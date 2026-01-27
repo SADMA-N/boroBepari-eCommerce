@@ -1,118 +1,158 @@
 import { createFileRoute } from '@tanstack/react-router'
+import HeroBanner from '../components/HeroBanner'
+import CategorySidebar, { CategoryList } from '../components/CategorySidebar'
+import FeaturedProductsGrid from '../components/FeaturedProductsGrid'
+import PopularSuppliers from '../components/PopularSuppliers'
+import PromoBanners, { PromoStrip, FrequentlySearched } from '../components/PromoBanner'
+import Footer from '../components/Footer'
 import {
-  Zap,
-  Server,
-  Route as RouteIcon,
-  Shield,
-  Waves,
-  Sparkles,
-} from 'lucide-react'
+  getFeaturedProducts,
+  getNewArrivals,
+  getTopRanking,
+  mockCategories,
+  frequentlySearched,
+} from '../data/mock-products'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({ component: HomePage })
 
-function App() {
-  const features = [
-    {
-      icon: <Zap className="w-12 h-12 text-cyan-400" />,
-      title: 'Powerful Server Functions',
-      description:
-        'Write server-side code that seamlessly integrates with your client components. Type-safe, secure, and simple.',
-    },
-    {
-      icon: <Server className="w-12 h-12 text-cyan-400" />,
-      title: 'Flexible Server Side Rendering',
-      description:
-        'Full-document SSR, streaming, and progressive enhancement out of the box. Control exactly what renders where.',
-    },
-    {
-      icon: <RouteIcon className="w-12 h-12 text-cyan-400" />,
-      title: 'API Routes',
-      description:
-        'Build type-safe API endpoints alongside your application. No separate backend needed.',
-    },
-    {
-      icon: <Shield className="w-12 h-12 text-cyan-400" />,
-      title: 'Strongly Typed Everything',
-      description:
-        'End-to-end type safety from server to client. Catch errors before they reach production.',
-    },
-    {
-      icon: <Waves className="w-12 h-12 text-cyan-400" />,
-      title: 'Full Streaming Support',
-      description:
-        'Stream data from server to client progressively. Perfect for AI applications and real-time updates.',
-    },
-    {
-      icon: <Sparkles className="w-12 h-12 text-cyan-400" />,
-      title: 'Next Generation Ready',
-      description:
-        'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.',
-    },
-  ]
+function HomePage() {
+  const featuredProducts = getFeaturedProducts()
+  const newArrivals = getNewArrivals()
+  const topRanking = getTopRanking()
+  const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      <section className="relative py-20 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
-        <div className="relative max-w-5xl mx-auto">
-          <div className="flex items-center justify-center gap-6 mb-6">
-            <img
-              src="/tanstack-circle-logo.png"
-              alt="TanStack Logo"
-              className="w-24 h-24 md:w-32 md:h-32"
-            />
-            <h1 className="text-6xl md:text-7xl font-black text-white [letter-spacing:-0.08em]">
-              <span className="text-gray-300">TANSTACK</span>{' '}
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                START
-              </span>
-            </h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section with Sidebar */}
+      <section className="max-w-7xl mx-auto px-4 py-4">
+        <div className="flex gap-4">
+          {/* Category Sidebar - Desktop */}
+          <div className="hidden lg:block w-64 flex-shrink-0">
+            <CategorySidebar categories={mainCategories} />
           </div>
-          <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
-            The framework for next generation AI applications
-          </p>
-          <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-            Full-stack framework powered by TanStack Router for React and Solid.
-            Build modern applications with server functions, streaming, and type
-            safety.
-          </p>
-          <div className="flex flex-col items-center gap-4">
-            <a
-              href="https://tanstack.com/start"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
-            >
-              Documentation
-            </a>
-            <p className="text-gray-400 text-sm mt-2">
-              Begin your TanStack Start journey by editing{' '}
-              <code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
-                /src/routes/index.tsx
-              </code>
-            </p>
+
+          {/* Hero Banner */}
+          <div className="flex-1">
+            <HeroBanner />
+          </div>
+
+          {/* Right Sidebar - Frequently Searched */}
+          <div className="hidden xl:block w-64 flex-shrink-0 space-y-4">
+            <FrequentlySearched keywords={frequentlySearched} />
           </div>
         </div>
       </section>
 
-      <section className="py-16 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
+      {/* Categories Grid - Mobile/Tablet */}
+      <section className="lg:hidden max-w-7xl mx-auto px-4 py-4">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Shop by Category</h2>
+        <CategoryList categories={mainCategories} />
+      </section>
+
+      {/* Popular Suppliers */}
+      <section className="max-w-7xl mx-auto px-4">
+        <PopularSuppliers />
+      </section>
+
+      {/* Promo Banner Strip */}
+      <section className="max-w-7xl mx-auto px-4 py-4">
+        <PromoStrip
+          title="Bulk Order Discount"
+          subtitle="Get 15% off on orders above ৳50,000"
+          ctaText="Start Ordering"
+          ctaLink="/categories"
+        />
+      </section>
+
+      {/* Promotional Banners */}
+      <section className="max-w-7xl mx-auto px-4 py-4">
+        <PromoBanners />
+      </section>
+
+      {/* Featured Products */}
+      <section className="max-w-7xl mx-auto px-4">
+        <FeaturedProductsGrid
+          products={featuredProducts.slice(0, 12)}
+          title="Recommended for Business"
+          subtitle="Products selected based on trending wholesale demands"
+          showViewAll
+          viewAllLink="/products?featured=true"
+        />
+      </section>
+
+      {/* Second Promo Strip */}
+      <section className="max-w-7xl mx-auto px-4 py-4">
+        <PromoStrip
+          title="New Supplier Registration"
+          subtitle="Become a verified seller and reach thousands of buyers"
+          ctaText="Register Now"
+          ctaLink="/sell"
+          bgColor="bg-gradient-to-r from-blue-500 to-purple-600"
+        />
+      </section>
+
+      {/* Top Ranking Products */}
+      <section className="max-w-7xl mx-auto px-4">
+        <FeaturedProductsGrid
+          products={topRanking}
+          title="Top Ranking Products"
+          subtitle="Most ordered products this month"
+          showViewAll
+          viewAllLink="/products?sort=popularity"
+        />
+      </section>
+
+      {/* New Arrivals */}
+      <section className="max-w-7xl mx-auto px-4">
+        <FeaturedProductsGrid
+          products={newArrivals}
+          title="New Arrivals"
+          subtitle="Fresh products from verified suppliers"
+          showViewAll
+          viewAllLink="/products?new=true"
+        />
+      </section>
+
+      {/* Category Discovery */}
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Discover More Categories
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {mainCategories.map((category) => (
+            <a
+              key={category.id}
+              href={`/categories/${category.slug}`}
+              className="bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow border border-gray-100"
             >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-white mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-gray-400 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
+              <div className="text-3xl mb-2">
+                {getCategoryEmoji(category.slug)}
+              </div>
+              <h3 className="font-medium text-gray-800">{category.name}</h3>
+            </a>
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
+}
+
+// Helper function for category emojis
+function getCategoryEmoji(slug: string): string {
+  const emojiMap: Record<string, string> = {
+    'fashion-apparel': '👕',
+    'electronics': '📱',
+    'home-living': '🏠',
+    'beauty-personal-care': '✨',
+    'sports-outdoors': '⚽',
+    'food-beverages': '🍜',
+    'industrial-supplies': '🏭',
+    'office-stationery': '📎',
+    'packaging': '📦',
+    'raw-materials': '🧱',
+  }
+  return emojiMap[slug] || '📦'
 }
