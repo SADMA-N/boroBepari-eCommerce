@@ -29,13 +29,23 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'BoroBepari - Bangladesh B2B Wholesale Marketplace',
+      },
+      {
+        name: 'description',
+        content:
+          'Discover wholesale products from verified suppliers across Bangladesh. Shop fashion, electronics, home goods and more at bulk prices.',
       },
     ],
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'icon',
+        type: 'image/svg+xml',
+        href: '/favicon.svg',
       },
     ],
   }),
@@ -49,7 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="antialiased">
         <Header />
         {children}
         <TanStackDevtools
