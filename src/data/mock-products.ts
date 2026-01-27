@@ -1,5 +1,8 @@
 import { faker } from '@faker-js/faker'
 
+// Set a seed for consistent data generation during development
+faker.seed(123)
+
 // Types for mock data (mirrors schema types but without DB dependencies)
 export interface MockCategory {
   id: number
@@ -192,139 +195,21 @@ const bdLocations = [
   'Mymensingh',
 ]
 
-// Generate mock suppliers
-export const mockSuppliers: MockSupplier[] = Array.from(
-  { length: 20 },
-  (_, i) => ({
-    id: i + 1,
+// --- FACTORY FUNCTIONS ---
+
+export const createMockSupplier = (id: number): MockSupplier => {
+  return {
+    id,
     name: faker.company.name(),
     slug: faker.helpers.slugify(faker.company.name()).toLowerCase(),
-    logo: `https://picsum.photos/seed/supplier${i + 1}/200/200`,
+    logo: `https://picsum.photos/seed/supplier${id}/200/200`,
     verified: faker.datatype.boolean({ probability: 0.7 }),
     location: faker.helpers.arrayElement(bdLocations),
     responseRate: faker.number.float({ min: 70, max: 100, fractionDigits: 1 }),
     onTimeDelivery: faker.number.float({ min: 80, max: 100, fractionDigits: 1 }),
     yearsInBusiness: faker.number.int({ min: 1, max: 20 }),
     description: faker.company.catchPhrase(),
-  })
-)
-
-// Product names by category for realism
-const productNamesByCategory: Record<number, string[]> = {
-  1: [
-    'Premium Cotton T-Shirt',
-    'Formal Business Shirt',
-    'Casual Polo Shirt',
-    'Denim Jeans',
-    'Cotton Saree',
-    'Silk Kurta',
-    'Winter Jacket',
-    'Sports Jersey',
-  ],
-  2: [
-    'Wireless Bluetooth Earbuds',
-    'Phone Charging Cable',
-    'Smart Watch Band',
-    'Screen Protector',
-    'Power Bank 10000mAh',
-    'USB Hub 4-Port',
-    'Laptop Stand',
-    'Wireless Mouse',
-  ],
-  3: [
-    'Stainless Steel Cookware Set',
-    'Cotton Bed Sheet',
-    'LED Desk Lamp',
-    'Storage Container Set',
-    'Wall Clock',
-    'Decorative Cushion Cover',
-    'Bath Towel Set',
-    'Plastic Chair',
-  ],
-  4: [
-    'Organic Face Cream',
-    'Hair Shampoo 500ml',
-    'Body Lotion',
-    'Perfume Gift Set',
-    'Makeup Brush Set',
-    'Nail Polish Collection',
-    'Sunscreen SPF 50',
-    'Face Mask Pack',
-  ],
-  5: [
-    'Yoga Mat',
-    'Dumbbells Set',
-    'Fitness Resistance Band',
-    'Sports Water Bottle',
-    'Running Shoes',
-    'Football',
-    'Badminton Racket',
-    'Gym Bag',
-  ],
-  6: [
-    'Premium Tea Pack',
-    'Instant Noodles Bulk',
-    'Rice 25kg Bag',
-    'Cooking Oil 5L',
-    'Spice Mix Set',
-    'Snacks Variety Pack',
-    'Energy Drink Case',
-    'Coffee Beans 1kg',
-  ],
-  7: [
-    'Safety Helmet',
-    'Work Gloves',
-    'Industrial Fan',
-    'Cable Ties Bulk',
-    'Adhesive Tape Roll',
-    'Cleaning Supplies',
-    'Tool Kit Set',
-    'First Aid Box',
-  ],
-  8: [
-    'A4 Paper Ream',
-    'Ballpoint Pen Pack',
-    'Notebook Set',
-    'Stapler Heavy Duty',
-    'File Folder Pack',
-    'Whiteboard Marker',
-    'Calculator Scientific',
-    'Desk Organizer',
-  ],
-  9: [
-    'Cardboard Boxes Bulk',
-    'Bubble Wrap Roll',
-    'Packing Tape',
-    'Poly Bags Pack',
-    'Shrink Wrap',
-    'Paper Bags Bulk',
-    'Food Container',
-    'Label Stickers',
-  ],
-  10: [
-    'Cotton Fabric Roll',
-    'Leather Sheet',
-    'Plastic Granules',
-    'Metal Wire Spool',
-    'Rubber Sheet',
-    'Foam Material',
-    'Glass Beads',
-    'Chemical Compound',
-  ],
-}
-
-// Units by category
-const unitsByCategory: Record<number, string[]> = {
-  1: ['piece', 'dozen', 'pack'],
-  2: ['piece', 'pack', 'box'],
-  3: ['piece', 'set', 'pack'],
-  4: ['piece', 'bottle', 'pack'],
-  5: ['piece', 'pair', 'set'],
-  6: ['kg', 'pack', 'carton'],
-  7: ['piece', 'box', 'set'],
-  8: ['piece', 'pack', 'ream'],
-  9: ['piece', 'roll', 'pack'],
-  10: ['meter', 'kg', 'roll'],
+  }
 }
 
 // Generate realistic wholesale prices in BDT
@@ -345,71 +230,107 @@ const generatePrice = (categoryId: number): number => {
   return faker.number.int({ min, max })
 }
 
-// Generate mock products
+const productNamesByCategory: Record<number, string[]> = {
+  1: ['T-Shirt', 'Shirt', 'Polo', 'Jeans', 'Saree', 'Kurta', 'Jacket', 'Jersey'],
+  2: ['Earbuds', 'Cable', 'Watch Band', 'Screen Protector', 'Power Bank', 'USB Hub', 'Stand', 'Mouse'],
+  3: ['Cookware', 'Bed Sheet', 'Lamp', 'Container', 'Clock', 'Cushion', 'Towel', 'Chair'],
+  4: ['Cream', 'Shampoo', 'Lotion', 'Perfume', 'Brush Set', 'Nail Polish', 'Sunscreen', 'Mask'],
+  5: ['Yoga Mat', 'Dumbbells', 'Band', 'Bottle', 'Shoes', 'Football', 'Racket', 'Bag'],
+  6: ['Tea', 'Noodles', 'Rice', 'Oil', 'Spice', 'Snacks', 'Drink', 'Coffee'],
+  7: ['Helmet', 'Gloves', 'Fan', 'Cable Ties', 'Tape', 'Cleaning', 'Tools', 'First Aid'],
+  8: ['Paper', 'Pen', 'Notebook', 'Stapler', 'Folder', 'Marker', 'Calculator', 'Organizer'],
+  9: ['Boxes', 'Bubble Wrap', 'Tape', 'Bags', 'Shrink Wrap', 'Paper Bags', 'Container', 'Labels'],
+  10: ['Fabric', 'Leather', 'Granules', 'Wire', 'Rubber', 'Foam', 'Beads', 'Chemical'],
+}
+
+const unitsByCategory: Record<number, string[]> = {
+  1: ['piece', 'dozen', 'pack'],
+  2: ['piece', 'pack', 'box'],
+  3: ['piece', 'set', 'pack'],
+  4: ['piece', 'bottle', 'pack'],
+  5: ['piece', 'pair', 'set'],
+  6: ['kg', 'pack', 'carton'],
+  7: ['piece', 'box', 'set'],
+  8: ['piece', 'pack', 'ream'],
+  9: ['piece', 'roll', 'pack'],
+  10: ['meter', 'kg', 'roll'],
+}
+
+export const createMockProduct = (id: number, supplierCount: number): MockProduct => {
+  const categoryId = faker.number.int({ min: 1, max: 10 })
+  const baseNames = productNamesByCategory[categoryId] || productNamesByCategory[1]
+  const baseName = faker.helpers.arrayElement(baseNames)
+  const adjective = faker.commerce.productAdjective()
+  const name = `${adjective} ${baseName}`
+  
+  const price = generatePrice(categoryId)
+  const hasDiscount = faker.datatype.boolean({ probability: 0.4 })
+  const originalPrice = hasDiscount
+    ? Math.round(price * faker.number.float({ min: 1.1, max: 1.5 }))
+    : null
+  
+  const units = unitsByCategory[categoryId] || ['piece']
+  const moq = faker.helpers.arrayElement([1, 5, 10, 20, 50, 100])
+  
+  // Tiered pricing
+  const tieredPricing = [
+    { minQty: moq, maxQty: moq * 2, price: price },
+    { minQty: moq * 2 + 1, maxQty: moq * 5, price: Math.round(price * 0.95) },
+    { minQty: moq * 5 + 1, maxQty: null, price: Math.round(price * 0.9) },
+  ]
+  
+  const hasSample = faker.datatype.boolean({ probability: 0.8 })
+
+  return {
+    id,
+    name,
+    slug: faker.helpers.slugify(name).toLowerCase() + `-${id}`,
+    description: faker.commerce.productDescription(),
+    images: Array.from(
+      { length: faker.number.int({ min: 1, max: 4 }) },
+      (_, j) => `https://picsum.photos/seed/product${id}-${j}/800/800`
+    ),
+    price,
+    originalPrice,
+    moq,
+    stock: faker.number.int({ min: 0, max: 10000 }),
+    unit: faker.helpers.arrayElement(units),
+    categoryId,
+    supplierId: faker.number.int({ min: 1, max: supplierCount }),
+    featured: faker.datatype.boolean({ probability: 0.2 }),
+    isNew: faker.datatype.boolean({ probability: 0.3 }),
+    rating: faker.number.float({ min: 3.5, max: 5, fractionDigits: 1 }),
+    reviewCount: faker.number.int({ min: 0, max: 500 }),
+    soldCount: faker.number.int({ min: 0, max: 10000 }),
+    tags: faker.helpers.arrayElements(
+      ['bestseller', 'trending', 'limited', 'bulk-deal', 'new-arrival', 'top-rated'],
+      faker.number.int({ min: 0, max: 4 })
+    ),
+    tieredPricing,
+    specifications: [
+      { key: 'Material', value: faker.commerce.productMaterial() },
+      { key: 'Color', value: faker.color.human() },
+      { key: 'Origin', value: 'Bangladesh' },
+      { key: 'Weight', value: `${faker.number.int({ min: 100, max: 1000 })}g` },
+      { key: 'Brand', value: faker.company.name() },
+    ],
+    hasSample,
+    samplePrice: hasSample ? Math.round(price * 1.5) : null,
+  }
+}
+
+// --- DATA GENERATION ---
+
+export const mockSuppliers: MockSupplier[] = Array.from(
+  { length: 20 },
+  (_, i) => createMockSupplier(i + 1)
+)
+
 export const mockProducts: MockProduct[] = Array.from(
   { length: 120 },
-  (_, i) => {
-    const categoryId = faker.number.int({ min: 1, max: 10 })
-    const productNames =
-      productNamesByCategory[categoryId] || productNamesByCategory[1]
-    const baseName = faker.helpers.arrayElement(productNames)
-    const variant = faker.commerce.productAdjective()
-    const name = `${variant} ${baseName}`
-    const price = generatePrice(categoryId)
-    const hasDiscount = faker.datatype.boolean({ probability: 0.4 })
-    const originalPrice = hasDiscount
-      ? Math.round(price * faker.number.float({ min: 1.1, max: 1.5 }))
-      : null
-    const units = unitsByCategory[categoryId] || ['piece']
-    const moq = faker.helpers.arrayElement([1, 5, 10, 20, 50, 100])
-    
-    // Generate tiered pricing
-    const tieredPricing = [
-      { minQty: moq, maxQty: moq * 2, price: price },
-      { minQty: moq * 2 + 1, maxQty: moq * 5, price: Math.round(price * 0.95) },
-      { minQty: moq * 5 + 1, maxQty: null, price: Math.round(price * 0.9) },
-    ]
-
-    const hasSample = faker.datatype.boolean({ probability: 0.8 })
-    
-    return {
-      id: i + 1,
-      name,
-      slug: faker.helpers.slugify(name).toLowerCase() + `-${i + 1}`,
-      description: faker.commerce.productDescription(),
-      images: Array.from(
-        { length: faker.number.int({ min: 1, max: 4 }) },
-        (_, j) => `https://picsum.photos/seed/product${i + 1}-${j}/800/800`
-      ),
-      price,
-      originalPrice,
-      moq,
-      stock: faker.number.int({ min: 0, max: 10000 }),
-      unit: faker.helpers.arrayElement(units),
-      categoryId,
-      supplierId: faker.number.int({ min: 1, max: 20 }),
-      featured: faker.datatype.boolean({ probability: 0.2 }),
-      isNew: faker.datatype.boolean({ probability: 0.3 }),
-      rating: faker.number.float({ min: 3.5, max: 5, fractionDigits: 1 }),
-      reviewCount: faker.number.int({ min: 0, max: 500 }),
-      soldCount: faker.number.int({ min: 0, max: 10000 }),
-      tags: faker.helpers.arrayElements(
-        ['bestseller', 'trending', 'limited', 'bulk-deal', 'new-arrival'],
-        faker.number.int({ min: 0, max: 3 })
-      ),
-      tieredPricing,
-      specifications: [
-        { key: 'Material', value: faker.commerce.productMaterial() },
-        { key: 'Color', value: faker.color.human() },
-        { key: 'Origin', value: 'Bangladesh' },
-        { key: 'Weight', value: `${faker.number.int({ min: 100, max: 1000 })}g` },
-        { key: 'Brand', value: faker.company.name() },
-      ],
-      hasSample,
-      samplePrice: hasSample ? Math.round(price * 1.5) : null,
-    }
-  }
+  (_, i) => createMockProduct(i + 1, mockSuppliers.length)
 )
+
 
 // Helper functions
 export const formatBDT = (price: number): string => {

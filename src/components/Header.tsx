@@ -100,7 +100,7 @@ export default function Header() {
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 ml-auto">
               {/* Wishlist */}
               <a
                 href="/wishlist"
