@@ -1,5 +1,6 @@
 import { Heart, Eye, BadgeCheck, Package } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import {
   formatBDT,
   getSupplierById,
@@ -24,7 +25,11 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
     <div className="group relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
-        <a href={`/products/${product.slug}`}>
+        <Link 
+          to="/products/$productSlug" 
+          params={{ productSlug: product.slug }}
+          className="block w-full h-full"
+        >
           {!imageLoaded && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse" />
           )}
@@ -36,7 +41,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
             }`}
             onLoad={() => setImageLoaded(true)}
           />
-        </a>
+        </Link>
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
@@ -104,11 +109,15 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         )}
 
         {/* Product Name */}
-        <a href={`/products/${product.slug}`}>
+        <Link 
+          to="/products/$productSlug"
+          params={{ productSlug: product.slug }}
+          className="block"
+        >
           <h3 className="text-sm font-medium text-gray-800 line-clamp-2 hover:text-orange-600 transition-colors min-h-[2.5rem]">
             {product.name}
           </h3>
-        </a>
+        </Link>
 
         {/* Rating */}
         {product.reviewCount > 0 && (

@@ -24,7 +24,7 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Sidebar */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
+      <section className="max-w-[1440px] mx-auto px-6 py-4">
         <div className="flex gap-4">
           {/* Category Sidebar - Desktop */}
           <div className="hidden lg:block w-64 flex-shrink-0">
@@ -44,18 +44,18 @@ function HomePage() {
       </section>
 
       {/* Categories Grid - Mobile/Tablet */}
-      <section className="lg:hidden max-w-7xl mx-auto px-4 py-4">
+      <section className="lg:hidden max-w-[1440px] mx-auto px-6 py-4">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Shop by Category</h2>
         <CategoryList categories={mainCategories} />
       </section>
 
       {/* Popular Suppliers */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className="max-w-[1440px] mx-auto px-6">
         <PopularSuppliers />
       </section>
 
       {/* Promo Banner Strip */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
+      <section className="max-w-[1440px] mx-auto px-6 py-4">
         <PromoStrip
           title="Bulk Order Discount"
           subtitle="Get 15% off on orders above ৳50,000"
@@ -65,12 +65,12 @@ function HomePage() {
       </section>
 
       {/* Promotional Banners */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
+      <section className="max-w-[1440px] mx-auto px-6 py-4">
         <PromoBanners />
       </section>
 
       {/* Featured Products */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className="max-w-[1440px] mx-auto px-6">
         <FeaturedProductsGrid
           products={featuredProducts.slice(0, 12)}
           title="Recommended for Business"
@@ -81,7 +81,7 @@ function HomePage() {
       </section>
 
       {/* Second Promo Strip */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
+      <section className="max-w-[1440px] mx-auto px-6 py-4">
         <PromoStrip
           title="New Supplier Registration"
           subtitle="Become a verified seller and reach thousands of buyers"
@@ -92,7 +92,7 @@ function HomePage() {
       </section>
 
       {/* Top Ranking Products */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className="max-w-[1440px] mx-auto px-6">
         <FeaturedProductsGrid
           products={topRanking}
           title="Top Ranking Products"
@@ -103,7 +103,7 @@ function HomePage() {
       </section>
 
       {/* New Arrivals */}
-      <section className="max-w-7xl mx-auto px-4">
+      <section className="max-w-[1440px] mx-auto px-6">
         <FeaturedProductsGrid
           products={newArrivals}
           title="New Arrivals"
@@ -114,7 +114,7 @@ function HomePage() {
       </section>
 
       {/* Category Discovery */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
+      <section className="max-w-[1440px] mx-auto px-6 py-8">
         <h2 className="text-xl font-bold text-gray-800 mb-4">
           Discover More Categories
         </h2>

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoOrpcTodoRouteImport } from './routes/demo/orpc-todo'
@@ -39,6 +40,11 @@ const SearchRoute = SearchRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
+  id: '/products/$productSlug',
+  path: '/products/$productSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/demo/orpc-todo': typeof DemoOrpcTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/demo/orpc-todo': typeof DemoOrpcTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/demo/orpc-todo': typeof DemoOrpcTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/demo/orpc-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/products/$productSlug'
     | '/api/rpc/$'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/demo/orpc-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/products/$productSlug'
     | '/api/rpc/$'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/demo/orpc-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/products/$productSlug'
     | '/api/rpc/$'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -290,6 +302,7 @@ export interface RootRouteChildren {
   DemoOrpcTodoRoute: typeof DemoOrpcTodoRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/products/$productSlug': {
+      id: '/products/$productSlug'
+      path: '/products/$productSlug'
+      fullPath: '/products/$productSlug'
+      preLoaderRoute: typeof ProductsProductSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -466,6 +486,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoOrpcTodoRoute: DemoOrpcTodoRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  ProductsProductSlugRoute: ProductsProductSlugRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,

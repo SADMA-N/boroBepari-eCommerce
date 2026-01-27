@@ -41,6 +41,10 @@ export interface MockProduct {
   reviewCount: number
   soldCount: number
   tags: string[]
+  tieredPricing: { minQty: number; maxQty: number | null; price: number }[]
+  specifications: { key: string; value: string }[]
+  hasSample: boolean
+  samplePrice: number | null
 }
 
 // Category icons mapping (Lucide icon names) - exported for potential use
@@ -357,7 +361,17 @@ export const mockProducts: MockProduct[] = Array.from(
       ? Math.round(price * faker.number.float({ min: 1.1, max: 1.5 }))
       : null
     const units = unitsByCategory[categoryId] || ['piece']
+    const moq = faker.helpers.arrayElement([1, 5, 10, 20, 50, 100])
+    
+    // Generate tiered pricing
+    const tieredPricing = [
+      { minQty: moq, maxQty: moq * 2, price: price },
+      { minQty: moq * 2 + 1, maxQty: moq * 5, price: Math.round(price * 0.95) },
+      { minQty: moq * 5 + 1, maxQty: null, price: Math.round(price * 0.9) },
+    ]
 
+    const hasSample = faker.datatype.boolean({ probability: 0.8 })
+    
     return {
       id: i + 1,
       name,
@@ -365,11 +379,11 @@ export const mockProducts: MockProduct[] = Array.from(
       description: faker.commerce.productDescription(),
       images: Array.from(
         { length: faker.number.int({ min: 1, max: 4 }) },
-        (_, j) => `https://picsum.photos/seed/product${i + 1}-${j}/400/400`
+        (_, j) => `https://picsum.photos/seed/product${i + 1}-${j}/800/800`
       ),
       price,
       originalPrice,
-      moq: faker.helpers.arrayElement([1, 5, 10, 20, 50, 100]),
+      moq,
       stock: faker.number.int({ min: 0, max: 10000 }),
       unit: faker.helpers.arrayElement(units),
       categoryId,
@@ -383,6 +397,16 @@ export const mockProducts: MockProduct[] = Array.from(
         ['bestseller', 'trending', 'limited', 'bulk-deal', 'new-arrival'],
         faker.number.int({ min: 0, max: 3 })
       ),
+      tieredPricing,
+      specifications: [
+        { key: 'Material', value: faker.commerce.productMaterial() },
+        { key: 'Color', value: faker.color.human() },
+        { key: 'Origin', value: 'Bangladesh' },
+        { key: 'Weight', value: `${faker.number.int({ min: 100, max: 1000 })}g` },
+        { key: 'Brand', value: faker.company.name() },
+      ],
+      hasSample,
+      samplePrice: hasSample ? Math.round(price * 1.5) : null,
     }
   }
 )

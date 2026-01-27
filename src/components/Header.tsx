@@ -27,7 +27,7 @@ export default function Header() {
     <>
       {/* Top Bar */}
       <div className="bg-gray-900 text-gray-300 text-xs py-2 hidden sm:block">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+        <div className="max-w-[1440px] mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <span>Welcome to BoroBepari - Bangladesh's B2B Marketplace</span>
           </div>
@@ -46,7 +46,7 @@ export default function Header() {
 
       {/* Main Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex items-center h-16 gap-4">
             {/* Mobile Menu Button */}
             <button
