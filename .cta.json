@@ -1,0 +1,30 @@
+{
+  "initialized": true,
+  "mode": "file-router",
+  "projectName": "borobepari-ecommerce",
+  "typescript": true,
+  "tailwind": true,
+  "git": true,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "postgresql"
+    }
+  },
+  "packageManager": "bun",
+  "install": true,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": [
+    "compiler",
+    "db",
+    "drizzle",
+    "form",
+    "oRPC",
+    "t3env",
+    "table",
+    "start",
+    "tanstack-query",
+    "eslint",
+    "nitro"
+  ]
+}
