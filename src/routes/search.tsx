@@ -11,10 +11,13 @@ import {
 import ProductCard from '../components/ProductCard'
 import FilterSidebar from '../components/FilterSidebar'
 import Footer from '../components/Footer'
+import QuickViewModal from '../components/QuickViewModal'
+import Toast from '../components/Toast'
 import { FeaturedProductsGridSkeleton } from '../components/FeaturedProductsGrid'
 import {
   filterProducts,
   mockCategories,
+  getFeaturedProducts,
   type ProductFilters,
   type MockProduct,
 } from '../data/mock-products'
@@ -56,6 +59,31 @@ function SearchPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [isLoading, setIsLoading] = useState(false)
   const [products, setProducts] = useState<MockProduct[]>([])
+  
+  // Recommendations state
+  const [recommendations, setRecommendations] = useState<MockProduct[]>([])
+
+  // Quick View & Toast State
+  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null)
+  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
+    message: '',
+    isVisible: false,
+  })
+
+  const handleQuickView = (product: MockProduct) => {
+    setQuickViewProduct(product)
+  }
+
+  const handleAddToCart = (product: MockProduct, quantity: number) => {
+    // In a real app, this would dispatch to a cart store
+    console.log(`Added ${quantity} of ${product.name} to cart`)
+    
+    setQuickViewProduct(null)
+    setToast({
+      message: `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+      isVisible: true,
+    })
+  }
 
   // Parse filters from URL search params
   const filters: ProductFilters = useMemo(
@@ -79,6 +107,12 @@ function SearchPage() {
     const timer = setTimeout(() => {
       const filtered = filterProducts(filters)
       setProducts(filtered)
+      
+      // Load recommendations if no results
+      if (filtered.length === 0) {
+         setRecommendations(getFeaturedProducts().slice(0, 8))
+      }
+      
       setIsLoading(false)
     }, 300)
 
@@ -136,7 +170,7 @@ function SearchPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="max-w-[1440px] mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-sm">
             <Link to="/" className="text-gray-500 hover:text-orange-500">
               Home
@@ -149,7 +183,7 @@ function SearchPage() {
 
       {/* Search Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-[1440px] mx-auto px-6 py-6">
           <div className="flex items-center gap-2">
             <Search size={24} className="text-gray-400" />
             <h1 className="text-2xl font-bold text-gray-800">
@@ -202,7 +236,7 @@ function SearchPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-[1440px] mx-auto px-6 py-6">
         <div className="flex gap-6">
           {/* Filter Sidebar - Desktop */}
           <div className="hidden lg:block w-64 flex-shrink-0">
@@ -357,27 +391,41 @@ function SearchPage() {
             {isLoading ? (
               <FeaturedProductsGridSkeleton count={12} />
             ) : products.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-12 text-center">
-                <Search size={48} className="mx-auto text-gray-300 mb-4" />
-                <p className="text-gray-500 text-lg mb-2">
-                  No products found
-                  {search.q && ` for "${search.q}"`}
-                </p>
-                <p className="text-gray-400 text-sm mb-4">
-                  Try adjusting your search or filters
-                </p>
-                {(filters.minPrice ||
-                  filters.maxPrice ||
-                  filters.locations?.length ||
-                  filters.verifiedOnly) && (
-                  <button
-                    onClick={() =>
-                      handleFiltersChange({ search: filters.search })
-                    }
-                    className="text-orange-500 hover:text-orange-600 font-medium"
-                  >
-                    Clear all filters
-                  </button>
+              <div className="space-y-12">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-12 text-center">
+                  <Search size={48} className="mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-500 text-lg mb-2">
+                    No products found
+                    {search.q && ` for "${search.q}"`}
+                  </p>
+                  <p className="text-gray-400 text-sm mb-4">
+                    Try adjusting your search or filters
+                  </p>
+                  {(filters.minPrice ||
+                    filters.maxPrice ||
+                    filters.locations?.length ||
+                    filters.verifiedOnly) && (
+                    <button
+                      onClick={() =>
+                        handleFiltersChange({ search: filters.search })
+                      }
+                      className="text-orange-500 hover:text-orange-600 font-medium"
+                    >
+                      Clear all filters
+                    </button>
+                  )}
+                </div>
+
+                {/* Recommendations */}
+                {recommendations.length > 0 && (
+                   <div>
+                     <h2 className="text-xl font-bold text-gray-800 mb-6">You Might Also Like</h2>
+                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                       {recommendations.map(product => (
+                         <ProductCard key={product.id} product={product} onQuickView={handleQuickView} />
+                       ))}
+                     </div>
+                   </div>
                 )}
               </div>
             ) : (
@@ -390,7 +438,7 @@ function SearchPage() {
                   }
                 >
                   {paginatedProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} onQuickView={handleQuickView} />
                   ))}
                 </div>
 
@@ -454,6 +502,21 @@ function SearchPage() {
       />
 
       <Footer />
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onAddToCart={handleAddToCart}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+      />
     </div>
   )
 }

@@ -1,16 +1,20 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
 import HeroBanner from '../components/HeroBanner'
 import CategorySidebar, { CategoryList } from '../components/CategorySidebar'
 import FeaturedProductsGrid from '../components/FeaturedProductsGrid'
 import PopularSuppliers from '../components/PopularSuppliers'
 import PromoBanners, { PromoStrip, FrequentlySearched } from '../components/PromoBanner'
 import Footer from '../components/Footer'
+import QuickViewModal from '../components/QuickViewModal'
+import Toast from '../components/Toast'
 import {
   getFeaturedProducts,
   getNewArrivals,
   getTopRanking,
   mockCategories,
   frequentlySearched,
+  type MockProduct,
 } from '../data/mock-products'
 
 export const Route = createFileRoute('/')({ component: HomePage })
@@ -20,6 +24,28 @@ function HomePage() {
   const newArrivals = getNewArrivals()
   const topRanking = getTopRanking()
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
+
+  // Quick View & Toast State
+  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null)
+  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
+    message: '',
+    isVisible: false,
+  })
+
+  const handleQuickView = (product: MockProduct) => {
+    setQuickViewProduct(product)
+  }
+
+  const handleAddToCart = (product: MockProduct, quantity: number) => {
+    // In a real app, this would dispatch to a cart store
+    console.log(`Added ${quantity} of ${product.name} to cart`)
+    
+    setQuickViewProduct(null)
+    setToast({
+      message: `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+      isVisible: true,
+    })
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -77,6 +103,7 @@ function HomePage() {
           subtitle="Products selected based on trending wholesale demands"
           showViewAll
           viewAllLink="/products?featured=true"
+          onQuickView={handleQuickView}
         />
       </section>
 
@@ -99,6 +126,7 @@ function HomePage() {
           subtitle="Most ordered products this month"
           showViewAll
           viewAllLink="/products?sort=popularity"
+          onQuickView={handleQuickView}
         />
       </section>
 
@@ -110,6 +138,7 @@ function HomePage() {
           subtitle="Fresh products from verified suppliers"
           showViewAll
           viewAllLink="/products?new=true"
+          onQuickView={handleQuickView}
         />
       </section>
 
@@ -136,6 +165,21 @@ function HomePage() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+        onAddToCart={handleAddToCart}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+      />
     </div>
   )
 }

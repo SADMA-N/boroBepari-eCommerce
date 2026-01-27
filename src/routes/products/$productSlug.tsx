@@ -61,7 +61,7 @@ function ProductDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1440px] mx-auto px-6 py-8">
       {/* Breadcrumb - Basic placeholder */}
       <div className="text-sm text-gray-500 mb-6">
         Home / Products / <span className="text-gray-900">{product.name}</span>
