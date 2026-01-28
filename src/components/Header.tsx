@@ -20,6 +20,7 @@ import { useCart } from '../contexts/CartContext'
 import { useWishlist } from '../contexts/WishlistContext'
 import { useAuth } from '../contexts/AuthContext'
 import AuthModal from './AuthModal'
+import CartSidebar from './CartSidebar'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -27,6 +28,7 @@ export default function Header() {
   const [showUserDropdown, setShowUserDropdown] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [redirectPath, setRedirectPath] = useState<string | undefined>(undefined)
+  const [isCartOpen, setIsCartOpen] = useState(false)
   
   const { cartCount } = useCart()
   const { wishlistItems } = useWishlist()
@@ -55,6 +57,11 @@ export default function Header() {
         isOpen={authModalOpen} 
         onClose={() => setAuthModalOpen(false)} 
         redirectPath={redirectPath}
+      />
+
+      <CartSidebar 
+        isOpen={isCartOpen} 
+        onClose={() => setIsCartOpen(false)} 
       />
 
       {/* Top Bar */}
@@ -151,8 +158,8 @@ export default function Header() {
               </a>
 
               {/* Cart */}
-              <a
-                href="/cart"
+              <button
+                onClick={() => setIsCartOpen(true)}
                 className="relative flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors"
               >
                 <div className="relative">
@@ -164,7 +171,7 @@ export default function Header() {
                   )}
                 </div>
                 <span className="text-xs hidden sm:block">Cart</span>
-              </a>
+              </button>
 
               {/* User Account */}
               <div
