@@ -14,8 +14,11 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlistIds, setWishlistIds] = useState<number[]>(() => {
-    const saved = localStorage.getItem('wishlist')
-    return saved ? JSON.parse(saved) : []
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('wishlist')
+      return saved ? JSON.parse(saved) : []
+    }
+    return []
   })
 
   useEffect(() => {
