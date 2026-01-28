@@ -6,6 +6,7 @@ import {
   getSupplierById,
   type MockProduct,
 } from '../data/mock-products'
+import { useWishlist } from '../contexts/WishlistContext'
 
 interface ProductCardProps {
   product: MockProduct
@@ -13,9 +14,10 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onQuickView }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false)
+  const { toggleWishlist, isInWishlist } = useWishlist()
   const [imageLoaded, setImageLoaded] = useState(false)
 
+  const isWishlisted = isInWishlist(product.id)
   const supplier = getSupplierById(product.supplierId)
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
@@ -62,7 +64,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
           <button
             onClick={(e) => {
               e.preventDefault()
-              setIsWishlisted(!isWishlisted)
+              toggleWishlist(product.id)
             }}
             className={`p-2 rounded-full shadow-md transition-colors ${
               isWishlisted

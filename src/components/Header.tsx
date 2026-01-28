@@ -15,11 +15,13 @@ import {
 } from 'lucide-react'
 import SearchBar from './SearchBar'
 import { mockCategories } from '../data/mock-products'
+import { useCart } from '../contexts/CartContext'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
+  const { cartCount } = useCart()
 
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
@@ -117,9 +119,11 @@ export default function Header() {
               >
                 <div className="relative">
                   <ShoppingCart size={22} />
-                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                    0
-                  </span>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
                 </div>
                 <span className="text-xs hidden sm:block">Cart</span>
               </a>

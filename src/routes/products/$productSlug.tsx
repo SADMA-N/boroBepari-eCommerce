@@ -18,6 +18,9 @@ import {
   Plus,
   AlertCircle
 } from 'lucide-react'
+import { useWishlist } from '../../contexts/WishlistContext'
+import { useCart } from '../../contexts/CartContext'
+import Toast from '../../components/Toast'
 
 export const Route = createFileRoute('/products/$productSlug')({
   loader: ({ params }) => {
@@ -33,13 +36,19 @@ export const Route = createFileRoute('/products/$productSlug')({
 
 function ProductDetailPage() {
   const { product, supplier } = Route.useLoaderData()
+  const { toggleWishlist, isInWishlist } = useWishlist()
+  const { addToCart } = useCart()
+  
   const [selectedImage, setSelectedImage] = useState(product.images[0])
   const [activeTab, setActiveTab] = useState('overview')
   const [quantity, setQuantity] = useState(product.moq)
   const [isSample, setIsSample] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
 
   const isOutOfStock = product.stock === 0
   const maxQuantity = isSample ? 5 : product.stock
+  const isWishlisted = isInWishlist(product.id)
   
   // Determine price based on quantity or sample
   const currentPrice = isSample 
@@ -60,8 +69,19 @@ function ProductDetailPage() {
     setQuantity(newIsSample ? 1 : product.moq)
   }
 
+  const handleAddToCart = () => {
+    addToCart(product.id, quantity)
+    setToastMessage(`Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`)
+    setShowToast(true)
+  }
+
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-8">
+       <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
       {/* Breadcrumb - Basic placeholder */}
       <div className="text-sm text-gray-500 mb-6">
         Home / Products / <span className="text-gray-900">{product.name}</span>
@@ -210,6 +230,7 @@ function ProductDetailPage() {
             <div className="flex space-x-3">
               <button 
                 disabled={isOutOfStock}
+                onClick={handleAddToCart}
                 className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ShoppingCart className="mr-2" size={20} />
@@ -220,8 +241,15 @@ function ProductDetailPage() {
                    Notify Me
                  </button>
               )}
-              <button className="p-3 border rounded-lg text-gray-500 hover:bg-gray-50">
-                <Heart size={20} />
+              <button 
+                onClick={() => toggleWishlist(product.id)}
+                className={`p-3 border rounded-lg transition-colors ${
+                  isWishlisted 
+                    ? 'bg-red-50 border-red-200 text-red-500' 
+                    : 'text-gray-500 hover:bg-gray-50'
+                }`}
+              >
+                <Heart size={20} fill={isWishlisted ? 'currentColor' : 'none'} />
               </button>
               <button className="p-3 border rounded-lg text-gray-500 hover:bg-gray-50">
                 <Share2 size={20} />

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
@@ -32,6 +33,11 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -146,6 +152,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/search': typeof SearchRoute
+  '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/search'
+    | '/wishlist'
     | '/api/$'
     | '/categories/$categorySlug'
     | '/demo/db-chat'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/search'
+    | '/wishlist'
     | '/api/$'
     | '/categories/$categorySlug'
     | '/demo/db-chat'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/search'
+    | '/wishlist'
     | '/api/$'
     | '/categories/$categorySlug'
     | '/demo/db-chat'
@@ -294,6 +306,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRoute: typeof SearchRoute
+  WishlistRoute: typeof WishlistRoute
   ApiSplatRoute: typeof ApiSplatRoute
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
@@ -318,6 +331,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -478,6 +498,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRoute: SearchRoute,
+  WishlistRoute: WishlistRoute,
   ApiSplatRoute: ApiSplatRoute,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,
