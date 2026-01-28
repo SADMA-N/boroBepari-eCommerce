@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   Menu,
@@ -12,24 +12,51 @@ import {
   UserPlus,
   Store,
   HelpCircle,
+  LogOut,
 } from 'lucide-react'
 import SearchBar from './SearchBar'
 import { mockCategories } from '../data/mock-products'
 import { useCart } from '../contexts/CartContext'
 import { useWishlist } from '../contexts/WishlistContext'
+import { useAuth } from '../contexts/AuthContext'
+import AuthModal from './AuthModal'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [redirectPath, setRedirectPath] = useState<string | undefined>(undefined)
+  
   const { cartCount } = useCart()
   const { wishlistItems } = useWishlist()
+  const { isAuthenticated, user, logout } = useAuth()
+  const router = useRouter()
+  
   const wishlistCount = wishlistItems.length
-
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
+
+  const handleAuthRequired = (e: React.MouseEvent, path: string) => {
+    if (!isAuthenticated) {
+      e.preventDefault()
+      setRedirectPath(path)
+      setAuthModalOpen(true)
+    }
+  }
+
+  const handleLogout = () => {
+    logout()
+    setShowUserDropdown(false)
+  }
 
   return (
     <>
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+        redirectPath={redirectPath}
+      />
+
       {/* Top Bar */}
       <div className="bg-gray-900 text-gray-300 text-xs py-2 hidden sm:block">
         <div className="max-w-[1440px] mx-auto px-6 flex items-center justify-between">
@@ -109,11 +136,12 @@ export default function Header() {
               {/* Wishlist */}
               <a
                 href="/wishlist"
+                onClick={(e) => handleAuthRequired(e, '/wishlist')}
                 className="hidden sm:flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors relative"
               >
                 <div className="relative">
                   <Heart size={22} />
-                  {wishlistCount > 0 && (
+                  {isAuthenticated && wishlistCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
                       {wishlistCount}
                     </span>
@@ -145,34 +173,67 @@ export default function Header() {
                 onMouseLeave={() => setShowUserDropdown(false)}
               >
                 <button className="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors">
-                  <User size={22} />
-                  <span className="text-xs hidden sm:block">Account</span>
+                  <User size={22} className={isAuthenticated ? "text-orange-500" : ""} />
+                  <span className="text-xs hidden sm:block">
+                    {isAuthenticated && user ? user.name.split(' ')[0] : 'Account'}
+                  </span>
                 </button>
 
                 {showUserDropdown && (
                   <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                    <a
-                      href="/login"
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
-                    >
-                      <LogIn size={16} />
-                      Sign In
-                    </a>
-                    <a
-                      href="/register"
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
-                    >
-                      <UserPlus size={16} />
-                      Register
-                    </a>
+                    {!isAuthenticated ? (
+                      <>
+                        <button
+                          onClick={() => setAuthModalOpen(true)}
+                          className="flex w-full items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600 text-left"
+                        >
+                          <LogIn size={16} />
+                          Sign In
+                        </button>
+                        <a
+                          href="/register"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
+                        >
+                          <UserPlus size={16} />
+                          Register
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                         <div className="px-4 py-2 border-b border-gray-100">
+                           <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                           <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                         </div>
+                         <a
+                          href="/profile"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
+                        >
+                          <User size={16} />
+                          My Profile
+                        </a>
+                      </>
+                    )}
                     <hr className="my-2 border-gray-100" />
                     <a
                       href="/orders"
+                      onClick={(e) => handleAuthRequired(e, '/orders')}
                       className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
                     >
                       <Package size={16} />
                       My Orders
                     </a>
+                    {isAuthenticated && (
+                      <>
+                        <hr className="my-2 border-gray-100" />
+                        <button
+                          onClick={handleLogout}
+                          className="flex w-full items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 text-left"
+                        >
+                          <LogOut size={16} />
+                          Sign Out
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -243,7 +304,10 @@ export default function Header() {
 
             <a
               href="/wishlist"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                handleAuthRequired(e, '/wishlist')
+                if (isAuthenticated) setIsMobileMenuOpen(false)
+              }}
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-50 text-gray-700"
             >
               <Heart size={20} />
@@ -252,7 +316,10 @@ export default function Header() {
 
             <a
               href="/orders"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                handleAuthRequired(e, '/orders')
+                if (isAuthenticated) setIsMobileMenuOpen(false)
+              }}
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-50 text-gray-700"
             >
               <Package size={20} />
@@ -270,23 +337,40 @@ export default function Header() {
 
             <hr className="my-4 border-gray-200" />
 
-            <a
-              href="/login"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg bg-orange-500 text-white font-medium"
-            >
-              <LogIn size={20} />
-              Sign In
-            </a>
+            {!isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => {
+                    setAuthModalOpen(true)
+                    setIsMobileMenuOpen(false)
+                  }}
+                  className="flex w-full items-center gap-3 px-4 py-3 rounded-lg bg-orange-500 text-white font-medium"
+                >
+                  <LogIn size={20} />
+                  Sign In
+                </button>
 
-            <a
-              href="/register"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg border border-orange-500 text-orange-500 font-medium"
-            >
-              <UserPlus size={20} />
-              Register
-            </a>
+                <a
+                  href="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg border border-orange-500 text-orange-500 font-medium"
+                >
+                  <UserPlus size={20} />
+                  Register
+                </a>
+              </>
+            ) : (
+              <button
+                onClick={() => {
+                  handleLogout()
+                  setIsMobileMenuOpen(false)
+                }}
+                className="flex w-full items-center gap-3 px-4 py-3 rounded-lg bg-red-50 text-red-600 font-medium"
+              >
+                <LogOut size={20} />
+                Sign Out
+              </button>
+            )}
           </div>
         </nav>
       </aside>
