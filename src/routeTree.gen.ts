@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -41,6 +42,11 @@ const WishlistRoute = WishlistRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersRoute = OrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -151,6 +157,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/orders': typeof OrdersRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/orders': typeof OrdersRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
@@ -202,6 +210,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/orders': typeof OrdersRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/orders'
     | '/search'
     | '/wishlist'
     | '/api/$'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/orders'
     | '/search'
     | '/wishlist'
     | '/api/$'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/orders'
     | '/search'
     | '/wishlist'
     | '/api/$'
@@ -305,6 +317,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  OrdersRoute: typeof OrdersRoute
   SearchRoute: typeof SearchRoute
   WishlistRoute: typeof WishlistRoute
   ApiSplatRoute: typeof ApiSplatRoute
@@ -343,6 +356,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -497,6 +517,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  OrdersRoute: OrdersRoute,
   SearchRoute: SearchRoute,
   WishlistRoute: WishlistRoute,
   ApiSplatRoute: ApiSplatRoute,
