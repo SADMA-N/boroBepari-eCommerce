@@ -36,6 +36,7 @@ export const suppliers = pgTable('suppliers', {
   id: serial().primaryKey(),
   name: text().notNull(),
   slug: text().notNull().unique(),
+  ownerId: text('owner_id').references(() => user.id), // Link supplier to a user
   logo: text(),
   verified: boolean().default(false),
   location: text(),
@@ -47,7 +48,11 @@ export const suppliers = pgTable('suppliers', {
   updatedAt: timestamp('updated_at').defaultNow(),
 })
 
-export const suppliersRelations = relations(suppliers, ({ many }) => ({
+export const suppliersRelations = relations(suppliers, ({ one, many }) => ({
+  owner: one(user, {
+    fields: [suppliers.ownerId],
+    references: [user.id],
+  }),
   products: many(products),
 }))
 
@@ -187,7 +192,7 @@ export const rfqs = pgTable('rfqs', {
   createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const rfqsRelations = relations(rfqs, ({ one }) => ({
+export const rfqsRelations = relations(rfqs, ({ one, many }) => ({
   user: one(user, {
     fields: [rfqs.userId],
     references: [user.id],
@@ -195,6 +200,56 @@ export const rfqsRelations = relations(rfqs, ({ one }) => ({
   product: one(products, {
     fields: [rfqs.productId],
     references: [products.id],
+  }),
+  quotes: many(quotes),
+}))
+
+// Quotes table (Supplier responses)
+export const quotes = pgTable('quotes', {
+  id: serial().primaryKey(),
+  rfqId: integer('rfq_id')
+    .notNull()
+    .references(() => rfqs.id),
+  supplierId: integer('supplier_id')
+    .notNull()
+    .references(() => suppliers.id),
+  unitPrice: decimal('unit_price', { precision: 12, scale: 2 }).notNull(),
+  totalPrice: decimal('total_price', { precision: 12, scale: 2 }),
+  validityDate: timestamp('validity_date'),
+  terms: text('terms'),
+  status: text('status').default('pending'), // pending, accepted, rejected
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const quotesRelations = relations(quotes, ({ one }) => ({
+  rfq: one(rfqs, {
+    fields: [quotes.rfqId],
+    references: [rfqs.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [quotes.supplierId],
+    references: [suppliers.id],
+  }),
+}))
+
+// Notifications table
+export const notifications = pgTable('notifications', {
+  id: serial().primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  type: text('type').notNull(), // rfq_received, quote_received, etc.
+  link: text('link'),
+  read: boolean('read').default(false),
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(user, {
+    fields: [notifications.userId],
+    references: [user.id],
   }),
 }))
 
@@ -209,3 +264,7 @@ export type LoginEvent = typeof loginEvents.$inferSelect
 export type NewLoginEvent = typeof loginEvents.$inferInsert
 export type Rfq = typeof rfqs.$inferSelect
 export type NewRfq = typeof rfqs.$inferInsert
+export type Quote = typeof quotes.$inferSelect
+export type NewQuote = typeof quotes.$inferInsert
+export type Notification = typeof notifications.$inferSelect
+export type NewNotification = typeof notifications.$inferInsert
