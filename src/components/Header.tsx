@@ -16,12 +16,15 @@ import {
 import SearchBar from './SearchBar'
 import { mockCategories } from '../data/mock-products'
 import { useCart } from '../contexts/CartContext'
+import { useWishlist } from '../contexts/WishlistContext'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
   const { cartCount } = useCart()
+  const { wishlistItems } = useWishlist()
+  const wishlistCount = wishlistItems.length
 
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
@@ -106,9 +109,16 @@ export default function Header() {
               {/* Wishlist */}
               <a
                 href="/wishlist"
-                className="hidden sm:flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors"
+                className="hidden sm:flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors relative"
               >
-                <Heart size={22} />
+                <div className="relative">
+                  <Heart size={22} />
+                  {wishlistCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </div>
                 <span className="text-xs">Wishlist</span>
               </a>
 
