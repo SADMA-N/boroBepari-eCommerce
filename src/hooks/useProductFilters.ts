@@ -1,6 +1,10 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { filterProducts, type ProductFilters, type MockProduct } from '../data/mock-products'
+import {
+  filterProducts,
+  type ProductFilters,
+  type MockProduct,
+} from '../data/mock-products'
 
 interface UseProductFiltersOptions {
   initialFilters?: ProductFilters
@@ -16,7 +20,7 @@ interface UseProductFiltersReturn {
   setFilters: (filters: ProductFilters) => void
   updateFilter: <K extends keyof ProductFilters>(
     key: K,
-    value: ProductFilters[K]
+    value: ProductFilters[K],
   ) => void
   clearFilters: () => void
   syncToUrl: () => void
@@ -46,7 +50,7 @@ export function useProductFilters({
         [key]: value,
       }))
     },
-    []
+    [],
   )
 
   // Clear all filters
@@ -62,11 +66,16 @@ export function useProductFilters({
 
     if (filters.search) searchParams.q = filters.search
     if (filters.categoryId) searchParams.category = String(filters.categoryId)
-    if (filters.minPrice !== undefined) searchParams.minPrice = String(filters.minPrice)
-    if (filters.maxPrice !== undefined) searchParams.maxPrice = String(filters.maxPrice)
-    if (filters.minMoq !== undefined) searchParams.minMoq = String(filters.minMoq)
-    if (filters.maxMoq !== undefined) searchParams.maxMoq = String(filters.maxMoq)
-    if (filters.locations?.length) searchParams.locations = filters.locations.join(',')
+    if (filters.minPrice !== undefined)
+      searchParams.minPrice = String(filters.minPrice)
+    if (filters.maxPrice !== undefined)
+      searchParams.maxPrice = String(filters.maxPrice)
+    if (filters.minMoq !== undefined)
+      searchParams.minMoq = String(filters.minMoq)
+    if (filters.maxMoq !== undefined)
+      searchParams.maxMoq = String(filters.maxMoq)
+    if (filters.locations?.length)
+      searchParams.locations = filters.locations.join(',')
     if (filters.verifiedOnly) searchParams.verifiedOnly = 'true'
     if (filters.sortBy) searchParams.sortBy = filters.sortBy
 
@@ -119,7 +128,7 @@ export function useProductFilters({
 
 // Helper to parse URL search params into filters
 export function parseSearchParamsToFilters(
-  search: Record<string, string | undefined>
+  search: Record<string, string | undefined>,
 ): ProductFilters {
   return {
     search: search.q,
@@ -136,7 +145,7 @@ export function parseSearchParamsToFilters(
 
 // Helper to convert filters to URL search params
 export function filtersToSearchParams(
-  filters: ProductFilters
+  filters: ProductFilters,
 ): Record<string, string> {
   const params: Record<string, string> = {}
 

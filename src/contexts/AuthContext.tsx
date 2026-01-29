@@ -37,29 +37,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const verifyPasswordStatus = async () => {
-        if (user && !isLoading) {
-            try {
-                const status = await checkUserPasswordStatus()
-                
-                if (status.needsPassword) {
-                    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-                        const [name, value] = cookie.trim().split('=')
-                        acc[name] = value
-                        return acc
-                    }, {} as Record<string, string>)
-    
-                    if (!cookies['skippedPasswordSetup']) {
-                        if (window.location.pathname !== '/auth/set-password') {
-                            router.navigate({ to: '/auth/set-password' })
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to check password status:", error)
+      if (user && !isLoading) {
+        try {
+          const status = await checkUserPasswordStatus()
+
+          if (status.needsPassword) {
+            const cookies = document.cookie.split(';').reduce(
+              (acc, cookie) => {
+                const [name, value] = cookie.trim().split('=')
+                acc[name] = value
+                return acc
+              },
+              {} as Record<string, string>,
+            )
+
+            if (!cookies['skippedPasswordSetup']) {
+              if (window.location.pathname !== '/auth/set-password') {
+                router.navigate({ to: '/auth/set-password' })
+              }
             }
+          }
+        } catch (error) {
+          console.error('Failed to check password status:', error)
         }
+      }
     }
-    
+
     verifyPasswordStatus()
   }, [user, isLoading, router])
 

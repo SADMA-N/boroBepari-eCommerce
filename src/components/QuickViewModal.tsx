@@ -1,6 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { X, Minus, Plus, ShoppingCart, ArrowRight, Check, AlertCircle } from 'lucide-react'
+import {
+  X,
+  Minus,
+  Plus,
+  ShoppingCart,
+  ArrowRight,
+  Check,
+  AlertCircle,
+} from 'lucide-react'
 import { MockProduct, formatBDT } from '../data/mock-products'
 
 interface QuickViewModalProps {
@@ -10,7 +18,12 @@ interface QuickViewModalProps {
   onAddToCart: (product: MockProduct, quantity: number) => void
 }
 
-export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }: QuickViewModalProps) {
+export default function QuickViewModal({
+  product,
+  isOpen,
+  onClose,
+  onAddToCart,
+}: QuickViewModalProps) {
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState('')
   const [isSample, setIsSample] = useState(false)
@@ -28,11 +41,14 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
 
   const isOutOfStock = product.stock === 0
   const maxQuantity = isSample ? 5 : product.stock
-  
+
   // Calculate price
-  const currentPrice = isSample 
-    ? (product.samplePrice || product.price) 
-    : (product.tieredPricing?.find(t => quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty))?.price || product.price)
+  const currentPrice = isSample
+    ? product.samplePrice || product.price
+    : product.tieredPricing?.find(
+        (t) =>
+          quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty),
+      )?.price || product.price
 
   const handleQuantityChange = (val: number) => {
     let newQty = val
@@ -49,16 +65,15 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Content */}
       <div className="relative bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-4xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col sm:flex-row animate-in zoom-in-95 duration-200">
-        
         {/* Close Button (Mobile: Top Right, Desktop: Top Right) */}
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-sm text-gray-500 hover:text-gray-800 transition-colors"
         >
@@ -68,13 +83,13 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
         {/* Image Gallery Section */}
         <div className="w-full sm:w-1/2 bg-gray-50 p-6 flex flex-col justify-center relative">
           <div className="aspect-square w-full relative mb-4 flex items-center justify-center">
-             <img 
-               src={selectedImage} 
-               alt={product.name} 
-               className="max-h-full max-w-full object-contain mix-blend-multiply"
-             />
+            <img
+              src={selectedImage}
+              alt={product.name}
+              className="max-h-full max-w-full object-contain mix-blend-multiply"
+            />
           </div>
-          
+
           {/* Thumbnails */}
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide justify-center">
             {product.images.map((img, idx) => (
@@ -83,7 +98,11 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
                 onClick={() => setSelectedImage(img)}
                 className={`w-16 h-16 border-2 rounded-lg overflow-hidden flex-shrink-0 ${selectedImage === img ? 'border-orange-500' : 'border-transparent hover:border-gray-300'}`}
               >
-                <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                <img
+                  src={img}
+                  alt={`Thumb ${idx}`}
+                  className="w-full h-full object-cover"
+                />
               </button>
             ))}
           </div>
@@ -94,7 +113,9 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
           <div className="flex-1">
             {/* Header */}
             <div className="mb-4">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {product.name}
+              </h2>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-medium text-gray-600">
                   MOQ: {product.moq} {product.unit}s
@@ -135,16 +156,20 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
               {/* Sample Toggle */}
               {product.hasSample && !isOutOfStock && (
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">Order Sample</span>
-                  <button 
+                  <span className="font-medium text-gray-700">
+                    Order Sample
+                  </span>
+                  <button
                     onClick={() => {
-                        const newVal = !isSample
-                        setIsSample(newVal)
-                        setQuantity(newVal ? 1 : product.moq)
+                      const newVal = !isSample
+                      setIsSample(newVal)
+                      setQuantity(newVal ? 1 : product.moq)
                     }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isSample ? 'bg-orange-500' : 'bg-gray-200'}`}
                   >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isSample ? 'translate-x-6' : 'translate-x-1'}`} />
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isSample ? 'translate-x-6' : 'translate-x-1'}`}
+                    />
                   </button>
                 </div>
               )}
@@ -155,21 +180,25 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
                   Quantity ({product.unit}s)
                 </label>
                 <div className="flex items-center w-full max-w-[200px] border border-gray-300 rounded-lg">
-                  <button 
+                  <button
                     onClick={() => handleQuantityChange(quantity - 1)}
-                    disabled={quantity <= (isSample ? 1 : product.moq) || isOutOfStock}
+                    disabled={
+                      quantity <= (isSample ? 1 : product.moq) || isOutOfStock
+                    }
                     className="p-3 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                   >
                     <Minus size={18} />
                   </button>
-                  <input 
+                  <input
                     type="number"
                     value={quantity}
-                    onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleQuantityChange(parseInt(e.target.value) || 0)
+                    }
                     className="flex-1 text-center border-none focus:ring-0 text-gray-900 font-medium p-0"
                     disabled={isOutOfStock}
                   />
-                  <button 
+                  <button
                     onClick={() => handleQuantityChange(quantity + 1)}
                     disabled={quantity >= maxQuantity || isOutOfStock}
                     className="p-3 text-gray-500 hover:text-gray-700 disabled:opacity-50"
@@ -178,9 +207,9 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
                   </button>
                 </div>
                 {!isOutOfStock && (
-                    <p className="text-xs text-gray-500 mt-1">
-                        Min. Order: {isSample ? 1 : product.moq} {product.unit}s
-                    </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Min. Order: {isSample ? 1 : product.moq} {product.unit}s
+                  </p>
                 )}
               </div>
             </div>
@@ -196,7 +225,7 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
               <ShoppingCart size={22} />
               {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
             </button>
-            
+
             <Link
               to="/products/$productSlug"
               params={{ productSlug: product.slug }}

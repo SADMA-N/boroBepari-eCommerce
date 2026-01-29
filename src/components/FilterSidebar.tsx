@@ -24,21 +24,21 @@ export default function FilterSidebar({
   className = '',
 }: FilterSidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['price', 'moq', 'location', 'verification', 'sort'])
+    new Set(['price', 'moq', 'location', 'verification', 'sort']),
   )
 
   // Local state for range inputs (for debouncing)
   const [localPriceMin, setLocalPriceMin] = useState<string>(
-    filters.minPrice?.toString() || ''
+    filters.minPrice?.toString() || '',
   )
   const [localPriceMax, setLocalPriceMax] = useState<string>(
-    filters.maxPrice?.toString() || ''
+    filters.maxPrice?.toString() || '',
   )
   const [localMoqMin, setLocalMoqMin] = useState<string>(
-    filters.minMoq?.toString() || ''
+    filters.minMoq?.toString() || '',
   )
   const [localMoqMax, setLocalMoqMax] = useState<string>(
-    filters.maxMoq?.toString() || ''
+    filters.maxMoq?.toString() || '',
   )
 
   // Sync local state with props
@@ -273,7 +273,9 @@ export default function FilterSidebar({
                 }`}
               />
             </div>
-            <span className="text-sm text-gray-700">Verified Suppliers Only</span>
+            <span className="text-sm text-gray-700">
+              Verified Suppliers Only
+            </span>
           </label>
         </FilterSection>
       </div>

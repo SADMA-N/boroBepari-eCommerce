@@ -4,7 +4,10 @@ import HeroBanner from '../components/HeroBanner'
 import CategorySidebar, { CategoryList } from '../components/CategorySidebar'
 import FeaturedProductsGrid from '../components/FeaturedProductsGrid'
 import PopularSuppliers from '../components/PopularSuppliers'
-import PromoBanners, { PromoStrip, FrequentlySearched } from '../components/PromoBanner'
+import PromoBanners, {
+  PromoStrip,
+  FrequentlySearched,
+} from '../components/PromoBanner'
 import Footer from '../components/Footer'
 import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
@@ -26,7 +29,9 @@ function HomePage() {
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
   // Quick View & Toast State
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null)
+  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(
+    null,
+  )
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
@@ -39,7 +44,7 @@ function HomePage() {
   const handleAddToCart = (product: MockProduct, quantity: number) => {
     // In a real app, this would dispatch to a cart store
     console.log(`Added ${quantity} of ${product.name} to cart`)
-    
+
     setQuickViewProduct(null)
     setToast({
       message: `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
@@ -71,7 +76,9 @@ function HomePage() {
 
       {/* Categories Grid - Mobile/Tablet */}
       <section className="lg:hidden max-w-[1440px] mx-auto px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Shop by Category</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Shop by Category
+        </h2>
         <CategoryList categories={mainCategories} />
       </section>
 
@@ -178,7 +185,7 @@ function HomePage() {
       <Toast
         message={toast.message}
         isVisible={toast.isVisible}
-        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
     </div>
   )
@@ -188,14 +195,14 @@ function HomePage() {
 function getCategoryEmoji(slug: string): string {
   const emojiMap: Record<string, string> = {
     'fashion-apparel': '👕',
-    'electronics': '📱',
+    electronics: '📱',
     'home-living': '🏠',
     'beauty-personal-care': '✨',
     'sports-outdoors': '⚽',
     'food-beverages': '🍜',
     'industrial-supplies': '🏭',
     'office-stationery': '📎',
-    'packaging': '📦',
+    packaging: '📦',
     'raw-materials': '🧱',
   }
   return emojiMap[slug] || '📦'

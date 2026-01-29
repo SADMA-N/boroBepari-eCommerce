@@ -10,7 +10,9 @@ interface WishlistContextType {
   wishlistItems: MockProduct[]
 }
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined,
+)
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlistIds, setWishlistIds] = useState<number[]>(() => {

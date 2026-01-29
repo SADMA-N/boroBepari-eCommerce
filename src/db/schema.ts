@@ -101,66 +101,102 @@ export type NewSupplier = typeof suppliers.$inferInsert
 export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
 
-export const user = pgTable("user", {
-	id: text("id").primaryKey(),
-	name: text("name").notNull(),
-	email: text("email").notNull().unique(),
-	emailVerified: boolean("email_verified").notNull(),
-	image: text("image"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull()
-});
+export const user = pgTable('user', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').notNull(),
+  image: text('image'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
 
-export const session = pgTable("session", {
-	id: text("id").primaryKey(),
-	expiresAt: timestamp("expires_at").notNull(),
-	token: text("token").notNull().unique(),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull(),
-	ipAddress: text("ip_address"),
-	userAgent: text("user_agent"),
-	userId: text("user_id").notNull().references(()=> user.id)
-});
+export const session = pgTable('session', {
+  id: text('id').primaryKey(),
+  expiresAt: timestamp('expires_at').notNull(),
+  token: text('token').notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+})
 
-export const account = pgTable("account", {
-	id: text("id").primaryKey(),
-	accountId: text("account_id").notNull(),
-	providerId: text("provider_id").notNull(),
-	userId: text("user_id").notNull().references(()=> user.id),
-	accessToken: text("access_token"),
-	refreshToken: text("refresh_token"),
-	idToken: text("id_token"),
-	accessTokenExpiresAt: timestamp("access_token_expires_at"),
-	refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
-	scope: text("scope"),
-	password: text("password"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at").defaultNow().notNull()
-});
+export const account = pgTable('account', {
+  id: text('id').primaryKey(),
+  accountId: text('account_id').notNull(),
+  providerId: text('provider_id').notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  idToken: text('id_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at'),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  scope: text('scope'),
+  password: text('password'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
 
-export const verification = pgTable("verification", {
-	id: text("id").primaryKey(),
-	identifier: text("identifier").notNull(),
-	value: text("value").notNull(),
-	expiresAt: timestamp("expires_at").notNull(),
-	createdAt: timestamp("created_at").defaultNow(),
-	updatedAt: timestamp("updated_at").defaultNow()
-});
+export const verification = pgTable('verification', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
 
-export const loginEvents = pgTable("login_events", {
+// Login Events table
+export const loginEvents = pgTable('login_events', {
   id: serial().primaryKey(),
-  userId: text("user_id").notNull().references(() => user.id),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+})
 
 export const loginEventsRelations = relations(loginEvents, ({ one }) => ({
   user: one(user, {
     fields: [loginEvents.userId],
     references: [user.id],
   }),
-}));
+}))
+
+// RFQs table
+export const rfqs = pgTable('rfqs', {
+  id: serial().primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  productId: integer('product_id')
+    .notNull()
+    .references(() => products.id),
+  quantity: integer('quantity').notNull(),
+  targetPrice: decimal('target_price', { precision: 12, scale: 2 }),
+  deliveryLocation: text('delivery_location'),
+  notes: text('notes'),
+  status: text('status').default('pending'), // pending, responded, accepted, rejected
+  attachments: jsonb('attachments').$type<string[]>().default([]),
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const rfqsRelations = relations(rfqs, ({ one }) => ({
+  user: one(user, {
+    fields: [rfqs.userId],
+    references: [user.id],
+  }),
+  product: one(products, {
+    fields: [rfqs.productId],
+    references: [products.id],
+  }),
+}))
 
 // Type exports
 export type Category = typeof categories.$inferSelect
@@ -171,3 +207,5 @@ export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
 export type LoginEvent = typeof loginEvents.$inferSelect
 export type NewLoginEvent = typeof loginEvents.$inferInsert
+export type Rfq = typeof rfqs.$inferSelect
+export type NewRfq = typeof rfqs.$inferInsert
