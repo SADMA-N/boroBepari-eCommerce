@@ -217,7 +217,9 @@ export const quotes = pgTable('quotes', {
   totalPrice: decimal('total_price', { precision: 12, scale: 2 }),
   validityDate: timestamp('validity_date'),
   terms: text('terms'),
-  status: text('status').default('pending'), // pending, accepted, rejected
+  status: text('status').default('pending'), // pending, accepted, rejected, countered
+  counterPrice: decimal('counter_price', { precision: 12, scale: 2 }),
+  counterNote: text('counter_note'),
   createdAt: timestamp('created_at').defaultNow(),
 })
 
