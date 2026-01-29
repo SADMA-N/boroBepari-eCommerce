@@ -16,12 +16,31 @@ import { AuthProvider } from '../contexts/AuthContext'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
+import { redirect } from '@tanstack/react-router'
+import { getAuthSession } from '@/lib/auth-server'
 
 interface MyRouterContext {
   queryClient: QueryClient
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  beforeLoad: async ({ location }) => {
+     if (location.pathname.startsWith('/auth/set-password') || location.pathname.startsWith('/api')) return
+
+     const session: any = await getAuthSession()
+     if (session?.user && !session.user.hasPassword) {
+         // Check for skip cookie (client-side only check possible here easily if hydration matches?)
+         // Ideally this runs on server too.
+         // For now, let's force the redirect if no password, and let the page handle the "Skip" (which sets cookie)
+         // Wait, if I redirect here, I need to know the cookie.
+         // If I can't read cookie in `beforeLoad` easily on server (without request context plumbing), 
+         // I might get infinite loop if I don't handle "Skip".
+         // Solution: Do this check in the `useEffect` of the root component or `AuthProvider`.
+         // `beforeLoad` is aggressive.
+         // Let's NOT do it in `beforeLoad` for now to avoid complexity with cookies/headers.
+         // I'll put it in `AuthContext` or a `useEffect` in `Header` or Root.
+     }
+  },
   head: () => ({
     meta: [
       {

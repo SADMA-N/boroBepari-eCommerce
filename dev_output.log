@@ -1,0 +1,76 @@
+$ vite dev --port 3000 --host
+
+  VITE v7.3.1  ready in 1782 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://192.168.68.104:3000/
+  ➜  Network: http://172.18.0.1:3000/
+  ➜  Network: http://172.19.0.1:3000/
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+11:29:23 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/auth/set-password.tsx
+11:29:23 PM [vite] (ssr) page reload src/routes/auth/set-password.tsx
+11:29:58 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/auth/set-password.tsx
+11:29:58 PM [vite] (ssr) page reload src/routes/auth/set-password.tsx
+11:50:09 PM [vite] (client) hmr update /src/styles.css?direct
+11:50:58 PM [vite] .env changed, restarting server...
+11:50:58 PM [vite] .env changed, restarting server...
+11:50:59 PM [vite] server restarted.
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+12:11:40 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/login.tsx, /src/routes/login.tsx?tsr-split=component
+12:11:40 AM [vite] (ssr) page reload src/routes/login.tsx
+[2m2026-01-28T18:12:20.358Z[0m [31mERROR[0m [1m[Better Auth]:[0m BetterAuthError [BetterAuthError: Invalid password hash]
+# SERVER_ERROR:  [BetterAuthError: Invalid password hash]
+12:13:14 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/register.tsx, /src/routes/register.tsx?tsr-split=component
+12:13:14 AM [vite] (ssr) page reload src/routes/register.tsx
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+12:30:26 AM [vite] .env.local changed, restarting server...
+12:30:27 AM [vite] server restarted.
+[2m2026-01-28T18:34:33.896Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+12:47:26 AM [vite] (client) hmr update /src/styles.css?direct
+12:47:55 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/auth/set-password.tsx
+12:47:55 AM [vite] (ssr) page reload src/routes/auth/set-password.tsx
+12:48:15 AM [vite] (client) hmr update /src/styles.css?direct, /src/contexts/AuthContext.tsx
+12:48:15 AM [vite] (ssr) page reload src/contexts/AuthContext.tsx
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+12:50:10 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/__root.tsx, /src/routes/auth/set-password.tsx?tsr-split=component
+12:50:52 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/__root.tsx, /src/routes/auth/set-password.tsx?tsr-split=component
+12:51:09 AM [vite] (client) hmr update /src/styles.css?direct
+[2m2026-01-28T18:53:37.927Z[0m [31mERROR[0m [1m[Better Auth]:[0m Password is too short
+[2m2026-01-28T18:54:55.466Z[0m [31mERROR[0m [1m[Better Auth]:[0m Invalid password
+[2m2026-01-28T18:55:22.337Z[0m [31mERROR[0m [1m[Better Auth]:[0m Invalid password
+Warning: A notFoundError was encountered on the route with ID "__root__", but a notFoundComponent option was not configured, nor was a router level defaultNotFoundComponent configured. Consider configuring at least one of these to avoid TanStack Router's overly generic defaultNotFoundComponent (<p>Not Found</p>)
+[2m2026-01-28T18:58:51.277Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+[2m2026-01-28T18:59:06.075Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+1:07:41 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/__root.tsx
+1:07:41 AM [vite] (ssr) page reload src/routes/__root.tsx
+1:07:48 AM [vite] (client) hmr update /src/styles.css?direct, /src/contexts/AuthContext.tsx
+1:07:48 AM [vite] (ssr) page reload src/contexts/AuthContext.tsx
+1:07:48 AM [vite] (client) hmr invalidate /src/contexts/AuthContext.tsx Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+1:07:48 AM [vite] (client) hmr update /src/routes/__root.tsx, /src/components/Header.tsx
+1:07:58 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/auth/set-password.tsx, /src/routes/auth/set-password.tsx?tsr-split=component
+1:07:58 AM [vite] (ssr) page reload src/routes/auth/set-password.tsx
+1:09:58 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/login.tsx
+1:09:58 AM [vite] (ssr) page reload src/routes/login.tsx
+1:10:12 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/register.tsx, /src/routes/register.tsx?tsr-split=component
+1:10:12 AM [vite] (ssr) page reload src/routes/register.tsx
+[2m2026-01-28T19:12:42.163Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+[2m2026-01-28T19:13:38.114Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+[2m2026-01-28T19:13:38.884Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+[2m2026-01-28T19:13:39.309Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+[2m2026-01-28T19:13:39.494Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+[2m2026-01-28T19:13:39.712Z[0m [31mERROR[0m [1m[Better Auth]:[0m Credential account not found { email: 'pubgmerabeta10@gmail.com' }
+1:15:47 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/__root.tsx
+1:15:47 AM [vite] (ssr) page reload src/routes/__root.tsx
+1:15:54 AM [vite] (client) hmr update /src/styles.css?direct, /src/contexts/AuthContext.tsx
+1:15:54 AM [vite] (ssr) page reload src/contexts/AuthContext.tsx
+1:15:54 AM [vite] (client) hmr invalidate /src/contexts/AuthContext.tsx Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+1:15:54 AM [vite] (client) hmr update /src/routes/__root.tsx, /src/components/Header.tsx
+1:16:06 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/auth/set-password.tsx, /src/routes/auth/set-password.tsx?tsr-split=component
+1:16:06 AM [vite] (ssr) page reload src/routes/auth/set-password.tsx
+1:16:13 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/login.tsx
+1:16:13 AM [vite] (ssr) page reload src/routes/login.tsx
+1:16:20 AM [vite] (client) hmr update /src/styles.css?direct, /src/routes/register.tsx, /src/routes/register.tsx?tsr-split=component
+1:16:20 AM [vite] (ssr) page reload src/routes/register.tsx
