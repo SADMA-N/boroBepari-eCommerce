@@ -79,3 +79,43 @@ export const checkUserPasswordStatus = createServerFn({ method: 'GET' })
         
         return { needsPassword: isSocial && !hasPassword }
     })
+
+export const verifyResetCode = createServerFn({ method: 'POST' })
+    .inputValidator((input: { email: string; code: string }) => {
+        return z.object({
+            email: z.string().email(),
+            code: z.string().length(6)
+        }).parse(input)
+    })
+    .handler(async ({ data }) => {
+        const { email, code } = data
+
+        // Find the OTP record
+        const record = await db.query.passwordResetOtps.findFirst({
+            where: and(
+                eq(schema.passwordResetOtps.email, email),
+                eq(schema.passwordResetOtps.code, code)
+            ),
+            orderBy: (t, { desc }) => [desc(t.createdAt)]
+        })
+
+        if (!record) {
+            throw new Error('Invalid code')
+        }
+
+        if (record.used) {
+            throw new Error('Code already used')
+        }
+
+        if (new Date() > record.expiresAt) {
+            throw new Error('Code expired')
+        }
+
+        // Mark code as used
+        await db.update(schema.passwordResetOtps)
+            .set({ used: true })
+            .where(eq(schema.passwordResetOtps.id, record.id))
+
+        // Return the token so the client can redirect to reset-password page
+        return { success: true, token: record.token }
+    })

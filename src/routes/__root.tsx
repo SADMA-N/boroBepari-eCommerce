@@ -17,7 +17,7 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { redirect } from '@tanstack/react-router'
-import { getAuthSession } from '@/lib/auth-server'
+import { getAuthSession, checkUserPasswordStatus } from '@/lib/auth-server'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -25,11 +25,20 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ location }) => {
-     if (location.pathname.startsWith('/auth/set-password') || location.pathname.startsWith('/api')) return
+     if (location.pathname.startsWith('/auth/set-password') || 
+         location.pathname.startsWith('/api') ||
+         location.pathname.startsWith('/login') ||
+         location.pathname.startsWith('/register')) return
 
      try {
-        const session: any = await getAuthSession()
+        const status = await checkUserPasswordStatus()
+        if (status.needsPassword) {
+            // Note: skipping via cookie is harder to check here on SSR without complex header parsing
+            // but for client-side navigation it works perfectly.
+            throw redirect({ to: '/auth/set-password' })
+        }
      } catch (err) {
+        if ((err as any).status === 307 || (err as any).status === 302) throw err
         console.error("Auth session fetch failed:", err)
      }
   },

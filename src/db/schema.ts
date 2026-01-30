@@ -162,6 +162,16 @@ export const loginEventsRelations = relations(loginEvents, ({ one }) => ({
   }),
 }));
 
+export const passwordResetOtps = pgTable("password_reset_otps", {
+    id: serial().primaryKey(),
+    email: text("email").notNull(),
+    code: text("code").notNull(),
+    token: text("token").notNull(),
+    used: boolean("used").default(false).notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Type exports
 export type Category = typeof categories.$inferSelect
 export type NewCategory = typeof categories.$inferInsert

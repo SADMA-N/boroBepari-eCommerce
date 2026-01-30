@@ -22,15 +22,65 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: true,
-    forgetPassword: {
-        sendResetPassword: async ({ user, url }) => {
-            const urlWithEmail = `${url}&email=${encodeURIComponent(user.email)}`;
-            await sendVerificationEmail({
-                email: user.email,
-                url: urlWithEmail,
-                name: user.name,
-                type: 'reset-password'
-            });
+    sendResetPassword: async ({ user, url }) => {
+        // Extract token from the URL using URL object
+        let token = "";
+        try {
+            const urlObj = new URL(url);
+            token = urlObj.searchParams.get("token") || "";
+            
+            // If not in query param, check path
+            if (!token) {
+                // path looks like /api/auth/reset-password/<token>
+                const parts = urlObj.pathname.split('/');
+                const resetIndex = parts.indexOf('reset-password');
+                if (resetIndex !== -1 && parts[resetIndex + 1]) {
+                    token = parts[resetIndex + 1];
+                }
+            }
+        } catch (e) {
+            console.error("Failed to parse reset URL:", url, e);
+        }
+
+        // Fallback for string parsing if URL constructor fails (relative URLs?)
+        if (!token) {
+            const match = url.match(/reset-password\/([^\?\/]+)/);
+            if (match) token = match[1];
+        }
+
+        if (!token) {
+            token = url.split("token=")[1]?.split("&")[0];
+        }
+        
+        if (!token) {
+            console.error("Could not extract token from reset URL:", url);
+            return;
+        }
+
+        // Generate 6-digit OTP
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        // Store in DB
+        await db.insert(schema.passwordResetOtps).values({
+            email: user.email,
+            code,
+            token,
+            expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+        });
+
+        // Send email with code
+        console.log(`[Auth] Sending reset code ${code} to ${user.email}`);
+        const emailResult = await sendVerificationEmail({
+            email: user.email,
+            name: user.name,
+            code,
+            type: 'reset-password'
+        });
+        
+        if (!emailResult.success) {
+            console.error("[Auth] Failed to send reset email:", emailResult.error);
+        } else {
+            console.log("[Auth] Reset email sent successfully:", emailResult.data);
         }
     }
   },
@@ -76,18 +126,22 @@ export const auth = betterAuth({
   },
   callbacks: {
     session: async ({ session, user }) => {
+        console.log("[Auth] Session callback for user:", user.email);
         const accounts = await db.query.account.findMany({
             where: eq(schema.account.userId, user.id)
         })
         const hasPassword = accounts.some(a => a.providerId === "credential")
         const isSocial = accounts.some(a => a.providerId !== "credential")
+        
+        const needsPassword = isSocial && !hasPassword;
+        console.log(`[Auth] User ${user.email}: hasPassword=${hasPassword}, isSocial=${isSocial}, needsPassword=${needsPassword}`);
 
         return {
             ...session,
             user: {
                 ...session.user,
                 hasPassword,
-                needsPassword: isSocial && !hasPassword
+                needsPassword
             }
         }
     }

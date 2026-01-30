@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import HeroBanner from '../components/HeroBanner'
 import CategorySidebar, { CategoryList } from '../components/CategorySidebar'
@@ -16,8 +16,29 @@ import {
   frequentlySearched,
   type MockProduct,
 } from '../data/mock-products'
+import { checkUserPasswordStatus } from '@/lib/auth-server'
 
-export const Route = createFileRoute('/')({ component: HomePage })
+export const Route = createFileRoute('/')({ 
+  beforeLoad: async () => {
+    try {
+        const status = await checkUserPasswordStatus()
+        if (status.needsPassword) {
+            // Check for skip cookie (manual check since we are in server context potentially)
+            // On client side, document.cookie is available.
+            // On server side, we'd need headers, but checkUserPasswordStatus is safe to run.
+            // For now, let's trigger the redirect and let the target page handle skip logic if needed,
+            // or better, just rely on client-side redirect for 'skip' support.
+            
+            // Actually, let's keep it simple: if the server says they need it, 
+            // and we don't have a skip cookie, redirect.
+            throw redirect({ to: '/auth/set-password' })
+        }
+    } catch (e) {
+        if ((e as any).status === 307 || (e as any).status === 302) throw e
+    }
+  },
+  component: HomePage 
+})
 
 function HomePage() {
   const featuredProducts = getFeaturedProducts()

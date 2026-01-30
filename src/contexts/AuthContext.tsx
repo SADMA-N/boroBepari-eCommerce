@@ -37,31 +37,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const verifyPasswordStatus = async () => {
-        if (user && !isLoading) {
-            try {
-                const status = await checkUserPasswordStatus()
-                
-                if (status.needsPassword) {
-                    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-                        const [name, value] = cookie.trim().split('=')
-                        acc[name] = value
-                        return acc
-                    }, {} as Record<string, string>)
-    
-                    if (!cookies['skippedPasswordSetup']) {
-                        if (window.location.pathname !== '/auth/set-password') {
-                            router.navigate({ to: '/auth/set-password' })
-                        }
-                    }
+        if (!user || isLoading) return;
+
+        // Respect skip cookie - only redirect if not skipped
+        const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+            const [name, value] = cookie.trim().split('=')
+            acc[name] = value
+            return acc
+        }, {} as Record<string, string>)
+
+        if (cookies['skippedPasswordSetup']) {
+            console.log("[AuthContext] Password setup skipped via cookie");
+            return;
+        }
+
+        try {
+            const status = await checkUserPasswordStatus()
+            if (status.needsPassword) {
+                if (window.location.pathname !== '/auth/set-password') {
+                    console.log("[AuthContext] Navigating to /auth/set-password");
+                    router.navigate({ to: '/auth/set-password' })
                 }
-            } catch (error) {
-                console.error("Failed to check password status:", error)
             }
+        } catch (error) {
+            console.error("[AuthContext] Status check failed:", error)
         }
     }
     
     verifyPasswordStatus()
-  }, [user, isLoading, router])
+  }, [user?.id, isLoading, router])
 
   return (
     <AuthContext.Provider
