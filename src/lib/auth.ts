@@ -22,14 +22,27 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: true,
+    forgetPassword: {
+        sendResetPassword: async ({ user, url }) => {
+            const urlWithEmail = `${url}&email=${encodeURIComponent(user.email)}`;
+            await sendVerificationEmail({
+                email: user.email,
+                url: urlWithEmail,
+                name: user.name,
+                type: 'reset-password'
+            });
+        }
+    }
   },
   emailVerification: {
     sendOnSignUp: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
         await sendVerificationEmail({
             email: user.email,
             url,
-            name: user.name
+            name: user.name,
+            type: 'verification'
         });
     }
   },

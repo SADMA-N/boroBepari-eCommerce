@@ -1,7 +1,7 @@
 import { X, CheckCircle, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, Link } from '@tanstack/react-router'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -105,7 +105,13 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
                 <label htmlFor="password" className="block text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Password
                 </label>
-                <a href="#" className="text-xs text-orange-600 hover:underline font-medium">Forgot?</a>
+                <Link 
+                  to="/forgot-password" 
+                  onClick={onClose}
+                  className="text-xs text-orange-600 hover:underline font-medium"
+                >
+                  Forgot?
+                </Link>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -178,9 +184,13 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Don't have an account?{' '}
-            <a href="/register" className="text-orange-600 font-bold hover:underline">
+            <Link 
+              to="/register" 
+              onClick={onClose}
+              className="text-orange-600 font-bold hover:underline"
+            >
               Register Now
-            </a>
+            </Link>
           </p>
         </div>
       </div>

@@ -7,9 +7,14 @@ export const Route = createFileRoute('/login')({
   component: LoginPage,
   // If already authenticated, redirect to home
   beforeLoad: async () => {
-     const session = await authClient.getSession();
-     if (session.data) {
-        throw redirect({ to: '/' })
+     try {
+        const session = await authClient.getSession();
+        if (session.data) {
+            throw redirect({ to: '/' })
+        }
+     } catch (err) {
+        if ((err as any).status === 307 || (err as any).status === 302) throw err
+        console.error("Login beforeLoad failed:", err)
      }
   }
 })
@@ -47,18 +52,18 @@ function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-xl">
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-xl border border-gray-100">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h2 className="text-3xl font-extrabold text-gray-900">
             Welcome Back
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to access your account
+          <p className="mt-2 text-sm text-gray-500">
+            Sign in to access your BoroBepari account
           </p>
         </div>
 
         {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm text-center">
+            <div className="bg-red-50 border border-red-100 text-red-600 p-3 rounded-md text-sm text-center font-medium">
                 {error}
             </div>
         )}
@@ -66,53 +71,68 @@ function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleEmailSignIn}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
+              <label className="sr-only">Email address</label>
               <input
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="relative">
+              <label className="sr-only">Password</label>
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm pr-10"
+                className="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm pr-10"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 z-20"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-600 z-20 transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+          </div>
+
+          <div className="flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => router.navigate({ to: '/forgot-password' })}
+              className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+            >
+              Forgot your password?
+            </button>
           </div>
 
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 shadow-lg transition-all active:scale-[0.98]"
             >
               Sign in
             </button>
           </div>
 
-          <div className="flex items-center justify-center">
-            <div className="text-sm">
-              <span className="text-gray-500">Or</span>
+          <div className="relative py-2">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="px-2 bg-white text-gray-500 font-medium">Or continue with</span>
             </div>
           </div>
 
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
