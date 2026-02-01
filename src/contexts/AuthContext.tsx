@@ -16,12 +16,13 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   logout: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: session, isPending: isLoading } = authClient.useSession()
+  const { data: session, isPending: isLoading, refetch } = authClient.useSession()
   const router = useRouter()
   const user = session?.user as User | null
 
@@ -33,6 +34,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       },
     })
+  }
+
+  const refreshUser = async () => {
+    await refetch()
   }
 
   useEffect(() => {
@@ -74,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user,
         isLoading,
         logout,
+        refreshUser,
       }}
     >
       {children}

@@ -8,6 +8,15 @@ async function main() {
   
   try {
     // Delete in order to respect foreign key constraints
+    console.log("Deleting order items...");
+    await db.delete(schema.orderItems);
+
+    console.log("Deleting orders...");
+    await db.delete(schema.orders);
+
+    console.log("Deleting addresses...");
+    await db.delete(schema.addresses);
+
     console.log("Deleting login events...");
     await db.delete(schema.loginEvents);
     

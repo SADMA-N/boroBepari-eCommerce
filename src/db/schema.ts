@@ -238,13 +238,6 @@ export const passwordResetOtps = pgTable("password_reset_otps", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Type exports
-export type Category = typeof categories.$inferSelect
-export type NewCategory = typeof categories.$inferInsert
-export type Supplier = typeof suppliers.$inferSelect
-export type NewSupplier = typeof suppliers.$inferInsert
-export type Product = typeof products.$inferSelect
-export type NewProduct = typeof products.$inferInsert
 export type LoginEvent = typeof loginEvents.$inferSelect
 export type NewLoginEvent = typeof loginEvents.$inferInsert
 export type Address = typeof addresses.$inferSelect
@@ -253,3 +246,4 @@ export type Order = typeof orders.$inferSelect
 export type NewOrder = typeof orders.$inferInsert
 export type OrderItem = typeof orderItems.$inferSelect
 export type NewOrderItem = typeof orderItems.$inferInsert
+

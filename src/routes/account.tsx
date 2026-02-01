@@ -1,13 +1,14 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
-import { Calendar, Edit2, Loader2, Mail, MapPin, Package, Phone, Plus, Trash2, User } from 'lucide-react'
-import { addresses, orderItems, orders as ordersTable, products, suppliers, user as userTable } from '@/db/schema'
+import { Edit2, Loader2, MapPin, Package, Phone, Plus, Trash2, User } from 'lucide-react'
+import { addresses, user as userTable } from '@/db/schema'
 import { db } from '@/db'
 import { authMiddleware } from '@/lib/auth-server'
+import { useAuth } from '@/contexts/AuthContext'
 
 // --- Server Functions ---
 
@@ -49,7 +50,7 @@ const updateProfile = createServerFn({ method: 'POST' })
             name: z.string().min(1),
             dateOfBirth: z.string().optional().nullable(), // ISO date string
             gender: z.enum(['male', 'female']).optional().nullable(),
-            phoneNumber: z.string().optional().nullable(),
+            phoneNumber: z.string().regex(/^01[3-9]\d{8}$/, "Phone number must be 11 digits and start with 013-019").optional().nullable(),
         }).parse(data)
     })
     .handler(async ({ data, context }) => {
@@ -73,10 +74,10 @@ const upsertAddress = createServerFn({ method: 'POST' })
     .inputValidator((data: any) => {
         return z.object({
             id: z.number().optional(),
-            name: z.string().min(1),
+            name: z.string().optional(),
             address: z.string().min(1),
             postcode: z.string().min(1),
-            phone: z.string().min(1),
+            phone: z.string().regex(/^01[3-9]\d{8}$/, "Phone number must be 11 digits and start with 013-019"),
             isDefault: z.boolean().default(false),
         }).parse(data)
     })
@@ -91,11 +92,20 @@ const upsertAddress = createServerFn({ method: 'POST' })
                 .where(eq(addresses.userId, session.user.id))
         }
 
+        let name = data.name;
+        if (!name) {
+            const user = await db.query.user.findFirst({
+                where: eq(userTable.id, session.user.id),
+                columns: { name: true }
+            });
+            name = user?.name || "My Address";
+        }
+
         if (data.id) {
             // Update
             await db.update(addresses)
                 .set({
-                    name: data.name,
+                    name: name,
                     address: data.address,
                     postcode: data.postcode,
                     phone: data.phone,
@@ -107,7 +117,7 @@ const upsertAddress = createServerFn({ method: 'POST' })
             // Insert
             await db.insert(addresses).values({
                 userId: session.user.id,
-                name: data.name,
+                name: name,
                 address: data.address,
                 postcode: data.postcode,
                 phone: data.phone,
@@ -214,6 +224,7 @@ function AccountPage() {
 
 function ProfileSection({ user }: { user: any }) {
     const router = useRouter()
+    const { refreshUser } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
@@ -235,10 +246,13 @@ function ProfileSection({ user }: { user: any }) {
                     gender: value.gender || null,
                     phoneNumber: value.phoneNumber || null,
                 }})
+                await refreshUser()
                 setMessage({ type: 'success', text: 'Profile updated successfully' })
                 router.invalidate()
-            } catch (err) {
-                setMessage({ type: 'error', text: 'Failed to update profile' })
+            } catch (err: any) {
+                console.error(err)
+                const errorMsg = err.message || 'Failed to update profile';
+                setMessage({ type: 'error', text: errorMsg })
             } finally {
                 setIsLoading(false)
             }
@@ -331,7 +345,10 @@ function ProfileSection({ user }: { user: any }) {
                                     name={field.name}
                                     value={field.state.value}
                                     onBlur={field.handleBlur}
-                                    onChange={(e) => field.handleChange(e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (/^\d*$/.test(val) && val.length <= 11) field.handleChange(val);
+                                    }}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
                                 />
                             </div>
@@ -437,6 +454,7 @@ function AddressSection({ addresses: userAddresses }: { addresses: Array<any> })
 
 function AddressForm({ address, onCancel, onSuccess }: { address?: any, onCancel: () => void, onSuccess: () => void }) {
     const [isLoading, setIsLoading] = useState(false)
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     
     const form = useForm({
         defaultValues: {
@@ -448,11 +466,14 @@ function AddressForm({ address, onCancel, onSuccess }: { address?: any, onCancel
         },
         onSubmit: async ({ value }) => {
             setIsLoading(true)
+            setMessage(null)
             try {
                 await upsertAddress({ data: { ...value, id: address?.id } })
                 onSuccess()
-            } catch (err) {
-                alert('Failed to save address')
+            } catch (err: any) {
+                console.error(err)
+                const errorMsg = err.message || 'Failed to save address';
+                setMessage({ type: 'error', text: errorMsg })
             } finally {
                 setIsLoading(false)
             }
@@ -464,24 +485,14 @@ function AddressForm({ address, onCancel, onSuccess }: { address?: any, onCancel
             <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100">
                 {address ? 'Edit Address' : 'Add New Address'}
             </h2>
+
+            {message && (
+                <div className={`p-4 rounded-lg mb-6 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    {message.text}
+                </div>
+            )}
             
             <form onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); form.handleSubmit() }} className="space-y-6 max-w-2xl">
-                <form.Field
-                    name="name"
-                    children={(field) => (
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                            <input
-                                name={field.name}
-                                value={field.state.value}
-                                onBlur={field.handleBlur}
-                                onChange={(e) => field.handleChange(e.target.value)}
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
-                            />
-                        </div>
-                    )}
-                />
-
                 <form.Field
                     name="address"
                     children={(field) => (
@@ -525,7 +536,10 @@ function AddressForm({ address, onCancel, onSuccess }: { address?: any, onCancel
                                     name={field.name}
                                     value={field.state.value}
                                     onBlur={field.handleBlur}
-                                    onChange={(e) => field.handleChange(e.target.value)}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (/^\d*$/.test(val) && val.length <= 11) field.handleChange(val);
+                                    }}
                                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
                                 />
                             </div>
