@@ -226,7 +226,7 @@ const generatePrice = (categoryId: number): number => {
     9: [10, 200],
     10: [100, 3000],
   }
-  const [min, max] = priceRanges[categoryId] || [100, 1000]
+  const [min, max] = priceRanges[categoryId] ?? [100, 1000]
   return faker.number.int({ min, max })
 }
 
@@ -258,7 +258,7 @@ const unitsByCategory: Record<number, Array<string>> = {
 
 export const createMockProduct = (id: number, supplierCount: number): MockProduct => {
   const categoryId = faker.number.int({ min: 1, max: 10 })
-  const baseNames = productNamesByCategory[categoryId] || productNamesByCategory[1]
+  const baseNames = productNamesByCategory[categoryId] ?? productNamesByCategory[1]
   const baseName = faker.helpers.arrayElement(baseNames)
   const adjective = faker.commerce.productAdjective()
   const name = `${adjective} ${baseName}`
@@ -269,7 +269,7 @@ export const createMockProduct = (id: number, supplierCount: number): MockProduc
     ? Math.round(price * faker.number.float({ min: 1.1, max: 1.5 }))
     : null
   
-  const units = unitsByCategory[categoryId] || ['piece']
+  const units = unitsByCategory[categoryId] ?? ['piece']
   const moq = faker.helpers.arrayElement([1, 5, 10, 20, 50, 100])
   
   // Tiered pricing

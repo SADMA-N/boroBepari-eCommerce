@@ -51,9 +51,9 @@ function ProductDetailPage() {
   const isWishlisted = isInWishlist(product.id)
   
   // Determine price based on quantity or sample
-  const currentPrice = isSample 
-    ? (product.samplePrice || product.price) 
-    : (product.tieredPricing?.find(t => quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty))?.price || product.price)
+  const currentPrice = isSample
+    ? (product.samplePrice || product.price)
+    : (product.tieredPricing.find(t => quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty))?.price ?? product.price)
 
   const handleQuantityChange = (val: number) => {
     let newQty = val
@@ -152,7 +152,7 @@ function ProductDetailPage() {
           </div>
 
           {/* Tiered Pricing Table */}
-          {product.tieredPricing && product.tieredPricing.length > 0 && (
+          {product.tieredPricing.length > 0 && (
              <div className="mb-6">
                <h3 className="text-sm font-semibold text-gray-900 mb-2">Wholesale Pricing</h3>
                <div className="border rounded-md overflow-hidden text-sm">
@@ -336,7 +336,7 @@ function ProductDetailPage() {
             <div className="bg-gray-50 rounded-lg p-6 max-w-2xl">
               <h3 className="text-lg font-semibold mb-4">Product Specifications</h3>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
-                {product.specifications?.map((spec, idx) => (
+                {product.specifications.map((spec, idx) => (
                   <div key={idx} className="flex border-b border-gray-200 pb-2">
                     <dt className="w-1/3 text-gray-500 text-sm font-medium">{spec.key}</dt>
                     <dd className="w-2/3 text-gray-900 text-sm">{spec.value}</dd>

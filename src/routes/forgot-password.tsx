@@ -24,7 +24,7 @@ function ForgotPasswordPage() {
     try {
     // We intentionally ignore the error result to prevent user enumeration
     // The generic message will always be shown
-    // @ts-ignore
+    // @ts-ignore -- intentionally ignoring unused return value to prevent enumeration
     await authClient.requestPasswordReset({
       email,
       redirectTo: '/reset-password',
@@ -49,7 +49,7 @@ function ForgotPasswordPage() {
     try {
         const result = await verifyResetCode({ data: { email, code: otp } })
         
-        if (result.success && result.token) {
+        if (result.token) {
             router.navigate({ 
                 to: '/reset-password',
                 search: { token: result.token, email }

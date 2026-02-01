@@ -24,14 +24,17 @@ function useStreamConnection(
       }
 
       const decoder = new TextDecoder()
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        for (const chunk of decoder
-          .decode(value, { stream: true })
-          .split('\n')
-          .filter((chunk) => chunk.length > 0)) {
-          collection.insert(JSON.parse(chunk))
+      let done = false
+      while (!done) {
+        const result = await reader.read()
+        done = result.done
+        if (result.value) {
+          for (const line of decoder
+            .decode(result.value, { stream: true })
+            .split('\n')
+            .filter((l) => l.length > 0)) {
+            collection.insert(JSON.parse(line))
+          }
         }
       }
     }

@@ -31,9 +31,9 @@ export default function QuickViewModal({ product, isOpen, onClose, onAddToCart }
   const maxQuantity = isSample ? 5 : product.stock
   
   // Calculate price
-  const currentPrice = isSample 
-    ? (product.samplePrice || product.price) 
-    : (product.tieredPricing?.find(t => quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty))?.price || product.price)
+  const currentPrice = isSample
+    ? (product.samplePrice || product.price)
+    : (product.tieredPricing.find(t => quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty))?.price ?? product.price)
 
   const handleQuantityChange = (val: number) => {
     let newQty = val

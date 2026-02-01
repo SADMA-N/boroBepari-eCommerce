@@ -3,11 +3,11 @@ import {
   decimal,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   serial,
   text,
   timestamp,
-  pgEnum,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 

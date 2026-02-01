@@ -44,7 +44,7 @@ export const auth = betterAuth({
 
         // Fallback for string parsing if URL constructor fails (relative URLs?)
         if (!token) {
-            const match = url.match(/reset-password\/([^\?\/]+)/);
+            const match = url.match(/reset-password\/([^?/]+)/);
             if (match) token = match[1];
         }
 

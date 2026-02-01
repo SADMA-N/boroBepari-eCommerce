@@ -16,7 +16,7 @@ import {  mockCategories } from '../data/mock-products'
 import type {MockCategory} from '../data/mock-products';
 
 // Map icon names to Lucide components
-const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+const iconMap: Partial<Record<string, React.ComponentType<{ size?: number; className?: string }>>> = {
   Shirt,
   Smartphone,
   Home,

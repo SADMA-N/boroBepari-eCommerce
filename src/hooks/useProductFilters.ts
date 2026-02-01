@@ -15,9 +15,9 @@ interface UseProductFiltersReturn {
   isLoading: boolean
   totalCount: number
   setFilters: (filters: ProductFilters) => void
-  updateFilter: <K extends keyof ProductFilters>(
-    key: K,
-    value: ProductFilters[K]
+  updateFilter: <TKey extends keyof ProductFilters>(
+    key: TKey,
+    value: ProductFilters[TKey]
   ) => void
   clearFilters: () => void
   syncToUrl: () => void
@@ -41,7 +41,7 @@ export function useProductFilters({
 
   // Update a single filter key
   const updateFilter = useCallback(
-    <K extends keyof ProductFilters>(key: K, value: ProductFilters[K]) => {
+    <TKey extends keyof ProductFilters>(key: TKey, value: ProductFilters[TKey]) => {
       setFiltersState((prev) => ({
         ...prev,
         [key]: value,

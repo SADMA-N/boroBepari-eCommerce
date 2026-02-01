@@ -15,8 +15,7 @@ export const Route = createFileRoute('/reset-password')({
 
 function ResetPasswordPage() {
   const router = useRouter()
-  // @ts-ignore - The email param was added in the link generation
-  const { token, email } = Route.useSearch<{ token?: string, email?: string }>()
+  const { token, email } = Route.useSearch()
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)

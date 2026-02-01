@@ -1,12 +1,12 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db'
-import { user as userTable, addresses, orders as ordersTable, orderItems, products, suppliers } from '@/db/schema'
-import { eq, desc, and } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
-import { User, MapPin, Package, Edit2, Trash2, Plus, Calendar, Phone, Mail, Loader2 } from 'lucide-react'
+import { Calendar, Edit2, Loader2, Mail, MapPin, Package, Phone, Plus, Trash2, User } from 'lucide-react'
+import { addresses, orderItems, orders as ordersTable, products, suppliers, user as userTable } from '@/db/schema'
+import { db } from '@/db'
 import { authMiddleware } from '@/lib/auth-server'
 
 // --- Server Functions ---
@@ -25,7 +25,7 @@ const getAccountData = createServerFn({ method: 'GET' })
             with: {
                 addresses: true,
                 orders: {
-                    orderBy: (orders, { desc }) => [desc(orders.createdAt)],
+                    orderBy: (orders, { desc: descFn }) => [descFn(orders.createdAt)],
                     with: {
                         items: {
                             with: {
@@ -135,7 +135,7 @@ export const Route = createFileRoute('/account')({
     loader: () => getAccountData(),
     validateSearch: (search: Record<string, unknown>) => {
         return {
-            tab: (search.tab as 'profile' | 'address' | 'orders') || 'profile',
+            tab: (search.tab as 'profile' | 'address' | 'orders' | undefined) ?? 'profile',
         }
     },
 })
@@ -354,7 +354,7 @@ function ProfileSection({ user }: { user: any }) {
     )
 }
 
-function AddressSection({ addresses }: { addresses: any[] }) {
+function AddressSection({ addresses: userAddresses }: { addresses: Array<any> }) {
     const [isEditing, setIsEditing] = useState(false)
     const [editingAddress, setEditingAddress] = useState<any>(null)
     const router = useRouter()
@@ -390,12 +390,12 @@ function AddressSection({ addresses }: { addresses: any[] }) {
             </div>
 
             <div className="space-y-4">
-                {addresses.length === 0 ? (
+                {userAddresses.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                         No addresses found. Add one to get started.
                     </div>
                 ) : (
-                    addresses.map((addr) => (
+                    userAddresses.map((addr) => (
                         <div key={addr.id} className="border border-gray-200 rounded-lg p-4 hover:border-orange-200 transition-colors">
                             <div className="flex justify-between items-start">
                                 <div>
@@ -572,7 +572,7 @@ function AddressForm({ address, onCancel, onSuccess }: { address?: any, onCancel
     )
 }
 
-function OrdersSection({ orders }: { orders: any[] }) {
+function OrdersSection({ orders }: { orders: Array<any> }) {
     if (orders.length === 0) {
         return (
             <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12">

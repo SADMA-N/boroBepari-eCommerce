@@ -53,10 +53,8 @@ function SetPasswordPage() {
     setError('')
 
     try {
-      const result = await setUserPassword({ data: { password } })
-      if (result.success) {
-        router.navigate({ to: '/' })
-      }
+      await setUserPassword({ data: { password } })
+      router.navigate({ to: '/' })
     } catch (err: any) {
       setError(err.message || 'Failed to set password. Please try again.')
     } finally {
