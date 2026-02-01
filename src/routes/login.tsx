@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,

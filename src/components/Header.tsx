@@ -1,24 +1,24 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
-  Menu,
-  X,
-  ShoppingCart,
-  Heart,
-  User,
   ChevronDown,
-  Package,
-  LogIn,
-  UserPlus,
-  Store,
+  Heart,
   HelpCircle,
+  LogIn,
   LogOut,
+  Menu,
+  Package,
+  ShoppingCart,
+  Store,
+  User,
+  UserPlus,
+  X,
 } from 'lucide-react'
-import SearchBar from './SearchBar'
 import { mockCategories } from '../data/mock-products'
 import { useCart } from '../contexts/CartContext'
 import { useWishlist } from '../contexts/WishlistContext'
 import { useAuth } from '../contexts/AuthContext'
+import SearchBar from './SearchBar'
 import AuthModal from './AuthModal'
 import CartSidebar from './CartSidebar'
 
@@ -199,7 +199,7 @@ export default function Header() {
                         </div>
                         <div className="py-1">
                           <Link
-                            to="/"
+                            to="/account"
                             onClick={() => setShowUserDropdown(false)}
                             className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                           >
@@ -207,7 +207,7 @@ export default function Header() {
                             My Profile
                           </Link>
                           <Link
-                            to="/orders"
+                            to="/account"
                             onClick={() => setShowUserDropdown(false)}
                             className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                           >
@@ -258,9 +258,9 @@ export default function Header() {
                         <hr className="border-gray-100" />
                         <div className="py-1">
                           <Link
-                            to="/orders"
+                            to="/account"
                             onClick={(e) => {
-                                handleAuthRequired(e, '/orders')
+                                handleAuthRequired(e, '/account')
                                 setShowUserDropdown(false)
                             }}
                             className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
@@ -352,9 +352,9 @@ export default function Header() {
             </a>
 
             <a
-              href="/orders"
+              href="/account"
               onClick={(e) => {
-                handleAuthRequired(e, '/orders')
+                handleAuthRequired(e, '/account')
                 if (isAuthenticated) setIsMobileMenuOpen(false)
               }}
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-50 text-gray-700"

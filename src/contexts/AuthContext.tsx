@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from 'react'
-import { authClient } from '@/lib/auth-client'
 import { useRouter } from '@tanstack/react-router'
+import { authClient } from '@/lib/auth-client'
 import { checkUserPasswordStatus } from '@/lib/auth-server'
 
 interface User {

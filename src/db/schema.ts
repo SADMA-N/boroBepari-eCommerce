@@ -1,14 +1,17 @@
 import {
+  boolean,
+  decimal,
+  integer,
+  jsonb,
   pgTable,
   serial,
   text,
   timestamp,
-  integer,
-  decimal,
-  boolean,
-  jsonb,
+  pgEnum,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
+
+export const genderEnum = pgEnum('gender', ['male', 'female']);
 
 // Categories table
 export const categories = pgTable('categories', {
@@ -57,7 +60,7 @@ export const products = pgTable('products', {
   name: text().notNull(),
   slug: text().notNull().unique(),
   description: text(),
-  images: jsonb().$type<string[]>().default([]),
+  images: jsonb().$type<Array<string>>().default([]),
   price: decimal({ precision: 12, scale: 2 }).notNull(),
   originalPrice: decimal('original_price', { precision: 12, scale: 2 }),
   moq: integer().notNull().default(1),
@@ -70,7 +73,7 @@ export const products = pgTable('products', {
   rating: decimal({ precision: 3, scale: 2 }),
   reviewCount: integer('review_count').default(0),
   soldCount: integer('sold_count').default(0),
-  tags: jsonb().$type<string[]>().default([]),
+  tags: jsonb().$type<Array<string>>().default([]),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })
@@ -107,9 +110,72 @@ export const user = pgTable("user", {
 	email: text("email").notNull().unique(),
 	emailVerified: boolean("email_verified").notNull(),
 	image: text("image"),
+	dateOfBirth: timestamp("date_of_birth"),
+	gender: genderEnum("gender"),
+	phoneNumber: text("phone_number"),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull()
 });
+
+export const userRelations = relations(user, ({ many }) => ({
+	addresses: many(addresses),
+	orders: many(orders),
+}));
+
+export const addresses = pgTable('addresses', {
+  id: serial().primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id),
+  name: text('name').notNull(),
+  address: text('address').notNull(),
+  postcode: text('postcode').notNull(),
+  phone: text('phone').notNull(),
+  isDefault: boolean('is_default').default(false),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const addressesRelations = relations(addresses, ({ one }) => ({
+  user: one(user, {
+    fields: [addresses.userId],
+    references: [user.id],
+  }),
+}))
+
+export const orders = pgTable('orders', {
+  id: serial().primaryKey(),
+  userId: text('user_id').notNull().references(() => user.id),
+  totalAmount: decimal('total_amount', { precision: 12, scale: 2 }).notNull(),
+  status: text('status').notNull().default('pending'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(user, {
+    fields: [orders.userId],
+    references: [user.id],
+  }),
+  items: many(orderItems),
+}))
+
+export const orderItems = pgTable('order_items', {
+  id: serial().primaryKey(),
+  orderId: integer('order_id').notNull().references(() => orders.id),
+  productId: integer('product_id').notNull().references(() => products.id),
+  quantity: integer('quantity').notNull(),
+  price: decimal('price', { precision: 12, scale: 2 }).notNull(),
+})
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}))
 
 export const session = pgTable("session", {
 	id: text("id").primaryKey(),
@@ -181,3 +247,9 @@ export type Product = typeof products.$inferSelect
 export type NewProduct = typeof products.$inferInsert
 export type LoginEvent = typeof loginEvents.$inferSelect
 export type NewLoginEvent = typeof loginEvents.$inferInsert
+export type Address = typeof addresses.$inferSelect
+export type NewAddress = typeof addresses.$inferInsert
+export type Order = typeof orders.$inferSelect
+export type NewOrder = typeof orders.$inferInsert
+export type OrderItem = typeof orderItems.$inferSelect
+export type NewOrderItem = typeof orderItems.$inferInsert

@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { ArrowRight, Check, Copy, Eye, EyeOff, RefreshCw, ShieldCheck, X } from 'lucide-react'
 import { setUserPassword } from '@/lib/auth-server'
-import { Check, X, ShieldCheck, ArrowRight, Eye, EyeOff, RefreshCw, Copy } from 'lucide-react'
 
 export const Route = createFileRoute('/auth/set-password')({
   component: SetPasswordPage,

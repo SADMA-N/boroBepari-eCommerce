@@ -1,12 +1,12 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ChevronRight,
-  SlidersHorizontal,
   Grid3X3,
   List,
-  X,
   Search,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
 import FilterSidebar from '../components/FilterSidebar'
@@ -15,12 +15,13 @@ import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import { FeaturedProductsGridSkeleton } from '../components/FeaturedProductsGrid'
 import {
+  
+  
   filterProducts,
-  mockCategories,
   getFeaturedProducts,
-  type ProductFilters,
-  type MockProduct,
+  mockCategories
 } from '../data/mock-products'
+import type {MockProduct, ProductFilters} from '../data/mock-products';
 
 interface SearchParams {
   q?: string
@@ -58,10 +59,10 @@ function SearchPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [isLoading, setIsLoading] = useState(false)
-  const [products, setProducts] = useState<MockProduct[]>([])
+  const [products, setProducts] = useState<Array<MockProduct>>([])
   
   // Recommendations state
-  const [recommendations, setRecommendations] = useState<MockProduct[]>([])
+  const [recommendations, setRecommendations] = useState<Array<MockProduct>>([])
 
   // Quick View & Toast State
   const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null)

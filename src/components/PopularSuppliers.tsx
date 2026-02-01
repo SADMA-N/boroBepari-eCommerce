@@ -1,9 +1,10 @@
-import { BadgeCheck, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
-import { getVerifiedSuppliers, type MockSupplier } from '../data/mock-products'
+import { BadgeCheck, ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import {  getVerifiedSuppliers } from '../data/mock-products'
+import type {MockSupplier} from '../data/mock-products';
 
 interface PopularSuppliersProps {
-  suppliers?: MockSupplier[]
+  suppliers?: Array<MockSupplier>
   title?: string
 }
 

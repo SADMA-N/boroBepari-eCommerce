@@ -2,7 +2,7 @@ import ProductCard from './ProductCard'
 import type { MockProduct } from '../data/mock-products'
 
 interface FeaturedProductsGridProps {
-  products: MockProduct[]
+  products: Array<MockProduct>
   title?: string
   subtitle?: string
   showViewAll?: boolean

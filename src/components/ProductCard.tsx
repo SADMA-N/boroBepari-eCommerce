@@ -1,12 +1,13 @@
-import { Heart, Eye, BadgeCheck, Package } from 'lucide-react'
+import { BadgeCheck, Eye, Heart, Package } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
+  
   formatBDT,
-  getSupplierById,
-  type MockProduct,
+  getSupplierById
 } from '../data/mock-products'
 import { useWishlist } from '../contexts/WishlistContext'
+import type {MockProduct} from '../data/mock-products';
 
 interface ProductCardProps {
   product: MockProduct

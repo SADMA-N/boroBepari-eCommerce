@@ -1,8 +1,8 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
-import { useState, useEffect } from 'react'
-import { Eye, EyeOff, Check, X, Sparkles, RefreshCw } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Check, Eye, EyeOff, RefreshCw, Sparkles, X } from 'lucide-react'
 import { z } from 'zod'
+import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,

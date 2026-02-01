@@ -30,7 +30,7 @@ export interface MockProduct {
   name: string
   slug: string
   description: string
-  images: string[]
+  images: Array<string>
   price: number
   originalPrice: number | null
   moq: number
@@ -43,9 +43,9 @@ export interface MockProduct {
   rating: number
   reviewCount: number
   soldCount: number
-  tags: string[]
-  tieredPricing: { minQty: number; maxQty: number | null; price: number }[]
-  specifications: { key: string; value: string }[]
+  tags: Array<string>
+  tieredPricing: Array<{ minQty: number; maxQty: number | null; price: number }>
+  specifications: Array<{ key: string; value: string }>
   hasSample: boolean
   samplePrice: number | null
 }
@@ -65,7 +65,7 @@ export const categoryIcons: Record<string, string> = {
 }
 
 // Wholesale product categories specific to Bangladesh B2B market
-export const mockCategories: MockCategory[] = [
+export const mockCategories: Array<MockCategory> = [
   {
     id: 1,
     name: 'Fashion & Apparel',
@@ -230,7 +230,7 @@ const generatePrice = (categoryId: number): number => {
   return faker.number.int({ min, max })
 }
 
-const productNamesByCategory: Record<number, string[]> = {
+const productNamesByCategory: Record<number, Array<string>> = {
   1: ['T-Shirt', 'Shirt', 'Polo', 'Jeans', 'Saree', 'Kurta', 'Jacket', 'Jersey'],
   2: ['Earbuds', 'Cable', 'Watch Band', 'Screen Protector', 'Power Bank', 'USB Hub', 'Stand', 'Mouse'],
   3: ['Cookware', 'Bed Sheet', 'Lamp', 'Container', 'Clock', 'Cushion', 'Towel', 'Chair'],
@@ -243,7 +243,7 @@ const productNamesByCategory: Record<number, string[]> = {
   10: ['Fabric', 'Leather', 'Granules', 'Wire', 'Rubber', 'Foam', 'Beads', 'Chemical'],
 }
 
-const unitsByCategory: Record<number, string[]> = {
+const unitsByCategory: Record<number, Array<string>> = {
   1: ['piece', 'dozen', 'pack'],
   2: ['piece', 'pack', 'box'],
   3: ['piece', 'set', 'pack'],
@@ -321,12 +321,12 @@ export const createMockProduct = (id: number, supplierCount: number): MockProduc
 
 // --- DATA GENERATION ---
 
-export const mockSuppliers: MockSupplier[] = Array.from(
+export const mockSuppliers: Array<MockSupplier> = Array.from(
   { length: 20 },
   (_, i) => createMockSupplier(i + 1)
 )
 
-export const mockProducts: MockProduct[] = Array.from(
+export const mockProducts: Array<MockProduct> = Array.from(
   { length: 120 },
   (_, i) => createMockProduct(i + 1, mockSuppliers.length)
 )
@@ -337,19 +337,19 @@ export const formatBDT = (price: number): string => {
   return `৳${price.toLocaleString('en-BD')}`
 }
 
-export const getProductsByCategory = (categoryId: number): MockProduct[] => {
+export const getProductsByCategory = (categoryId: number): Array<MockProduct> => {
   return mockProducts.filter((p) => p.categoryId === categoryId)
 }
 
-export const getFeaturedProducts = (): MockProduct[] => {
+export const getFeaturedProducts = (): Array<MockProduct> => {
   return mockProducts.filter((p) => p.featured)
 }
 
-export const getNewArrivals = (): MockProduct[] => {
+export const getNewArrivals = (): Array<MockProduct> => {
   return mockProducts.filter((p) => p.isNew).slice(0, 12)
 }
 
-export const getTopRanking = (): MockProduct[] => {
+export const getTopRanking = (): Array<MockProduct> => {
   return [...mockProducts].sort((a, b) => b.soldCount - a.soldCount).slice(0, 12)
 }
 
@@ -365,7 +365,7 @@ export const getCategoryBySlug = (slug: string): MockCategory | undefined => {
   return mockCategories.find((c) => c.slug === slug)
 }
 
-export const getVerifiedSuppliers = (): MockSupplier[] => {
+export const getVerifiedSuppliers = (): Array<MockSupplier> => {
   return mockSuppliers.filter((s) => s.verified)
 }
 
@@ -377,12 +377,12 @@ export interface ProductFilters {
   maxPrice?: number
   minMoq?: number
   maxMoq?: number
-  locations?: string[]
+  locations?: Array<string>
   verifiedOnly?: boolean
   sortBy?: 'price-asc' | 'price-desc' | 'newest' | 'popularity'
 }
 
-export const filterProducts = (filters: ProductFilters): MockProduct[] => {
+export const filterProducts = (filters: ProductFilters): Array<MockProduct> => {
   let filtered = [...mockProducts]
 
   if (filters.search) {
@@ -461,7 +461,7 @@ export interface HeroBannerSlide {
   bgColor: string
 }
 
-export const heroBannerSlides: HeroBannerSlide[] = [
+export const heroBannerSlides: Array<HeroBannerSlide> = [
   {
     id: 1,
     title: 'Wholesale Fashion Week',
@@ -508,7 +508,7 @@ export interface PromoBanner {
   link: string
 }
 
-export const promoBanners: PromoBanner[] = [
+export const promoBanners: Array<PromoBanner> = [
   {
     id: 1,
     title: 'Flash Deals',
@@ -530,7 +530,7 @@ export const promoBanners: PromoBanner[] = [
 ]
 
 // Frequently searched terms
-export const frequentlySearched: string[] = [
+export const frequentlySearched: Array<string> = [
   'cotton t-shirt',
   'mobile charger',
   'kitchen utensils',
@@ -542,4 +542,4 @@ export const frequentlySearched: string[] = [
 ]
 
 // Bangladesh locations for filters
-export const bdLocationsList: string[] = bdLocations
+export const bdLocationsList: Array<string> = bdLocations

@@ -1,7 +1,7 @@
 
+import { count } from "drizzle-orm";
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
-import { count } from "drizzle-orm";
 
 async function main() {
   console.log("Cleaning up all user-related data...");

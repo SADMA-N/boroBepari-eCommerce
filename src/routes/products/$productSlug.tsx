@@ -1,23 +1,23 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { useState } from 'react'
 import { 
-  mockProducts, 
-  getSupplierById, 
-  formatBDT, 
-  MockProduct 
-} from '../../data/mock-products'
-import { 
+  AlertCircle, 
   CheckCircle, 
   Clock, 
-  Truck, 
-  Star, 
-  ShoppingCart, 
   Heart, 
-  Share2, 
   Minus, 
-  Plus,
-  AlertCircle
+  Plus, 
+  Share2, 
+  ShoppingCart, 
+  Star,
+  Truck
 } from 'lucide-react'
+import { 
+  MockProduct, 
+  formatBDT, 
+  getSupplierById, 
+  mockProducts 
+} from '../../data/mock-products'
 import { useWishlist } from '../../contexts/WishlistContext'
 import { useCart } from '../../contexts/CartContext'
 import Toast from '../../components/Toast'

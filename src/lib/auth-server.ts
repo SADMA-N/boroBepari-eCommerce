@@ -1,11 +1,11 @@
-import { createServerFn, createMiddleware } from '@tanstack/react-start'
+import { createMiddleware, createServerFn } from '@tanstack/react-start'
+import { and, eq } from 'drizzle-orm'
+import { z } from 'zod'
 import { auth } from './auth'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
-import { eq, and } from 'drizzle-orm'
-import { z } from 'zod'
 
-const authMiddleware = createMiddleware().server(async ({ next, request }) => {
+export const authMiddleware = createMiddleware().server(async ({ next, request }) => {
     try {
         const session = await auth.api.getSession({ headers: request.headers })
         return next({ context: { session, headers: request.headers } })
@@ -17,7 +17,7 @@ const authMiddleware = createMiddleware().server(async ({ next, request }) => {
 
 export const getAuthSession = createServerFn({ method: 'GET' })
     .middleware([authMiddleware])
-    .handler(async ({ context }) => {
+    .handler(({ context }) => {
         return context.session
     })
 
@@ -49,17 +49,12 @@ export const setUserPassword = createServerFn({ method: 'POST' })
 
         // Use better-auth's API to set the password
         // This ensures compatibility with better-auth's hashing and verification
-        const res = await auth.api.setPassword({
+        await auth.api.setPassword({
             body: {
                 newPassword: data.password,
             },
             headers: context.headers
         })
-
-        if (!res) {
-             // Fallback or error handling if needed
-             throw new Error("Failed to set password")
-        }
 
         return { success: true }
     })

@@ -1,17 +1,18 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { ChevronRight, SlidersHorizontal, Grid3X3, List, X } from 'lucide-react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChevronRight, Grid3X3, List, SlidersHorizontal, X } from 'lucide-react'
 import ProductCard from '../../components/ProductCard'
 import FilterSidebar from '../../components/FilterSidebar'
 import Footer from '../../components/Footer'
 import { FeaturedProductsGridSkeleton } from '../../components/FeaturedProductsGrid'
 import {
-  getCategoryBySlug,
+  
+  
   filterProducts,
-  mockCategories,
-  type ProductFilters,
-  type MockProduct,
+  getCategoryBySlug,
+  mockCategories
 } from '../../data/mock-products'
+import type {MockProduct, ProductFilters} from '../../data/mock-products';
 
 interface SearchParams {
   minPrice?: string
@@ -69,7 +70,7 @@ function CategoryPage() {
   }), [category?.id, search])
 
   // Filter products
-  const [products, setProducts] = useState<MockProduct[]>([])
+  const [products, setProducts] = useState<Array<MockProduct>>([])
 
   // Debounced filter update
   useEffect(() => {

@@ -1,7 +1,7 @@
-import { X, Trash2, ShoppingCart, Minus, Plus } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { useCart } from '../contexts/CartContext'
 import { formatBDT, mockProducts } from '../data/mock-products'
-import { useEffect, useRef } from 'react'
 
 interface CartSidebarProps {
   isOpen: boolean

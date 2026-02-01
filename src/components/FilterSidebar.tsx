@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ChevronDown,
   ChevronUp,
-  X,
-  SlidersHorizontal,
   RotateCcw,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react'
-import { bdLocationsList, type ProductFilters } from '../data/mock-products'
+import {  bdLocationsList } from '../data/mock-products'
+import type {ProductFilters} from '../data/mock-products';
 
 interface FilterSidebarProps {
   filters: ProductFilters

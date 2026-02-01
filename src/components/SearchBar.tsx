@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Search, X, Clock, TrendingUp } from 'lucide-react'
+import { Clock, Search, TrendingUp, X } from 'lucide-react'
 import { frequentlySearched } from '../data/mock-products'
 
 interface SearchBarProps {
@@ -20,7 +20,7 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialValue)
   const [isFocused, setIsFocused] = useState(false)
-  const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [recentSearches, setRecentSearches] = useState<Array<string>>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()

@@ -1,15 +1,15 @@
 import { Link } from '@tanstack/react-router'
 import {
+  ChevronDown,
   Facebook,
-  Twitter,
+  Globe,
   Instagram,
   Linkedin,
-  Youtube,
   Mail,
-  Phone,
   MapPin,
-  Globe,
-  ChevronDown,
+  Phone,
+  Twitter,
+  Youtube,
 } from 'lucide-react'
 import { useState } from 'react'
 

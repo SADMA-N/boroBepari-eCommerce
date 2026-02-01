@@ -1,5 +1,6 @@
+import { loginEvents } from "./schema";
 import { db } from "./index";
-import { loginEvents, NewLoginEvent } from "./schema";
+import type { NewLoginEvent } from "./schema";
 
 export async function createLoginEvent(data: NewLoginEvent) {
   return await db.insert(loginEvents).values(data).returning();

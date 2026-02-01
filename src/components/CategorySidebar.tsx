@@ -1,18 +1,19 @@
 import { Link } from '@tanstack/react-router'
 import {
+  Boxes,
+  Briefcase,
+  ChevronRight,
+  Dumbbell,
+  Factory,
+  Home,
+  Package,
   Shirt,
   Smartphone,
-  Home,
   Sparkles,
-  Dumbbell,
   UtensilsCrossed,
-  Factory,
-  Briefcase,
-  Package,
-  Boxes,
-  ChevronRight,
 } from 'lucide-react'
-import { mockCategories, type MockCategory } from '../data/mock-products'
+import {  mockCategories } from '../data/mock-products'
+import type {MockCategory} from '../data/mock-products';
 
 // Map icon names to Lucide components
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -29,7 +30,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 }
 
 interface CategorySidebarProps {
-  categories?: MockCategory[]
+  categories?: Array<MockCategory>
   activeCategoryId?: number
   className?: string
 }
@@ -97,7 +98,7 @@ export default function CategorySidebar({
 export function CategoryList({
   categories = mockCategories.filter((c) => c.parentId === null),
 }: {
-  categories?: MockCategory[]
+  categories?: Array<MockCategory>
 }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">

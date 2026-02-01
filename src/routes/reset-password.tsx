@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Check, Eye, EyeOff, Loader2, Lock, RefreshCw, Sparkles, X } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
-import { Eye, EyeOff, Check, X, Sparkles, RefreshCw, Loader2, Lock } from 'lucide-react'
 
 export const Route = createFileRoute('/reset-password')({
   validateSearch: (search: Record<string, unknown>) => {

@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { heroBannerSlides, type HeroBannerSlide } from '../data/mock-products'
+import {  heroBannerSlides } from '../data/mock-products'
+import type {HeroBannerSlide} from '../data/mock-products';
 
 interface HeroBannerProps {
-  slides?: HeroBannerSlide[]
+  slides?: Array<HeroBannerSlide>
   autoplayInterval?: number
 }
 

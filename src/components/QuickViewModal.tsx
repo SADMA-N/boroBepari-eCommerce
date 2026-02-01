@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { X, Minus, Plus, ShoppingCart, ArrowRight, Check, AlertCircle } from 'lucide-react'
-import { MockProduct, formatBDT } from '../data/mock-products'
+import { useEffect, useState } from 'react'
+import { AlertCircle, ArrowRight, Check, Minus, Plus, ShoppingCart, X } from 'lucide-react'
+import { formatBDT } from '../data/mock-products'
+import type { MockProduct} from '../data/mock-products';
 
 interface QuickViewModalProps {
   product: MockProduct | null

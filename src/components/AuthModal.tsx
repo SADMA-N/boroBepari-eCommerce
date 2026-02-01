@@ -1,7 +1,7 @@
-import { X, CheckCircle, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react'
+import { CheckCircle, Eye, EyeOff, Loader2, Lock, Mail, X } from 'lucide-react'
 import { useState } from 'react'
+import { Link, useRouter } from '@tanstack/react-router'
 import { authClient } from '@/lib/auth-client'
-import { useRouter, Link } from '@tanstack/react-router'
 
 interface AuthModalProps {
   isOpen: boolean

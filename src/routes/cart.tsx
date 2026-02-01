@@ -1,21 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute  } from '@tanstack/react-router'
 import {
-  Trash2,
-  ShoppingCart,
-  Minus,
-  Plus,
-  Package,
+  ArrowRight,
   BadgeCheck,
-  ArrowRight
+  Minus,
+  Package,
+  Plus,
+  ShoppingCart,
+  Trash2
 } from 'lucide-react'
 import { useCart } from '../contexts/CartContext'
 import {
+  
   formatBDT,
   getSupplierById,
-  mockProducts,
-  type MockProduct,
+  mockProducts
 } from '../data/mock-products'
-import { Link } from '@tanstack/react-router'
+import type {MockProduct} from '../data/mock-products';
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,

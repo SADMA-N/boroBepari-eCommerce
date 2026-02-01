@@ -1,8 +1,8 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
+import { ArrowLeft, KeyRound, Loader2, Mail, Sparkles } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import { verifyResetCode } from '@/lib/auth-server'
-import { Mail, ArrowLeft, Loader2, KeyRound, Sparkles } from 'lucide-react'
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordPage,

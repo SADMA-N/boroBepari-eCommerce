@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { mockProducts } from '../data/mock-products'
 
 interface CartItem {
@@ -7,7 +7,7 @@ interface CartItem {
 }
 
 interface CartContextType {
-  cartItems: CartItem[]
+  cartItems: Array<CartItem>
   addToCart: (productId: number, quantity: number) => void
   removeFromCart: (productId: number) => void
   updateQuantity: (productId: number, quantity: number) => void
@@ -18,7 +18,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  const [cartItems, setCartItems] = useState<Array<CartItem>>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('cart')
       return saved ? JSON.parse(saved) : []

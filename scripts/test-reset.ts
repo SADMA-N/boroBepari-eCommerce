@@ -7,7 +7,7 @@ const request = new Request("http://localhost:3000/api/auth/forget-password", {
     headers: {
         "Content-Type": "application/json"
     },
-    body: JSON.stringify({
+body: JSON.stringify({
         email: "pubgmerabeta1@gmail.com",
         redirectTo: "/reset-password"
     })

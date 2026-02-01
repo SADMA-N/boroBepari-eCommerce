@@ -4,18 +4,19 @@ import HeroBanner from '../components/HeroBanner'
 import CategorySidebar, { CategoryList } from '../components/CategorySidebar'
 import FeaturedProductsGrid from '../components/FeaturedProductsGrid'
 import PopularSuppliers from '../components/PopularSuppliers'
-import PromoBanners, { PromoStrip, FrequentlySearched } from '../components/PromoBanner'
+import PromoBanners, { FrequentlySearched, PromoStrip } from '../components/PromoBanner'
 import Footer from '../components/Footer'
 import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import {
+  
+  frequentlySearched,
   getFeaturedProducts,
   getNewArrivals,
   getTopRanking,
-  mockCategories,
-  frequentlySearched,
-  type MockProduct,
+  mockCategories
 } from '../data/mock-products'
+import type {MockProduct} from '../data/mock-products';
 import { checkUserPasswordStatus } from '@/lib/auth-server'
 
 export const Route = createFileRoute('/')({ 

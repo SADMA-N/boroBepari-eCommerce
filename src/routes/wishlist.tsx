@@ -1,22 +1,23 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
-  Trash2,
-  ShoppingCart,
-  Share2,
-  Minus,
-  Plus,
-  Package,
   BadgeCheck,
+  Minus,
+  Package,
+  Plus,
+  Share2,
+  ShoppingCart,
+  Trash2,
 } from 'lucide-react'
 import { useWishlist } from '../contexts/WishlistContext'
 import { useCart } from '../contexts/CartContext'
 import {
+  
   formatBDT,
-  getSupplierById,
-  type MockProduct,
+  getSupplierById
 } from '../data/mock-products'
 import Toast from '../components/Toast'
+import type {MockProduct} from '../data/mock-products';
 
 export const Route = createFileRoute('/wishlist')({
   component: WishlistPage,

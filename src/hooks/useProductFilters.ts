@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { filterProducts, type ProductFilters, type MockProduct } from '../data/mock-products'
+import {   filterProducts } from '../data/mock-products'
+import type {MockProduct, ProductFilters} from '../data/mock-products';
 
 interface UseProductFiltersOptions {
   initialFilters?: ProductFilters
@@ -10,7 +11,7 @@ interface UseProductFiltersOptions {
 
 interface UseProductFiltersReturn {
   filters: ProductFilters
-  products: MockProduct[]
+  products: Array<MockProduct>
   isLoading: boolean
   totalCount: number
   setFilters: (filters: ProductFilters) => void
@@ -28,7 +29,7 @@ export function useProductFilters({
   basePath,
 }: UseProductFiltersOptions = {}): UseProductFiltersReturn {
   const [filters, setFiltersState] = useState<ProductFilters>(initialFilters)
-  const [products, setProducts] = useState<MockProduct[]>([])
+  const [products, setProducts] = useState<Array<MockProduct>>([])
   const [isLoading, setIsLoading] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()

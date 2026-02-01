@@ -1,7 +1,7 @@
 import {
   HeadContent,
   Scripts,
-  createRootRouteWithContext,
+  createRootRouteWithContext, redirect 
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -16,8 +16,7 @@ import { AuthProvider } from '../contexts/AuthContext'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { redirect } from '@tanstack/react-router'
-import { getAuthSession, checkUserPasswordStatus } from '@/lib/auth-server'
+import { checkUserPasswordStatus, getAuthSession } from '@/lib/auth-server'
 
 interface MyRouterContext {
   queryClient: QueryClient
