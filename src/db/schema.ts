@@ -247,3 +247,83 @@ export type NewOrder = typeof orders.$inferInsert
 export type OrderItem = typeof orderItems.$inferSelect
 export type NewOrderItem = typeof orderItems.$inferInsert
 
+// Enums for RFQ and Quote
+export const rfqStatusEnum = pgEnum('rfq_status', [
+  'pending',
+  'quoted',
+  'accepted',
+  'rejected',
+  'expired',
+  'converted'
+]);
+
+export const quoteStatusEnum = pgEnum('quote_status', [
+  'pending',
+  'accepted',
+  'rejected',
+  'countered'
+]);
+
+// RFQ Table
+export const rfqs = pgTable('rfqs', {
+  id: serial('id').primaryKey(),
+  buyerId: text('buyer_id').notNull().references(() => user.id),
+  supplierId: integer('supplier_id').notNull().references(() => suppliers.id),
+  productId: integer('product_id').notNull().references(() => products.id),
+  quantity: integer('quantity').notNull(),
+  targetPrice: decimal('target_price', { precision: 12, scale: 2 }),
+  deliveryLocation: text('delivery_location').notNull(),
+  notes: text('notes'),
+  attachments: jsonb('attachments').$type<Array<string>>().default([]),
+  status: rfqStatusEnum('status').default('pending').notNull(),
+  expiresAt: timestamp('expires_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const rfqsRelations = relations(rfqs, ({ one, many }) => ({
+  buyer: one(user, {
+    fields: [rfqs.buyerId],
+    references: [user.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [rfqs.supplierId],
+    references: [suppliers.id],
+  }),
+  product: one(products, {
+    fields: [rfqs.productId],
+    references: [products.id],
+  }),
+  quotes: many(quotes),
+}));
+
+// Quotes Table
+export const quotes = pgTable('quotes', {
+  id: serial('id').primaryKey(),
+  rfqId: integer('rfq_id').notNull().references(() => rfqs.id),
+  supplierId: integer('supplier_id').notNull().references(() => suppliers.id),
+  unitPrice: decimal('unit_price', { precision: 12, scale: 2 }).notNull(),
+  totalPrice: decimal('total_price', { precision: 12, scale: 2 }).notNull(),
+  validityPeriod: timestamp('validity_period').notNull(),
+  terms: text('terms'),
+  status: quoteStatusEnum('status').default('pending').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const quotesRelations = relations(quotes, ({ one }) => ({
+  rfq: one(rfqs, {
+    fields: [quotes.rfqId],
+    references: [rfqs.id],
+  }),
+  supplier: one(suppliers, {
+    fields: [quotes.supplierId],
+    references: [suppliers.id],
+  }),
+}));
+
+export type Rfq = typeof rfqs.$inferSelect;
+export type NewRfq = typeof rfqs.$inferInsert;
+export type Quote = typeof quotes.$inferSelect;
+export type NewQuote = typeof quotes.$inferInsert;
+
