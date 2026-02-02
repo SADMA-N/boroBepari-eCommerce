@@ -27,3 +27,9 @@ node_modules/
 
 
 
+
+# Logs
+*.log
+
+# Scripts
+get-docker.sh
