@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import {  mockProducts } from '../data/mock-products'
-import type {MockProduct} from '../data/mock-products';
+import { mockProducts } from '../data/mock-products'
+import type { MockProduct } from '../data/mock-products'
 
 interface WishlistContextType {
   wishlistIds: Array<number>
@@ -11,7 +11,9 @@ interface WishlistContextType {
   wishlistItems: Array<MockProduct>
 }
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined,
+)
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [wishlistIds, setWishlistIds] = useState<Array<number>>(() => {

@@ -1,4 +1,4 @@
-import { Link, createFileRoute  } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import {
   ArrowRight,
   BadgeCheck,
@@ -6,16 +6,11 @@ import {
   Package,
   Plus,
   ShoppingCart,
-  Trash2
+  Trash2,
 } from 'lucide-react'
 import { useCart } from '../contexts/CartContext'
-import {
-  
-  formatBDT,
-  getSupplierById,
-  mockProducts
-} from '../data/mock-products'
-import type {MockProduct} from '../data/mock-products';
+import { formatBDT, getSupplierById, mockProducts } from '../data/mock-products'
+import type { MockProduct } from '../data/mock-products'
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,
@@ -24,7 +19,7 @@ export const Route = createFileRoute('/cart')({
 function CartItem({ item }: { item: { productId: number; quantity: number } }) {
   const { removeFromCart, updateQuantity } = useCart()
   const product = mockProducts.find((p) => p.id === item.productId)
-  
+
   if (!product) return null
 
   const supplier = getSupplierById(product.supplierId)
@@ -76,8 +71,10 @@ function CartItem({ item }: { item: { productId: number; quantity: number } }) {
           </div>
 
           <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-             <Package size={14} />
-             <span>MOQ: {product.moq} {product.unit}</span>
+            <Package size={14} />
+            <span>
+              MOQ: {product.moq} {product.unit}
+            </span>
           </div>
         </div>
       </div>
@@ -126,10 +123,14 @@ function CartPage() {
           {cartItems.length === 0 ? (
             <div className="text-center py-20 bg-gray-50 rounded-lg">
               <div className="bg-white p-4 rounded-full inline-block shadow-sm mb-4">
-                 <ShoppingCart size={48} className="text-gray-300" />
+                <ShoppingCart size={48} className="text-gray-300" />
               </div>
-              <h2 className="text-xl font-medium text-gray-800 mb-2">Your cart is empty</h2>
-              <p className="text-gray-500 mb-6">Looks like you haven't added anything to your cart yet.</p>
+              <h2 className="text-xl font-medium text-gray-800 mb-2">
+                Your cart is empty
+              </h2>
+              <p className="text-gray-500 mb-6">
+                Looks like you haven't added anything to your cart yet.
+              </p>
               <a
                 href="/"
                 className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
@@ -150,8 +151,10 @@ function CartPage() {
         {cartItems.length > 0 && (
           <div className="lg:w-96">
             <div className="bg-white rounded-lg shadow-sm border p-6 sticky top-24">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
-              
+              <h2 className="text-lg font-bold text-gray-900 mb-4">
+                Order Summary
+              </h2>
+
               <div className="space-y-3 text-sm border-b pb-4 mb-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
@@ -168,8 +171,12 @@ function CartPage() {
               </div>
 
               <div className="flex justify-between items-center mb-6">
-                <span className="text-base font-bold text-gray-900">Order Total</span>
-                <span className="text-xl font-bold text-orange-600">{formatBDT(cartTotal)}</span>
+                <span className="text-base font-bold text-gray-900">
+                  Order Total
+                </span>
+                <span className="text-xl font-bold text-orange-600">
+                  {formatBDT(cartTotal)}
+                </span>
               </div>
 
               <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg">

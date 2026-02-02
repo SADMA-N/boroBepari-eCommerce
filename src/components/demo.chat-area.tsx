@@ -3,7 +3,6 @@ import { useState } from 'react'
 import Messages from './demo.messages'
 import { useChat, useMessages } from '@/hooks/demo.useChat'
 
-
 export default function ChatArea() {
   const { sendMessage } = useChat()
 

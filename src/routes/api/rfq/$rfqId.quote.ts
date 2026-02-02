@@ -9,9 +9,12 @@ export const Route = createFileRoute('/api/rfq/$rfqId/quote')({
         // TODO: Parse body using createQuoteSchema
         // TODO: Validate RFQ exists and is open
         // TODO: Create Quote in database
-        return new Response(JSON.stringify({ message: `Quote submitted for RFQ ${rfqId}` }), {
-          headers: { 'Content-Type': 'application/json' },
-        })
+        return new Response(
+          JSON.stringify({ message: `Quote submitted for RFQ ${rfqId}` }),
+          {
+            headers: { 'Content-Type': 'application/json' },
+          },
+        )
       },
     },
   },

@@ -38,7 +38,10 @@ export default function SearchBar({
     const trimmed = searchQuery.trim()
     if (!trimmed) return
 
-    const updated = [trimmed, ...recentSearches.filter((s) => s !== trimmed)].slice(0, 5)
+    const updated = [
+      trimmed,
+      ...recentSearches.filter((s) => s !== trimmed),
+    ].slice(0, 5)
     setRecentSearches(updated)
     localStorage.setItem('recentSearches', JSON.stringify(updated))
   }

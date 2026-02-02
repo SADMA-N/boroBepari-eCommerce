@@ -1,35 +1,36 @@
 import { BadgeCheck, Eye, Heart, Package } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import {
-  
-  formatBDT,
-  getSupplierById
-} from '../data/mock-products'
+import { formatBDT, getSupplierById } from '../data/mock-products'
 import { useWishlist } from '../contexts/WishlistContext'
-import type {MockProduct} from '../data/mock-products';
+import type { MockProduct } from '../data/mock-products'
 
 interface ProductCardProps {
   product: MockProduct
   onQuickView?: (product: MockProduct) => void
 }
 
-export default function ProductCard({ product, onQuickView }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  onQuickView,
+}: ProductCardProps) {
   const { toggleWishlist, isInWishlist } = useWishlist()
   const [imageLoaded, setImageLoaded] = useState(false)
 
   const isWishlisted = isInWishlist(product.id)
   const supplier = getSupplierById(product.supplierId)
   const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100,
+      )
     : null
 
   return (
     <div className="group relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
-        <Link 
-          to="/products/$productSlug" 
+        <Link
+          to="/products/$productSlug"
           params={{ productSlug: product.slug }}
           className="block w-full h-full"
         >
@@ -72,7 +73,9 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
                 ? 'bg-red-500 text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-100'
             }`}
-            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+            aria-label={
+              isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+            }
           >
             <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} />
           </button>
@@ -112,7 +115,7 @@ export default function ProductCard({ product, onQuickView }: ProductCardProps) 
         )}
 
         {/* Product Name */}
-        <Link 
+        <Link
           to="/products/$productSlug"
           params={{ productSlug: product.slug }}
           className="block"

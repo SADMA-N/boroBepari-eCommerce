@@ -12,11 +12,13 @@ import {
   Sparkles,
   UtensilsCrossed,
 } from 'lucide-react'
-import {  mockCategories } from '../data/mock-products'
-import type {MockCategory} from '../data/mock-products';
+import { mockCategories } from '../data/mock-products'
+import type { MockCategory } from '../data/mock-products'
 
 // Map icon names to Lucide components
-const iconMap: Partial<Record<string, React.ComponentType<{ size?: number; className?: string }>>> = {
+const iconMap: Partial<
+  Record<string, React.ComponentType<{ size?: number; className?: string }>>
+> = {
   Shirt,
   Smartphone,
   Home,
@@ -41,7 +43,9 @@ export default function CategorySidebar({
   className = '',
 }: CategorySidebarProps) {
   return (
-    <div className={`bg-white rounded-lg shadow-sm border border-gray-100 ${className}`}>
+    <div
+      className={`bg-white rounded-lg shadow-sm border border-gray-100 ${className}`}
+    >
       <div className="p-3 border-b border-gray-100">
         <h3 className="font-semibold text-gray-800">Categories</h3>
       </div>

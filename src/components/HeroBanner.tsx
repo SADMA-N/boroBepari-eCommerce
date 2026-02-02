@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import {  heroBannerSlides } from '../data/mock-products'
-import type {HeroBannerSlide} from '../data/mock-products';
+import { heroBannerSlides } from '../data/mock-products'
+import type { HeroBannerSlide } from '../data/mock-products'
 
 interface HeroBannerProps {
   slides?: Array<HeroBannerSlide>
@@ -21,9 +21,12 @@ export default function HeroBanner({
 
   const slideCount = slides.length
 
-  const goToSlide = useCallback((index: number) => {
-    setCurrentSlide((index + slideCount) % slideCount)
-  }, [slideCount])
+  const goToSlide = useCallback(
+    (index: number) => {
+      setCurrentSlide((index + slideCount) % slideCount)
+    },
+    [slideCount],
+  )
 
   const nextSlide = useCallback(() => {
     goToSlide(currentSlide + 1)
@@ -111,10 +114,7 @@ export default function HeroBanner({
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div
-            key={slide.id}
-            className="w-full flex-shrink-0 relative"
-          >
+          <div key={slide.id} className="w-full flex-shrink-0 relative">
             {/* Background Image */}
             <div className="relative h-[200px] sm:h-[300px] md:h-[400px]">
               <img
@@ -123,7 +123,9 @@ export default function HeroBanner({
                 className="w-full h-full object-cover"
               />
               {/* Gradient Overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgColor} opacity-80`} />
+              <div
+                className={`absolute inset-0 bg-gradient-to-r ${slide.bgColor} opacity-80`}
+              />
 
               {/* Content */}
               <div className="absolute inset-0 flex items-center">

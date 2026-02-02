@@ -24,7 +24,7 @@ dev_output.log
 .claude/
 .gemini/
 node_modules/
-
+epic3prompt.txt
 
 
 

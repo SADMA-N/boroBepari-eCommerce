@@ -65,7 +65,11 @@ export default function FeaturedProductsGrid({
 }
 
 // Loading skeleton for the grid
-export function FeaturedProductsGridSkeleton({ count = 12 }: { count?: number }) {
+export function FeaturedProductsGridSkeleton({
+  count = 12,
+}: {
+  count?: number
+}) {
   return (
     <section className="py-6">
       <div className="flex items-center justify-between mb-4">

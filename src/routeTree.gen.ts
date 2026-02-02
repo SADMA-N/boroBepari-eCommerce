@@ -35,11 +35,19 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as ApiRfqSupplierSupplierIdRouteImport } from './routes/api/rfq/supplier/$supplierId'
+import { Route as ApiRfqBuyerBuyerIdRouteImport } from './routes/api/rfq/buyer/$buyerId'
+import { Route as ApiRfqRfqIdQuotesRouteImport } from './routes/api/rfq/$rfqId.quotes'
+import { Route as ApiRfqRfqIdQuoteRouteImport } from './routes/api/rfq/$rfqId.quote'
+import { Route as ApiRfqQuoteQuoteIdRejectRouteImport } from './routes/api/rfq/quote/$quoteId.reject'
+import { Route as ApiRfqQuoteQuoteIdCounterRouteImport } from './routes/api/rfq/quote/$quoteId.counter'
+import { Route as ApiRfqQuoteQuoteIdAcceptRouteImport } from './routes/api/rfq/quote/$quoteId.accept'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
@@ -171,6 +179,11 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
+  id: '/api/rfq/submit',
+  path: '/api/rfq/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -196,6 +209,45 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
   path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRfqSupplierSupplierIdRoute =
+  ApiRfqSupplierSupplierIdRouteImport.update({
+    id: '/api/rfq/supplier/$supplierId',
+    path: '/api/rfq/supplier/$supplierId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRfqBuyerBuyerIdRoute = ApiRfqBuyerBuyerIdRouteImport.update({
+  id: '/api/rfq/buyer/$buyerId',
+  path: '/api/rfq/buyer/$buyerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRfqRfqIdQuotesRoute = ApiRfqRfqIdQuotesRouteImport.update({
+  id: '/api/rfq/$rfqId/quotes',
+  path: '/api/rfq/$rfqId/quotes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRfqRfqIdQuoteRoute = ApiRfqRfqIdQuoteRouteImport.update({
+  id: '/api/rfq/$rfqId/quote',
+  path: '/api/rfq/$rfqId/quote',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRfqQuoteQuoteIdRejectRoute =
+  ApiRfqQuoteQuoteIdRejectRouteImport.update({
+    id: '/api/rfq/quote/$quoteId/reject',
+    path: '/api/rfq/quote/$quoteId/reject',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRfqQuoteQuoteIdCounterRoute =
+  ApiRfqQuoteQuoteIdCounterRouteImport.update({
+    id: '/api/rfq/quote/$quoteId/counter',
+    path: '/api/rfq/quote/$quoteId/counter',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRfqQuoteQuoteIdAcceptRoute =
+  ApiRfqQuoteQuoteIdAcceptRouteImport.update({
+    id: '/api/rfq/quote/$quoteId/accept',
+    path: '/api/rfq/quote/$quoteId/accept',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -219,16 +271,24 @@ export interface FileRoutesByFullPath {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
+  '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
+  '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
+  '/api/rfq/supplier/$supplierId': typeof ApiRfqSupplierSupplierIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
+  '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
+  '/api/rfq/quote/$quoteId/reject': typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -252,16 +312,24 @@ export interface FileRoutesByTo {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
+  '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
+  '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
+  '/api/rfq/supplier/$supplierId': typeof ApiRfqSupplierSupplierIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
+  '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
+  '/api/rfq/quote/$quoteId/reject': typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -286,16 +354,24 @@ export interface FileRoutesById {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
+  '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
+  '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
+  '/api/rfq/supplier/$supplierId': typeof ApiRfqSupplierSupplierIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
+  '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
+  '/api/rfq/quote/$quoteId/reject': typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -321,16 +397,24 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/api/auth/$'
+    | '/api/rfq/submit'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/rfq/$rfqId/quote'
+    | '/api/rfq/$rfqId/quotes'
+    | '/api/rfq/buyer/$buyerId'
+    | '/api/rfq/supplier/$supplierId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr/'
+    | '/api/rfq/quote/$quoteId/accept'
+    | '/api/rfq/quote/$quoteId/counter'
+    | '/api/rfq/quote/$quoteId/reject'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -354,16 +438,24 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/api/auth/$'
+    | '/api/rfq/submit'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/rfq/$rfqId/quote'
+    | '/api/rfq/$rfqId/quotes'
+    | '/api/rfq/buyer/$buyerId'
+    | '/api/rfq/supplier/$supplierId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr'
+    | '/api/rfq/quote/$quoteId/accept'
+    | '/api/rfq/quote/$quoteId/counter'
+    | '/api/rfq/quote/$quoteId/reject'
   id:
     | '__root__'
     | '/'
@@ -387,16 +479,24 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/api/auth/$'
+    | '/api/rfq/submit'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/rfq/$rfqId/quote'
+    | '/api/rfq/$rfqId/quotes'
+    | '/api/rfq/buyer/$buyerId'
+    | '/api/rfq/supplier/$supplierId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr/'
+    | '/api/rfq/quote/$quoteId/accept'
+    | '/api/rfq/quote/$quoteId/counter'
+    | '/api/rfq/quote/$quoteId/reject'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -421,16 +521,24 @@ export interface RootRouteChildren {
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiRfqSubmitRoute: typeof ApiRfqSubmitRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
+  ApiRfqRfqIdQuoteRoute: typeof ApiRfqRfqIdQuoteRoute
+  ApiRfqRfqIdQuotesRoute: typeof ApiRfqRfqIdQuotesRoute
+  ApiRfqBuyerBuyerIdRoute: typeof ApiRfqBuyerBuyerIdRoute
+  ApiRfqSupplierSupplierIdRoute: typeof ApiRfqSupplierSupplierIdRoute
   DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
   DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
   DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
   DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
+  ApiRfqQuoteQuoteIdAcceptRoute: typeof ApiRfqQuoteQuoteIdAcceptRoute
+  ApiRfqQuoteQuoteIdCounterRoute: typeof ApiRfqQuoteQuoteIdCounterRoute
+  ApiRfqQuoteQuoteIdRejectRoute: typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -617,6 +725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/rfq/submit': {
+      id: '/api/rfq/submit'
+      path: '/api/rfq/submit'
+      fullPath: '/api/rfq/submit'
+      preLoaderRoute: typeof ApiRfqSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -652,6 +767,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/rfq/supplier/$supplierId': {
+      id: '/api/rfq/supplier/$supplierId'
+      path: '/api/rfq/supplier/$supplierId'
+      fullPath: '/api/rfq/supplier/$supplierId'
+      preLoaderRoute: typeof ApiRfqSupplierSupplierIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/buyer/$buyerId': {
+      id: '/api/rfq/buyer/$buyerId'
+      path: '/api/rfq/buyer/$buyerId'
+      fullPath: '/api/rfq/buyer/$buyerId'
+      preLoaderRoute: typeof ApiRfqBuyerBuyerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/$rfqId/quotes': {
+      id: '/api/rfq/$rfqId/quotes'
+      path: '/api/rfq/$rfqId/quotes'
+      fullPath: '/api/rfq/$rfqId/quotes'
+      preLoaderRoute: typeof ApiRfqRfqIdQuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/$rfqId/quote': {
+      id: '/api/rfq/$rfqId/quote'
+      path: '/api/rfq/$rfqId/quote'
+      fullPath: '/api/rfq/$rfqId/quote'
+      preLoaderRoute: typeof ApiRfqRfqIdQuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/quote/$quoteId/reject': {
+      id: '/api/rfq/quote/$quoteId/reject'
+      path: '/api/rfq/quote/$quoteId/reject'
+      fullPath: '/api/rfq/quote/$quoteId/reject'
+      preLoaderRoute: typeof ApiRfqQuoteQuoteIdRejectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/quote/$quoteId/counter': {
+      id: '/api/rfq/quote/$quoteId/counter'
+      path: '/api/rfq/quote/$quoteId/counter'
+      fullPath: '/api/rfq/quote/$quoteId/counter'
+      preLoaderRoute: typeof ApiRfqQuoteQuoteIdCounterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/quote/$quoteId/accept': {
+      id: '/api/rfq/quote/$quoteId/accept'
+      path: '/api/rfq/quote/$quoteId/accept'
+      fullPath: '/api/rfq/quote/$quoteId/accept'
+      preLoaderRoute: typeof ApiRfqQuoteQuoteIdAcceptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -677,16 +841,24 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiRfqSubmitRoute: ApiRfqSubmitRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
+  ApiRfqRfqIdQuoteRoute: ApiRfqRfqIdQuoteRoute,
+  ApiRfqRfqIdQuotesRoute: ApiRfqRfqIdQuotesRoute,
+  ApiRfqBuyerBuyerIdRoute: ApiRfqBuyerBuyerIdRoute,
+  ApiRfqSupplierSupplierIdRoute: ApiRfqSupplierSupplierIdRoute,
   DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
   DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
   DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
   DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
+  ApiRfqQuoteQuoteIdAcceptRoute: ApiRfqQuoteQuoteIdAcceptRoute,
+  ApiRfqQuoteQuoteIdCounterRoute: ApiRfqQuoteQuoteIdCounterRoute,
+  ApiRfqQuoteQuoteIdRejectRoute: ApiRfqQuoteQuoteIdRejectRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -37,10 +37,12 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     }
   }, [isOpen, onClose])
 
-  const cartProducts = cartItems.map((item) => {
-    const product = mockProducts.find((p) => p.id === item.productId)
-    return { ...product!, quantity: item.quantity }
-  }).filter(p => p.id) // Filter out any undefined products just in case
+  const cartProducts = cartItems
+    .map((item) => {
+      const product = mockProducts.find((p) => p.id === item.productId)
+      return { ...product!, quantity: item.quantity }
+    })
+    .filter((p) => p.id) // Filter out any undefined products just in case
 
   return (
     <>
@@ -63,7 +65,8 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-xl font-bold flex items-center gap-2">
               <ShoppingCart size={24} className="text-orange-500" />
-              Your Cart ({cartItems.reduce((acc, item) => acc + item.quantity, 0)})
+              Your Cart (
+              {cartItems.reduce((acc, item) => acc + item.quantity, 0)})
             </h2>
             <button
               onClick={onClose}
@@ -88,7 +91,10 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               </div>
             ) : (
               cartProducts.map((product) => (
-                <div key={product.id} className="flex gap-4 p-3 border rounded-lg bg-gray-50">
+                <div
+                  key={product.id}
+                  className="flex gap-4 p-3 border rounded-lg bg-gray-50"
+                >
                   <div className="w-20 h-20 flex-shrink-0 bg-white rounded-md overflow-hidden border">
                     <img
                       src={product.images[0]}
@@ -108,7 +114,9 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border bg-white rounded-md">
                         <button
-                          onClick={() => updateQuantity(product.id, product.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(product.id, product.quantity - 1)
+                          }
                           className="p-1 hover:bg-gray-50 text-gray-600"
                           disabled={product.quantity <= product.moq}
                         >
@@ -118,7 +126,9 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                           {product.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(product.id, product.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(product.id, product.quantity + 1)
+                          }
                           className="p-1 hover:bg-gray-50 text-gray-600"
                         >
                           <Plus size={14} />

@@ -1,6 +1,15 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { Check, Eye, EyeOff, Loader2, Lock, RefreshCw, Sparkles, X } from 'lucide-react'
+import {
+  Check,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  RefreshCw,
+  Sparkles,
+  X,
+} from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 
 export const Route = createFileRoute('/reset-password')({
@@ -42,20 +51,24 @@ function ResetPasswordPage() {
 
   const generateStrongPassword = () => {
     setIsGenerating(true)
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+"
-    let retVal = ""
-    
-    retVal += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]
-    retVal += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)]
-    retVal += "0123456789"[Math.floor(Math.random() * 10)]
-    retVal += "!@#$%^&*()_+"[Math.floor(Math.random() * 12)]
-    
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
+    let retVal = ''
+
+    retVal += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]
+    retVal += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]
+    retVal += '0123456789'[Math.floor(Math.random() * 10)]
+    retVal += '!@#$%^&*()_+'[Math.floor(Math.random() * 12)]
+
     for (let i = 0; i < 8; i++) {
-        retVal += charset.charAt(Math.floor(Math.random() * charset.length))
+      retVal += charset.charAt(Math.floor(Math.random() * charset.length))
     }
-    
-    retVal = retVal.split('').sort(() => 0.5 - Math.random()).join('')
-    
+
+    retVal = retVal
+      .split('')
+      .sort(() => 0.5 - Math.random())
+      .join('')
+
     setPassword(retVal)
     setConfirmPassword(retVal)
     setShowPassword(true)
@@ -79,7 +92,10 @@ function ResetPasswordPage() {
     })
 
     if (resError) {
-      setError(resError.message || 'Failed to reset password. The link may have expired.')
+      setError(
+        resError.message ||
+          'Failed to reset password. The link may have expired.',
+      )
       setIsLoading(false)
     } else {
       setIsSuccess(true)
@@ -97,9 +113,12 @@ function ResetPasswordPage() {
           <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
             <Check className="h-10 w-10 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Reset Successful</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Password Reset Successful
+          </h2>
           <p className="text-gray-600 mb-8 text-sm">
-            Your password has been updated. You will be redirected to the login page in a few seconds.
+            Your password has been updated. You will be redirected to the login
+            page in a few seconds.
           </p>
           <button
             onClick={() => router.navigate({ to: '/login' })}
@@ -119,7 +138,9 @@ function ResetPasswordPage() {
           <div className="mx-auto h-12 w-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
             <Lock className="h-6 w-6 text-orange-600" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900">Reset Password</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900">
+            Reset Password
+          </h2>
           <p className="text-gray-500 text-sm mt-2">
             Create a new strong password for your account.
           </p>
@@ -152,18 +173,22 @@ function ResetPasswordPage() {
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
                 New Password
               </label>
-              <button 
-                 type="button" 
-                 onClick={generateStrongPassword}
-                 className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 uppercase tracking-tight transition-colors"
+              <button
+                type="button"
+                onClick={generateStrongPassword}
+                className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 uppercase tracking-tight transition-colors"
               >
-                 {isGenerating ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                 Skip & Auto-generate
+                {isGenerating ? (
+                  <RefreshCw className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3 w-3" />
+                )}
+                Skip & Auto-generate
               </button>
             </div>
             <div className="relative group">
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? 'text' : 'password'}
                 required
                 className="appearance-none block w-full px-4 py-3 bg-gray-50 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm pr-12"
                 placeholder="Enter new password"
@@ -186,7 +211,9 @@ function ResetPasswordPage() {
               <div className="mt-2 text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-100 px-3 py-2 rounded-lg animate-in fade-in zoom-in-95 duration-300">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-3 w-3" />
-                  <span>System generated strong password. Save it or edit it.</span>
+                  <span>
+                    System generated strong password. Save it or edit it.
+                  </span>
                 </div>
               </div>
             )}
@@ -197,7 +224,7 @@ function ResetPasswordPage() {
               Confirm New Password
             </label>
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               required
               className="appearance-none block w-full px-4 py-3 bg-gray-50 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
               placeholder="Confirm new password"
@@ -208,11 +235,22 @@ function ResetPasswordPage() {
 
           {/* Validation Checklist */}
           <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-100">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Requirements</p>
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+              Requirements
+            </p>
             <div className="flex flex-col gap-2">
-              <RequirementItem isValid={valLength} text="At least 8 characters" />
-              <RequirementItem isValid={valAlpha} text="Include at least one letter" />
-              <RequirementItem isValid={valNum} text="Include at least one number" />
+              <RequirementItem
+                isValid={valLength}
+                text="At least 8 characters"
+              />
+              <RequirementItem
+                isValid={valAlpha}
+                text="Include at least one letter"
+              />
+              <RequirementItem
+                isValid={valNum}
+                text="Include at least one number"
+              />
               <RequirementItem isValid={valMatch} text="Passwords must match" />
             </div>
           </div>
@@ -222,11 +260,15 @@ function ResetPasswordPage() {
             disabled={!isPasswordValid || isLoading}
             className={`w-full py-3.5 rounded-xl text-white font-bold shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 ${
               isPasswordValid && !isLoading
-              ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer' 
-              : 'bg-gray-300 cursor-not-allowed'
+                ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer'
+                : 'bg-gray-300 cursor-not-allowed'
             }`}
           >
-            {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Save New Password'}
+            {isLoading ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              'Save New Password'
+            )}
           </button>
         </form>
       </div>
@@ -234,7 +276,13 @@ function ResetPasswordPage() {
   )
 }
 
-function RequirementItem({ isValid, text }: { isValid: boolean; text: string }) {
+function RequirementItem({
+  isValid,
+  text,
+}: {
+  isValid: boolean
+  text: string
+}) {
   return (
     <div className="flex items-center gap-2">
       {isValid ? (
@@ -242,7 +290,9 @@ function RequirementItem({ isValid, text }: { isValid: boolean; text: string }) 
       ) : (
         <div className="h-3.5 w-3.5 rounded-full border border-gray-300" />
       )}
-      <span className={`text-xs ${isValid ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>
+      <span
+        className={`text-xs ${isValid ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
+      >
         {text}
       </span>
     </div>

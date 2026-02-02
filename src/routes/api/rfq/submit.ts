@@ -8,9 +8,12 @@ export const Route = createFileRoute('/api/rfq/submit')({
         // TODO: Parse body using createRfqSchema
         // TODO: Create RFQ in database
         // TODO: Return created RFQ
-        return new Response(JSON.stringify({ message: 'Submit RFQ placeholder' }), {
-          headers: { 'Content-Type': 'application/json' },
-        })
+        return new Response(
+          JSON.stringify({ message: 'Submit RFQ placeholder' }),
+          {
+            headers: { 'Content-Type': 'application/json' },
+          },
+        )
       },
     },
   },

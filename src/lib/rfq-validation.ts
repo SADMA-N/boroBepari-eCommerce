@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 // RFQ Validation Schemas
 
@@ -9,26 +9,29 @@ export const rfqStatusEnum = z.enum([
   'rejected',
   'expired',
   'converted',
-]);
+])
 
 export const quoteStatusEnum = z.enum([
   'pending',
   'accepted',
   'rejected',
   'countered',
-]);
+])
 
 export const createRfqSchema = z.object({
   buyerId: z.string().min(1, 'Buyer ID is required'),
   supplierId: z.number().int().positive('Supplier ID is required'),
   productId: z.number().int().positive('Product ID is required'),
   quantity: z.number().int().positive('Quantity must be greater than 0'),
-  targetPrice: z.number().positive('Target price must be greater than 0').optional(),
+  targetPrice: z
+    .number()
+    .positive('Target price must be greater than 0')
+    .optional(),
   deliveryLocation: z.string().min(5, 'Delivery location is required'),
   notes: z.string().optional(),
   attachments: z.array(z.string().url()).optional(),
   expiresAt: z.string().datetime().optional(), // ISO date string
-});
+})
 
 export const createQuoteSchema = z.object({
   rfqId: z.number().int().positive('RFQ ID is required'),
@@ -36,7 +39,7 @@ export const createQuoteSchema = z.object({
   unitPrice: z.number().positive('Unit price must be greater than 0'),
   validityPeriod: z.string().datetime(), // ISO date string
   terms: z.string().optional(),
-});
+})
 
 /**
  * Validates if the requested quantity meets the Minimum Order Quantity (MOQ).
@@ -45,7 +48,7 @@ export const createQuoteSchema = z.object({
  * @returns boolean
  */
 export function validateMoq(quantity: number, moq: number): boolean {
-  return quantity >= moq;
+  return quantity >= moq
 }
 
 /**
@@ -55,7 +58,7 @@ export function validateMoq(quantity: number, moq: number): boolean {
  * @returns boolean
  */
 export function validatePrice(price: number): boolean {
-  return price > 0;
+  return price > 0
 }
 
 /**
@@ -64,9 +67,9 @@ export function validatePrice(price: number): boolean {
  * @returns Date object
  */
 export function calculateExpiry(days: number = 30): Date {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  return date;
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+  return date
 }
 
 /**
@@ -75,6 +78,7 @@ export function calculateExpiry(days: number = 30): Date {
  * @returns boolean
  */
 export function isExpired(expiryDate: Date | string): boolean {
-  const date = typeof expiryDate === 'string' ? new Date(expiryDate) : expiryDate;
-  return date < new Date();
+  const date =
+    typeof expiryDate === 'string' ? new Date(expiryDate) : expiryDate
+  return date < new Date()
 }

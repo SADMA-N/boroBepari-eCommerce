@@ -9,7 +9,11 @@ interface AuthModalProps {
   redirectPath?: string
 }
 
-export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalProps) {
+export default function AuthModal({
+  isOpen,
+  onClose,
+  redirectPath,
+}: AuthModalProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -25,19 +29,25 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
     setIsLoading(true)
 
     try {
-      await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: redirectPath || '/',
-      }, {
-        onSuccess: () => {
-          onClose()
-          router.invalidate()
+      await authClient.signIn.email(
+        {
+          email,
+          password,
+          callbackURL: redirectPath || '/',
         },
-        onError: (ctx) => {
-          setError(ctx.error.message || 'Login failed. Please verify your email or check credentials.')
-        }
-      })
+        {
+          onSuccess: () => {
+            onClose()
+            router.invalidate()
+          },
+          onError: (ctx) => {
+            setError(
+              ctx.error.message ||
+                'Login failed. Please verify your email or check credentials.',
+            )
+          },
+        },
+      )
     } catch (err) {
       setError('An unexpected error occurred')
     } finally {
@@ -81,7 +91,10 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
 
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+              <label
+                htmlFor="email"
+                className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -102,11 +115,14 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label htmlFor="password" className="block text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                >
                   Password
                 </label>
-                <Link 
-                  to="/forgot-password" 
+                <Link
+                  to="/forgot-password"
                   onClick={onClose}
                   className="text-xs text-orange-600 hover:underline font-medium"
                 >
@@ -118,7 +134,7 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
                   <Lock size={18} />
                 </div>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   required
                   value={password}
@@ -141,7 +157,11 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
               disabled={isLoading}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-70"
             >
-              {isLoading ? <Loader2 className="animate-spin" size={20} /> : 'Login'}
+              {isLoading ? (
+                <Loader2 className="animate-spin" size={20} />
+              ) : (
+                'Login'
+              )}
             </button>
           </form>
 
@@ -150,7 +170,9 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -184,8 +206,8 @@ export default function AuthModal({ isOpen, onClose, redirectPath }: AuthModalPr
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Don't have an account?{' '}
-            <Link 
-              to="/register" 
+            <Link
+              to="/register"
               onClick={onClose}
               className="text-orange-600 font-bold hover:underline"
             >

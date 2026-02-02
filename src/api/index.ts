@@ -1,6 +1,11 @@
 import { Hono } from 'hono'
 import { Scalar } from '@scalar/hono-api-reference'
-import { describeRoute, openAPIRouteHandler, resolver, validator } from 'hono-openapi'
+import {
+  describeRoute,
+  openAPIRouteHandler,
+  resolver,
+  validator,
+} from 'hono-openapi'
 import { z } from 'zod'
 import { CreateTodoSchema, TodoSchema } from './schemas/todo'
 
@@ -33,7 +38,7 @@ app.get(
   }),
   (c) => {
     return c.json(todos)
-  }
+  },
 )
 
 // POST /api/todos - Create a new todo
@@ -60,7 +65,7 @@ app.post(
     const newTodo = { id: todos.length + 1, name: input.name }
     todos.push(newTodo)
     return c.json(newTodo, 201)
-  }
+  },
 )
 
 // OpenAPI spec endpoint - MUST be after all routes
@@ -78,7 +83,7 @@ app.get(
       ],
       tags: [{ name: 'Todos', description: 'Todo management endpoints' }],
     },
-  })
+  }),
 )
 
 // Scalar documentation UI
@@ -88,7 +93,7 @@ app.get(
     url: '/api/openapi',
     theme: 'purple',
     pageTitle: 'Borobepari API Documentation',
-  })
+  }),
 )
 
 export default app

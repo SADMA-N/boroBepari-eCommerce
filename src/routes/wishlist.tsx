@@ -11,13 +11,9 @@ import {
 } from 'lucide-react'
 import { useWishlist } from '../contexts/WishlistContext'
 import { useCart } from '../contexts/CartContext'
-import {
-  
-  formatBDT,
-  getSupplierById
-} from '../data/mock-products'
+import { formatBDT, getSupplierById } from '../data/mock-products'
 import Toast from '../components/Toast'
-import type {MockProduct} from '../data/mock-products';
+import type { MockProduct } from '../data/mock-products'
 
 export const Route = createFileRoute('/wishlist')({
   component: WishlistPage,
@@ -34,16 +30,19 @@ function WishlistItem({ product }: { product: MockProduct }) {
 
   const handleAddToCart = () => {
     addToCart(product.id, quantity)
-    setToastMessage(`Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`)
+    setToastMessage(
+      `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+    )
     setShowToast(true)
   }
 
   const increment = () => setQuantity((q) => q + 1)
-  const decrement = () => setQuantity((q) => (q > product.moq ? q - 1 : product.moq))
+  const decrement = () =>
+    setQuantity((q) => (q > product.moq ? q - 1 : product.moq))
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
-        <Toast
+      <Toast
         message={toastMessage}
         isVisible={showToast}
         onClose={() => setShowToast(false)}
@@ -86,9 +85,7 @@ function WishlistItem({ product }: { product: MockProduct }) {
             <span className="text-xl font-bold text-orange-600">
               {formatBDT(product.price)}
             </span>
-            <span className="text-sm text-gray-500">
-              / {product.unit}
-            </span>
+            <span className="text-sm text-gray-500">/ {product.unit}</span>
             {product.originalPrice && (
               <span className="text-sm text-gray-400 line-through">
                 {formatBDT(product.originalPrice)}
@@ -97,11 +94,15 @@ function WishlistItem({ product }: { product: MockProduct }) {
           </div>
 
           <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-             <Package size={14} />
-             <span>MOQ: {product.moq} {product.unit}</span>
-             <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
-             </span>
+            <Package size={14} />
+            <span>
+              MOQ: {product.moq} {product.unit}
+            </span>
+            <span
+              className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
+            >
+              {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+            </span>
           </div>
         </div>
       </div>
@@ -147,7 +148,7 @@ function WishlistPage() {
     // Generate a shareable link (simulated)
     const url = `${window.location.origin}/wishlist?ids=${wishlistIds.join(',')}`
     navigator.clipboard.writeText(url).then(() => {
-        setShareToastOpen(true)
+      setShareToastOpen(true)
     })
   }
 
@@ -158,31 +159,37 @@ function WishlistPage() {
         isVisible={shareToastOpen}
         onClose={() => setShareToastOpen(false)}
       />
-      
+
       <div className="flex items-center justify-between mb-8">
         <div>
-            <h1 className="text-2xl font-bold text-gray-800">My Wishlist</h1>
-            <p className="text-gray-500 mt-1">{wishlistItems.length} items saved</p>
+          <h1 className="text-2xl font-bold text-gray-800">My Wishlist</h1>
+          <p className="text-gray-500 mt-1">
+            {wishlistItems.length} items saved
+          </p>
         </div>
-        
+
         {wishlistItems.length > 0 && (
-            <button
+          <button
             onClick={handleShare}
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors"
-            >
+          >
             <Share2 size={18} />
             Share Wishlist
-            </button>
+          </button>
         )}
       </div>
 
       {wishlistItems.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-lg">
           <div className="bg-white p-4 rounded-full inline-block shadow-sm mb-4">
-             <HeartIcon size={48} className="text-gray-300" />
+            <HeartIcon size={48} className="text-gray-300" />
           </div>
-          <h2 className="text-xl font-medium text-gray-800 mb-2">Your wishlist is empty</h2>
-          <p className="text-gray-500 mb-6">Save items you want to buy later by clicking the heart icon.</p>
+          <h2 className="text-xl font-medium text-gray-800 mb-2">
+            Your wishlist is empty
+          </h2>
+          <p className="text-gray-500 mb-6">
+            Save items you want to buy later by clicking the heart icon.
+          </p>
           <a
             href="/"
             className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
@@ -201,22 +208,22 @@ function WishlistPage() {
   )
 }
 
-// Custom heart icon for empty state to avoid conflict with Lucide import if needed, 
+// Custom heart icon for empty state to avoid conflict with Lucide import if needed,
 // though we can just use the imported one.
-function HeartIcon({ size, className }: { size: number, className?: string }) {
-    return (
-        <svg 
-            width={size} 
-            height={size} 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={className}
-        >
-            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-        </svg>
-    )
+function HeartIcon({ size, className }: { size: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+    </svg>
+  )
 }

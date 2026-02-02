@@ -1,7 +1,7 @@
 import { BadgeCheck, ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import {  getVerifiedSuppliers } from '../data/mock-products'
-import type {MockSupplier} from '../data/mock-products';
+import { getVerifiedSuppliers } from '../data/mock-products'
+import type { MockSupplier } from '../data/mock-products'
 
 interface PopularSuppliersProps {
   suppliers?: Array<MockSupplier>
@@ -21,7 +21,8 @@ export default function PopularSuppliers({
     if (container) {
       setCanScrollLeft(container.scrollLeft > 0)
       setCanScrollRight(
-        container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+        container.scrollLeft <
+          container.scrollWidth - container.clientWidth - 10,
       )
     }
   }
@@ -99,7 +100,9 @@ function SupplierCard({ supplier }: { supplier: MockSupplier }) {
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1">
-            <h3 className="font-medium text-gray-800 truncate">{supplier.name}</h3>
+            <h3 className="font-medium text-gray-800 truncate">
+              {supplier.name}
+            </h3>
             {supplier.verified && (
               <BadgeCheck size={16} className="text-blue-500 flex-shrink-0" />
             )}

@@ -37,7 +37,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return prev.map((item) =>
           item.productId === productId
             ? { ...item, quantity: item.quantity + quantity }
-            : item
+            : item,
         )
       }
       return [...prev, { productId, quantity }]
@@ -55,8 +55,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
     setCartItems((prev) =>
       prev.map((item) =>
-        item.productId === productId ? { ...item, quantity } : item
-      )
+        item.productId === productId ? { ...item, quantity } : item,
+      ),
     )
   }
 

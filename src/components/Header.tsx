@@ -27,14 +27,16 @@ export default function Header() {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [redirectPath, setRedirectPath] = useState<string | undefined>(undefined)
+  const [redirectPath, setRedirectPath] = useState<string | undefined>(
+    undefined,
+  )
   const [isCartOpen, setIsCartOpen] = useState(false)
-  
+
   const { cartCount } = useCart()
   const { wishlistItems } = useWishlist()
   const { isAuthenticated, user, logout } = useAuth()
   const router = useRouter()
-  
+
   const wishlistCount = wishlistItems.length
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
@@ -53,16 +55,13 @@ export default function Header() {
 
   return (
     <>
-      <AuthModal 
-        isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
         redirectPath={redirectPath}
       />
 
-      <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-      />
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       {/* Top Bar */}
       <div className="bg-gray-900 text-gray-300 text-xs py-2 hidden sm:block">
@@ -71,11 +70,17 @@ export default function Header() {
             <span>Welcome to BoroBepari - Bangladesh's B2B Marketplace</span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/sell" className="hover:text-orange-400 flex items-center gap-1">
+            <a
+              href="/sell"
+              className="hover:text-orange-400 flex items-center gap-1"
+            >
               <Store size={14} />
               Sell on BoroBepari
             </a>
-            <a href="/help" className="hover:text-orange-400 flex items-center gap-1">
+            <a
+              href="/help"
+              className="hover:text-orange-400 flex items-center gap-1"
+            >
               <HelpCircle size={14} />
               Help
             </a>
@@ -179,13 +184,18 @@ export default function Header() {
                 onMouseEnter={() => setShowUserDropdown(true)}
                 onMouseLeave={() => setShowUserDropdown(false)}
               >
-                <button 
+                <button
                   onClick={() => setShowUserDropdown(!showUserDropdown)}
                   className="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors focus:outline-none"
                 >
-                  <User size={22} className={isAuthenticated ? "text-orange-500" : ""} />
+                  <User
+                    size={22}
+                    className={isAuthenticated ? 'text-orange-500' : ''}
+                  />
                   <span className="text-xs hidden sm:block">
-                    {isAuthenticated && user ? user.name.split(' ')[0] : 'Account'}
+                    {isAuthenticated && user
+                      ? user.name.split(' ')[0]
+                      : 'Account'}
                   </span>
                 </button>
 
@@ -194,8 +204,12 @@ export default function Header() {
                     {isAuthenticated ? (
                       <>
                         <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{user?.name}</p>
-                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {user?.name}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {user?.email}
+                          </p>
                         </div>
                         <div className="py-1">
                           <Link
@@ -219,8 +233,8 @@ export default function Header() {
                         <div className="py-1">
                           <button
                             onClick={() => {
-                                handleLogout();
-                                setShowUserDropdown(false);
+                              handleLogout()
+                              setShowUserDropdown(false)
                             }}
                             className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
                           >
@@ -232,8 +246,12 @@ export default function Header() {
                     ) : (
                       <>
                         <div className="px-4 py-3 border-b border-gray-100">
-                          <p className="text-sm font-medium text-gray-900">Welcome to BoroBepari</p>
-                          <p className="text-xs text-gray-500">Sign in to start trading</p>
+                          <p className="text-sm font-medium text-gray-900">
+                            Welcome to BoroBepari
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Sign in to start trading
+                          </p>
                         </div>
                         <div className="p-3 space-y-2">
                           <button
@@ -260,8 +278,8 @@ export default function Header() {
                           <Link
                             to="/account"
                             onClick={(e) => {
-                                handleAuthRequired(e, '/account')
-                                setShowUserDropdown(false)
+                              handleAuthRequired(e, '/account')
+                              setShowUserDropdown(false)
                             }}
                             className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                           >

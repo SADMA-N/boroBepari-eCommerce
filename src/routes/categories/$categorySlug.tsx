@@ -6,13 +6,11 @@ import FilterSidebar from '../../components/FilterSidebar'
 import Footer from '../../components/Footer'
 import { FeaturedProductsGridSkeleton } from '../../components/FeaturedProductsGrid'
 import {
-  
-  
   filterProducts,
   getCategoryBySlug,
-  mockCategories
+  mockCategories,
 } from '../../data/mock-products'
-import type {MockProduct, ProductFilters} from '../../data/mock-products';
+import type { MockProduct, ProductFilters } from '../../data/mock-products'
 
 interface SearchParams {
   minPrice?: string
@@ -58,16 +56,19 @@ function CategoryPage() {
   })
 
   // Parse filters from URL search params
-  const filters: ProductFilters = useMemo(() => ({
-    categoryId: category?.id,
-    minPrice: search.minPrice ? Number(search.minPrice) : undefined,
-    maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
-    minMoq: search.minMoq ? Number(search.minMoq) : undefined,
-    maxMoq: search.maxMoq ? Number(search.maxMoq) : undefined,
-    locations: search.locations ? search.locations.split(',') : undefined,
-    verifiedOnly: search.verifiedOnly === 'true',
-    sortBy: search.sortBy as ProductFilters['sortBy'],
-  }), [category?.id, search])
+  const filters: ProductFilters = useMemo(
+    () => ({
+      categoryId: category?.id,
+      minPrice: search.minPrice ? Number(search.minPrice) : undefined,
+      maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
+      minMoq: search.minMoq ? Number(search.minMoq) : undefined,
+      maxMoq: search.maxMoq ? Number(search.maxMoq) : undefined,
+      locations: search.locations ? search.locations.split(',') : undefined,
+      verifiedOnly: search.verifiedOnly === 'true',
+      sortBy: search.sortBy as ProductFilters['sortBy'],
+    }),
+    [category?.id, search],
+  )
 
   // Filter products
   const [products, setProducts] = useState<Array<MockProduct>>([])
@@ -85,24 +86,32 @@ function CategoryPage() {
   }, [filters])
 
   // Update URL when filters change
-  const handleFiltersChange = useCallback((newFilters: ProductFilters) => {
-    const newSearch: Record<string, string> = {}
+  const handleFiltersChange = useCallback(
+    (newFilters: ProductFilters) => {
+      const newSearch: Record<string, string> = {}
 
-    if (newFilters.minPrice !== undefined) newSearch.minPrice = String(newFilters.minPrice)
-    if (newFilters.maxPrice !== undefined) newSearch.maxPrice = String(newFilters.maxPrice)
-    if (newFilters.minMoq !== undefined) newSearch.minMoq = String(newFilters.minMoq)
-    if (newFilters.maxMoq !== undefined) newSearch.maxMoq = String(newFilters.maxMoq)
-    if (newFilters.locations?.length) newSearch.locations = newFilters.locations.join(',')
-    if (newFilters.verifiedOnly) newSearch.verifiedOnly = 'true'
-    if (newFilters.sortBy) newSearch.sortBy = newFilters.sortBy
+      if (newFilters.minPrice !== undefined)
+        newSearch.minPrice = String(newFilters.minPrice)
+      if (newFilters.maxPrice !== undefined)
+        newSearch.maxPrice = String(newFilters.maxPrice)
+      if (newFilters.minMoq !== undefined)
+        newSearch.minMoq = String(newFilters.minMoq)
+      if (newFilters.maxMoq !== undefined)
+        newSearch.maxMoq = String(newFilters.maxMoq)
+      if (newFilters.locations?.length)
+        newSearch.locations = newFilters.locations.join(',')
+      if (newFilters.verifiedOnly) newSearch.verifiedOnly = 'true'
+      if (newFilters.sortBy) newSearch.sortBy = newFilters.sortBy
 
-    navigate({
-      to: '/categories/$categorySlug',
-      params: { categorySlug },
-      search: newSearch,
-      replace: true,
-    })
-  }, [navigate, categorySlug])
+      navigate({
+        to: '/categories/$categorySlug',
+        params: { categorySlug },
+        search: newSearch,
+        replace: true,
+      })
+    },
+    [navigate, categorySlug],
+  )
 
   // Pagination
   const page = search.page ? Number(search.page) : 1
@@ -110,7 +119,7 @@ function CategoryPage() {
   const totalPages = Math.ceil(products.length / productsPerPage)
   const paginatedProducts = products.slice(
     (page - 1) * productsPerPage,
-    page * productsPerPage
+    page * productsPerPage,
   )
 
   const handlePageChange = (newPage: number) => {
@@ -211,8 +220,8 @@ function CategoryPage() {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 {/* Results count */}
                 <p className="text-sm text-gray-600">
-                  <span className="font-medium">{products.length}</span> products
-                  found
+                  <span className="font-medium">{products.length}</span>{' '}
+                  products found
                 </p>
 
                 <div className="flex items-center gap-4">
@@ -255,7 +264,9 @@ function CategoryPage() {
                     onChange={(e) =>
                       handleFiltersChange({
                         ...filters,
-                        sortBy: e.target.value as ProductFilters['sortBy'] || undefined,
+                        sortBy:
+                          (e.target.value as ProductFilters['sortBy']) ||
+                          undefined,
                       })
                     }
                     className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
@@ -316,7 +327,9 @@ function CategoryPage() {
                       onRemove={() =>
                         handleFiltersChange({
                           ...filters,
-                          locations: filters.locations?.filter((l) => l !== location),
+                          locations: filters.locations?.filter(
+                            (l) => l !== location,
+                          ),
                         })
                       }
                     />

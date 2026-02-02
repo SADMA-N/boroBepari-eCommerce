@@ -4,41 +4,43 @@ import HeroBanner from '../components/HeroBanner'
 import CategorySidebar, { CategoryList } from '../components/CategorySidebar'
 import FeaturedProductsGrid from '../components/FeaturedProductsGrid'
 import PopularSuppliers from '../components/PopularSuppliers'
-import PromoBanners, { FrequentlySearched, PromoStrip } from '../components/PromoBanner'
+import PromoBanners, {
+  FrequentlySearched,
+  PromoStrip,
+} from '../components/PromoBanner'
 import Footer from '../components/Footer'
 import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import {
-  
   frequentlySearched,
   getFeaturedProducts,
   getNewArrivals,
   getTopRanking,
-  mockCategories
+  mockCategories,
 } from '../data/mock-products'
-import type {MockProduct} from '../data/mock-products';
+import type { MockProduct } from '../data/mock-products'
 import { checkUserPasswordStatus } from '@/lib/auth-server'
 
-export const Route = createFileRoute('/')({ 
+export const Route = createFileRoute('/')({
   beforeLoad: async () => {
     try {
-        const status = await checkUserPasswordStatus()
-        if (status.needsPassword) {
-            // Check for skip cookie (manual check since we are in server context potentially)
-            // On client side, document.cookie is available.
-            // On server side, we'd need headers, but checkUserPasswordStatus is safe to run.
-            // For now, let's trigger the redirect and let the target page handle skip logic if needed,
-            // or better, just rely on client-side redirect for 'skip' support.
-            
-            // Actually, let's keep it simple: if the server says they need it, 
-            // and we don't have a skip cookie, redirect.
-            throw redirect({ to: '/auth/set-password' })
-        }
+      const status = await checkUserPasswordStatus()
+      if (status.needsPassword) {
+        // Check for skip cookie (manual check since we are in server context potentially)
+        // On client side, document.cookie is available.
+        // On server side, we'd need headers, but checkUserPasswordStatus is safe to run.
+        // For now, let's trigger the redirect and let the target page handle skip logic if needed,
+        // or better, just rely on client-side redirect for 'skip' support.
+
+        // Actually, let's keep it simple: if the server says they need it,
+        // and we don't have a skip cookie, redirect.
+        throw redirect({ to: '/auth/set-password' })
+      }
     } catch (e) {
-        if ((e as any).status === 307 || (e as any).status === 302) throw e
+      if ((e as any).status === 307 || (e as any).status === 302) throw e
     }
   },
-  component: HomePage 
+  component: HomePage,
 })
 
 function HomePage() {
@@ -48,7 +50,9 @@ function HomePage() {
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
   // Quick View & Toast State
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null)
+  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(
+    null,
+  )
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
@@ -61,7 +65,7 @@ function HomePage() {
   const handleAddToCart = (product: MockProduct, quantity: number) => {
     // In a real app, this would dispatch to a cart store
     console.log(`Added ${quantity} of ${product.name} to cart`)
-    
+
     setQuickViewProduct(null)
     setToast({
       message: `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
@@ -93,7 +97,9 @@ function HomePage() {
 
       {/* Categories Grid - Mobile/Tablet */}
       <section className="lg:hidden max-w-[1440px] mx-auto px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Shop by Category</h2>
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Shop by Category
+        </h2>
         <CategoryList categories={mainCategories} />
       </section>
 
@@ -200,7 +206,7 @@ function HomePage() {
       <Toast
         message={toast.message}
         isVisible={toast.isVisible}
-        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
     </div>
   )
@@ -210,14 +216,14 @@ function HomePage() {
 function getCategoryEmoji(slug: string): string {
   const emojiMap: Record<string, string> = {
     'fashion-apparel': '👕',
-    'electronics': '📱',
+    electronics: '📱',
     'home-living': '🏠',
     'beauty-personal-care': '✨',
     'sports-outdoors': '⚽',
     'food-beverages': '🍜',
     'industrial-supplies': '🏭',
     'office-stationery': '📎',
-    'packaging': '📦',
+    packaging: '📦',
     'raw-materials': '🧱',
   }
   return emojiMap[slug] || '📦'
