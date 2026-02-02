@@ -30,10 +30,14 @@ import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
+import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
+import { Route as ApiCartAddRouteImport } from './routes/api/cart/add'
+import { Route as ApiCartUserIdRouteImport } from './routes/api/cart/$userId'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as ApiCartItemItemIdRouteImport } from './routes/api/cart/item/$itemId'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
@@ -140,6 +144,21 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCartValidateCouponRoute = ApiCartValidateCouponRouteImport.update({
+  id: '/api/cart/validate-coupon',
+  path: '/api/cart/validate-coupon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartAddRoute = ApiCartAddRouteImport.update({
+  id: '/api/cart/add',
+  path: '/api/cart/add',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartUserIdRoute = ApiCartUserIdRouteImport.update({
+  id: '/api/cart/$userId',
+  path: '/api/cart/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
@@ -160,6 +179,11 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
   path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCartItemItemIdRoute = ApiCartItemItemIdRouteImport.update({
+  id: '/api/cart/item/$itemId',
+  path: '/api/cart/item/$itemId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -176,6 +200,9 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -183,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -203,6 +231,9 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -210,6 +241,7 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -231,6 +263,9 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -238,6 +273,7 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
@@ -260,6 +296,9 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
     | '/api/rpc/$'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -267,6 +306,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/cart/item/$itemId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -287,6 +327,9 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
     | '/api/rpc/$'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -294,6 +337,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/cart/item/$itemId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -314,6 +358,9 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
     | '/api/rpc/$'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -321,6 +368,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/cart/item/$itemId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
@@ -342,6 +390,9 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
+  ApiCartUserIdRoute: typeof ApiCartUserIdRoute
+  ApiCartAddRoute: typeof ApiCartAddRoute
+  ApiCartValidateCouponRoute: typeof ApiCartValidateCouponRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
@@ -349,6 +400,7 @@ export interface RootRouteChildren {
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
+  ApiCartItemItemIdRoute: typeof ApiCartItemItemIdRoute
   DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
   DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
   DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
@@ -504,6 +556,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cart/validate-coupon': {
+      id: '/api/cart/validate-coupon'
+      path: '/api/cart/validate-coupon'
+      fullPath: '/api/cart/validate-coupon'
+      preLoaderRoute: typeof ApiCartValidateCouponRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/add': {
+      id: '/api/cart/add'
+      path: '/api/cart/add'
+      fullPath: '/api/cart/add'
+      preLoaderRoute: typeof ApiCartAddRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/$userId': {
+      id: '/api/cart/$userId'
+      path: '/api/cart/$userId'
+      fullPath: '/api/cart/$userId'
+      preLoaderRoute: typeof ApiCartUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/ssr/': {
       id: '/demo/start/ssr/'
       path: '/demo/start/ssr'
@@ -532,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cart/item/$itemId': {
+      id: '/api/cart/item/$itemId'
+      path: '/api/cart/item/$itemId'
+      fullPath: '/api/cart/item/$itemId'
+      preLoaderRoute: typeof ApiCartItemItemIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -550,6 +630,9 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
+  ApiCartUserIdRoute: ApiCartUserIdRoute,
+  ApiCartAddRoute: ApiCartAddRoute,
+  ApiCartValidateCouponRoute: ApiCartValidateCouponRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
@@ -557,6 +640,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
+  ApiCartItemItemIdRoute: ApiCartItemItemIdRoute,
   DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
   DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
   DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,

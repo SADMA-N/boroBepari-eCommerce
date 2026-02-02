@@ -1,0 +1,586 @@
+git checkout main
+git pull origin main
+git checkout -b epic-4-cart-checkout
+```
+
+---
+
+### **Subtask 4.1: Cart Data Models & State Management**
+
+**Prompt for Gemini:**
+```
+I'm implementing the cart and checkout system for BoroBepari B2B marketplace.
+
+Create the following:
+
+1. TypeScript types:
+   - CartItem (id, productId, productName, image, supplierId, quantity, unitPrice, moq, lineTotal)
+   - Cart (items: CartItem[], subtotal, deliveryFee, discount, total, supplierBreakdown)
+   - CouponCode (code, discountType: 'percentage' | 'fixed', value, minOrderValue, expiryDate)
+   
+2. Cart context/state management:
+   - Use React Context or Zustand for global cart state
+   - Actions: addItem, removeItem, updateQuantity, clearCart, applyCoupon
+   - Persist cart to localStorage with 7-day expiry
+   - Merge guest cart with user cart on login
+
+3. Cart validation utilities:
+   - Check MOQ compliance for each item
+   - Validate stock availability
+   - Calculate supplier-wise subtotals (multi-supplier cart support)
+   - Apply coupon code logic
+
+4. API routes (placeholder):
+   - GET /api/cart/:userId - Fetch user cart
+   - POST /api/cart/add - Add item to cart
+   - PATCH /api/cart/item/:itemId - Update quantity
+   - DELETE /api/cart/item/:itemId - Remove item
+   - POST /api/cart/validate-coupon - Validate coupon code
+
+Place files in appropriate directories and add comprehensive comments.
+```
+
+**Commit Message:** `feat(epic-4): add cart data models and state management`
+
+---
+
+### **Subtask 4.2: Cart UI Component**
+
+**Prompt for Gemini:**
+```
+Create the cart UI component with all required features.
+
+Requirements:
+
+1. Create `CartPage.tsx`:
+   - Route: /cart
+   - Display all cart items grouped by supplier
+   - Each supplier section shows:
+     * Supplier name + verification badge
+     * Items from that supplier
+     * Supplier subtotal
+
+2. Cart Item Row:
+   - Product image (thumbnail, clickable to PDP)
+   - Product name and basic specs
+   - Unit price in BDT
+   - Quantity selector (with +/- buttons)
+   - Line total (quantity × unit price)
+   - Remove button (trash icon)
+
+3. Quantity Controls:
+   - Increment/decrement buttons
+   - Direct input (validate on blur)
+   - Show MOQ warning if quantity < MOQ
+   - Disable checkout if any item violates MOQ
+   - Real-time line total and order total updates
+
+4. Cart Summary Sidebar:
+   - Subtotal
+   - Delivery fee (show breakdown if multiple suppliers)
+   - Discount (if coupon applied)
+   - Total (bold, large text)
+   - "Proceed to Checkout" button (primary, sticky on mobile)
+
+5. Empty Cart State:
+   - "Your cart is empty" message
+   - Illustration/icon
+   - "Continue Shopping" button
+
+Use Tailwind CSS for responsive design and smooth animations.
+```
+
+**Commit Message:** `feat(epic-4): create cart page UI with item management`
+
+---
+
+### **Subtask 4.3: Coupon Code Application**
+
+**Prompt for Gemini:**
+```
+Implement coupon code functionality in the cart.
+
+Tasks:
+
+1. Coupon Input Section (in cart summary):
+   - Text input for coupon code
+   - "Apply" button
+   - Show applied coupon with discount amount
+   - "Remove" button to clear coupon
+
+2. Coupon Validation:
+   - Check code exists and is valid
+   - Verify expiry date
+   - Check minimum order value requirement
+   - Ensure code not already used (if one-time use)
+   
+3. Discount Calculation:
+   - Percentage discount: Apply to subtotal
+   - Fixed discount: Subtract from total
+   - Don't allow total to go below 0
+   - Show original price (strikethrough) and discounted price
+
+4. Error Handling:
+   - "Invalid coupon code"
+   - "Coupon expired"
+   - "Minimum order value not met (₹X required)"
+   - "This coupon has already been used"
+
+5. Success State:
+   - Green checkmark icon
+   - "Coupon applied! You saved ₹X"
+   - Show discount breakdown in summary
+
+Integrate with API endpoint `/api/cart/validate-coupon` and handle async validation.
+```
+
+**Commit Message:** `feat(epic-4): implement coupon code validation and application`
+
+---
+
+### **Subtask 4.4: MOQ Validation & Warnings**
+
+**Prompt for Gemini:**
+```
+Add MOQ (Minimum Order Quantity) validation and user warnings.
+
+Requirements:
+
+1. MOQ Check on Cart Items:
+   - For each item, compare quantity with MOQ
+   - If quantity < MOQ, show warning banner on item row:
+     * "Minimum order: X units"
+     * Highlight row with warning color (yellow/orange border)
+     * Show "Increase to MOQ" quick action button
+
+2. Checkout Blocking:
+   - If ANY item violates MOQ, disable "Proceed to Checkout" button
+   - Show banner at top of cart:
+     * "Cannot proceed: Some items don't meet minimum order quantity"
+     * List affected products with links
+
+3. Quick Fix Actions:
+   - "Increase to MOQ" button: Auto-set quantity to MOQ value
+   - "Remove from cart" button: Quick remove if buyer doesn't want MOQ
+
+4. Real-time Validation:
+   - Check MOQ when quantity changes
+   - Update warnings instantly
+   - Re-enable checkout when all items meet MOQ
+
+5. Multi-Supplier MOQ Handling:
+   - Each supplier may have different MOQs
+   - Group warnings by supplier
+   - Show supplier-specific MOQ rules
+
+Add visual indicators (icons, colors) and ensure mobile-friendly layout.
+```
+
+**Commit Message:** `feat(epic-4): add MOQ validation and warnings in cart`
+
+---
+
+### **Subtask 4.5: Checkout Flow - Address Selection**
+
+**Prompt for Gemini:**
+```
+Create the first step of checkout: delivery address selection.
+
+Requirements:
+
+1. Create `CheckoutPage.tsx` with multi-step layout:
+   - Progress indicator: Address → Payment → Review
+   - Current step highlighted
+   - Route: /checkout
+
+2. Address Selection Step:
+   - Fetch saved addresses from user profile (Epic 2)
+   - Display address cards in grid:
+     * Full address text
+     * Address label (Home/Office/Warehouse)
+     * "Default" badge if default address
+     * Radio button for selection
+   
+3. Address Card Actions:
+   - Select address (radio button)
+   - Edit address (pencil icon) - open edit modal
+   - Delete address (trash icon) - confirm before delete
+   
+4. Add New Address:
+   - "+ Add New Address" button
+   - Modal form with fields:
+     * Address label (dropdown: Home/Office/Warehouse/Other)
+     * Full address (textarea)
+     * City (text input)
+     * Postal code (text input)
+     * Phone number (text input)
+     * "Set as default" checkbox
+   - Form validation and error messages
+
+5. Navigation:
+   - "Continue to Payment" button (disabled if no address selected)
+   - "Back to Cart" link
+
+For guest users, show single address form instead of saved addresses.
+```
+
+**Commit Message:** `feat(epic-4): add checkout address selection step`
+
+---
+
+### **Subtask 4.6: Checkout Flow - Payment Method Selection**
+
+**Prompt for Gemini:**
+```
+Create the payment method selection step in checkout.
+
+Requirements:
+
+1. Payment Options Display:
+   - Radio button list with 3 options:
+     a) Full Payment (bKash/Card)
+     b) 30% Deposit (Pay rest on delivery)
+     c) Pay on Delivery (Only for verified buyers)
+   
+2. Payment Option Details:
+
+   Full Payment:
+   - Icon: Credit card / bKash logo
+   - Description: "Pay complete amount now"
+   - Total amount display
+   - Sub-options: bKash | Credit/Debit Card
+   
+   30% Deposit:
+   - Icon: Percentage icon
+   - Description: "Pay 30% now, rest on delivery"
+   - Show deposit amount (30% of total)
+   - Show balance due (70% of total)
+   
+   Pay on Delivery:
+   - Icon: Cash icon
+   - Description: "Pay when you receive the order"
+   - Show "Available for verified buyers only"
+   - Disable if buyer not verified (show tooltip explaining why)
+
+3. Optional Fields:
+   - PO Number input field (for business buyers)
+   - Special instructions textarea (optional)
+
+4. Payment Method Selection:
+   - Highlight selected option
+   - Show payment breakdown based on selection
+   - Update order summary with payment method
+
+5. Navigation:
+   - "Back to Address" button
+   - "Continue to Review" button (disabled if no payment method selected)
+
+Add helper text and tooltips for each payment method.
+```
+
+**Commit Message:** `feat(epic-4): add checkout payment method selection step`
+
+---
+
+### **Subtask 4.7: Checkout Flow - Order Review & Confirmation**
+
+**Prompt for Gemini:**
+```
+Create the final review step before order placement.
+
+Requirements:
+
+1. Order Review Page Layout:
+   - Three main sections:
+     a) Delivery Address (from Step 1)
+     b) Payment Method (from Step 2)
+     c) Order Summary (items, pricing)
+   
+2. Delivery Address Section:
+   - Display selected address
+   - "Change" link → Go back to Step 1
+
+3. Payment Method Section:
+   - Display selected payment method
+   - Show payment breakdown (deposit/full/COD)
+   - "Change" link → Go back to Step 2
+
+4. Order Summary Section:
+   - List all items (grouped by supplier)
+   - Show: Product image, name, quantity, unit price, line total
+   - Display:
+     * Subtotal
+     * Delivery fee (per supplier if multiple)
+     * Discount (if coupon applied)
+     * **Total Amount**
+   - For 30% deposit: Show deposit amount and balance due clearly
+
+5. Terms & Conditions:
+   - Checkbox: "I agree to Terms & Conditions"
+   - Link to T&C page (opens in new tab)
+   - Disable "Place Order" button if not checked
+
+6. Place Order Button:
+   - Large, prominent primary button
+   - Loading state with spinner when clicked
+   - Success: Redirect to order confirmation page
+   - Error: Show error message, allow retry
+
+Ensure all information is clearly visible and easy to verify before order placement.
+```
+
+**Commit Message:** `feat(epic-4): add checkout review and order placement step`
+
+---
+
+### **Subtask 4.8: Payment Integration - bKash**
+
+**Prompt for Gemini:**
+```
+Integrate bKash payment gateway for order payments.
+
+Requirements:
+
+1. bKash Payment Flow:
+   - When user selects bKash and clicks "Place Order"
+   - Call backend API to create payment intent
+   - Backend returns bKash payment URL
+   - Redirect user to bKash payment page
+
+2. Create `BkashPaymentHandler.tsx`:
+   - Handle redirection to bKash
+   - Show loading screen with "Redirecting to bKash..." message
+   - bKash logo and payment icon
+
+3. Payment Callback Handling:
+   - Route: /checkout/payment-callback
+   - Query params: ?status=success&orderId=XXX&transactionId=YYY
+   - If success:
+     * Verify payment with backend
+     * Show success message
+     * Redirect to order confirmation page
+   - If failed/cancelled:
+     * Show error message
+     * "Retry Payment" button
+     * "Cancel Order" button
+
+4. Payment Status Tracking:
+   - Store payment status in order
+   - Statuses: pending | processing | completed | failed | refunded
+   - Update order status based on payment status
+
+5. Error Handling:
+   - Network errors during redirect
+   - Payment timeout (30 minutes)
+   - Invalid transaction response
+   - Show user-friendly error messages
+
+Note: Use sandbox/test credentials for development. Add configuration for production keys.
+```
+
+**Commit Message:** `feat(epic-4): integrate bKash payment gateway`
+
+---
+
+### **Subtask 4.9: Order Confirmation Page**
+
+**Prompt for Gemini:**
+```
+Create order confirmation page shown after successful order placement.
+
+Requirements:
+
+1. Create `OrderConfirmationPage.tsx`:
+   - Route: /order-confirmation/:orderId
+   - Success animation (checkmark icon with fade-in)
+   
+2. Confirmation Details:
+   - Large heading: "Order Placed Successfully!"
+   - Order number (large, copyable)
+   - Order date and time
+   - Estimated delivery date
+   
+3. Order Summary:
+   - List of items ordered
+   - Delivery address
+   - Payment method and amount paid
+   - Total amount
+   
+4. Next Steps Section:
+   - "Track your order" button → Link to order tracking page
+   - "Download Invoice" button → Generate PDF
+   - "Continue Shopping" button → Homepage/catalog
+
+5. Email/SMS Confirmation:
+   - Show message: "Order confirmation sent to [email] and [phone]"
+   - Icon/checkmark indicating sent
+   
+6. Post-Purchase Actions:
+   - For guest orders: "Create Account" prompt
+     * "Save your details for faster checkout next time"
+     * "Create Account" button → Opens registration modal
+   - Clear cart after order placed
+
+7. Share Order:
+   - "Share" button with options:
+     * WhatsApp
+     * Copy link
+
+Add celebratory UI elements (confetti animation optional) and ensure mobile-responsive design.
+```
+
+**Commit Message:** `feat(epic-4): add order confirmation page with post-purchase actions`
+
+---
+
+### **Subtask 4.10: Guest Checkout Flow**
+
+**Prompt for Gemini:**
+```
+Implement guest checkout allowing users to purchase without creating account.
+
+Requirements:
+
+1. Guest Checkout Entry Point:
+   - On checkout page, show two options:
+     a) Login/Register
+     b) Continue as Guest (prominent)
+   
+2. Guest Checkout Form:
+   - Collect required information:
+     * Full name (text input)
+     * Email address (with validation)
+     * Phone number (with validation)
+     * Delivery address (same fields as registered users)
+   - No password required
+   
+3. Guest Session Management:
+   - Store guest cart in localStorage
+   - Merge with backend session on checkout
+   - Generate temporary guest ID
+   
+4. Order Placement:
+   - Guest can complete full checkout flow
+   - Create order with guest user reference
+   - Send email/SMS confirmation
+
+5. Post-Purchase Account Creation:
+   - On order confirmation page, show:
+     * "Create account to track your order easily"
+     * Benefits list (save addresses, view history, etc.)
+     * "Create Account" button
+   - Pre-fill registration with guest details (name, email, phone)
+   - Only ask for password
+   - After registration, link guest order to new account
+
+6. Guest Order Tracking:
+   - Guest receives order tracking link via email/SMS
+   - Can track order without logging in using order number + email/phone
+
+Ensure smooth experience and clear messaging about benefits of creating account.
+```
+
+**Commit Message:** `feat(epic-4): implement guest checkout flow with account creation option`
+
+---
+
+### **Subtask 4.11: Escrow & Deposit Payment Logic**
+
+**Prompt for Gemini:**
+```
+Implement escrow hold and deposit payment logic for B2B transactions.
+
+Requirements:
+
+1. Escrow Payment Flow:
+   - When buyer pays via bKash/card:
+     * Payment held in escrow (not released to supplier immediately)
+     * Order status: "Payment in Escrow"
+   - Escrow release conditions:
+     * 3-day window after order marked "Delivered"
+     * Auto-release if no dispute filed within 3 days
+     * Manual release if buyer confirms delivery early
+   
+2. Deposit Payment (30% Down):
+   - Calculate deposit amount (30% of total)
+   - Charge deposit on order placement
+   - Order status: "Deposit Paid - Pending Balance"
+   - Balance due calculation: Total - Deposit
+   - Balance collection:
+     * Pay on Delivery (cash/card to delivery agent)
+     * Before delivery (via bKash/card if supplier requires)
+
+3. Payment Status Tracking:
+   - Create PaymentStatus enum: 
+     * deposit_paid | full_paid | balance_pending | escrow_hold | released | refunded
+   - Store payment timeline:
+     * Deposit paid at: timestamp
+     * Full payment at: timestamp
+     * Escrow released at: timestamp
+   
+4. UI Indicators:
+   - Show payment status on order detail page
+   - Escrow countdown: "Funds will be released in X days"
+   - For deposit orders: "Balance due: ₹X (Pay on delivery)"
+   - Payment timeline visualization
+
+5. Edge Cases:
+   - Dispute filed during escrow: Hold funds until resolution
+   - Buyer requests refund: Process escrow refund
+   - Deposit refund: Only refund deposit if order cancelled before shipment
+
+Create backend logic and frontend UI to display payment states clearly.
+```
+
+**Commit Message:** `feat(epic-4): add escrow hold and deposit payment logic`
+
+---
+
+### **Epic 4 Final Tasks**
+
+**Subtask 4.12: Cart & Checkout Testing**
+
+**Prompt for Gemini:**
+```
+Add comprehensive testing and polish for cart and checkout.
+
+Tasks:
+
+1. Edge Case Handling:
+   - Product goes out of stock while in cart
+   - Price changes after item added to cart
+   - Coupon expires during checkout
+   - Payment fails after escrow initiated
+   - Multiple simultaneous checkouts (race conditions)
+
+2. Validation:
+   - Prevent negative quantities
+   - Prevent checkout with empty cart
+   - Validate address fields thoroughly
+   - Check payment method availability based on buyer verification
+
+3. Performance:
+   - Lazy load cart items if many products
+   - Debounce quantity updates (don't call API on every keystroke)
+   - Optimize cart total calculations
+   - Cache cart data with smart invalidation
+
+4. Accessibility:
+   - Keyboard navigation through entire checkout flow
+   - Screen reader announcements for cart updates
+   - Focus management in modals
+   - High contrast mode support
+
+5. Mobile Optimization:
+   - Bottom sheet for cart summary on mobile
+   - Sticky "Proceed to Checkout" button
+   - Touch-friendly quantity controls
+   - Simplified checkout steps for small screens
+
+6. Error Recovery:
+   - Save checkout progress (multi-step)
+   - Allow returning to failed payment
+   - Clear error messages with recovery actions
+   - Support chat link for payment issues
+
+Create test scenarios document and add JSDoc comments to complex functions.

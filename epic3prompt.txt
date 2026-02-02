@@ -1,0 +1,437 @@
+git checkout -b epic-3-rfq-workflow
+```
+
+---
+
+### **Subtask 3.1: RFQ Data Models & API Routes**
+
+**Prompt for Gemini:**
+```
+I'm building a B2B marketplace called BoroBepari using TanStack Start, React, TypeScript, and Tailwind CSS. I need to implement the RFQ (Request for Quote) feature.
+
+Create the following:
+
+1. TypeScript types/interfaces for:
+   - RFQ entity (id, buyerId, supplierId, productId, quantity, targetPrice, deliveryLocation, notes, attachments[], status, createdAt, expiresAt)
+   - Quote entity (id, rfqId, supplierId, unitPrice, totalPrice, validityPeriod, terms, status, createdAt)
+   - RFQ status enum: 'pending' | 'quoted' | 'accepted' | 'rejected' | 'expired' | 'converted'
+   - Quote status enum: 'pending' | 'accepted' | 'rejected' | 'countered'
+
+2. API route structure (create placeholder files):
+   - POST /api/rfq/submit - Submit new RFQ
+   - GET /api/rfq/buyer/:buyerId - Get buyer's RFQs
+   - GET /api/rfq/supplier/:supplierId - Get supplier's RFQs
+   - POST /api/rfq/:rfqId/quote - Supplier submits quote
+   - GET /api/rfq/:rfqId/quotes - Get quotes for an RFQ
+   - PATCH /api/rfq/quote/:quoteId/accept - Accept a quote
+   - PATCH /api/rfq/quote/:quoteId/reject - Reject a quote
+   - POST /api/rfq/quote/:quoteId/counter - Counter a quote
+
+3. Create a shared utility file for RFQ validations (MOQ check, price validation, expiry calculation)
+
+Place files in appropriate directories following TanStack Start conventions. Use clear comments explaining each field and function.
+```
+
+**Commit Message:** `feat(epic-3): add RFQ data models and API route structure`
+
+---
+
+### **Subtask 3.2: RFQ Submission Form Component**
+
+**Prompt for Gemini:**
+```
+Building on the RFQ models from previous task, create an RFQ submission form component.
+
+Requirements:
+
+1. Create `RFQFormModal.tsx` component that:
+   - Accepts props: isOpen, onClose, productId (pre-filled), productName
+   - Contains form fields:
+     * Product name (read-only, pre-filled)
+     * Quantity (number input with validation)
+     * Target price per unit (BDT)
+     * Delivery location (text input)
+     * Additional notes (textarea, optional)
+     * File upload for attachments (images/documents, max 5 files, 5MB each)
+   
+2. Form validation:
+   - Quantity must be positive integer
+   - Target price must be positive number
+   - Delivery location required
+   - Show error messages below each field
+
+3. UI/UX:
+   - Use Tailwind CSS for styling
+   - Mobile-responsive modal
+   - Loading state during submission
+   - Success toast notification on submit
+   - Error handling with user-friendly messages
+
+4. On successful submission:
+   - Show RFQ number
+   - Display "Expected response in 24 hours" message
+   - Auto-close modal after 2 seconds
+
+Create the component with proper TypeScript types and accessibility (ARIA labels, keyboard navigation).
+```
+
+**Commit Message:** `feat(epic-3): add RFQ submission form modal component`
+
+---
+
+### **Subtask 3.3: Integrate RFQ Button on Product Pages**
+
+**Prompt for Gemini:**
+```
+Integrate the RFQ submission form into the Product Detail Page (PDP).
+
+Tasks:
+
+1. Add "Request Quote" button to PDP:
+   - Position it next to "Add to Cart" button
+   - Style with secondary/outline button variant
+   - Icon: Use a quote/message icon from lucide-react
+
+2. Button behavior:
+   - onClick opens RFQFormModal
+   - Pre-fills productId and productName
+   - If user not logged in, show login prompt first
+
+3. Also add "Request Quote" button to:
+   - Supplier profile page (for bulk inquiries)
+   - Quick view modal
+
+4. Ensure proper state management:
+   - Track modal open/close state
+   - Handle form submission success/error
+   - Update UI after RFQ submitted (maybe show badge "Quote Requested")
+
+Use React hooks (useState) and ensure components are properly typed with TypeScript.
+```
+
+**Commit Message:** `feat(epic-3): integrate RFQ request button on product pages`
+
+---
+
+### **Subtask 3.4: Buyer RFQ Inbox/Dashboard**
+
+**Prompt for Gemini:**
+```
+Create a buyer dashboard page to view and manage RFQs.
+
+Requirements:
+
+1. Create `BuyerRFQInbox.tsx` page component:
+   - Route: /buyer/rfqs
+   - Tabs for filtering: All | Pending | Quoted | Accepted | Expired
+   
+2. RFQ List Display:
+   - Table/card layout showing:
+     * RFQ number
+     * Product name (linked)
+     * Quantity requested
+     * Target price
+     * Status badge (color-coded)
+     * Submitted date
+     * Expiry countdown (for pending/quoted)
+     * Number of quotes received
+   
+3. Filtering & Sorting:
+   - Filter by status tabs
+   - Sort by: Date (newest/oldest), Expiry (soonest)
+   - Search by product name or RFQ number
+
+4. Click on RFQ row to view details:
+   - Show full RFQ details
+   - Display all received quotes
+   - Action buttons based on status
+
+5. Empty states:
+   - "No RFQs yet" when list is empty
+   - "No quotes received" for RFQs without responses
+
+Use TanStack Start routing and ensure responsive design with Tailwind CSS.
+```
+
+**Commit Message:** `feat(epic-3): add buyer RFQ inbox and listing page`
+
+---
+
+### **Subtask 3.5: RFQ Detail View & Quote Display**
+
+**Prompt for Gemini:**
+```
+Create RFQ detail view showing submitted quotes from suppliers.
+
+Requirements:
+
+1. Create `RFQDetailPage.tsx`:
+   - Route: /buyer/rfqs/:rfqId
+   - Display RFQ information:
+     * Product details (image, name)
+     * Requested quantity and target price
+     * Delivery location and notes
+     * Attachments (downloadable)
+     * Status and expiry countdown
+   
+2. Quotes Section:
+   - List all quotes received from suppliers
+   - Each quote card shows:
+     * Supplier name + verification badge
+     * Unit price and total price
+     * Validity period countdown
+     * Terms/notes
+     * Supplier rating and response rate
+   - Sort quotes by: Price (low/high), Date received
+
+3. Quote Actions (per quote):
+   - "Accept Quote" button (green)
+   - "Reject Quote" button (red)
+   - "Counter Offer" button (blue)
+   
+4. Comparison Table:
+   - Toggle view: Cards vs Table
+   - Table columns: Supplier | Unit Price | Total | Validity | Action
+
+5. Status-based UI:
+   - If RFQ expired: Disable all actions, show "Expired" banner
+   - If quote accepted: Show "Accepted" badge, enable "Place Order"
+   - If no quotes yet: Show "Waiting for quotes..." with refresh button
+
+Handle loading states and API errors gracefully.
+```
+
+**Commit Message:** `feat(epic-3): add RFQ detail page with quote display and comparison`
+
+---
+
+### **Subtask 3.6: Quote Management Actions (Accept/Reject/Counter)**
+
+**Prompt for Gemini:**
+```
+Implement quote management actions for buyers.
+
+Tasks:
+
+1. Accept Quote:
+   - Confirmation modal: "Accept this quote from [Supplier]?"
+   - Show price lock notice: "This price will be locked for your order"
+   - On confirm: Update quote status, show success message
+   - Enable "Place Order" button (linking to checkout with locked pricing)
+
+2. Reject Quote:
+   - Confirmation modal: "Reject this quote?"
+   - Optional: Add rejection reason (dropdown or text)
+   - On confirm: Update status, notify supplier
+
+3. Counter Offer:
+   - Modal with form:
+     * Current quoted price (read-only)
+     * New counter price (input)
+     * Counter notes (textarea)
+   - Validation: Counter must be different from quoted price
+   - On submit: Create counter-quote entry, notify supplier
+
+4. API Integration:
+   - Connect to API endpoints created in Subtask 3.1
+   - Handle loading, success, and error states
+   - Show toast notifications for each action
+   - Refresh quote list after action
+
+5. Real-time updates (optional):
+   - Add polling or WebSocket for quote status updates
+   - Show notification badge when new quote received
+
+Ensure all modals are accessible and mobile-responsive.
+```
+eat(epic-3): implement quote accept/reject/counter a
+**Commit Message:** `fctions`
+
+---
+
+### **Subtask 3.7: Supplier RFQ Inbox & Quote Response**
+
+**Prompt for Gemini:**
+```
+Create supplier-side RFQ management interface.
+
+Requirements:
+
+1. Create `SupplierRFQInbox.tsx`:
+   - Route: /supplier/rfqs
+   - Tabs: New | Quoted | Accepted | Expired
+   - Display RFQs targeting supplier's products
+   
+2. RFQ Card/Row shows:
+   - Buyer name (anonymized or verified)
+   - Product name
+   - Quantity requested
+   - Target price (as reference)
+   - Delivery location
+   - Time remaining to respond
+   - "Send Quote" button
+
+3. Quote Response Form Modal:
+   - Triggered by "Send Quote" button
+   - Form fields:
+     * Unit price (required, BDT)
+     * Total price (auto-calculated)
+     * Validity period (dropdown: 7/14/30 days)
+     * Terms and conditions (textarea)
+     * Estimated delivery time (optional)
+   - Validation:
+     * Unit price must be positive
+     * Show comparison with buyer's target price
+   - Submit button: "Send Quote to Buyer"
+
+4. Notifications:
+   - In-app notification when new RFQ received
+   - SMS notification (backend integration)
+   - Email notification
+
+5. Response time tracking:
+   - Show "Respond within 24 hours" countdown
+   - Mark overdue RFQs with warning badge
+
+Ensure supplier can only see RFQs for their own products.
+```
+
+**Commit Message:** `feat(epic-3): add supplier RFQ inbox and quote response interface`
+
+---
+
+### **Subtask 3.8: RFQ Notifications & Status Updates**
+
+**Prompt for Gemini:**
+```
+Implement notification system for RFQ workflow.
+
+Tasks:
+
+1. Create `useRFQNotifications` custom hook:
+   - Poll for new RFQs (suppliers) and new quotes (buyers)
+   - Return notification count and list
+   - Mark notifications as read
+
+2. Notification scenarios:
+   Buyer side:
+   - New quote received
+   - Quote accepted by supplier
+   - Quote validity expiring soon (24h warning)
+   - RFQ expired
+   
+   Supplier side:
+   - New RFQ received
+   - Buyer accepted your quote
+   - Buyer countered your quote
+   - RFQ response time expiring soon
+
+3. Notification UI:
+   - Bell icon in header with badge count
+   - Dropdown panel showing recent notifications
+   - Link to relevant RFQ/quote detail page
+   - "Mark all as read" button
+
+4. In-app toast notifications:
+   - Real-time toast when action happens
+   - Auto-dismiss after 5 seconds
+   - Click to navigate to detail page
+
+5. Status update automation:
+   - Auto-expire RFQs after validity period
+   - Auto-expire quotes after validity period
+   - Update status when actions taken
+
+Create reusable notification components and ensure accessibility.
+```
+
+**Commit Message:** `feat(epic-3): add RFQ notification system and auto-expiry`
+
+---
+
+### **Subtask 3.9: Quote to Order Conversion**
+
+**Prompt for Gemini:**
+```
+Implement the flow to convert accepted quote into an order.
+
+Requirements:
+
+1. "Place Order" button on accepted quote:
+   - Only visible when quote status is "accepted"
+   - Button redirects to checkout with pre-filled data
+
+2. Checkout integration:
+   - Pre-fill cart with:
+     * Product from RFQ
+     * Quantity from RFQ
+     * Locked price from accepted quote
+     * Supplier from quote
+   - Disable price editing (show "Price locked from quote #XXXXX")
+   - Display quote reference in order summary
+
+3. Order metadata:
+   - Link order to original RFQ ID
+   - Link order to quote ID
+   - Store quote acceptance timestamp
+
+4. Post-order RFQ status:
+   - Update RFQ status to "converted"
+   - Update quote status to "converted"
+   - Show "Order Placed" badge on RFQ detail page
+   - Link to order from RFQ page
+
+5. Handle edge cases:
+   - Quote expired before order placement
+   - Product out of stock after quote accepted
+   - Price mismatch validation
+
+Create smooth transition from RFQ → Quote → Order with clear user feedback.
+```
+
+**Commit Message:** `feat(epic-3): implement quote to order conversion flow`
+
+---
+
+### **Epic 3 Final Tasks**
+
+**Subtask 3.10: Testing & Edge Cases**
+
+**Prompt for Gemini:**
+```
+Add comprehensive error handling and edge case management for RFQ workflow.
+
+Tasks:
+
+1. Validation & Error Handling:
+   - Handle network errors gracefully
+   - Show retry option on failed API calls
+   - Validate file uploads (size, type, count)
+   - Handle expired sessions during RFQ submission
+
+2. Edge Cases:
+   - RFQ submitted for out-of-stock product
+   - Multiple quotes from same supplier
+   - Quote accepted while another is being reviewed
+   - RFQ/Quote expiry during user action
+   - Concurrent counter-offers
+
+3. User Feedback:
+   - Loading skeletons for RFQ list
+   - Empty states with helpful CTAs
+   - Success confirmations for all actions
+   - Clear error messages (not technical jargon)
+
+4. Accessibility:
+   - Keyboard navigation for all modals
+   - Screen reader announcements for status changes
+   - Focus management in forms
+   - ARIA labels for all interactive elements
+
+5. Mobile Optimization:
+   - Touch-friendly buttons and forms
+   - Swipe gestures for quote cards (optional)
+   - Responsive tables (convert to cards on mobile)
+   - Bottom sheet modals instead of center modals
+
+Add comments explaining complex logic and create a README for RFQ feature.

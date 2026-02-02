@@ -1,27 +1,23 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import {
-  Trash2,
-  ShoppingCart,
-  Minus,
-  Plus,
-  Package,
+  ArrowRight,
   BadgeCheck,
-  ArrowRight
+  Minus,
+  Package,
+  Plus,
+  ShoppingCart,
+  Trash2,
 } from 'lucide-react'
 import { useCart } from '../contexts/CartContext'
-import {
-  formatBDT,
-  getSupplierById,
-  mockProducts,
-  type MockProduct,
-} from '../data/mock-products'
-import { Link } from '@tanstack/react-router'
+import { formatBDT, getSupplierById, mockProducts } from '../data/mock-products'
+import type { MockProduct } from '../data/mock-products'
+import type { CartItem as CartItemType } from '../types/cart'
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,
 })
 
-function CartItem({ item }: { item: { productId: number; quantity: number } }) {
+function CartItem({ item }: { item: CartItemType }) {
   const { removeFromCart, updateQuantity } = useCart()
   const product = mockProducts.find((p) => p.id === item.productId)
   
