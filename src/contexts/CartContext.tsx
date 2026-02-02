@@ -1,133 +1,61 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { Cart, CartItem, CouponCode } from '@/types/cart'
-import { calculateCartTotals } from '@/lib/cart-utils'
-import { mockProducts, getSupplierById } from '@/data/mock-products'
+import { mockProducts } from '../data/mock-products'
+
+interface CartItem {
+  productId: number
+  quantity: number
+  customPrice?: number
+  rfqId?: number
+  quoteId?: number
+}
 
 interface CartContextType {
-  cart: Cart
-  cartItems: CartItem[] // Alias for cart.items
+  cartItems: Array<CartItem>
   addToCart: (productId: number, quantity: number, options?: { customPrice?: number, rfqId?: number, quoteId?: number }) => void
   removeFromCart: (productId: number, rfqId?: number) => void
   updateQuantity: (productId: number, quantity: number, rfqId?: number) => void
-  clearCart: () => void
-  applyCoupon: (code: string) => Promise<boolean> // Mock async
   cartCount: number
-  getCartTotal: () => number // Legacy support
+  getCartTotal: () => number
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
-const CART_STORAGE_KEY = 'borobepari_cart_v2'
-const CART_EXPIRY_DAYS = 7
-
-interface StoredCart {
-  items: CartItem[]
-  updatedAt: number
-}
-
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<Cart>({
-    items: [],
-    subtotal: 0,
-    deliveryFee: 0,
-    discount: 0,
-    total: 0,
-    supplierBreakdown: []
+  const [cartItems, setCartItems] = useState<Array<CartItem>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('cart')
+      return saved ? JSON.parse(saved) : []
+    }
+    return []
   })
 
-  // Initialize from LocalStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem(CART_STORAGE_KEY)
-        if (saved) {
-          const parsed: StoredCart = JSON.parse(saved)
-          const now = Date.now()
-          const expiryMs = CART_EXPIRY_DAYS * 24 * 60 * 60 * 1000
-          
-          if (now - parsed.updatedAt < expiryMs) {
-            // Recalculate totals on load to ensure consistency
-            const totals = calculateCartTotals(parsed.items)
-            setCart({ ...totals, items: parsed.items })
-          } else {
-            localStorage.removeItem(CART_STORAGE_KEY)
-          }
-        }
-      } catch (e) {
-        console.error("Failed to load cart", e)
-      }
-    }
-  }, [])
-
-  // Persist to LocalStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const data: StoredCart = {
-        items: cart.items,
-        updatedAt: Date.now()
-      }
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(data))
-    }
-  }, [cart.items])
+    localStorage.setItem('cart', JSON.stringify(cartItems))
+  }, [cartItems])
 
   const addToCart = (productId: number, quantity: number, options?: { customPrice?: number, rfqId?: number, quoteId?: number }) => {
-    const product = mockProducts.find(p => p.id === productId)
-    if (!product) return
-
-    setCart(prev => {
-      const isSpecialOrder = !!options?.rfqId
-      // Generate ID: for special orders, combine product+rfq. For standard, just product ID string.
-      const itemId = isSpecialOrder ? `${productId}-rfq-${options?.rfqId}` : `${productId}-std`
+    setCartItems((prev) => {
+      // If it's a special RFQ item, we might want to treat it as a separate line item even if product ID matches?
+      // For simplicity, if options.rfqId is present, we treat it as unique or update existing RFQ item.
+      // Let's treat RFQ items as unique based on rfqId if present.
       
-      const existingItemIndex = prev.items.findIndex(item => item.id === itemId)
-      let newItems = [...prev.items]
+      const existingIndex = prev.findIndex((item) => 
+        item.productId === productId && item.rfqId === options?.rfqId
+      )
 
-      if (existingItemIndex > -1) {
-        // Update existing
-        const item = newItems[existingItemIndex]
-        const newQty = item.quantity + quantity
-        // Ensure we don't exceed stock if it's not a special order (special orders usually negotiated separately, but strict stock check is good)
-        // For simplicity, we just update.
-        newItems[existingItemIndex] = {
-          ...item,
-          quantity: newQty,
-          lineTotal: newQty * item.unitPrice
-        }
-      } else {
-        // Add new
-        const supplier = getSupplierById(product.supplierId)
-        const unitPrice = options?.customPrice ?? product.price
-        
-        const newItem: CartItem = {
-          id: itemId,
-          productId,
-          productName: product.name,
-          image: product.images[0],
-          supplierId: product.supplierId,
-          quantity,
-          unitPrice,
-          moq: product.moq,
-          stock: product.stock,
-          lineTotal: quantity * unitPrice,
-          rfqId: options?.rfqId,
-          quoteId: options?.quoteId,
-          isPriceLocked: isSpecialOrder
-        }
-        newItems.push(newItem)
+      if (existingIndex > -1) {
+        return prev.map((item, index) =>
+          index === existingIndex
+            ? { ...item, quantity: item.quantity + quantity } // Merge quantity
+            : item,
+        )
       }
-
-      const totals = calculateCartTotals(newItems, prev.appliedCoupon)
-      return { ...prev, ...totals, items: newItems }
+      return [...prev, { productId, quantity, ...options }]
     })
   }
 
   const removeFromCart = (productId: number, rfqId?: number) => {
-    setCart(prev => {
-      const itemId = rfqId ? `${productId}-rfq-${rfqId}` : `${productId}-std`
-      const newItems = prev.items.filter(item => item.id !== itemId)
-      const totals = calculateCartTotals(newItems, prev.appliedCoupon)
-      return { ...prev, ...totals, items: newItems }
-    })
+    setCartItems((prev) => prev.filter((item) => !(item.productId === productId && item.rfqId === rfqId)))
   }
 
   const updateQuantity = (productId: number, quantity: number, rfqId?: number) => {
@@ -135,72 +63,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeFromCart(productId, rfqId)
       return
     }
-
-    setCart(prev => {
-      const itemId = rfqId ? `${productId}-rfq-${rfqId}` : `${productId}-std`
-      const newItems = prev.items.map(item => {
-        if (item.id === itemId) {
-          return {
-            ...item,
-            quantity,
-            lineTotal: quantity * item.unitPrice
-          }
-        }
-        return item
-      })
-      const totals = calculateCartTotals(newItems, prev.appliedCoupon)
-      return { ...prev, ...totals, items: newItems }
-    })
+    setCartItems((prev) =>
+      prev.map((item) =>
+        (item.productId === productId && item.rfqId === rfqId) ? { ...item, quantity } : item,
+      ),
+    )
   }
 
-  const clearCart = () => {
-    setCart({
-      items: [],
-      subtotal: 0,
-      deliveryFee: 0,
-      discount: 0,
-      total: 0,
-      supplierBreakdown: []
-    })
-  }
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
 
-  const applyCoupon = async (code: string): Promise<boolean> => {
-    // Mock API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        if (code === 'WELCOME10') {
-          const coupon: CouponCode = {
-            code: 'WELCOME10',
-            discountType: 'percentage',
-            value: 10,
-            minOrderValue: 1000,
-            expiryDate: new Date(Date.now() + 86400000).toISOString()
-          }
-          setCart(prev => {
-            const totals = calculateCartTotals(prev.items, coupon)
-            return { ...prev, ...totals, appliedCoupon: coupon }
-          })
-          resolve(true)
-        } else {
-          resolve(false)
-        }
-      }, 500)
-    })
+  const getCartTotal = () => {
+    return cartItems.reduce((total, item) => {
+      const product = mockProducts.find((p) => p.id === item.productId)
+      const price = item.customPrice ?? (product ? product.price : 0)
+      return total + (price * item.quantity)
+    }, 0)
   }
-
-  const cartCount = cart.items.reduce((acc, item) => acc + item.quantity, 0)
-  const getCartTotal = () => cart.total
 
   return (
     <CartContext.Provider
       value={{
-        cart,
-        cartItems: cart.items,
+        cartItems,
         addToCart,
         removeFromCart,
         updateQuantity,
-        clearCart,
-        applyCoupon,
         cartCount,
         getCartTotal,
       }}

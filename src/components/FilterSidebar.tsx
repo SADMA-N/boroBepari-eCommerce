@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ChevronDown,
   ChevronUp,
-  X,
-  SlidersHorizontal,
   RotateCcw,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react'
-import { bdLocationsList, type ProductFilters } from '../data/mock-products'
+import { bdLocationsList } from '../data/mock-products'
+import type { ProductFilters } from '../data/mock-products'
 
 interface FilterSidebarProps {
   filters: ProductFilters
@@ -24,21 +25,21 @@ export default function FilterSidebar({
   className = '',
 }: FilterSidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['price', 'moq', 'location', 'verification', 'sort'])
+    new Set(['price', 'moq', 'location', 'verification', 'sort']),
   )
 
   // Local state for range inputs (for debouncing)
   const [localPriceMin, setLocalPriceMin] = useState<string>(
-    filters.minPrice?.toString() || ''
+    filters.minPrice?.toString() || '',
   )
   const [localPriceMax, setLocalPriceMax] = useState<string>(
-    filters.maxPrice?.toString() || ''
+    filters.maxPrice?.toString() || '',
   )
   const [localMoqMin, setLocalMoqMin] = useState<string>(
-    filters.minMoq?.toString() || ''
+    filters.minMoq?.toString() || '',
   )
   const [localMoqMax, setLocalMoqMax] = useState<string>(
-    filters.maxMoq?.toString() || ''
+    filters.maxMoq?.toString() || '',
   )
 
   // Sync local state with props
@@ -273,7 +274,9 @@ export default function FilterSidebar({
                 }`}
               />
             </div>
-            <span className="text-sm text-gray-700">Verified Suppliers Only</span>
+            <span className="text-sm text-gray-700">
+              Verified Suppliers Only
+            </span>
           </label>
         </FilterSection>
       </div>
@@ -302,7 +305,7 @@ export default function FilterSidebar({
           fixed inset-y-0 left-0 z-50 w-72
           lg:w-full lg:z-auto
           transform transition-transform duration-300
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          translate-x-0
         `}
       >
         {sidebarContent}

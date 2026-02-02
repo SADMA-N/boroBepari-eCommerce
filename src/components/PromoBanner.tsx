@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
-import { promoBanners, type PromoBanner as PromoBannerType } from '../data/mock-products'
+import { promoBanners } from '../data/mock-products'
+import type { PromoBanner as PromoBannerType } from '../data/mock-products'
 
 interface PromoBannersProps {
-  banners?: PromoBannerType[]
+  banners?: Array<PromoBannerType>
 }
 
 export default function PromoBanners({
@@ -53,7 +54,9 @@ export function PromoStrip({
         <div className="text-center sm:text-left">
           <h3 className="text-white font-bold text-xl sm:text-2xl">{title}</h3>
           {subtitle && (
-            <p className="text-white/90 text-sm sm:text-base mt-1">{subtitle}</p>
+            <p className="text-white/90 text-sm sm:text-base mt-1">
+              {subtitle}
+            </p>
           )}
         </div>
         <Link
@@ -69,7 +72,7 @@ export function PromoStrip({
 
 // Frequently searched keywords
 interface FrequentlySearchedProps {
-  keywords: string[]
+  keywords: Array<string>
   title?: string
 }
 

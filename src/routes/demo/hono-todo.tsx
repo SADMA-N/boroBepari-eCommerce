@@ -1,38 +1,58 @@
 import { useCallback, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { orpc } from '@/orpc/client'
+interface Todo {
+  id: number
+  name: string
+}
 
-export const Route = createFileRoute('/demo/orpc-todo')({
-  component: ORPCTodos,
+const fetchTodos = async (): Promise<Array<Todo>> => {
+  const response = await fetch('/api/todos')
+  if (!response.ok) throw new Error('Failed to fetch todos')
+  return response.json()
+}
+
+const createTodo = async (name: string): Promise<Todo> => {
+  const response = await fetch('/api/todos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  })
+  if (!response.ok) throw new Error('Failed to create todo')
+  return response.json()
+}
+
+export const Route = createFileRoute('/demo/hono-todo')({
+  component: HonoTodos,
   loader: async ({ context }) => {
-    await context.queryClient.prefetchQuery(
-      orpc.listTodos.queryOptions({
-        input: {},
-      }),
-    )
+    await context.queryClient.prefetchQuery({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+    })
   },
 })
 
-function ORPCTodos() {
-  const { data, refetch } = useQuery(
-    orpc.listTodos.queryOptions({
-      input: {},
-    }),
-  )
+function HonoTodos() {
+  const queryClient = useQueryClient()
+
+  const { data } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  })
 
   const [todo, setTodo] = useState('')
+
   const { mutate: addTodo } = useMutation({
-    mutationFn: orpc.addTodo.call,
+    mutationFn: createTodo,
     onSuccess: () => {
-      refetch()
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
       setTodo('')
     },
   })
 
   const submitTodo = useCallback(() => {
-    addTodo({ name: todo })
+    addTodo(todo)
   }, [addTodo, todo])
 
   return (
@@ -44,7 +64,12 @@ function ORPCTodos() {
       }}
     >
       <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-        <h1 className="text-2xl mb-4">oRPC Todos list</h1>
+        <h1 className="text-2xl mb-4">Hono OpenAPI Todos list</h1>
+        <p className="text-sm mb-4 opacity-70">
+          <a href="/api/docs" className="underline hover:opacity-100">
+            View API Documentation
+          </a>
+        </p>
         <ul className="mb-4 space-y-2">
           {data?.map((t) => (
             <li

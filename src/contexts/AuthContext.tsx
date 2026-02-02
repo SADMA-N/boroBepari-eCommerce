@@ -1,57 +1,92 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
+import { useRouter } from '@tanstack/react-router'
+import { authClient } from '@/lib/auth-client'
+import { checkUserPasswordStatus } from '@/lib/auth-server'
 
 interface User {
   id: string
   name: string
   email: string
+  hasPassword?: boolean
+  needsPassword?: boolean
 }
 
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
-  login: (email: string) => void
-  logout: () => void
+  isLoading: boolean
+  logout: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('auth_user')
-      return saved ? JSON.parse(saved) : null
-    }
-    return null
-  })
+  const {
+    data: session,
+    isPending: isLoading,
+    refetch,
+  } = authClient.useSession()
+  const router = useRouter()
+  const user = session?.user as User | null
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('auth_user', JSON.stringify(user))
-    } else {
-      localStorage.removeItem('auth_user')
-    }
-  }, [user])
-
-  const login = (email: string) => {
-    // Mock login
-    setUser({
-      id: '1',
-      name: 'Test User',
-      email,
+  const logout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.invalidate()
+        },
+      },
     })
   }
 
-  const logout = () => {
-    setUser(null)
+  const refreshUser = async () => {
+    await refetch()
   }
+
+  useEffect(() => {
+    const verifyPasswordStatus = async () => {
+      if (!user || isLoading) return
+
+      // Respect skip cookie - only redirect if not skipped
+      const cookies = document.cookie.split(';').reduce(
+        (acc, cookie) => {
+          const [name, value] = cookie.trim().split('=')
+          acc[name] = value
+          return acc
+        },
+        {} as Record<string, string>,
+      )
+
+      if (cookies['skippedPasswordSetup']) {
+        console.log('[AuthContext] Password setup skipped via cookie')
+        return
+      }
+
+      try {
+        const status = await checkUserPasswordStatus()
+        if (status.needsPassword) {
+          if (window.location.pathname !== '/auth/set-password') {
+            console.log('[AuthContext] Navigating to /auth/set-password')
+            router.navigate({ to: '/auth/set-password' })
+          }
+        }
+      } catch (error) {
+        console.error('[AuthContext] Status check failed:', error)
+      }
+    }
+
+    verifyPasswordStatus()
+  }, [user?.id, isLoading, router])
 
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user: user || null,
         isAuthenticated: !!user,
-        login,
+        isLoading,
         logout,
+        refreshUser,
       }}
     >
       {children}

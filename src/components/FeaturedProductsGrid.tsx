@@ -2,7 +2,7 @@ import ProductCard from './ProductCard'
 import type { MockProduct } from '../data/mock-products'
 
 interface FeaturedProductsGridProps {
-  products: MockProduct[]
+  products: Array<MockProduct>
   title?: string
   subtitle?: string
   showViewAll?: boolean
@@ -65,7 +65,11 @@ export default function FeaturedProductsGrid({
 }
 
 // Loading skeleton for the grid
-export function FeaturedProductsGridSkeleton({ count = 12 }: { count?: number }) {
+export function FeaturedProductsGridSkeleton({
+  count = 12,
+}: {
+  count?: number
+}) {
   return (
     <section className="py-6">
       <div className="flex items-center justify-between mb-4">

@@ -1,19 +1,22 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { mockProducts, type MockProduct } from '../data/mock-products'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { mockProducts } from '../data/mock-products'
+import type { MockProduct } from '../data/mock-products'
 
 interface WishlistContextType {
-  wishlistIds: number[]
+  wishlistIds: Array<number>
   addToWishlist: (productId: number) => void
   removeFromWishlist: (productId: number) => void
   toggleWishlist: (productId: number) => void
   isInWishlist: (productId: number) => boolean
-  wishlistItems: MockProduct[]
+  wishlistItems: Array<MockProduct>
 }
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined,
+)
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [wishlistIds, setWishlistIds] = useState<number[]>(() => {
+  const [wishlistIds, setWishlistIds] = useState<Array<number>>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('wishlist')
       return saved ? JSON.parse(saved) : []

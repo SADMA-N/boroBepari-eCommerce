@@ -11,19 +11,25 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
-import { Route as DemoOrpcTodoRouteImport } from './routes/demo/orpc-todo'
+import { Route as DemoHonoTodoRouteImport } from './routes/demo/hono-todo'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoDbChatApiRouteImport } from './routes/demo/db-chat-api'
 import { Route as DemoDbChatRouteImport } from './routes/demo/db-chat'
 import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/$categorySlug'
 import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
+import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
@@ -32,11 +38,8 @@ import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
-import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
 import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
-import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
-import { Route as ApiCartAddRouteImport } from './routes/api/cart/add'
-import { Route as ApiCartUserIdRouteImport } from './routes/api/cart/$userId'
+import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
@@ -45,7 +48,6 @@ import { Route as ApiRfqSupplierSupplierIdRouteImport } from './routes/api/rfq/s
 import { Route as ApiRfqBuyerBuyerIdRouteImport } from './routes/api/rfq/buyer/$buyerId'
 import { Route as ApiRfqRfqIdQuotesRouteImport } from './routes/api/rfq/$rfqId.quotes'
 import { Route as ApiRfqRfqIdQuoteRouteImport } from './routes/api/rfq/$rfqId.quote'
-import { Route as ApiCartItemItemIdRouteImport } from './routes/api/cart/item/$itemId'
 import { Route as ApiRfqQuoteQuoteIdRejectRouteImport } from './routes/api/rfq/quote/$quoteId.reject'
 import { Route as ApiRfqQuoteQuoteIdCounterRouteImport } from './routes/api/rfq/quote/$quoteId.counter'
 import { Route as ApiRfqQuoteQuoteIdAcceptRouteImport } from './routes/api/rfq/quote/$quoteId.accept'
@@ -60,14 +62,39 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -95,9 +122,9 @@ const DemoTableRoute = DemoTableRouteImport.update({
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoOrpcTodoRoute = DemoOrpcTodoRouteImport.update({
-  id: '/demo/orpc-todo',
-  path: '/demo/orpc-todo',
+const DemoHonoTodoRoute = DemoHonoTodoRouteImport.update({
+  id: '/demo/hono-todo',
+  path: '/demo/hono-todo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoDrizzleRoute = DemoDrizzleRouteImport.update({
@@ -123,6 +150,11 @@ const CategoriesCategorySlugRoute = CategoriesCategorySlugRouteImport.update({
 const BuyerRfqsRoute = BuyerRfqsRouteImport.update({
   id: '/buyer/rfqs',
   path: '/buyer/rfqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
+  id: '/auth/set-password',
+  path: '/auth/set-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -165,29 +197,14 @@ const BuyerRfqsRfqIdRoute = BuyerRfqsRfqIdRouteImport.update({
   path: '/$rfqId',
   getParentRoute: () => BuyerRfqsRoute,
 } as any)
-const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
-  id: '/api/rpc/$',
-  path: '/api/rpc/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
   id: '/api/rfq/submit',
   path: '/api/rfq/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCartValidateCouponRoute = ApiCartValidateCouponRouteImport.update({
-  id: '/api/cart/validate-coupon',
-  path: '/api/cart/validate-coupon',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCartAddRoute = ApiCartAddRouteImport.update({
-  id: '/api/cart/add',
-  path: '/api/cart/add',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCartUserIdRoute = ApiCartUserIdRouteImport.update({
-  id: '/api/cart/$userId',
-  path: '/api/cart/$userId',
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
@@ -231,11 +248,6 @@ const ApiRfqRfqIdQuoteRoute = ApiRfqRfqIdQuoteRouteImport.update({
   path: '/api/rfq/$rfqId/quote',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCartItemItemIdRoute = ApiCartItemItemIdRouteImport.update({
-  id: '/api/cart/item/$itemId',
-  path: '/api/cart/item/$itemId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiRfqQuoteQuoteIdRejectRoute =
   ApiRfqQuoteQuoteIdRejectRouteImport.update({
     id: '/api/rfq/quote/$quoteId/reject',
@@ -257,26 +269,29 @@ const ApiRfqQuoteQuoteIdAcceptRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
+  '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/orpc-todo': typeof DemoOrpcTodoRoute
+  '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
-  '/api/cart/$userId': typeof ApiCartUserIdRoute
-  '/api/cart/add': typeof ApiCartAddRoute
-  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -284,7 +299,6 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -299,26 +313,29 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
+  '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/orpc-todo': typeof DemoOrpcTodoRoute
+  '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
-  '/api/cart/$userId': typeof ApiCartUserIdRoute
-  '/api/cart/add': typeof ApiCartAddRoute
-  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -326,7 +343,6 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -342,26 +358,29 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
+  '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/orpc-todo': typeof DemoOrpcTodoRoute
+  '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
-  '/api/cart/$userId': typeof ApiCartUserIdRoute
-  '/api/cart/add': typeof ApiCartAddRoute
-  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -369,7 +388,6 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -386,26 +404,29 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/cart'
+    | '/forgot-password'
+    | '/login'
     | '/orders'
+    | '/register'
+    | '/reset-password'
     | '/search'
     | '/wishlist'
     | '/api/$'
+    | '/auth/set-password'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
-    | '/demo/orpc-todo'
+    | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/supplier/rfqs'
-    | '/api/cart/$userId'
-    | '/api/cart/add'
-    | '/api/cart/validate-coupon'
+    | '/api/auth/$'
     | '/api/rfq/submit'
-    | '/api/rpc/$'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -413,7 +434,6 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
-    | '/api/cart/item/$itemId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -428,26 +448,29 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/cart'
+    | '/forgot-password'
+    | '/login'
     | '/orders'
+    | '/register'
+    | '/reset-password'
     | '/search'
     | '/wishlist'
     | '/api/$'
+    | '/auth/set-password'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
-    | '/demo/orpc-todo'
+    | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/supplier/rfqs'
-    | '/api/cart/$userId'
-    | '/api/cart/add'
-    | '/api/cart/validate-coupon'
+    | '/api/auth/$'
     | '/api/rfq/submit'
-    | '/api/rpc/$'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -455,7 +478,6 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
-    | '/api/cart/item/$itemId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -470,26 +492,29 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/cart'
+    | '/forgot-password'
+    | '/login'
     | '/orders'
+    | '/register'
+    | '/reset-password'
     | '/search'
     | '/wishlist'
     | '/api/$'
+    | '/auth/set-password'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
-    | '/demo/orpc-todo'
+    | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/supplier/rfqs'
-    | '/api/cart/$userId'
-    | '/api/cart/add'
-    | '/api/cart/validate-coupon'
+    | '/api/auth/$'
     | '/api/rfq/submit'
-    | '/api/rpc/$'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -497,7 +522,6 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
-    | '/api/cart/item/$itemId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -513,33 +537,35 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   CartRoute: typeof CartRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
   OrdersRoute: typeof OrdersRoute
+  RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   WishlistRoute: typeof WishlistRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  AuthSetPasswordRoute: typeof AuthSetPasswordRoute
   BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
   DemoDbChatApiRoute: typeof DemoDbChatApiRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
-  DemoOrpcTodoRoute: typeof DemoOrpcTodoRoute
+  DemoHonoTodoRoute: typeof DemoHonoTodoRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   SupplierRfqsRoute: typeof SupplierRfqsRoute
-  ApiCartUserIdRoute: typeof ApiCartUserIdRoute
-  ApiCartAddRoute: typeof ApiCartAddRoute
-  ApiCartValidateCouponRoute: typeof ApiCartValidateCouponRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiRfqSubmitRoute: typeof ApiRfqSubmitRoute
-  ApiRpcSplatRoute: typeof ApiRpcSplatRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
-  ApiCartItemItemIdRoute: typeof ApiCartItemItemIdRoute
   ApiRfqRfqIdQuoteRoute: typeof ApiRfqRfqIdQuoteRoute
   ApiRfqRfqIdQuotesRoute: typeof ApiRfqRfqIdQuotesRoute
   ApiRfqBuyerBuyerIdRoute: typeof ApiRfqBuyerBuyerIdRoute
@@ -569,6 +595,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders': {
       id: '/orders'
       path: '/orders'
@@ -576,11 +616,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cart': {
       id: '/cart'
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -618,11 +679,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/orpc-todo': {
-      id: '/demo/orpc-todo'
-      path: '/demo/orpc-todo'
-      fullPath: '/demo/orpc-todo'
-      preLoaderRoute: typeof DemoOrpcTodoRouteImport
+    '/demo/hono-todo': {
+      id: '/demo/hono-todo'
+      path: '/demo/hono-todo'
+      fullPath: '/demo/hono-todo'
+      preLoaderRoute: typeof DemoHonoTodoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/drizzle': {
@@ -658,6 +719,13 @@ declare module '@tanstack/react-router' {
       path: '/buyer/rfqs'
       fullPath: '/buyer/rfqs'
       preLoaderRoute: typeof BuyerRfqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/set-password': {
+      id: '/auth/set-password'
+      path: '/auth/set-password'
+      fullPath: '/auth/set-password'
+      preLoaderRoute: typeof AuthSetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/$': {
@@ -716,13 +784,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerRfqsRfqIdRouteImport
       parentRoute: typeof BuyerRfqsRoute
     }
-    '/api/rpc/$': {
-      id: '/api/rpc/$'
-      path: '/api/rpc/$'
-      fullPath: '/api/rpc/$'
-      preLoaderRoute: typeof ApiRpcSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/rfq/submit': {
       id: '/api/rfq/submit'
       path: '/api/rfq/submit'
@@ -730,25 +791,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRfqSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/cart/validate-coupon': {
-      id: '/api/cart/validate-coupon'
-      path: '/api/cart/validate-coupon'
-      fullPath: '/api/cart/validate-coupon'
-      preLoaderRoute: typeof ApiCartValidateCouponRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/cart/add': {
-      id: '/api/cart/add'
-      path: '/api/cart/add'
-      fullPath: '/api/cart/add'
-      preLoaderRoute: typeof ApiCartAddRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/cart/$userId': {
-      id: '/api/cart/$userId'
-      path: '/api/cart/$userId'
-      fullPath: '/api/cart/$userId'
-      preLoaderRoute: typeof ApiCartUserIdRouteImport
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/ssr/': {
@@ -807,13 +854,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRfqRfqIdQuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/cart/item/$itemId': {
-      id: '/api/cart/item/$itemId'
-      path: '/api/cart/item/$itemId'
-      fullPath: '/api/cart/item/$itemId'
-      preLoaderRoute: typeof ApiCartItemItemIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/rfq/quote/$quoteId/reject': {
       id: '/api/rfq/quote/$quoteId/reject'
       path: '/api/rfq/quote/$quoteId/reject'
@@ -852,33 +892,35 @@ const BuyerRfqsRouteWithChildren = BuyerRfqsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   CartRoute: CartRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
   OrdersRoute: OrdersRoute,
+  RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   WishlistRoute: WishlistRoute,
   ApiSplatRoute: ApiSplatRoute,
+  AuthSetPasswordRoute: AuthSetPasswordRoute,
   BuyerRfqsRoute: BuyerRfqsRouteWithChildren,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,
   DemoDbChatApiRoute: DemoDbChatApiRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
-  DemoOrpcTodoRoute: DemoOrpcTodoRoute,
+  DemoHonoTodoRoute: DemoHonoTodoRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
   SupplierRfqsRoute: SupplierRfqsRoute,
-  ApiCartUserIdRoute: ApiCartUserIdRoute,
-  ApiCartAddRoute: ApiCartAddRoute,
-  ApiCartValidateCouponRoute: ApiCartValidateCouponRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiRfqSubmitRoute: ApiRfqSubmitRoute,
-  ApiRpcSplatRoute: ApiRpcSplatRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
-  ApiCartItemItemIdRoute: ApiCartItemItemIdRoute,
   ApiRfqRfqIdQuoteRoute: ApiRfqRfqIdQuoteRoute,
   ApiRfqRfqIdQuotesRoute: ApiRfqRfqIdQuotesRoute,
   ApiRfqBuyerBuyerIdRoute: ApiRfqBuyerBuyerIdRoute,

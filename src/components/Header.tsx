@@ -1,24 +1,24 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
-  Menu,
-  X,
-  ShoppingCart,
-  Heart,
-  User,
   ChevronDown,
-  Package,
-  LogIn,
-  UserPlus,
-  Store,
+  Heart,
   HelpCircle,
+  LogIn,
   LogOut,
+  Menu,
+  Package,
+  ShoppingCart,
+  Store,
+  User,
+  UserPlus,
+  X,
 } from 'lucide-react'
-import SearchBar from './SearchBar'
 import { mockCategories } from '../data/mock-products'
 import { useCart } from '../contexts/CartContext'
 import { useWishlist } from '../contexts/WishlistContext'
 import { useAuth } from '../contexts/AuthContext'
+import SearchBar from './SearchBar'
 import AuthModal from './AuthModal'
 import CartSidebar from './CartSidebar'
 import NotificationBell from './NotificationBell'
@@ -28,14 +28,16 @@ export default function Header() {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false)
   const [showUserDropdown, setShowUserDropdown] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [redirectPath, setRedirectPath] = useState<string | undefined>(undefined)
+  const [redirectPath, setRedirectPath] = useState<string | undefined>(
+    undefined,
+  )
   const [isCartOpen, setIsCartOpen] = useState(false)
-  
+
   const { cartCount } = useCart()
   const { wishlistItems } = useWishlist()
   const { isAuthenticated, user, logout } = useAuth()
   const router = useRouter()
-  
+
   const wishlistCount = wishlistItems.length
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
@@ -54,16 +56,13 @@ export default function Header() {
 
   return (
     <>
-      <AuthModal 
-        isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
         redirectPath={redirectPath}
       />
 
-      <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-      />
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       {/* Top Bar */}
       <div className="bg-gray-900 text-gray-300 text-xs py-2 hidden sm:block">
@@ -72,11 +71,17 @@ export default function Header() {
             <span>Welcome to BoroBepari - Bangladesh's B2B Marketplace</span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/sell" className="hover:text-orange-400 flex items-center gap-1">
+            <a
+              href="/sell"
+              className="hover:text-orange-400 flex items-center gap-1"
+            >
               <Store size={14} />
               Sell on BoroBepari
             </a>
-            <a href="/help" className="hover:text-orange-400 flex items-center gap-1">
+            <a
+              href="/help"
+              className="hover:text-orange-400 flex items-center gap-1"
+            >
               <HelpCircle size={14} />
               Help
             </a>
@@ -187,66 +192,109 @@ export default function Header() {
                 onMouseEnter={() => setShowUserDropdown(true)}
                 onMouseLeave={() => setShowUserDropdown(false)}
               >
-                <button className="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors">
-                  <User size={22} className={isAuthenticated ? "text-orange-500" : ""} />
+                <button
+                  onClick={() => setShowUserDropdown(!showUserDropdown)}
+                  className="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors focus:outline-none"
+                >
+                  <User
+                    size={22}
+                    className={isAuthenticated ? 'text-orange-500' : ''}
+                  />
                   <span className="text-xs hidden sm:block">
-                    {isAuthenticated && user ? user.name.split(' ')[0] : 'Account'}
+                    {isAuthenticated && user
+                      ? user.name.split(' ')[0]
+                      : 'Account'}
                   </span>
                 </button>
 
                 {showUserDropdown && (
-                  <div className="absolute top-full right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                    {!isAuthenticated ? (
+                  <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50 overflow-hidden">
+                    {isAuthenticated ? (
                       <>
-                        <button
-                          onClick={() => setAuthModalOpen(true)}
-                          className="flex w-full items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600 text-left"
-                        >
-                          <LogIn size={16} />
-                          Sign In
-                        </button>
-                        <a
-                          href="/register"
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
-                        >
-                          <UserPlus size={16} />
-                          Register
-                        </a>
+                        <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {user?.name}
+                          </p>
+                          <p className="text-xs text-gray-500 truncate">
+                            {user?.email}
+                          </p>
+                        </div>
+                        <div className="py-1">
+                          <Link
+                            to="/account"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                          >
+                            <User size={16} />
+                            My Profile
+                          </Link>
+                          <Link
+                            to="/account"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                          >
+                            <Package size={16} />
+                            My Orders
+                          </Link>
+                        </div>
+                        <hr className="border-gray-100" />
+                        <div className="py-1">
+                          <button
+                            onClick={() => {
+                              handleLogout()
+                              setShowUserDropdown(false)
+                            }}
+                            className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
+                          >
+                            <LogOut size={16} />
+                            Sign Out
+                          </button>
+                        </div>
                       </>
                     ) : (
                       <>
-                         <div className="px-4 py-2 border-b border-gray-100">
-                           <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                           <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-                         </div>
-                         <a
-                          href="/profile"
-                          className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
-                        >
-                          <User size={16} />
-                          My Profile
-                        </a>
-                      </>
-                    )}
-                    <hr className="my-2 border-gray-100" />
-                    <a
-                      href="/orders"
-                      onClick={(e) => handleAuthRequired(e, '/orders')}
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-orange-50 text-gray-700 hover:text-orange-600"
-                    >
-                      <Package size={16} />
-                      My Orders
-                    </a>
-                    {isAuthenticated && (
-                      <>
-                        <hr className="my-2 border-gray-100" />
-                        <button
-                          onClick={handleLogout}
-                          className="flex w-full items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 text-left"
-                        >
-                          <LogOut size={16} />
-                          Sign Out
-                        </button>
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900">
+                            Welcome to BoroBepari
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Sign in to start trading
+                          </p>
+                        </div>
+                        <div className="p-3 space-y-2">
+                          <button
+                            onClick={() => {
+                              setAuthModalOpen(true)
+                              setShowUserDropdown(false)
+                            }}
+                            className="flex w-full items-center justify-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md text-sm font-semibold hover:bg-orange-600 transition-colors"
+                          >
+                            <LogIn size={16} />
+                            Login
+                          </button>
+                          <Link
+                            to="/register"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex w-full items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm font-semibold hover:bg-gray-50 transition-colors"
+                          >
+                            <UserPlus size={16} />
+                            Register
+                          </Link>
+                        </div>
+                        <hr className="border-gray-100" />
+                        <div className="py-1">
+                          <Link
+                            to="/account"
+                            onClick={(e) => {
+                              handleAuthRequired(e, '/account')
+                              setShowUserDropdown(false)
+                            }}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
+                          >
+                            <Package size={16} />
+                            My Orders
+                          </Link>
+                        </div>
                       </>
                     )}
                   </div>
@@ -330,9 +378,9 @@ export default function Header() {
             </a>
 
             <a
-              href="/orders"
+              href="/account"
               onClick={(e) => {
-                handleAuthRequired(e, '/orders')
+                handleAuthRequired(e, '/account')
                 if (isAuthenticated) setIsMobileMenuOpen(false)
               }}
               className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-50 text-gray-700"

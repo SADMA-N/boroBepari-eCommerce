@@ -30,7 +30,7 @@ export interface MockProduct {
   name: string
   slug: string
   description: string
-  images: string[]
+  images: Array<string>
   price: number
   originalPrice: number | null
   moq: number
@@ -43,9 +43,9 @@ export interface MockProduct {
   rating: number
   reviewCount: number
   soldCount: number
-  tags: string[]
-  tieredPricing: { minQty: number; maxQty: number | null; price: number }[]
-  specifications: { key: string; value: string }[]
+  tags: Array<string>
+  tieredPricing: Array<{ minQty: number; maxQty: number | null; price: number }>
+  specifications: Array<{ key: string; value: string }>
   hasSample: boolean
   samplePrice: number | null
 }
@@ -65,7 +65,7 @@ export const categoryIcons: Record<string, string> = {
 }
 
 // Wholesale product categories specific to Bangladesh B2B market
-export const mockCategories: MockCategory[] = [
+export const mockCategories: Array<MockCategory> = [
   {
     id: 1,
     name: 'Fashion & Apparel',
@@ -206,7 +206,11 @@ export const createMockSupplier = (id: number): MockSupplier => {
     verified: faker.datatype.boolean({ probability: 0.7 }),
     location: faker.helpers.arrayElement(bdLocations),
     responseRate: faker.number.float({ min: 70, max: 100, fractionDigits: 1 }),
-    onTimeDelivery: faker.number.float({ min: 80, max: 100, fractionDigits: 1 }),
+    onTimeDelivery: faker.number.float({
+      min: 80,
+      max: 100,
+      fractionDigits: 1,
+    }),
     yearsInBusiness: faker.number.int({ min: 1, max: 20 }),
     description: faker.company.catchPhrase(),
   }
@@ -226,24 +230,105 @@ const generatePrice = (categoryId: number): number => {
     9: [10, 200],
     10: [100, 3000],
   }
-  const [min, max] = priceRanges[categoryId] || [100, 1000]
+  const [min, max] = priceRanges[categoryId] ?? [100, 1000]
   return faker.number.int({ min, max })
 }
 
-const productNamesByCategory: Record<number, string[]> = {
-  1: ['T-Shirt', 'Shirt', 'Polo', 'Jeans', 'Saree', 'Kurta', 'Jacket', 'Jersey'],
-  2: ['Earbuds', 'Cable', 'Watch Band', 'Screen Protector', 'Power Bank', 'USB Hub', 'Stand', 'Mouse'],
-  3: ['Cookware', 'Bed Sheet', 'Lamp', 'Container', 'Clock', 'Cushion', 'Towel', 'Chair'],
-  4: ['Cream', 'Shampoo', 'Lotion', 'Perfume', 'Brush Set', 'Nail Polish', 'Sunscreen', 'Mask'],
-  5: ['Yoga Mat', 'Dumbbells', 'Band', 'Bottle', 'Shoes', 'Football', 'Racket', 'Bag'],
+const productNamesByCategory: Record<number, Array<string>> = {
+  1: [
+    'T-Shirt',
+    'Shirt',
+    'Polo',
+    'Jeans',
+    'Saree',
+    'Kurta',
+    'Jacket',
+    'Jersey',
+  ],
+  2: [
+    'Earbuds',
+    'Cable',
+    'Watch Band',
+    'Screen Protector',
+    'Power Bank',
+    'USB Hub',
+    'Stand',
+    'Mouse',
+  ],
+  3: [
+    'Cookware',
+    'Bed Sheet',
+    'Lamp',
+    'Container',
+    'Clock',
+    'Cushion',
+    'Towel',
+    'Chair',
+  ],
+  4: [
+    'Cream',
+    'Shampoo',
+    'Lotion',
+    'Perfume',
+    'Brush Set',
+    'Nail Polish',
+    'Sunscreen',
+    'Mask',
+  ],
+  5: [
+    'Yoga Mat',
+    'Dumbbells',
+    'Band',
+    'Bottle',
+    'Shoes',
+    'Football',
+    'Racket',
+    'Bag',
+  ],
   6: ['Tea', 'Noodles', 'Rice', 'Oil', 'Spice', 'Snacks', 'Drink', 'Coffee'],
-  7: ['Helmet', 'Gloves', 'Fan', 'Cable Ties', 'Tape', 'Cleaning', 'Tools', 'First Aid'],
-  8: ['Paper', 'Pen', 'Notebook', 'Stapler', 'Folder', 'Marker', 'Calculator', 'Organizer'],
-  9: ['Boxes', 'Bubble Wrap', 'Tape', 'Bags', 'Shrink Wrap', 'Paper Bags', 'Container', 'Labels'],
-  10: ['Fabric', 'Leather', 'Granules', 'Wire', 'Rubber', 'Foam', 'Beads', 'Chemical'],
+  7: [
+    'Helmet',
+    'Gloves',
+    'Fan',
+    'Cable Ties',
+    'Tape',
+    'Cleaning',
+    'Tools',
+    'First Aid',
+  ],
+  8: [
+    'Paper',
+    'Pen',
+    'Notebook',
+    'Stapler',
+    'Folder',
+    'Marker',
+    'Calculator',
+    'Organizer',
+  ],
+  9: [
+    'Boxes',
+    'Bubble Wrap',
+    'Tape',
+    'Bags',
+    'Shrink Wrap',
+    'Paper Bags',
+    'Container',
+    'Labels',
+  ],
+  10: [
+    'Fabric',
+    'Leather',
+    'Granules',
+    'Wire',
+    'Rubber',
+    'Foam',
+    'Beads',
+    'Chemical',
+  ],
 }
 
-const unitsByCategory: Record<number, string[]> = {
+const unitsByCategory: Record<number, Array<string>> = {
   1: ['piece', 'dozen', 'pack'],
   2: ['piece', 'pack', 'box'],
   3: ['piece', 'set', 'pack'],
@@ -256,29 +341,33 @@ const unitsByCategory: Record<number, string[]> = {
   10: ['meter', 'kg', 'roll'],
 }
 
-export const createMockProduct = (id: number, supplierCount: number): MockProduct => {
+export const createMockProduct = (
+  id: number,
+  supplierCount: number,
+): MockProduct => {
   const categoryId = faker.number.int({ min: 1, max: 10 })
-  const baseNames = productNamesByCategory[categoryId] || productNamesByCategory[1]
+  const baseNames =
+    productNamesByCategory[categoryId] ?? productNamesByCategory[1]
   const baseName = faker.helpers.arrayElement(baseNames)
   const adjective = faker.commerce.productAdjective()
   const name = `${adjective} ${baseName}`
-  
+
   const price = generatePrice(categoryId)
   const hasDiscount = faker.datatype.boolean({ probability: 0.4 })
   const originalPrice = hasDiscount
     ? Math.round(price * faker.number.float({ min: 1.1, max: 1.5 }))
     : null
-  
-  const units = unitsByCategory[categoryId] || ['piece']
+
+  const units = unitsByCategory[categoryId] ?? ['piece']
   const moq = faker.helpers.arrayElement([1, 5, 10, 20, 50, 100])
-  
+
   // Tiered pricing
   const tieredPricing = [
     { minQty: moq, maxQty: moq * 2, price: price },
     { minQty: moq * 2 + 1, maxQty: moq * 5, price: Math.round(price * 0.95) },
     { minQty: moq * 5 + 1, maxQty: null, price: Math.round(price * 0.9) },
   ]
-  
+
   const hasSample = faker.datatype.boolean({ probability: 0.8 })
 
   return {
@@ -288,7 +377,7 @@ export const createMockProduct = (id: number, supplierCount: number): MockProduc
     description: faker.commerce.productDescription(),
     images: Array.from(
       { length: faker.number.int({ min: 1, max: 4 }) },
-      (_, j) => `https://picsum.photos/seed/product${id}-${j}/800/800`
+      (_, j) => `https://picsum.photos/seed/product${id}-${j}/800/800`,
     ),
     price,
     originalPrice,
@@ -303,8 +392,15 @@ export const createMockProduct = (id: number, supplierCount: number): MockProduc
     reviewCount: faker.number.int({ min: 0, max: 500 }),
     soldCount: faker.number.int({ min: 0, max: 10000 }),
     tags: faker.helpers.arrayElements(
-      ['bestseller', 'trending', 'limited', 'bulk-deal', 'new-arrival', 'top-rated'],
-      faker.number.int({ min: 0, max: 4 })
+      [
+        'bestseller',
+        'trending',
+        'limited',
+        'bulk-deal',
+        'new-arrival',
+        'top-rated',
+      ],
+      faker.number.int({ min: 0, max: 4 }),
     ),
     tieredPricing,
     specifications: [
@@ -321,36 +417,39 @@ export const createMockProduct = (id: number, supplierCount: number): MockProduc
 
 // --- DATA GENERATION ---
 
-export const mockSuppliers: MockSupplier[] = Array.from(
+export const mockSuppliers: Array<MockSupplier> = Array.from(
   { length: 20 },
-  (_, i) => createMockSupplier(i + 1)
+  (_, i) => createMockSupplier(i + 1),
 )
 
-export const mockProducts: MockProduct[] = Array.from(
+export const mockProducts: Array<MockProduct> = Array.from(
   { length: 120 },
-  (_, i) => createMockProduct(i + 1, mockSuppliers.length)
+  (_, i) => createMockProduct(i + 1, mockSuppliers.length),
 )
-
 
 // Helper functions
 export const formatBDT = (price: number): string => {
   return `৳${price.toLocaleString('en-BD')}`
 }
 
-export const getProductsByCategory = (categoryId: number): MockProduct[] => {
+export const getProductsByCategory = (
+  categoryId: number,
+): Array<MockProduct> => {
   return mockProducts.filter((p) => p.categoryId === categoryId)
 }
 
-export const getFeaturedProducts = (): MockProduct[] => {
+export const getFeaturedProducts = (): Array<MockProduct> => {
   return mockProducts.filter((p) => p.featured)
 }
 
-export const getNewArrivals = (): MockProduct[] => {
+export const getNewArrivals = (): Array<MockProduct> => {
   return mockProducts.filter((p) => p.isNew).slice(0, 12)
 }
 
-export const getTopRanking = (): MockProduct[] => {
-  return [...mockProducts].sort((a, b) => b.soldCount - a.soldCount).slice(0, 12)
+export const getTopRanking = (): Array<MockProduct> => {
+  return [...mockProducts]
+    .sort((a, b) => b.soldCount - a.soldCount)
+    .slice(0, 12)
 }
 
 export const getSupplierById = (id: number): MockSupplier | undefined => {
@@ -365,7 +464,7 @@ export const getCategoryBySlug = (slug: string): MockCategory | undefined => {
   return mockCategories.find((c) => c.slug === slug)
 }
 
-export const getVerifiedSuppliers = (): MockSupplier[] => {
+export const getVerifiedSuppliers = (): Array<MockSupplier> => {
   return mockSuppliers.filter((s) => s.verified)
 }
 
@@ -377,12 +476,12 @@ export interface ProductFilters {
   maxPrice?: number
   minMoq?: number
   maxMoq?: number
-  locations?: string[]
+  locations?: Array<string>
   verifiedOnly?: boolean
   sortBy?: 'price-asc' | 'price-desc' | 'newest' | 'popularity'
 }
 
-export const filterProducts = (filters: ProductFilters): MockProduct[] => {
+export const filterProducts = (filters: ProductFilters): Array<MockProduct> => {
   let filtered = [...mockProducts]
 
   if (filters.search) {
@@ -391,7 +490,7 @@ export const filterProducts = (filters: ProductFilters): MockProduct[] => {
       (p) =>
         p.name.toLowerCase().includes(searchLower) ||
         p.description.toLowerCase().includes(searchLower) ||
-        p.tags.some((t) => t.toLowerCase().includes(searchLower))
+        p.tags.some((t) => t.toLowerCase().includes(searchLower)),
     )
   }
 
@@ -427,7 +526,7 @@ export const filterProducts = (filters: ProductFilters): MockProduct[] => {
       .filter((s) => s.verified)
       .map((s) => s.id)
     filtered = filtered.filter((p) =>
-      verifiedSupplierIds.includes(p.supplierId)
+      verifiedSupplierIds.includes(p.supplierId),
     )
   }
 
@@ -461,7 +560,7 @@ export interface HeroBannerSlide {
   bgColor: string
 }
 
-export const heroBannerSlides: HeroBannerSlide[] = [
+export const heroBannerSlides: Array<HeroBannerSlide> = [
   {
     id: 1,
     title: 'Wholesale Fashion Week',
@@ -508,7 +607,7 @@ export interface PromoBanner {
   link: string
 }
 
-export const promoBanners: PromoBanner[] = [
+export const promoBanners: Array<PromoBanner> = [
   {
     id: 1,
     title: 'Flash Deals',
@@ -530,7 +629,7 @@ export const promoBanners: PromoBanner[] = [
 ]
 
 // Frequently searched terms
-export const frequentlySearched: string[] = [
+export const frequentlySearched: Array<string> = [
   'cotton t-shirt',
   'mobile charger',
   'kitchen utensils',
@@ -542,4 +641,4 @@ export const frequentlySearched: string[] = [
 ]
 
 // Bangladesh locations for filters
-export const bdLocationsList: string[] = bdLocations
+export const bdLocationsList: Array<string> = bdLocations
