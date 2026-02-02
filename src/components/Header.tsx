@@ -21,6 +21,7 @@ import { useWishlist } from '../contexts/WishlistContext'
 import { useAuth } from '../contexts/AuthContext'
 import AuthModal from './AuthModal'
 import CartSidebar from './CartSidebar'
+import NotificationBell from './NotificationBell'
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -172,6 +173,13 @@ export default function Header() {
                 </div>
                 <span className="text-xs hidden sm:block">Cart</span>
               </button>
+
+              {/* Notifications - Only show if logged in */}
+              {isAuthenticated && (
+                <div className="hidden sm:block">
+                  <NotificationBell />
+                </div>
+              )}
 
               {/* User Account */}
               <div
