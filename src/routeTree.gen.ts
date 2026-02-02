@@ -36,6 +36,7 @@ import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
 import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
@@ -185,6 +186,11 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerRfqsRfqIdRoute = BuyerRfqsRfqIdRouteImport.update({
+  id: '/$rfqId',
+  path: '/$rfqId',
+  getParentRoute: () => BuyerRfqsRoute,
+} as any)
 const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
   id: '/api/rfq/submit',
   path: '/api/rfq/submit',
@@ -268,7 +274,7 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/buyer/rfqs': typeof BuyerRfqsRoute
+  '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -279,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -310,7 +317,7 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/buyer/rfqs': typeof BuyerRfqsRoute
+  '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -321,6 +328,7 @@ export interface FileRoutesByTo {
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -353,7 +361,7 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/buyer/rfqs': typeof BuyerRfqsRoute
+  '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -364,6 +372,7 @@ export interface FileRoutesById {
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
@@ -408,6 +417,7 @@ export interface FileRouteTypes {
     | '/products/$productSlug'
     | '/api/auth/$'
     | '/api/rfq/submit'
+    | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -450,6 +460,7 @@ export interface FileRouteTypes {
     | '/products/$productSlug'
     | '/api/auth/$'
     | '/api/rfq/submit'
+    | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -492,6 +503,7 @@ export interface FileRouteTypes {
     | '/products/$productSlug'
     | '/api/auth/$'
     | '/api/rfq/submit'
+    | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
@@ -524,7 +536,7 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   ApiSplatRoute: typeof ApiSplatRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
-  BuyerRfqsRoute: typeof BuyerRfqsRoute
+  BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
   DemoDbChatApiRoute: typeof DemoDbChatApiRoute
@@ -745,6 +757,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/rfqs/$rfqId': {
+      id: '/buyer/rfqs/$rfqId'
+      path: '/$rfqId'
+      fullPath: '/buyer/rfqs/$rfqId'
+      preLoaderRoute: typeof BuyerRfqsRfqIdRouteImport
+      parentRoute: typeof BuyerRfqsRoute
+    }
     '/api/rfq/submit': {
       id: '/api/rfq/submit'
       path: '/api/rfq/submit'
@@ -839,6 +858,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface BuyerRfqsRouteChildren {
+  BuyerRfqsRfqIdRoute: typeof BuyerRfqsRfqIdRoute
+}
+
+const BuyerRfqsRouteChildren: BuyerRfqsRouteChildren = {
+  BuyerRfqsRfqIdRoute: BuyerRfqsRfqIdRoute,
+}
+
+const BuyerRfqsRouteWithChildren = BuyerRfqsRoute._addFileChildren(
+  BuyerRfqsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
@@ -852,7 +883,7 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   ApiSplatRoute: ApiSplatRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
-  BuyerRfqsRoute: BuyerRfqsRoute,
+  BuyerRfqsRoute: BuyerRfqsRouteWithChildren,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,
   DemoDbChatApiRoute: DemoDbChatApiRoute,
