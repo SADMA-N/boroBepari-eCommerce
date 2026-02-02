@@ -1,8 +1,8 @@
-import { createFileRoute, notFound, Link } from '@tanstack/react-router'
+import { createFileRoute, notFound, Link, useRouter } from '@tanstack/react-router'
 import { useState, useMemo } from 'react'
 import { 
   AlertTriangle, 
-  ArrowLeft, 
+  ArrowLeft,
   BadgeCheck, 
   Calendar, 
   CheckCircle, 
@@ -23,6 +23,7 @@ import { mockRfqs, MockRfq, MockQuote } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
 import { AcceptQuoteModal, RejectQuoteModal, CounterOfferModal } from '@/components/QuoteActionModals'
 import Toast from '@/components/Toast'
+import { useCart } from '@/contexts/CartContext'
 
 export const Route = createFileRoute('/buyer/rfqs/$rfqId')({
   loader: ({ params }) => {
@@ -45,6 +46,9 @@ function RFQDetailPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
   const [sortOption, setSortOption] = useState<SortOption>('price-asc')
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const { addToCart } = useCart()
+  const router = useRouter()
 
   // Modal State
   const [selectedQuote, setSelectedQuote] = useState<MockQuote | null>(null)
@@ -133,6 +137,15 @@ function RFQDetailPage() {
     setRfq(prev => ({ ...prev, quotes: updatedQuotes }))
     setToast({ message: 'Counter offer sent successfully!', isVisible: true })
     closeActionModal()
+  }
+
+  const handleCheckout = (quote: MockQuote) => {
+    addToCart(rfq.productId!, rfq.quantity!, {
+      customPrice: Number(quote.unitPrice),
+      rfqId: rfq.id,
+      quoteId: quote.id
+    })
+    router.navigate({ to: '/cart' })
   }
 
   return (
@@ -316,7 +329,8 @@ function RFQDetailPage() {
                        key={quote.id} 
                        quote={quote} 
                        isExpired={isExpired || isAccepted} 
-                       onAction={(id, action) => openActionModal(quote, action)} 
+                       onAction={(id, action) => openActionModal(quote, action)}
+                       onCheckout={() => handleCheckout(quote)}
                      />
                    ))}
                  </div>
@@ -349,22 +363,33 @@ function RFQDetailPage() {
                              </td>
                              <td className="px-6 py-4 text-right">
                                <div className="flex justify-end gap-2">
-                                 <button 
-                                   disabled={isExpired || isAccepted}
-                                   onClick={() => openActionModal(quote, 'accept')}
-                                   className="text-green-600 hover:bg-green-50 p-1.5 rounded disabled:opacity-50"
-                                   title="Accept"
-                                 >
-                                   <CheckCircle size={18} />
-                                 </button>
-                                 <button 
-                                   disabled={isExpired || isAccepted}
-                                   onClick={() => openActionModal(quote, 'reject')}
-                                   className="text-red-500 hover:bg-red-50 p-1.5 rounded disabled:opacity-50"
-                                   title="Reject"
-                                 >
-                                   <XCircle size={18} />
-                                 </button>
+                                 {quote.status === 'accepted' ? (
+                                    <button 
+                                      onClick={() => handleCheckout(quote)}
+                                      className="text-white bg-green-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-700"
+                                    >
+                                      Checkout
+                                    </button>
+                                 ) : (
+                                   <>
+                                     <button 
+                                       disabled={isExpired || isAccepted}
+                                       onClick={() => openActionModal(quote, 'accept')}
+                                       className="text-green-600 hover:bg-green-50 p-1.5 rounded disabled:opacity-50"
+                                       title="Accept"
+                                     >
+                                       <CheckCircle size={18} />
+                                     </button>
+                                     <button 
+                                       disabled={isExpired || isAccepted}
+                                       onClick={() => openActionModal(quote, 'reject')}
+                                       className="text-red-500 hover:bg-red-50 p-1.5 rounded disabled:opacity-50"
+                                       title="Reject"
+                                     >
+                                       <XCircle size={18} />
+                                     </button>
+                                   </>
+                                 )}
                                </div>
                              </td>
                            </tr>
@@ -382,16 +407,17 @@ function RFQDetailPage() {
   )
 }
 
-function QuoteCard({ 
-  quote, 
-  isExpired, 
-  onAction 
-}: { 
+function QuoteCard({
+  quote,
+  isExpired,
+  onAction,
+  onCheckout
+}: {
   quote: MockQuote
   isExpired: boolean
   onAction: (id: number, action: 'accept' | 'reject' | 'counter') => void 
-}) {
-  const daysValid = differenceInDays(quote.validityPeriod!, new Date())
+  onCheckout: () => void
+}) {  const daysValid = differenceInDays(quote.validityPeriod!, new Date())
   
   return (
     <div className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow ${

@@ -16,7 +16,7 @@ export const Route = createFileRoute('/cart')({
   component: CartPage,
 })
 
-function CartItem({ item }: { item: { productId: number; quantity: number } }) {
+function CartItem({ item }: { item: { productId: number; quantity: number; customPrice?: number; rfqId?: number; quoteId?: number } }) {
   const { removeFromCart, updateQuantity } = useCart()
   const product = mockProducts.find((p) => p.id === item.productId)
 
@@ -24,16 +24,23 @@ function CartItem({ item }: { item: { productId: number; quantity: number } }) {
 
   const supplier = getSupplierById(product.supplierId)
   const quantity = item.quantity
+  const price = item.customPrice ?? product.price
+  const isLocked = item.customPrice !== undefined
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+    <div className={`flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow ${isLocked ? 'border-orange-200 bg-orange-50/10' : ''}`}>
       {/* Image */}
-      <div className="w-full sm:w-32 h-32 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
+      <div className="w-full sm:w-32 h-32 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden relative">
         <img
           src={product.images[0]}
           alt={product.name}
           className="w-full h-full object-cover"
         />
+        {isLocked && (
+          <div className="absolute top-0 left-0 bg-orange-500 text-white text-[10px] px-2 py-0.5 font-bold rounded-br">
+            QUOTE #{item.rfqId}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -44,7 +51,7 @@ function CartItem({ item }: { item: { productId: number; quantity: number } }) {
               <a href={`/products/${product.slug}`}>{product.name}</a>
             </h3>
             <button
-              onClick={() => removeFromCart(product.id)}
+              onClick={() => removeFromCart(product.id, item.rfqId)}
               className="text-gray-400 hover:text-red-500 transition-colors"
               title="Remove from cart"
             >
@@ -63,12 +70,18 @@ function CartItem({ item }: { item: { productId: number; quantity: number } }) {
 
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-xl font-bold text-orange-600">
-              {formatBDT(product.price * quantity)}
+              {formatBDT(price * quantity)}
             </span>
             <span className="text-sm text-gray-500">
-              ({formatBDT(product.price)} / {product.unit})
+              ({formatBDT(price)} / {product.unit})
             </span>
           </div>
+
+          {isLocked && (
+             <div className="text-xs text-orange-700 bg-orange-100 inline-block px-2 py-1 rounded mt-1 font-medium">
+               Price locked from Quote #{item.quoteId}
+             </div>
+          )}
 
           <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
             <Package size={14} />
@@ -81,11 +94,12 @@ function CartItem({ item }: { item: { productId: number; quantity: number } }) {
 
       {/* Actions */}
       <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 border-t sm:border-t-0 pt-4 sm:pt-0 mt-2 sm:mt-0">
-        <div className="flex items-center border rounded-lg">
+        <div className="flex items-center border rounded-lg bg-white">
           <button
-            onClick={() => updateQuantity(product.id, quantity - 1)}
-            className="p-2 hover:bg-gray-50 text-gray-600 disabled:opacity-50"
-            disabled={quantity <= product.moq}
+            onClick={() => updateQuantity(product.id, quantity - 1, item.rfqId)}
+            className="p-2 hover:bg-gray-50 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={quantity <= product.moq || isLocked}
+            title={isLocked ? "Quantity fixed for quote" : ""}
           >
             <Minus size={16} />
           </button>
@@ -93,8 +107,10 @@ function CartItem({ item }: { item: { productId: number; quantity: number } }) {
             {quantity}
           </span>
           <button
-            onClick={() => updateQuantity(product.id, quantity + 1)}
-            className="p-2 hover:bg-gray-50 text-gray-600"
+            onClick={() => updateQuantity(product.id, quantity + 1, item.rfqId)}
+            className="p-2 hover:bg-gray-50 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLocked}
+            title={isLocked ? "Quantity fixed for quote" : ""}
           >
             <Plus size={16} />
           </button>

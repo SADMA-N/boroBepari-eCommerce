@@ -4,13 +4,16 @@ import { mockProducts } from '../data/mock-products'
 interface CartItem {
   productId: number
   quantity: number
+  customPrice?: number
+  rfqId?: number
+  quoteId?: number
 }
 
 interface CartContextType {
   cartItems: Array<CartItem>
-  addToCart: (productId: number, quantity: number) => void
-  removeFromCart: (productId: number) => void
-  updateQuantity: (productId: number, quantity: number) => void
+  addToCart: (productId: number, quantity: number, options?: { customPrice?: number, rfqId?: number, quoteId?: number }) => void
+  removeFromCart: (productId: number, rfqId?: number) => void
+  updateQuantity: (productId: number, quantity: number, rfqId?: number) => void
   cartCount: number
   getCartTotal: () => number
 }
@@ -30,32 +33,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('cart', JSON.stringify(cartItems))
   }, [cartItems])
 
-  const addToCart = (productId: number, quantity: number) => {
+  const addToCart = (productId: number, quantity: number, options?: { customPrice?: number, rfqId?: number, quoteId?: number }) => {
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.productId === productId)
-      if (existing) {
-        return prev.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: item.quantity + quantity }
+      // If it's a special RFQ item, we might want to treat it as a separate line item even if product ID matches?
+      // For simplicity, if options.rfqId is present, we treat it as unique or update existing RFQ item.
+      // Let's treat RFQ items as unique based on rfqId if present.
+      
+      const existingIndex = prev.findIndex((item) => 
+        item.productId === productId && item.rfqId === options?.rfqId
+      )
+
+      if (existingIndex > -1) {
+        return prev.map((item, index) =>
+          index === existingIndex
+            ? { ...item, quantity: item.quantity + quantity } // Merge quantity
             : item,
         )
       }
-      return [...prev, { productId, quantity }]
+      return [...prev, { productId, quantity, ...options }]
     })
   }
 
-  const removeFromCart = (productId: number) => {
-    setCartItems((prev) => prev.filter((item) => item.productId !== productId))
+  const removeFromCart = (productId: number, rfqId?: number) => {
+    setCartItems((prev) => prev.filter((item) => !(item.productId === productId && item.rfqId === rfqId)))
   }
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: number, quantity: number, rfqId?: number) => {
     if (quantity <= 0) {
-      removeFromCart(productId)
+      removeFromCart(productId, rfqId)
       return
     }
     setCartItems((prev) =>
       prev.map((item) =>
-        item.productId === productId ? { ...item, quantity } : item,
+        (item.productId === productId && item.rfqId === rfqId) ? { ...item, quantity } : item,
       ),
     )
   }
@@ -65,7 +75,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const getCartTotal = () => {
     return cartItems.reduce((total, item) => {
       const product = mockProducts.find((p) => p.id === item.productId)
-      return total + (product ? product.price * item.quantity : 0)
+      const price = item.customPrice ?? (product ? product.price : 0)
+      return total + (price * item.quantity)
     }, 0)
   }
 
