@@ -21,6 +21,8 @@ import {
 import { format, differenceInDays } from 'date-fns'
 import { mockRfqs, MockRfq, MockQuote } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
+import { AcceptQuoteModal, RejectQuoteModal, CounterOfferModal } from '@/components/QuoteActionModals'
+import Toast from '@/components/Toast'
 
 export const Route = createFileRoute('/buyer/rfqs/$rfqId')({
   loader: ({ params }) => {
@@ -44,6 +46,14 @@ function RFQDetailPage() {
   const [sortOption, setSortOption] = useState<SortOption>('price-asc')
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  // Modal State
+  const [selectedQuote, setSelectedQuote] = useState<MockQuote | null>(null)
+  const [actionType, setActionType] = useState<'accept' | 'reject' | 'counter' | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  
+  // Toast State
+  const [toast, setToast] = useState({ message: '', isVisible: false })
+
   const isExpired = differenceInDays(rfq.expiresAt!, new Date()) < 0 || rfq.status === 'expired'
   const isAccepted = rfq.status === 'accepted'
 
@@ -61,10 +71,68 @@ function RFQDetailPage() {
     })
   }, [rfq.quotes, sortOption])
 
-  // Mock actions
-  const handleAction = (quoteId: number, action: 'accept' | 'reject') => {
-    // In real app: API call
-    alert(`${action.toUpperCase()} Quote ID: ${quoteId}`)
+  const openActionModal = (quote: MockQuote, action: 'accept' | 'reject' | 'counter') => {
+    setSelectedQuote(quote)
+    setActionType(action)
+  }
+
+  const closeActionModal = () => {
+    setSelectedQuote(null)
+    setActionType(null)
+    setIsLoading(false)
+  }
+
+  const handleConfirmAccept = async () => {
+    if (!selectedQuote) return
+    setIsLoading(true)
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    // Update local state
+    const updatedQuotes = rfq.quotes.map(q => 
+      q.id === selectedQuote.id ? { ...q, status: 'accepted' } : { ...q, status: 'rejected' } // Auto reject others? Usually yes or keep pending. Let's keep pending for now or reject.
+    ) as MockQuote[]
+
+    setRfq(prev => ({
+      ...prev,
+      status: 'accepted',
+      quotes: updatedQuotes
+    }))
+
+    setToast({ message: 'Quote accepted successfully!', isVisible: true })
+    closeActionModal()
+  }
+
+  const handleConfirmReject = async (reason: string) => {
+    if (!selectedQuote) return
+    setIsLoading(true)
+    
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    const updatedQuotes = rfq.quotes.map(q => 
+      q.id === selectedQuote.id ? { ...q, status: 'rejected' } : q
+    ) as MockQuote[]
+
+    setRfq(prev => ({ ...prev, quotes: updatedQuotes }))
+    setToast({ message: 'Quote rejected.', isVisible: true })
+    closeActionModal()
+  }
+
+  const handleConfirmCounter = async (price: number, notes: string) => {
+    if (!selectedQuote) return
+    setIsLoading(true)
+    
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
+    // In real app, this might create a new quote entry or update status
+    const updatedQuotes = rfq.quotes.map(q => 
+      q.id === selectedQuote.id ? { ...q, status: 'countered' } : q
+    ) as MockQuote[]
+
+    setRfq(prev => ({ ...prev, quotes: updatedQuotes }))
+    setToast({ message: 'Counter offer sent successfully!', isVisible: true })
+    closeActionModal()
   }
 
   return (
@@ -76,6 +144,37 @@ function RFQDetailPage() {
       >
         <ArrowLeft size={20} className="mr-2" /> Back to RFQs
       </Link>
+
+      <Toast 
+        message={toast.message} 
+        isVisible={toast.isVisible} 
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))} 
+      />
+
+      <AcceptQuoteModal 
+        isOpen={!!selectedQuote && actionType === 'accept'}
+        onClose={closeActionModal}
+        isLoading={isLoading}
+        supplierName={selectedQuote?.supplierName || ''}
+        price={selectedQuote?.totalPrice || 0}
+        onConfirm={handleConfirmAccept}
+      />
+
+      <RejectQuoteModal 
+        isOpen={!!selectedQuote && actionType === 'reject'}
+        onClose={closeActionModal}
+        isLoading={isLoading}
+        supplierName={selectedQuote?.supplierName || ''}
+        onConfirm={handleConfirmReject}
+      />
+
+      <CounterOfferModal 
+        isOpen={!!selectedQuote && actionType === 'counter'}
+        onClose={closeActionModal}
+        isLoading={isLoading}
+        currentPrice={selectedQuote?.unitPrice || 0}
+        onConfirm={handleConfirmCounter}
+      />
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -216,8 +315,8 @@ function RFQDetailPage() {
                      <QuoteCard 
                        key={quote.id} 
                        quote={quote} 
-                       isExpired={isExpired} 
-                       onAction={handleAction} 
+                       isExpired={isExpired || isAccepted} 
+                       onAction={(id, action) => openActionModal(quote, action)} 
                      />
                    ))}
                  </div>
@@ -251,16 +350,16 @@ function RFQDetailPage() {
                              <td className="px-6 py-4 text-right">
                                <div className="flex justify-end gap-2">
                                  <button 
-                                   disabled={isExpired}
-                                   onClick={() => handleAction(quote.id!, 'accept')}
+                                   disabled={isExpired || isAccepted}
+                                   onClick={() => openActionModal(quote, 'accept')}
                                    className="text-green-600 hover:bg-green-50 p-1.5 rounded disabled:opacity-50"
                                    title="Accept"
                                  >
                                    <CheckCircle size={18} />
                                  </button>
                                  <button 
-                                   disabled={isExpired}
-                                   onClick={() => handleAction(quote.id!, 'reject')}
+                                   disabled={isExpired || isAccepted}
+                                   onClick={() => openActionModal(quote, 'reject')}
                                    className="text-red-500 hover:bg-red-50 p-1.5 rounded disabled:opacity-50"
                                    title="Reject"
                                  >
@@ -290,12 +389,14 @@ function QuoteCard({
 }: { 
   quote: MockQuote
   isExpired: boolean
-  onAction: (id: number, action: 'accept' | 'reject') => void 
+  onAction: (id: number, action: 'accept' | 'reject' | 'counter') => void 
 }) {
   const daysValid = differenceInDays(quote.validityPeriod!, new Date())
   
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+    <div className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow ${
+      quote.status === 'accepted' ? 'border-green-500 ring-1 ring-green-500' : 'border-gray-100'
+    }`}>
       <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-4">
         {/* Supplier Info */}
         <div className="flex items-start gap-4">
@@ -304,6 +405,9 @@ function QuoteCard({
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-gray-900 text-lg">{quote.supplierName}</h3>
               <BadgeCheck size={16} className="text-blue-500" />
+              {quote.status && quote.status !== 'pending' && (
+                <StatusBadge status={quote.status} />
+              )}
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
               <span className="flex items-center gap-1">
@@ -354,27 +458,36 @@ function QuoteCard({
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <button 
-          disabled={isExpired}
-          onClick={() => onAction(quote.id!, 'accept')}
-          className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-        >
-          <ThumbsUp size={18} /> Accept Quote
-        </button>
-        <button 
-          disabled={isExpired}
-          className="flex-1 bg-white border border-blue-600 text-blue-600 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Counter Offer
-        </button>
-        <button 
-          disabled={isExpired}
-          onClick={() => onAction(quote.id!, 'reject')}
-          className="flex-none px-4 bg-white border border-gray-300 text-gray-600 py-2.5 rounded-lg font-semibold hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Reject Quote"
-        >
-          <ThumbsDown size={18} />
-        </button>
+        {quote.status === 'accepted' ? (
+           <button className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center gap-2">
+             Proceed to Checkout
+           </button>
+        ) : (
+          <>
+            <button 
+              disabled={isExpired || quote.status === 'rejected'}
+              onClick={() => onAction(quote.id!, 'accept')}
+              className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            >
+              <ThumbsUp size={18} /> Accept Quote
+            </button>
+            <button 
+              disabled={isExpired || quote.status === 'rejected'}
+              onClick={() => onAction(quote.id!, 'counter')}
+              className="flex-1 bg-white border border-blue-600 text-blue-600 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Counter Offer
+            </button>
+            <button 
+              disabled={isExpired || quote.status === 'rejected'}
+              onClick={() => onAction(quote.id!, 'reject')}
+              className="flex-none px-4 bg-white border border-gray-300 text-gray-600 py-2.5 rounded-lg font-semibold hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Reject Quote"
+            >
+              <ThumbsDown size={18} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   )
@@ -387,7 +500,8 @@ function StatusBadge({ status }: { status?: string }) {
     accepted: 'bg-green-100 text-green-800',
     rejected: 'bg-red-100 text-red-800',
     expired: 'bg-gray-100 text-gray-600',
-    converted: 'bg-purple-100 text-purple-800'
+    converted: 'bg-purple-100 text-purple-800',
+    countered: 'bg-purple-100 text-purple-800'
   }
   
   const label = status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown'
