@@ -19,6 +19,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
@@ -99,6 +100,11 @@ const AccountRoute = AccountRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
+  id: '/supplier/rfqs',
+  path: '/supplier/rfqs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/supplier/rfqs': typeof SupplierRfqsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/supplier/rfqs': typeof SupplierRfqsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/supplier/rfqs': typeof SupplierRfqsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
@@ -415,6 +424,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
+    | '/supplier/rfqs'
     | '/api/auth/$'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
@@ -458,6 +468,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
+    | '/supplier/rfqs'
     | '/api/auth/$'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
@@ -501,6 +512,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/products/$productSlug'
+    | '/supplier/rfqs'
     | '/api/auth/$'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
@@ -545,6 +557,7 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
+  SupplierRfqsRoute: typeof SupplierRfqsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiRfqSubmitRoute: typeof ApiRfqSubmitRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
@@ -636,6 +649,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/supplier/rfqs': {
+      id: '/supplier/rfqs'
+      path: '/supplier/rfqs'
+      fullPath: '/supplier/rfqs'
+      preLoaderRoute: typeof SupplierRfqsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/products/$productSlug': {
@@ -892,6 +912,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
+  SupplierRfqsRoute: SupplierRfqsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiRfqSubmitRoute: ApiRfqSubmitRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
