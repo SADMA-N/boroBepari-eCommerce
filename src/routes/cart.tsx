@@ -5,7 +5,7 @@
  * - Items grouped by supplier
  * - Quantity controls with direct input
  * - MOQ validation
- * - Coupon code input
+ * - Coupon code validation via API
  * - Order summary with checkout button
  * - Responsive design with sticky checkout on mobile
  */
@@ -15,13 +15,17 @@ import {
   AlertTriangle,
   ArrowRight,
   BadgeCheck,
+  Check,
   ChevronDown,
   ChevronUp,
+  Loader2,
   Minus,
   Package,
+  Percent,
   Plus,
   ShoppingBag,
   ShoppingCart,
+  Sparkles,
   Store,
   Tag,
   Trash2,
@@ -32,37 +36,12 @@ import { useState, useRef, useEffect } from 'react'
 import { useCart } from '../contexts/CartContext'
 import { getSupplierById } from '../data/mock-products'
 import { formatCurrency } from '@/lib/cart-utils'
-import type { CartItem as CartItemType, CouponCode, SupplierBreakdown } from '@/types/cart'
+import { useCouponValidation } from '@/hooks/useCouponValidation'
+import type { CartItem as CartItemType, SupplierBreakdown } from '@/types/cart'
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,
 })
-
-// Demo coupons for testing
-const DEMO_COUPONS: Record<string, CouponCode> = {
-  WELCOME10: {
-    code: 'WELCOME10',
-    discountType: 'percentage',
-    value: 10,
-    minOrderValue: 1000,
-    expiryDate: '2026-12-31',
-    maxDiscount: 500,
-  },
-  FLAT200: {
-    code: 'FLAT200',
-    discountType: 'fixed',
-    value: 200,
-    minOrderValue: 2000,
-    expiryDate: '2026-12-31',
-  },
-  FREESHIP: {
-    code: 'FREESHIP',
-    discountType: 'fixed',
-    value: 100,
-    minOrderValue: 3000,
-    expiryDate: '2026-12-31',
-  },
-}
 
 // ============================================================================
 // Cart Item Row Component
@@ -84,7 +63,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
   const isBelowMoq = item.quantity < item.moq
   const isLowStock = item.stock < 50
 
-  // Sync input value when quantity changes externally
   useEffect(() => {
     setInputValue(item.quantity.toString())
   }, [item.quantity])
@@ -147,7 +125,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
         ${!isBelowMoq && !isLocked ? 'hover:shadow-md hover:border-gray-300' : ''}
       `}
     >
-      {/* Product Image */}
       <Link
         to="/products/$productSlug"
         params={{ productSlug: item.productId.toString() }}
@@ -165,7 +142,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
         )}
       </Link>
 
-      {/* Product Details */}
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0">
@@ -196,7 +172,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
           </button>
         </div>
 
-        {/* Price */}
         <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <span className="text-lg font-bold text-orange-600">
             {formatCurrency(item.lineTotal)}
@@ -206,7 +181,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
           </span>
         </div>
 
-        {/* Badges */}
         <div className="mt-2 flex flex-wrap gap-2">
           {isLocked && item.quoteId && (
             <span className="inline-flex items-center gap-1 text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded-full font-medium">
@@ -228,7 +202,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
           )}
         </div>
 
-        {/* MOQ Warning */}
         {isBelowMoq && (
           <div className="mt-2 flex items-center gap-2 text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
             <AlertTriangle size={16} className="flex-shrink-0" />
@@ -239,7 +212,6 @@ function CartItemRow({ item, showSupplier = false }: CartItemRowProps) {
         )}
       </div>
 
-      {/* Quantity Controls */}
       <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-0">
         <div className={`
           flex items-center border rounded-lg overflow-hidden
@@ -301,7 +273,6 @@ function SupplierGroup({ breakdown, isExpanded, onToggle }: SupplierGroupProps) 
 
   return (
     <div className="border rounded-xl bg-white overflow-hidden shadow-sm">
-      {/* Supplier Header */}
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
@@ -345,7 +316,6 @@ function SupplierGroup({ breakdown, isExpanded, onToggle }: SupplierGroupProps) 
         </div>
       </button>
 
-      {/* Items */}
       <div className={`
         transition-all duration-300 ease-in-out overflow-hidden
         ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}
@@ -356,7 +326,6 @@ function SupplierGroup({ breakdown, isExpanded, onToggle }: SupplierGroupProps) 
           ))}
         </div>
 
-        {/* Supplier Footer */}
         <div className="px-4 py-3 border-t bg-white flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Truck size={16} />
@@ -411,38 +380,60 @@ function EmptyCart() {
 }
 
 // ============================================================================
-// Order Summary Component
+// Coupon Input Component
 // ============================================================================
 
-interface OrderSummaryProps {
-  cart: ReturnType<typeof useCart>['cart']
-  couponInput: string
-  setCouponInput: (value: string) => void
-  couponError: string
-  onApplyCoupon: () => void
-  onRemoveCoupon: () => void
-  hasValidationErrors: boolean
-}
+function CouponSection() {
+  const [couponInput, setCouponInput] = useState('')
+  const {
+    isValidating,
+    error,
+    successMessage,
+    appliedCoupon,
+    couponDescription,
+    calculatedDiscount,
+    validateAndApply,
+    removeCoupon,
+    clearError,
+    clearSuccess,
+  } = useCouponValidation()
 
-function OrderSummary({
-  cart,
-  couponInput,
-  setCouponInput,
-  couponError,
-  onApplyCoupon,
-  onRemoveCoupon,
-  hasValidationErrors,
-}: OrderSummaryProps) {
+  const handleApply = async () => {
+    if (!couponInput.trim()) return
+    const success = await validateAndApply(couponInput)
+    if (success) {
+      setCouponInput('')
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isValidating) {
+      handleApply()
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCouponInput(e.target.value.toUpperCase())
+    if (error) clearError()
+  }
+
+  // Auto-clear success message after 5 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(clearSuccess, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [successMessage, clearSuccess])
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-      <div className="p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Promo Code
+      </label>
 
-        {/* Coupon Input */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Promo Code
-          </label>
+      {/* Input and Apply Button */}
+      {!appliedCoupon && (
+        <>
           <div className="flex gap-2">
             <div className="flex-1 relative">
               <Tag
@@ -452,53 +443,137 @@ function OrderSummary({
               <input
                 type="text"
                 value={couponInput}
-                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
                 placeholder="Enter code"
-                className="w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent uppercase"
-                onKeyDown={(e) => e.key === 'Enter' && onApplyCoupon()}
+                disabled={isValidating}
+                className={`
+                  w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm uppercase
+                  focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
+                  disabled:bg-gray-50 disabled:cursor-not-allowed
+                  ${error ? 'border-red-300 bg-red-50' : 'border-gray-200'}
+                `}
               />
             </div>
             <button
-              onClick={onApplyCoupon}
-              className="px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors"
+              onClick={handleApply}
+              disabled={isValidating || !couponInput.trim()}
+              className={`
+                px-5 py-2.5 text-sm font-medium rounded-lg transition-all
+                flex items-center gap-2 min-w-[90px] justify-center
+                ${isValidating || !couponInput.trim()
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-900 hover:bg-gray-800 text-white'}
+              `}
             >
-              Apply
+              {isValidating ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span className="sr-only">Validating...</span>
+                </>
+              ) : (
+                'Apply'
+              )}
             </button>
           </div>
 
-          {couponError && (
-            <p className="text-xs text-red-500 mt-2 flex items-center gap-1">
-              <AlertTriangle size={12} />
-              {couponError}
-            </p>
-          )}
-
-          {cart.appliedCoupon && (
-            <div className="flex items-center justify-between mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-center gap-2">
-                <Tag size={16} className="text-green-600" />
-                <span className="text-sm font-medium text-green-700">
-                  {cart.appliedCoupon.code}
-                </span>
-                <span className="text-xs text-green-600">
-                  ({cart.appliedCoupon.discountType === 'percentage'
-                    ? `${cart.appliedCoupon.value}% off`
-                    : `${formatCurrency(cart.appliedCoupon.value)} off`})
-                </span>
-              </div>
-              <button
-                onClick={onRemoveCoupon}
-                className="p-1 text-green-600 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
-              >
-                <X size={16} />
-              </button>
+          {/* Error Message */}
+          {error && (
+            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+              <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
 
-          <p className="text-xs text-gray-500 mt-2">
-            Try: WELCOME10, FLAT200, FREESHIP
-          </p>
+          {/* Available Coupons Hint */}
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+            <p className="text-xs text-gray-500 mb-2 font-medium">Available coupons to try:</p>
+            <div className="flex flex-wrap gap-2">
+              {['WELCOME10', 'FLAT200', 'FREESHIP', 'BULK15'].map((code) => (
+                <button
+                  key={code}
+                  onClick={() => setCouponInput(code)}
+                  className="text-xs px-2 py-1 bg-white border border-gray-200 rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                >
+                  {code}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Success Message */}
+      {successMessage && !appliedCoupon && (
+        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
+          <Check size={16} className="text-green-600" />
+          <p className="text-sm text-green-700 font-medium">{successMessage}</p>
         </div>
+      )}
+
+      {/* Applied Coupon Display */}
+      {appliedCoupon && (
+        <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl animate-in fade-in zoom-in-95 duration-300">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Sparkles size={20} className="text-green-600" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-green-800 text-lg">
+                    {appliedCoupon.code}
+                  </span>
+                  <Check size={18} className="text-green-600" />
+                </div>
+                <p className="text-sm text-green-700 mt-0.5">
+                  {couponDescription || (
+                    appliedCoupon.discountType === 'percentage'
+                      ? `${appliedCoupon.value}% off your order`
+                      : `${formatCurrency(appliedCoupon.value)} off your order`
+                  )}
+                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full font-medium">
+                    You save {formatCurrency(calculatedDiscount)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={removeCoupon}
+              className="p-1.5 text-green-600 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              title="Remove coupon"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================================
+// Order Summary Component
+// ============================================================================
+
+interface OrderSummaryProps {
+  cart: ReturnType<typeof useCart>['cart']
+  hasValidationErrors: boolean
+}
+
+function OrderSummary({ cart, hasValidationErrors }: OrderSummaryProps) {
+  const originalTotal = cart.subtotal + cart.deliveryFee
+  const hasDiscount = cart.discount > 0
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <div className="p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
+
+        {/* Coupon Section */}
+        <CouponSection />
 
         {/* Price Breakdown */}
         <div className="space-y-3 text-sm">
@@ -524,20 +599,37 @@ function OrderSummary({
             </span>
           </div>
 
-          {cart.discount > 0 && (
-            <div className="flex justify-between text-green-600">
-              <span>Discount</span>
-              <span className="font-medium">-{formatCurrency(cart.discount)}</span>
+          {hasDiscount && (
+            <div className="flex justify-between text-green-600 bg-green-50 -mx-2 px-2 py-2 rounded-lg">
+              <span className="flex items-center gap-1 font-medium">
+                <Percent size={14} />
+                Coupon Discount
+              </span>
+              <span className="font-bold">-{formatCurrency(cart.discount)}</span>
             </div>
           )}
         </div>
 
         {/* Total */}
         <div className="flex justify-between items-center mt-4 pt-4 border-t">
-          <span className="text-base font-bold text-gray-900">Total</span>
-          <span className="text-2xl font-bold text-orange-600">
-            {formatCurrency(cart.total)}
-          </span>
+          <div>
+            <span className="text-base font-bold text-gray-900">Total</span>
+            {hasDiscount && (
+              <p className="text-xs text-gray-500">
+                <span className="line-through">{formatCurrency(originalTotal)}</span>
+              </p>
+            )}
+          </div>
+          <div className="text-right">
+            <span className="text-2xl font-bold text-orange-600">
+              {formatCurrency(cart.total)}
+            </span>
+            {hasDiscount && (
+              <p className="text-xs text-green-600 font-medium">
+                You save {formatCurrency(cart.discount)}!
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Validation Warning */}
@@ -607,18 +699,14 @@ function OrderSummary({
 // ============================================================================
 
 function CartPage() {
-  const { cart, cartCount, applyCoupon, removeCoupon, clearCart, validateCartItems } = useCart()
-  const [couponInput, setCouponInput] = useState('')
-  const [couponError, setCouponError] = useState('')
+  const { cart, cartCount, clearCart, validateCartItems } = useCart()
   const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(new Set())
 
-  // Initialize all suppliers as expanded
   useEffect(() => {
     const allSupplierIds = new Set(cart.supplierBreakdown.map((s) => s.supplierId))
     setExpandedSuppliers(allSupplierIds)
   }, [cart.supplierBreakdown.length])
 
-  // Check for MOQ validation errors
   const validation = validateCartItems()
   const hasValidationErrors = !validation.isValid
 
@@ -634,30 +722,6 @@ function CartPage() {
     })
   }
 
-  const handleApplyCoupon = () => {
-    setCouponError('')
-    const code = couponInput.trim().toUpperCase()
-
-    if (!code) {
-      setCouponError('Please enter a coupon code')
-      return
-    }
-
-    const coupon = DEMO_COUPONS[code]
-    if (!coupon) {
-      setCouponError('Invalid coupon code')
-      return
-    }
-
-    const result = applyCoupon(coupon)
-    if (!result.success) {
-      setCouponError(result.error || 'Could not apply coupon')
-    } else {
-      setCouponInput('')
-    }
-  }
-
-  // Single supplier - show items directly without grouping
   const isSingleSupplier = cart.supplierBreakdown.length === 1
 
   return (
@@ -696,7 +760,6 @@ function CartPage() {
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Cart Items */}
             <div className="flex-1 space-y-4">
-              {/* Multi-Supplier Notice */}
               {!isSingleSupplier && (
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
                   <Store size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
@@ -712,7 +775,6 @@ function CartPage() {
                 </div>
               )}
 
-              {/* Items grouped by supplier or flat list */}
               {isSingleSupplier ? (
                 <div className="bg-white rounded-xl border p-4 space-y-3">
                   {cart.items.map((item) => (
@@ -733,16 +795,11 @@ function CartPage() {
               )}
             </div>
 
-            {/* Order Summary - Sticky on desktop */}
+            {/* Order Summary */}
             <div className="lg:w-[380px] flex-shrink-0">
               <div className="lg:sticky lg:top-24">
                 <OrderSummary
                   cart={cart}
-                  couponInput={couponInput}
-                  setCouponInput={setCouponInput}
-                  couponError={couponError}
-                  onApplyCoupon={handleApplyCoupon}
-                  onRemoveCoupon={removeCoupon}
                   hasValidationErrors={hasValidationErrors}
                 />
               </div>
@@ -760,6 +817,11 @@ function CartPage() {
               <p className="text-xl font-bold text-orange-600">
                 {formatCurrency(cart.total)}
               </p>
+              {cart.discount > 0 && (
+                <p className="text-xs text-green-600">
+                  Saving {formatCurrency(cart.discount)}
+                </p>
+              )}
             </div>
             <button
               disabled={hasValidationErrors}
