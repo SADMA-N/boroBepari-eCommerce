@@ -50,6 +50,7 @@ import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/rout
 import { Route as SellerRfqsIndexRouteImport } from './routes/seller/rfqs/index'
 import { Route as SellerProductsIndexRouteImport } from './routes/seller/products/index'
 import { Route as SellerOrdersIndexRouteImport } from './routes/seller/orders/index'
+import { Route as SellerAnalyticsIndexRouteImport } from './routes/seller/analytics/index'
 import { Route as BuyerOrdersIndexRouteImport } from './routes/buyer/orders/index'
 import { Route as SellerProductsAddRouteImport } from './routes/seller/products/add'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
@@ -291,6 +292,11 @@ const SellerOrdersIndexRoute = SellerOrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => SellerRouteRoute,
 } as any)
+const SellerAnalyticsIndexRoute = SellerAnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
 const BuyerOrdersIndexRoute = BuyerOrdersIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -522,6 +528,7 @@ export interface FileRoutesByFullPath {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/seller/analytics/': typeof SellerAnalyticsIndexRoute
   '/seller/orders/': typeof SellerOrdersIndexRoute
   '/seller/products/': typeof SellerProductsIndexRoute
   '/seller/rfqs/': typeof SellerRfqsIndexRoute
@@ -596,6 +603,7 @@ export interface FileRoutesByTo {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders': typeof BuyerOrdersIndexRoute
+  '/seller/analytics': typeof SellerAnalyticsIndexRoute
   '/seller/orders': typeof SellerOrdersIndexRoute
   '/seller/products': typeof SellerProductsIndexRoute
   '/seller/rfqs': typeof SellerRfqsIndexRoute
@@ -674,6 +682,7 @@ export interface FileRoutesById {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/seller/analytics/': typeof SellerAnalyticsIndexRoute
   '/seller/orders/': typeof SellerOrdersIndexRoute
   '/seller/products/': typeof SellerProductsIndexRoute
   '/seller/rfqs/': typeof SellerRfqsIndexRoute
@@ -753,6 +762,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders/'
+    | '/seller/analytics/'
     | '/seller/orders/'
     | '/seller/products/'
     | '/seller/rfqs/'
@@ -827,6 +837,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders'
+    | '/seller/analytics'
     | '/seller/orders'
     | '/seller/products'
     | '/seller/rfqs'
@@ -904,6 +915,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders/'
+    | '/seller/analytics/'
     | '/seller/orders/'
     | '/seller/products/'
     | '/seller/rfqs/'
@@ -1272,6 +1284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellerOrdersIndexRouteImport
       parentRoute: typeof SellerRouteRoute
     }
+    '/seller/analytics/': {
+      id: '/seller/analytics/'
+      path: '/analytics'
+      fullPath: '/seller/analytics/'
+      preLoaderRoute: typeof SellerAnalyticsIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
     '/buyer/orders/': {
       id: '/buyer/orders/'
       path: '/'
@@ -1538,6 +1557,7 @@ interface SellerRouteRouteChildren {
   SellerRegisterRoute: typeof SellerRegisterRoute
   SellerIndexRoute: typeof SellerIndexRoute
   SellerProductsAddRoute: typeof SellerProductsAddRoute
+  SellerAnalyticsIndexRoute: typeof SellerAnalyticsIndexRoute
   SellerOrdersIndexRoute: typeof SellerOrdersIndexRoute
   SellerProductsIndexRoute: typeof SellerProductsIndexRoute
   SellerRfqsIndexRoute: typeof SellerRfqsIndexRoute
@@ -1550,6 +1570,7 @@ const SellerRouteRouteChildren: SellerRouteRouteChildren = {
   SellerRegisterRoute: SellerRegisterRoute,
   SellerIndexRoute: SellerIndexRoute,
   SellerProductsAddRoute: SellerProductsAddRoute,
+  SellerAnalyticsIndexRoute: SellerAnalyticsIndexRoute,
   SellerOrdersIndexRoute: SellerOrdersIndexRoute,
   SellerProductsIndexRoute: SellerProductsIndexRoute,
   SellerRfqsIndexRoute: SellerRfqsIndexRoute,
