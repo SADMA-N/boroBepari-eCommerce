@@ -25,6 +25,10 @@ function PaymentCallbackPage() {
       setTimeout(() => {
         setIsVerifying(false)
         clearCart()
+        // Redirect to confirmation page
+        if (orderId) {
+             router.navigate({ to: '/order-confirmation/$orderId', params: { orderId } })
+        }
       }, 2000)
     } else {
       setIsVerifying(false)
@@ -71,10 +75,11 @@ function PaymentCallbackPage() {
 
             <div className="space-y-3">
               <Link 
-                to="/orders" 
+                to="/order-confirmation/$orderId" 
+                params={{ orderId: orderId || '0' }}
                 className="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md"
               >
-                View My Orders
+                View Order Details
               </Link>
               <Link 
                 to="/" 

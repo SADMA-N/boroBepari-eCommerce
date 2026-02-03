@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
+import { Route as OrderConfirmationOrderIdRouteImport } from './routes/order-confirmation/$orderId'
 import { Route as MockPaymentBkashRouteImport } from './routes/mock-payment/bkash'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
@@ -132,6 +133,12 @@ const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
   path: '/products/$productSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderConfirmationOrderIdRoute =
+  OrderConfirmationOrderIdRouteImport.update({
+    id: '/order-confirmation/$orderId',
+    path: '/order-confirmation/$orderId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MockPaymentBkashRoute = MockPaymentBkashRouteImport.update({
   id: '/mock-payment/bkash',
   path: '/mock-payment/bkash',
@@ -353,6 +360,7 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
+  '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -406,6 +414,7 @@ export interface FileRoutesByTo {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
+  '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout': typeof CheckoutIndexRoute
@@ -461,6 +470,7 @@ export interface FileRoutesById {
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
+  '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/mock-payment/bkash'
+    | '/order-confirmation/$orderId'
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/checkout/'
@@ -570,6 +581,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/mock-payment/bkash'
+    | '/order-confirmation/$orderId'
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/checkout'
@@ -624,6 +636,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/mock-payment/bkash'
+    | '/order-confirmation/$orderId'
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/checkout/'
@@ -676,6 +689,7 @@ export interface RootRouteChildren {
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   MockPaymentBkashRoute: typeof MockPaymentBkashRoute
+  OrderConfirmationOrderIdRoute: typeof OrderConfirmationOrderIdRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   SupplierRfqsRoute: typeof SupplierRfqsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -801,6 +815,13 @@ declare module '@tanstack/react-router' {
       path: '/products/$productSlug'
       fullPath: '/products/$productSlug'
       preLoaderRoute: typeof ProductsProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-confirmation/$orderId': {
+      id: '/order-confirmation/$orderId'
+      path: '/order-confirmation/$orderId'
+      fullPath: '/order-confirmation/$orderId'
+      preLoaderRoute: typeof OrderConfirmationOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mock-payment/bkash': {
@@ -1125,6 +1146,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   MockPaymentBkashRoute: MockPaymentBkashRoute,
+  OrderConfirmationOrderIdRoute: OrderConfirmationOrderIdRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
   SupplierRfqsRoute: SupplierRfqsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

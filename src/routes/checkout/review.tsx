@@ -71,8 +71,9 @@ function ReviewPage() {
         setToast({ message: 'Order placed successfully!', isVisible: true })
         // Redirect to success page
         setTimeout(() => {
-            // Ideally navigate to order confirmation
-            router.navigate({ to: '/orders' }) // or /checkout/success
+            // Ideally navigate to order confirmation with real ID
+            const mockId = Date.now().toString()
+            router.navigate({ to: '/order-confirmation/$orderId', params: { orderId: mockId } }) 
         }, 1500)
       }
     } catch (error) {

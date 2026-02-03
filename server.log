@@ -1,3 +1,0 @@
-$ vite dev --port 3000 --host
-error: script "dev" was terminated by signal SIGHUP (Terminal hung up)
-Hangup
