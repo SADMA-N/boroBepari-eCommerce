@@ -7,6 +7,8 @@ export interface SellerUser {
   email: string
   phone: string | null
   kycStatus: KycStatus
+  kycSubmittedAt: string | null
+  kycRejectionReason: string | null
   verificationBadge: VerificationBadge
 }
 

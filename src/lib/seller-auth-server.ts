@@ -19,7 +19,7 @@ function generateToken(sellerId: string): string {
   return `${encoded}.${signature}`
 }
 
-function verifyToken(token: string): { sellerId: string } | null {
+export function verifySellerToken(token: string): { sellerId: string } | null {
   try {
     const [encoded, signature] = token.split('.')
     const expectedSignature = Buffer.from(SECRET + encoded).toString('base64').slice(0, 32)
@@ -64,7 +64,7 @@ export const sellerAuthMiddleware = createMiddleware().server(
       const token = authHeader?.replace('Bearer ', '')
 
       if (token) {
-        const decoded = verifyToken(token)
+        const decoded = verifySellerToken(token)
         if (decoded) {
           const seller = await db.query.sellers.findFirst({
             where: eq(schema.sellers.id, decoded.sellerId),
@@ -77,6 +77,10 @@ export const sellerAuthMiddleware = createMiddleware().server(
               email: seller.email,
               phone: seller.phone,
               kycStatus: seller.kycStatus,
+              kycSubmittedAt: seller.kycSubmittedAt
+                ? seller.kycSubmittedAt.toISOString()
+                : null,
+              kycRejectionReason: seller.kycRejectionReason,
               verificationBadge: seller.verificationBadge,
             }
           }
@@ -147,6 +151,10 @@ export const sellerRegister = createServerFn({ method: 'POST' })
       email: seller.email,
       phone: seller.phone,
       kycStatus: seller.kycStatus,
+      kycSubmittedAt: seller.kycSubmittedAt
+        ? seller.kycSubmittedAt.toISOString()
+        : null,
+      kycRejectionReason: seller.kycRejectionReason,
       verificationBadge: seller.verificationBadge,
     }
 
@@ -192,6 +200,10 @@ export const sellerLogin = createServerFn({ method: 'POST' })
       email: seller.email,
       phone: seller.phone,
       kycStatus: seller.kycStatus,
+      kycSubmittedAt: seller.kycSubmittedAt
+        ? seller.kycSubmittedAt.toISOString()
+        : null,
+      kycRejectionReason: seller.kycRejectionReason,
       verificationBadge: seller.verificationBadge,
     }
 
@@ -211,7 +223,7 @@ export const validateSellerToken = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const { token } = data
 
-    const decoded = verifyToken(token)
+    const decoded = verifySellerToken(token)
     if (!decoded) {
       return { valid: false, seller: null }
     }
@@ -230,6 +242,10 @@ export const validateSellerToken = createServerFn({ method: 'POST' })
       email: seller.email,
       phone: seller.phone,
       kycStatus: seller.kycStatus,
+      kycSubmittedAt: seller.kycSubmittedAt
+        ? seller.kycSubmittedAt.toISOString()
+        : null,
+      kycRejectionReason: seller.kycRejectionReason,
       verificationBadge: seller.verificationBadge,
     }
 

@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
+import { submitSellerKyc } from '@/lib/seller-kyc-server'
+import type { KycStatus } from '@/types/seller'
 
 type UploadKey =
   | 'tradeLicense'
@@ -47,8 +49,9 @@ const INVENTORY_RANGES = [
 ]
 
 export function SellerKYCPage() {
-  const { seller } = useSellerAuth()
+  const { seller, refreshSeller } = useSellerAuth()
   const search = useSearch({ from: '/seller/kyc', strict: false })
+  const [localStatus, setLocalStatus] = useState<KycStatus | null>(null)
   const [uploads, setUploads] = useState<Record<UploadKey, UploadItem | null>>({
     tradeLicense: null,
     nidFront: null,
@@ -68,11 +71,19 @@ export function SellerKYCPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittedAt, setSubmittedAt] = useState<Date | null>(null)
   const [successMessage, setSuccessMessage] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   const rejectionReason = useMemo(() => {
+    if (seller?.kycRejectionReason) return seller.kycRejectionReason
     if (search && typeof search.reason === 'string') return search.reason
     return 'Missing or unclear documents'
-  }, [search])
+  }, [search, seller?.kycRejectionReason])
+
+  useEffect(() => {
+    if (seller?.kycSubmittedAt) {
+      setSubmittedAt(new Date(seller.kycSubmittedAt))
+    }
+  }, [seller?.kycSubmittedAt])
 
   useEffect(() => {
     if (successMessage) {
@@ -81,21 +92,24 @@ export function SellerKYCPage() {
     }
   }, [successMessage])
 
-  const status = seller?.kycStatus ?? 'pending'
+  const status = localStatus ?? seller?.kycStatus ?? 'pending'
   const isVerified = status === 'approved'
   const isRejected = status === 'rejected'
-  const isPending = status === 'submitted' || status === 'pending'
-  const canSubmit = !isSubmitting && (!isPending || isRejected)
+  const isUnderReview = status === 'submitted'
+  const canSubmit = !isSubmitting && (!isUnderReview || isRejected)
 
-  const updateUpload = (key: UploadKey, file: File) => {
+  const updateUpload = async (key: UploadKey, file: File) => {
     const error = validateFile(file)
     if (error) {
       setUploadErrors((prev) => ({ ...prev, [key]: error }))
       return
     }
 
-    const previewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined
-    setUploads((prev) => ({ ...prev, [key]: { file, previewUrl, progress: 0 } }))
+    const processedFile = await compressImageIfNeeded(file)
+    const previewUrl = processedFile.type.startsWith('image/')
+      ? URL.createObjectURL(processedFile)
+      : undefined
+    setUploads((prev) => ({ ...prev, [key]: { file: processedFile, previewUrl, progress: 0 } }))
     setUploadErrors((prev) => ({ ...prev, [key]: null }))
     simulateProgress(key)
   }
@@ -128,12 +142,12 @@ export function SellerKYCPage() {
   const handleDrop = (key: UploadKey, event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
     const file = event.dataTransfer.files?.[0]
-    if (file) updateUpload(key, file)
+    if (file) void updateUpload(key, file)
   }
 
   const handleBrowse = (key: UploadKey, files: FileList | null) => {
     const file = files?.[0]
-    if (file) updateUpload(key, file)
+    if (file) void updateUpload(key, file)
   }
 
   const clearUpload = (key: UploadKey) => {
@@ -167,14 +181,25 @@ export function SellerKYCPage() {
     setShowConfirm(true)
   }
 
-  const confirmSubmit = () => {
+  const confirmSubmit = async () => {
     setShowConfirm(false)
     setIsSubmitting(true)
-    window.setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmittedAt(new Date())
+    setSubmitError('')
+    try {
+      const token = localStorage.getItem('seller_token')
+      if (!token) throw new Error('Unauthorized')
+
+      const payload = await buildSubmissionPayload(token, uploads, description, selectedCategories, inventoryRange)
+      const result = await submitSellerKyc({ data: payload })
+      setSubmittedAt(new Date(result.submittedAt))
+      setLocalStatus('submitted')
       setSuccessMessage(true)
-    }, 1200)
+      await refreshSeller()
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Failed to submit documents')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -210,6 +235,11 @@ export function SellerKYCPage() {
                   </p>
                   <button
                     type="button"
+                    onClick={() => {
+                      setLocalStatus('pending')
+                      setSubmittedAt(null)
+                      setSubmitError('')
+                    }}
                     className="mt-3 inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-white text-sm font-semibold hover:bg-red-700"
                   >
                     Resubmit Documents
@@ -237,7 +267,7 @@ export function SellerKYCPage() {
             </div>
           )}
 
-          {isPending && submittedAt && (
+          {isUnderReview && submittedAt && (
             <div className="mt-6 rounded-xl border border-yellow-100 bg-yellow-50 p-4 text-sm text-yellow-700">
               <div className="flex items-start gap-3">
                 <AlertCircle className="mt-0.5" size={18} />
@@ -393,6 +423,12 @@ export function SellerKYCPage() {
             {isSubmitting ? 'Submitting...' : 'Submit for Verification'}
           </button>
         </section>
+
+        {submitError && (
+          <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700">
+            {submitError}
+          </div>
+        )}
 
         {successMessage && (
           <div className="rounded-xl border border-green-100 bg-green-50 p-4 text-sm text-green-700">
@@ -596,4 +632,93 @@ function ConfirmationModal({
       </div>
     </div>
   )
+}
+
+async function compressImageIfNeeded(file: File) {
+  if (!file.type.startsWith('image/')) return file
+  if (file.size <= 1.5 * 1024 * 1024) return file
+
+  const bitmap = await createImageBitmap(file)
+  const maxWidth = 1600
+  const scale = Math.min(1, maxWidth / bitmap.width)
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return file
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+
+  const blob = await new Promise<Blob | null>((resolve) => {
+    canvas.toBlob(resolve, 'image/jpeg', 0.8)
+  })
+
+  if (!blob) return file
+  return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })
+}
+
+async function fileToBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Failed to read file'))
+    reader.onload = () => {
+      const result = reader.result
+      if (typeof result !== 'string') {
+        reject(new Error('Failed to read file'))
+        return
+      }
+      const base64 = result.split(',')[1]
+      resolve(base64)
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+async function buildSubmissionPayload(
+  token: string,
+  uploads: Record<UploadKey, UploadItem | null>,
+  description: string,
+  categories: string[],
+  inventoryRange: string,
+) {
+  const tradeLicense = uploads.tradeLicense?.file
+  const nidFront = uploads.nidFront?.file
+  const nidBack = uploads.nidBack?.file
+  const bankProof = uploads.bankProof?.file
+
+  if (!tradeLicense || !nidFront || !nidBack) {
+    throw new Error('Please upload all required documents.')
+  }
+
+  const payloadDocuments = {
+    tradeLicense: {
+      filename: tradeLicense.name,
+      mimeType: tradeLicense.type,
+      data: await fileToBase64(tradeLicense),
+    },
+    nidFront: {
+      filename: nidFront.name,
+      mimeType: nidFront.type,
+      data: await fileToBase64(nidFront),
+    },
+    nidBack: {
+      filename: nidBack.name,
+      mimeType: nidBack.type,
+      data: await fileToBase64(nidBack),
+    },
+    bankProof: bankProof
+      ? {
+          filename: bankProof.name,
+          mimeType: bankProof.type,
+          data: await fileToBase64(bankProof),
+        }
+      : undefined,
+  }
+
+  return {
+    token,
+    description,
+    categories,
+    inventoryRange,
+    documents: payloadDocuments,
+  }
 }

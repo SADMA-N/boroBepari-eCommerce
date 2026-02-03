@@ -74,6 +74,18 @@ export const sellers = pgTable('sellers', {
   businessName: text('business_name').notNull(),
   phone: text('phone'),
   kycStatus: kycStatusEnum('kyc_status').default('pending').notNull(),
+  kycSubmittedAt: timestamp('kyc_submitted_at'),
+  kycRejectionReason: text('kyc_rejection_reason'),
+  kycDocuments: jsonb('kyc_documents')
+    .$type<Record<string, string | null>>()
+    .default({}),
+  kycAdditionalInfo: jsonb('kyc_additional_info')
+    .$type<{
+      description: string
+      categories: string[]
+      inventoryRange: string
+    }>()
+    .default({ description: '', categories: [], inventoryRange: '' }),
   verificationBadge: verificationBadgeEnum('verification_badge')
     .default('none')
     .notNull(),
