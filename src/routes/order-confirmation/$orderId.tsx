@@ -1,11 +1,21 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle, Package, ArrowRight, Download, Share2, Copy, MessageCircle, Truck, Calendar, MapPin, CreditCard, UserPlus, Clock, AlertCircle } from 'lucide-react'
+import {
+  CheckCircle,
+  Package,
+  Download,
+  Share2,
+  Copy,
+  Truck,
+  Calendar,
+  MapPin,
+  CreditCard,
+  ShieldCheck,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getOrder } from '@/lib/order-actions'
 import { formatCurrency } from '@/lib/cart-utils'
-import { useAuth } from '@/contexts/AuthContext'
 import Toast from '@/components/Toast'
-import { differenceInDays, addDays } from 'date-fns'
+import { addDays } from 'date-fns'
 
 export const Route = createFileRoute('/order-confirmation/$orderId')({
   component: OrderConfirmationPage,
@@ -18,14 +28,9 @@ export const Route = createFileRoute('/order-confirmation/$orderId')({
 
 function OrderConfirmationPage() {
   const order = Route.useLoaderData()
-  const { isAuthenticated } = useAuth()
   const [toast, setToast] = useState({ message: '', isVisible: false })
-  const [showConfetti, setShowConfetti] = useState(true)
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowConfetti(false), 5000)
-    return () => clearTimeout(timer)
-  }, [])
+  useEffect(() => undefined, [])
 
   if (!order) return <div className="p-8 text-center">Order not found</div>
 
@@ -49,33 +54,7 @@ function OrderConfirmationPage() {
   const balanceDue = Number(order.balanceDue)
   const isEscrow = order.paymentStatus === 'escrow_hold'
   
-  // Timeline Logic
-  const timeline = [
-    { 
-      label: 'Order Placed', 
-      date: order.createdAt, 
-      completed: true,
-      icon: Package 
-    },
-    { 
-      label: isDeposit ? 'Deposit Paid' : 'Payment Processing', 
-      date: order.depositPaidAt || order.fullPaymentPaidAt || order.createdAt, 
-      completed: !!(order.depositPaidAt || order.fullPaymentPaidAt),
-      icon: CreditCard 
-    },
-    { 
-      label: 'Delivered', 
-      date: null, // Future
-      completed: order.status === 'delivered',
-      icon: Truck 
-    },
-    { 
-      label: 'Escrow Release', 
-      date: order.escrowReleaseDeadline, 
-      completed: !!order.escrowReleasedAt,
-      icon: ShieldCheck 
-    }
-  ]
+  const estimatedDelivery = addDays(new Date(order.createdAt), 5)
 
   // Mock address linkage if missing (schema limitation workaround)
   const displayAddress = (order as any).user?.addresses?.find((a: any) => a.isDefault) || {
@@ -86,143 +65,199 @@ function OrderConfirmationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 relative overflow-hidden">
-      <Toast 
-        message={toast.message} 
-        isVisible={toast.isVisible} 
-        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))} 
+    <div className="min-h-screen bg-slate-50">
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
 
-      {showConfetti && (
-        <div className="absolute inset-0 pointer-events-none flex justify-center overflow-hidden">
-            <div className="w-full h-full absolute top-0 left-0 bg-[url('https://cdn.confetti.js.org/confetti.gif')] opacity-20 bg-cover"></div> 
-        </div>
-      )}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.12),transparent_55%)]" />
+        <div className="relative max-w-5xl mx-auto px-4 py-12 space-y-8">
+          <div className="bg-white/90 backdrop-blur rounded-2xl border shadow-sm p-8 text-center">
+            <div className="mx-auto mb-5 w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
+              <CheckCircle className="w-10 h-10 text-emerald-600" strokeWidth={2.4} />
+            </div>
+            <p className="text-emerald-700 text-sm font-semibold tracking-wide uppercase">
+              Thanks for your order
+            </p>
+            <h1 className="text-3xl font-semibold text-slate-900 mt-2">
+              Your order is confirmed
+            </h1>
+            <p className="text-slate-600 mt-3">
+              Order <span className="font-semibold text-slate-900">#{order.id}</span> was placed
+              successfully. We will notify you when the supplier confirms and ships it.
+            </p>
 
-      <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-        
-        {/* Success Header */}
-        <div className="bg-white rounded-2xl shadow-sm border p-8 text-center animate-in fade-in zoom-in-95 duration-500">
-          <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-600" strokeWidth={3} />
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <button
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                onClick={handleCopyOrderNumber}
+              >
+                <Copy size={16} /> Copy Order ID
+              </button>
+              <button
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                onClick={() => handleShare('copy')}
+              >
+                <Share2 size={16} /> Share Order
+              </button>
+              <Link
+                to={`/buyer/orders/${order.id}`}
+                className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+              >
+                Track Order
+              </Link>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Placed Successfully!</h1>
-          <p className="text-gray-600 mb-6">
-            Thank you for your purchase. Your order #{order.id} has been received.
-          </p>
-          
-          {/* Payment Status Banner */}
-          <div className="max-w-lg mx-auto mb-6">
-             {isEscrow && (
-               <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex items-start gap-3 text-left">
-                 <ShieldCheck className="text-blue-600 mt-0.5 flex-shrink-0" size={20} />
-                 <div>
-                   <h4 className="font-bold text-blue-800">Payment in Escrow</h4>
-                   <p className="text-sm text-blue-700 mt-1">
-                     Your payment is held securely in escrow. It will be released to the supplier 3 days after delivery confirmation.
-                   </p>
-                 </div>
-               </div>
-             )}
-             {isDeposit && balanceDue > 0 && (
-               <div className="bg-orange-50 border border-orange-100 p-4 rounded-lg flex items-start gap-3 text-left mt-3">
-                 <AlertCircle className="text-orange-600 mt-0.5 flex-shrink-0" size={20} />
-                 <div>
-                   <h4 className="font-bold text-orange-800">Balance Pending</h4>
-                   <p className="text-sm text-orange-700 mt-1">
-                     You have paid a 30% deposit. Please pay the remaining <strong>{formatCurrency(balanceDue)}</strong> upon delivery.
-                   </p>
-                 </div>
-               </div>
-             )}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2 space-y-6">
-                
-                {/* Timeline */}
-                <div className="bg-white rounded-xl shadow-sm border p-6">
-                   <h3 className="font-semibold text-gray-900 mb-6">Order Status</h3>
-                   <div className="relative flex justify-between">
-                      {/* Line */}
-                      <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-100 -z-10"></div>
-                      
-                      {timeline.map((step, idx) => (
-                        <div key={idx} className="flex flex-col items-center text-center w-1/4">
-                           <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white ${step.completed ? 'border-green-500 text-green-600' : 'border-gray-200 text-gray-300'}`}>
-                              <step.icon size={14} />
-                           </div>
-                           <span className={`text-xs font-medium mt-2 ${step.completed ? 'text-gray-900' : 'text-gray-400'}`}>
-                             {step.label}
-                           </span>
-                           {step.date && (
-                             <span className="text-[10px] text-gray-400 mt-0.5">
-                               {new Date(step.date).toLocaleDateString()}
-                             </span>
-                           )}
-                        </div>
-                      ))}
-                   </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white rounded-2xl border shadow-sm p-6">
+                <h2 className="text-lg font-semibold text-slate-900">What happens next</h2>
+                <div className="mt-4 grid gap-4 md:grid-cols-3 text-sm">
+                  {[
+                    {
+                      title: 'Supplier review',
+                      detail: 'We are confirming stock with the supplier.',
+                      icon: Package,
+                    },
+                    {
+                      title: 'Packing & dispatch',
+                      detail: 'Your items are prepared and handed to courier.',
+                      icon: Truck,
+                    },
+                    {
+                      title: 'Delivery window',
+                      detail: `Estimated by ${estimatedDelivery.toLocaleDateString()}.`,
+                      icon: Calendar,
+                    },
+                  ].map((step, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-xl border border-slate-100 bg-slate-50/70 p-4"
+                    >
+                      <step.icon className="text-emerald-600" size={18} />
+                      <h3 className="mt-3 font-semibold text-slate-900">{step.title}</h3>
+                      <p className="mt-2 text-slate-600">{step.detail}</p>
+                    </div>
+                  ))}
                 </div>
+              </div>
 
-                {/* Items */}
-                <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                    <div className="px-6 py-4 border-b bg-gray-50">
-                        <h2 className="font-semibold text-gray-900">Order Items</h2>
-                    </div>
-                    <div className="p-6 divide-y">
-                        {order.items.map((item: any) => (
-                            <div key={item.id} className="py-3 flex gap-4">
-                                <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center text-gray-400">
-                                    <Package size={24} />
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900 text-sm">{item.product.name}</h4>
-                                    <p className="text-xs text-gray-500 mt-1">Quantity: {item.quantity}</p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="font-medium text-gray-900 text-sm">{formatCurrency(Number(item.price))}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+              <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b bg-slate-50">
+                  <h2 className="font-semibold text-slate-900">Order Items</h2>
                 </div>
+                <div className="p-6 divide-y">
+                  {order.items.map((item: any) => (
+                    <div key={item.id} className="py-4 flex gap-4">
+                      <div className="w-14 h-14 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                        <Package size={22} />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-slate-900 text-sm">
+                          {item.product?.name || 'Product'}
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1">Quantity: {item.quantity}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-medium text-slate-900 text-sm">
+                          {formatCurrency(Number(item.price))}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="space-y-6">
-                {/* Summary */}
-                <div className="bg-white rounded-xl shadow-sm border p-6">
-                    <h3 className="font-semibold text-gray-900 mb-4">Payment Summary</h3>
-                    <div className="space-y-2 text-sm text-gray-600 pb-4 border-b">
-                        <div className="flex justify-between">
-                            <span>Subtotal</span>
-                            <span>{formatCurrency(Number(order.totalAmount))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span>Deposit Paid</span>
-                            <span className="text-green-600">-{formatCurrency(Number(order.depositAmount))}</span>
-                        </div>
-                    </div>
-                    <div className="flex justify-between items-center pt-4 font-bold text-lg">
-                        <span>Total Due</span>
-                        <span className="text-orange-600">{formatCurrency(balanceDue)}</span>
-                    </div>
+              <div className="bg-white rounded-2xl border shadow-sm p-6 space-y-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
+                  <p className="text-2xl font-semibold text-slate-900">
+                    {formatCurrency(Number(order.totalAmount))}
+                  </p>
                 </div>
+                <div className="space-y-2 text-sm text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <CreditCard size={16} className="text-slate-400" />
+                    <span>Payment method: {order.paymentMethod ?? 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin size={16} className="text-slate-400" />
+                    <span>{displayAddress.address}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} className="text-slate-400" />
+                    <span>Placed on {new Date(order.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                {isEscrow && (
+                  <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700">
+                    <div className="flex items-start gap-2">
+                      <ShieldCheck size={18} className="mt-0.5 text-blue-600" />
+                      <div>
+                        <p className="font-semibold text-blue-800">Payment in escrow</p>
+                        <p className="mt-1">
+                          Funds are held securely and released after delivery confirmation.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {isDeposit && balanceDue > 0 && (
+                  <div className="rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700">
+                    <p className="font-semibold text-amber-800">Balance due on delivery</p>
+                    <p className="mt-1">
+                      Remaining amount: <strong>{formatCurrency(balanceDue)}</strong>
+                    </p>
+                  </div>
+                )}
+                <div className="grid gap-3">
+                  <Link
+                    to={`/buyer/orders/${order.id}`}
+                    className="w-full rounded-lg bg-slate-900 py-2.5 text-center text-sm font-semibold text-white hover:bg-slate-800"
+                  >
+                    Track Order
+                  </Link>
+                  <button className="w-full rounded-lg border border-slate-200 py-2.5 text-center text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                    <Download className="inline-block mr-2" size={16} />
+                    Download Invoice
+                  </button>
+                  <Link
+                    to="/"
+                    className="w-full text-center text-sm font-semibold text-emerald-700 hover:underline"
+                  >
+                    Continue Shopping
+                  </Link>
+                </div>
+              </div>
 
-                {/* Actions */}
-                <div className="bg-white rounded-xl shadow-sm border p-6 space-y-3">
-                    <Link to="/orders" className="block w-full py-2.5 bg-gray-900 text-white text-center rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium">
-                        Track Order
-                    </Link>
-                    <button className="block w-full py-2.5 border border-gray-200 text-gray-700 text-center rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                        Download Invoice
-                    </button>
-                    <Link to="/" className="block w-full py-2.5 text-orange-600 text-center text-sm font-medium hover:underline">
-                        Continue Shopping
-                    </Link>
+              <div className="bg-white rounded-2xl border shadow-sm p-6">
+                <h3 className="font-semibold text-slate-900">Need help?</h3>
+                <p className="text-sm text-slate-600 mt-2">
+                  Our support team is ready if you need changes or updates.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2 text-sm">
+                  <button
+                    className="rounded-full border border-slate-200 px-3 py-1.5 text-slate-700 hover:bg-slate-50"
+                    onClick={() => handleShare('whatsapp')}
+                  >
+                    Share on WhatsApp
+                  </button>
+                  <Link
+                    to="/buyer/orders"
+                    className="rounded-full border border-slate-200 px-3 py-1.5 text-slate-700 hover:bg-slate-50"
+                  >
+                    View all orders
+                  </Link>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
       </div>
     </div>

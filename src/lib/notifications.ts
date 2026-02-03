@@ -1,4 +1,4 @@
-import { sendCancellationEmail, sendOrderStatusEmail } from './email'
+import { sendCancellationEmail, sendOrderStatusEmail as sendOrderStatusEmailEmail } from './email'
 
 type OrderStatus =
   | 'placed'
@@ -36,7 +36,7 @@ export async function sendOrderStatusEmail({
     })
   }
 
-  return sendOrderStatusEmail({
+  return sendOrderStatusEmailEmail({
     email,
     name,
     orderNumber: buildOrderNumber(orderId),
