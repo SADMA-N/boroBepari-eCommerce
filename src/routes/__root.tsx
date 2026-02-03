@@ -112,7 +112,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         {showBuyerShell ? (
           <AuthProvider>
             <NotificationProvider>

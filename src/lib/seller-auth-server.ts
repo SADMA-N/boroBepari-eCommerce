@@ -96,7 +96,7 @@ export const sellerAuthMiddleware = createMiddleware().server(
 
 // Register a new seller
 export const sellerRegister = createServerFn({ method: 'POST' })
-  .validator(
+  .inputValidator(
     z.object({
       businessName: z.string().min(2, 'Business name must be at least 2 characters'),
       email: z.string().email('Invalid email address'),
@@ -163,7 +163,7 @@ export const sellerRegister = createServerFn({ method: 'POST' })
 
 // Login seller
 export const sellerLogin = createServerFn({ method: 'POST' })
-  .validator(
+  .inputValidator(
     z.object({
       identifier: z.string().min(1, 'Email or phone is required'),
       password: z.string().min(1, 'Password is required'),
@@ -219,7 +219,7 @@ export const getSellerSession = createServerFn({ method: 'GET' })
 
 // Validate seller token (called from client to verify stored token)
 export const validateSellerToken = createServerFn({ method: 'POST' })
-  .validator(z.object({ token: z.string() }))
+  .inputValidator(z.object({ token: z.string() }))
   .handler(async ({ data }) => {
     const { token } = data
 

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Eye, EyeOff, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const BD_MOBILE_REGEX = /^01\d{9}$/
@@ -9,6 +10,7 @@ const BD_MOBILE_REGEX = /^01\d{9}$/
 export function SellerLoginPage() {
   const navigate = useNavigate()
   const { login } = useSellerAuth()
+  const { pushToast } = useSellerToast()
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -36,6 +38,9 @@ export function SellerLoginPage() {
 
   const mapErrorMessage = (message: string) => {
     const normalized = message.toLowerCase()
+    if (normalized.includes('failed query') || normalized.includes('sellers')) {
+      return 'You are not registered as a seller. Please register to continue.'
+    }
     if (normalized.includes('suspended')) return 'Account suspended'
     if (normalized.includes('not verified')) return 'Account not verified'
     if (normalized.includes('invalid')) return 'Invalid credentials'
@@ -69,7 +74,9 @@ export function SellerLoginPage() {
       navigate({ to: '/seller/kyc' })
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Invalid credentials'
-      setError(mapErrorMessage(message))
+      const friendly = mapErrorMessage(message)
+      setError(friendly)
+      pushToast(friendly, 'error')
     } finally {
       setIsSubmitting(false)
     }

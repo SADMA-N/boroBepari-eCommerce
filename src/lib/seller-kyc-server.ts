@@ -61,7 +61,7 @@ async function saveDocument(
 
 /** Server handler to accept seller KYC payloads and persist documents. */
 export const submitSellerKyc = createServerFn({ method: 'POST' })
-  .validator((input) => submitSchema.parse(input))
+  .inputValidator((input) => submitSchema.parse(input))
   .handler(async ({ data }) => {
     const { token, description, categories, inventoryRange, documents } = data
     const decoded = verifySellerToken(token)

@@ -71,13 +71,13 @@ export default function Header() {
             <span>Welcome to BoroBepari - Bangladesh's B2B Marketplace</span>
           </div>
           <div className="flex items-center gap-4">
-            <a
-              href="/sell"
+            <Link
+              to="/seller/dashboard"
               className="hover:text-orange-400 flex items-center gap-1"
             >
               <Store size={14} />
               Sell on BoroBepari
-            </a>
+            </Link>
             <a
               href="/help"
               className="hover:text-orange-400 flex items-center gap-1"
