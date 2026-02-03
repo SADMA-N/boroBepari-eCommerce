@@ -48,6 +48,7 @@ import { Route as ApiStockAlertsRouteImport } from './routes/api/stock-alerts'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
 import { Route as SellerProductsIndexRouteImport } from './routes/seller/products/index'
+import { Route as SellerOrdersIndexRouteImport } from './routes/seller/orders/index'
 import { Route as BuyerOrdersIndexRouteImport } from './routes/buyer/orders/index'
 import { Route as SellerProductsAddRouteImport } from './routes/seller/products/add'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
@@ -277,6 +278,11 @@ const BuyerOrdersRouteRoute = BuyerOrdersRouteRouteImport.update({
 const SellerProductsIndexRoute = SellerProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerOrdersIndexRoute = SellerOrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
   getParentRoute: () => SellerRouteRoute,
 } as any)
 const BuyerOrdersIndexRoute = BuyerOrdersIndexRouteImport.update({
@@ -510,6 +516,7 @@ export interface FileRoutesByFullPath {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/seller/orders/': typeof SellerOrdersIndexRoute
   '/seller/products/': typeof SellerProductsIndexRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
@@ -582,6 +589,7 @@ export interface FileRoutesByTo {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders': typeof BuyerOrdersIndexRoute
+  '/seller/orders': typeof SellerOrdersIndexRoute
   '/seller/products': typeof SellerProductsIndexRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
@@ -658,6 +666,7 @@ export interface FileRoutesById {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/seller/orders/': typeof SellerOrdersIndexRoute
   '/seller/products/': typeof SellerProductsIndexRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
@@ -735,6 +744,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders/'
+    | '/seller/orders/'
     | '/seller/products/'
     | '/api/cart/item/$itemId'
     | '/api/orders/$orderId/invoice'
@@ -807,6 +817,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders'
+    | '/seller/orders'
     | '/seller/products'
     | '/api/cart/item/$itemId'
     | '/api/orders/$orderId/invoice'
@@ -882,6 +893,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders/'
+    | '/seller/orders/'
     | '/seller/products/'
     | '/api/cart/item/$itemId'
     | '/api/orders/$orderId/invoice'
@@ -1234,6 +1246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellerProductsIndexRouteImport
       parentRoute: typeof SellerRouteRoute
     }
+    '/seller/orders/': {
+      id: '/seller/orders/'
+      path: '/orders'
+      fullPath: '/seller/orders/'
+      preLoaderRoute: typeof SellerOrdersIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
     '/buyer/orders/': {
       id: '/buyer/orders/'
       path: '/'
@@ -1500,6 +1519,7 @@ interface SellerRouteRouteChildren {
   SellerRegisterRoute: typeof SellerRegisterRoute
   SellerIndexRoute: typeof SellerIndexRoute
   SellerProductsAddRoute: typeof SellerProductsAddRoute
+  SellerOrdersIndexRoute: typeof SellerOrdersIndexRoute
   SellerProductsIndexRoute: typeof SellerProductsIndexRoute
 }
 
@@ -1510,6 +1530,7 @@ const SellerRouteRouteChildren: SellerRouteRouteChildren = {
   SellerRegisterRoute: SellerRegisterRoute,
   SellerIndexRoute: SellerIndexRoute,
   SellerProductsAddRoute: SellerProductsAddRoute,
+  SellerOrdersIndexRoute: SellerOrdersIndexRoute,
   SellerProductsIndexRoute: SellerProductsIndexRoute,
 }
 
