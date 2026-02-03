@@ -169,35 +169,68 @@ export const orders = pgTable('orders', {
   updatedAt: timestamp('updated_at').defaultNow(),
 })
 
-export const ordersRelations = relations(orders, ({ one, many }) => ({
-  user: one(user, {
-    fields: [orders.userId],
-    references: [user.id],
-  }),
-  items: many(orderItems),
-}))
-
 export const orderItems = pgTable('order_items', {
+
   id: serial().primaryKey(),
-  orderId: integer('order_id')
-    .notNull()
-    .references(() => orders.id),
+
   productId: integer('product_id')
+
     .notNull()
+
     .references(() => products.id),
+
+  supplierId: integer('supplier_id')
+
+    .references(() => suppliers.id),
+
   quantity: integer('quantity').notNull(),
+
   price: decimal('price', { precision: 12, scale: 2 }).notNull(),
+
+  orderId: integer('order_id')
+
+    .notNull()
+
+    .references(() => orders.id),
+
 })
 
+
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+
+  user: one(user, {
+
+    fields: [orders.userId],
+
+    references: [user.id],
+
+  }),
+
+  items: many(orderItems),
+
+}))
+
+
+
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+
   order: one(orders, {
+
     fields: [orderItems.orderId],
+
     references: [orders.id],
+
   }),
+
   product: one(products, {
+
     fields: [orderItems.productId],
+
     references: [products.id],
+
   }),
+
 }))
 
 export const session = pgTable('session', {

@@ -46,6 +46,7 @@ import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
 import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
+import { Route as ApiOrdersOrderIdRouteImport } from './routes/api/orders/$orderId'
 import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
 import { Route as ApiCartAddRouteImport } from './routes/api/cart/add'
 import { Route as ApiCartUserIdRouteImport } from './routes/api/cart/$userId'
@@ -58,6 +59,11 @@ import { Route as ApiRfqSupplierSupplierIdRouteImport } from './routes/api/rfq/s
 import { Route as ApiRfqBuyerBuyerIdRouteImport } from './routes/api/rfq/buyer/$buyerId'
 import { Route as ApiRfqRfqIdQuotesRouteImport } from './routes/api/rfq/$rfqId.quotes'
 import { Route as ApiRfqRfqIdQuoteRouteImport } from './routes/api/rfq/$rfqId.quote'
+import { Route as ApiOrdersBuyerBuyerIdRouteImport } from './routes/api/orders/buyer/$buyerId'
+import { Route as ApiOrdersOrderIdTrackRouteImport } from './routes/api/orders/$orderId/track'
+import { Route as ApiOrdersOrderIdStatusRouteImport } from './routes/api/orders/$orderId/status'
+import { Route as ApiOrdersOrderIdReorderRouteImport } from './routes/api/orders/$orderId/reorder'
+import { Route as ApiOrdersOrderIdInvoiceRouteImport } from './routes/api/orders/$orderId/invoice'
 import { Route as ApiCartItemItemIdRouteImport } from './routes/api/cart/item/$itemId'
 import { Route as ApiRfqQuoteQuoteIdRejectRouteImport } from './routes/api/rfq/quote/$quoteId.reject'
 import { Route as ApiRfqQuoteQuoteIdCounterRouteImport } from './routes/api/rfq/quote/$quoteId.counter'
@@ -249,6 +255,11 @@ const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
   path: '/api/rfq/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrdersOrderIdRoute = ApiOrdersOrderIdRouteImport.update({
+  id: '/api/orders/$orderId',
+  path: '/api/orders/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCartValidateCouponRoute = ApiCartValidateCouponRouteImport.update({
   id: '/api/cart/validate-coupon',
   path: '/api/cart/validate-coupon',
@@ -310,6 +321,31 @@ const ApiRfqRfqIdQuoteRoute = ApiRfqRfqIdQuoteRouteImport.update({
   path: '/api/rfq/$rfqId/quote',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOrdersBuyerBuyerIdRoute = ApiOrdersBuyerBuyerIdRouteImport.update({
+  id: '/api/orders/buyer/$buyerId',
+  path: '/api/orders/buyer/$buyerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrdersOrderIdTrackRoute = ApiOrdersOrderIdTrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiOrdersOrderIdStatusRoute = ApiOrdersOrderIdStatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiOrdersOrderIdReorderRoute = ApiOrdersOrderIdReorderRouteImport.update({
+  id: '/reorder',
+  path: '/reorder',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiOrdersOrderIdInvoiceRoute = ApiOrdersOrderIdInvoiceRouteImport.update({
+  id: '/invoice',
+  path: '/invoice',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
 const ApiCartItemItemIdRoute = ApiCartItemItemIdRouteImport.update({
   id: '/api/cart/item/$itemId',
   path: '/api/cart/item/$itemId',
@@ -368,6 +404,7 @@ export interface FileRoutesByFullPath {
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -377,6 +414,11 @@ export interface FileRoutesByFullPath {
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
+  '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
+  '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
+  '/api/orders/$orderId/status': typeof ApiOrdersOrderIdStatusRoute
+  '/api/orders/$orderId/track': typeof ApiOrdersOrderIdTrackRoute
+  '/api/orders/buyer/$buyerId': typeof ApiOrdersBuyerBuyerIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -422,6 +464,7 @@ export interface FileRoutesByTo {
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -431,6 +474,11 @@ export interface FileRoutesByTo {
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
+  '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
+  '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
+  '/api/orders/$orderId/status': typeof ApiOrdersOrderIdStatusRoute
+  '/api/orders/$orderId/track': typeof ApiOrdersOrderIdTrackRoute
+  '/api/orders/buyer/$buyerId': typeof ApiOrdersBuyerBuyerIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -478,6 +526,7 @@ export interface FileRoutesById {
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -487,6 +536,11 @@ export interface FileRoutesById {
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
+  '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
+  '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
+  '/api/orders/$orderId/status': typeof ApiOrdersOrderIdStatusRoute
+  '/api/orders/$orderId/track': typeof ApiOrdersOrderIdTrackRoute
+  '/api/orders/buyer/$buyerId': typeof ApiOrdersBuyerBuyerIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -535,6 +589,7 @@ export interface FileRouteTypes {
     | '/api/cart/$userId'
     | '/api/cart/add'
     | '/api/cart/validate-coupon'
+    | '/api/orders/$orderId'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -544,6 +599,11 @@ export interface FileRouteTypes {
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
     | '/api/cart/item/$itemId'
+    | '/api/orders/$orderId/invoice'
+    | '/api/orders/$orderId/reorder'
+    | '/api/orders/$orderId/status'
+    | '/api/orders/$orderId/track'
+    | '/api/orders/buyer/$buyerId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -589,6 +649,7 @@ export interface FileRouteTypes {
     | '/api/cart/$userId'
     | '/api/cart/add'
     | '/api/cart/validate-coupon'
+    | '/api/orders/$orderId'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -598,6 +659,11 @@ export interface FileRouteTypes {
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
     | '/api/cart/item/$itemId'
+    | '/api/orders/$orderId/invoice'
+    | '/api/orders/$orderId/reorder'
+    | '/api/orders/$orderId/status'
+    | '/api/orders/$orderId/track'
+    | '/api/orders/buyer/$buyerId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -644,6 +710,7 @@ export interface FileRouteTypes {
     | '/api/cart/$userId'
     | '/api/cart/add'
     | '/api/cart/validate-coupon'
+    | '/api/orders/$orderId'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -653,6 +720,11 @@ export interface FileRouteTypes {
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
     | '/api/cart/item/$itemId'
+    | '/api/orders/$orderId/invoice'
+    | '/api/orders/$orderId/reorder'
+    | '/api/orders/$orderId/status'
+    | '/api/orders/$orderId/track'
+    | '/api/orders/buyer/$buyerId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -696,6 +768,7 @@ export interface RootRouteChildren {
   ApiCartUserIdRoute: typeof ApiCartUserIdRoute
   ApiCartAddRoute: typeof ApiCartAddRoute
   ApiCartValidateCouponRoute: typeof ApiCartValidateCouponRoute
+  ApiOrdersOrderIdRoute: typeof ApiOrdersOrderIdRouteWithChildren
   ApiRfqSubmitRoute: typeof ApiRfqSubmitRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
@@ -704,6 +777,7 @@ export interface RootRouteChildren {
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
   ApiCartItemItemIdRoute: typeof ApiCartItemItemIdRoute
+  ApiOrdersBuyerBuyerIdRoute: typeof ApiOrdersBuyerBuyerIdRoute
   ApiRfqRfqIdQuoteRoute: typeof ApiRfqRfqIdQuoteRoute
   ApiRfqRfqIdQuotesRoute: typeof ApiRfqRfqIdQuotesRoute
   ApiRfqBuyerBuyerIdRoute: typeof ApiRfqBuyerBuyerIdRoute
@@ -978,6 +1052,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRfqSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/orders/$orderId': {
+      id: '/api/orders/$orderId'
+      path: '/api/orders/$orderId'
+      fullPath: '/api/orders/$orderId'
+      preLoaderRoute: typeof ApiOrdersOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/cart/validate-coupon': {
       id: '/api/cart/validate-coupon'
       path: '/api/cart/validate-coupon'
@@ -1062,6 +1143,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRfqRfqIdQuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/orders/buyer/$buyerId': {
+      id: '/api/orders/buyer/$buyerId'
+      path: '/api/orders/buyer/$buyerId'
+      fullPath: '/api/orders/buyer/$buyerId'
+      preLoaderRoute: typeof ApiOrdersBuyerBuyerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/orders/$orderId/track': {
+      id: '/api/orders/$orderId/track'
+      path: '/track'
+      fullPath: '/api/orders/$orderId/track'
+      preLoaderRoute: typeof ApiOrdersOrderIdTrackRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/orders/$orderId/status': {
+      id: '/api/orders/$orderId/status'
+      path: '/status'
+      fullPath: '/api/orders/$orderId/status'
+      preLoaderRoute: typeof ApiOrdersOrderIdStatusRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/orders/$orderId/reorder': {
+      id: '/api/orders/$orderId/reorder'
+      path: '/reorder'
+      fullPath: '/api/orders/$orderId/reorder'
+      preLoaderRoute: typeof ApiOrdersOrderIdReorderRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/orders/$orderId/invoice': {
+      id: '/api/orders/$orderId/invoice'
+      path: '/invoice'
+      fullPath: '/api/orders/$orderId/invoice'
+      preLoaderRoute: typeof ApiOrdersOrderIdInvoiceRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
     '/api/cart/item/$itemId': {
       id: '/api/cart/item/$itemId'
       path: '/api/cart/item/$itemId'
@@ -1123,6 +1239,23 @@ const BuyerRfqsRouteWithChildren = BuyerRfqsRoute._addFileChildren(
   BuyerRfqsRouteChildren,
 )
 
+interface ApiOrdersOrderIdRouteChildren {
+  ApiOrdersOrderIdInvoiceRoute: typeof ApiOrdersOrderIdInvoiceRoute
+  ApiOrdersOrderIdReorderRoute: typeof ApiOrdersOrderIdReorderRoute
+  ApiOrdersOrderIdStatusRoute: typeof ApiOrdersOrderIdStatusRoute
+  ApiOrdersOrderIdTrackRoute: typeof ApiOrdersOrderIdTrackRoute
+}
+
+const ApiOrdersOrderIdRouteChildren: ApiOrdersOrderIdRouteChildren = {
+  ApiOrdersOrderIdInvoiceRoute: ApiOrdersOrderIdInvoiceRoute,
+  ApiOrdersOrderIdReorderRoute: ApiOrdersOrderIdReorderRoute,
+  ApiOrdersOrderIdStatusRoute: ApiOrdersOrderIdStatusRoute,
+  ApiOrdersOrderIdTrackRoute: ApiOrdersOrderIdTrackRoute,
+}
+
+const ApiOrdersOrderIdRouteWithChildren =
+  ApiOrdersOrderIdRoute._addFileChildren(ApiOrdersOrderIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRouteRoute: CheckoutRouteRouteWithChildren,
@@ -1153,6 +1286,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCartUserIdRoute: ApiCartUserIdRoute,
   ApiCartAddRoute: ApiCartAddRoute,
   ApiCartValidateCouponRoute: ApiCartValidateCouponRoute,
+  ApiOrdersOrderIdRoute: ApiOrdersOrderIdRouteWithChildren,
   ApiRfqSubmitRoute: ApiRfqSubmitRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
@@ -1161,6 +1295,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
   ApiCartItemItemIdRoute: ApiCartItemItemIdRoute,
+  ApiOrdersBuyerBuyerIdRoute: ApiOrdersBuyerBuyerIdRoute,
   ApiRfqRfqIdQuoteRoute: ApiRfqRfqIdQuoteRoute,
   ApiRfqRfqIdQuotesRoute: ApiRfqRfqIdQuotesRoute,
   ApiRfqBuyerBuyerIdRoute: ApiRfqBuyerBuyerIdRoute,
