@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
-  Bell,
   ChevronDown,
   Package,
   Search,
   X,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type OrderStatus =
   | 'New'
@@ -138,6 +138,7 @@ const STATUS_TABS: OrderStatus[] = [
 const PAYMENT_STATUSES: PaymentStatus[] = ['Paid', 'Deposit Paid', 'COD']
 
 export function SellerOrdersPage() {
+  const { pushToast } = useSellerToast()
   const [orders, setOrders] = useState<Order[]>(ORDERS)
   const [tab, setTab] = useState<OrderStatus>('New')
   const [query, setQuery] = useState('')
@@ -147,19 +148,25 @@ export function SellerOrdersPage() {
   const [dateRange, setDateRange] = useState('Last 7 Days')
   const [sortBy, setSortBy] = useState('Date')
   const [selected, setSelected] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const perPage = 10
   const [expanded, setExpanded] = useState<string | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState<Order | null>(null)
   const [showShip, setShowShip] = useState<Order | null>(null)
 
   useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 600)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
     const interval = window.setInterval(() => {
-      setToast('New order received: BB-1049')
+      pushToast('New order received: BB-1049', 'info')
       playNotificationSound()
-      window.setTimeout(() => setToast(null), 3000)
     }, 20000)
     return () => window.clearInterval(interval)
-  }, [])
+  }, [pushToast])
 
   const counts = useMemo(() => {
     return STATUS_TABS.reduce((acc, status) => {
@@ -189,6 +196,11 @@ export function SellerOrdersPage() {
         return b.id.localeCompare(a.id)
       })
   }, [orders, tab, query, statusFilter, paymentFilter, amountRange, sortBy])
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * perPage
+    return filtered.slice(start, start + perPage)
+  }, [filtered, page])
 
   const toggleSelected = (id: string) => {
     setSelected((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
@@ -310,39 +322,44 @@ export function SellerOrdersPage() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {loading ? (
+            <OrderSkeleton />
+          ) : filtered.length === 0 ? (
             <EmptyState query={query} />
           ) : (
-            <div className="overflow-x-auto">
-              {selected.length > 0 && (
-                <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-slate-600">
-                  <span>{selected.length} selected</span>
-                  <select
-                    className="rounded-lg border border-slate-200 px-2 py-1"
-                    onChange={(event) => {
-                      const value = event.target.value as OrderStatus
-                      if (!value) return
-                      setOrders((prev) =>
-                        prev.map((order) =>
-                          selected.includes(order.id) ? { ...order, status: value } : order,
-                        ),
-                      )
-                    }}
-                  >
-                    <option value="">Bulk update status</option>
-                    {STATUS_TABS.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                  <button className="rounded-lg border border-slate-200 px-2 py-1">Bulk Print</button>
-                  <button className="rounded-lg border border-slate-200 px-2 py-1">Bulk Export</button>
-                </div>
-              )}
-              <table className="w-full text-sm">
-                <thead className="text-left text-slate-400">
-                  <tr>
+            <>
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                {selected.length > 0 && (
+                  <>
+                    <span>{selected.length} selected</span>
+                    <select
+                      className="rounded-lg border border-slate-200 px-2 py-1"
+                      onChange={(event) => {
+                        const value = event.target.value as OrderStatus
+                        if (!value) return
+                        setOrders((prev) =>
+                          prev.map((order) =>
+                            selected.includes(order.id) ? { ...order, status: value } : order,
+                          ),
+                        )
+                      }}
+                    >
+                      <option value="">Bulk update status</option>
+                      {STATUS_TABS.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1">Bulk Print</button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1">Bulk Export</button>
+                  </>
+                )}
+              </div>
+              <div className="hidden lg:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="text-left text-slate-400">
+                    <tr>
                     <th className="py-3">
                       <input
                         type="checkbox"
@@ -361,7 +378,7 @@ export function SellerOrdersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-600">
-                  {filtered.map((order) => (
+                  {paged.map((order) => (
                     <>
                   <tr key={order.id} className="hover:bg-slate-50">
                         <td className="py-3">
@@ -399,7 +416,7 @@ export function SellerOrdersPage() {
                               const reason = window.prompt('Cancellation reason?')
                               if (!reason) return
                               updateStatus(order.id, 'Cancelled')
-                              setToast(`Order ${order.id} cancelled`)
+                              pushToast(`Order ${order.id} cancelled`, 'info')
                             }}
                           />
                         </td>
@@ -414,16 +431,67 @@ export function SellerOrdersPage() {
                     </>
                   ))}
                 </tbody>
-              </table>
-            </div>
+                </table>
+              </div>
+              <div className="grid gap-4 lg:hidden">
+                {paged.map((order) => (
+                  <div key={order.id} className="rounded-xl border border-slate-200 p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-xs text-slate-400">{order.id}</p>
+                        <p className="font-semibold text-slate-800">{order.buyer}</p>
+                        <p className="text-xs text-slate-500">{order.date}</p>
+                      </div>
+                      <span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </div>
+                    <div className="mt-3 text-sm text-slate-600">
+                      ₹{order.total.toLocaleString()} · {order.items} items · {order.paymentStatus}
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={() => setExpanded(expanded === order.id ? null : order.id)}
+                        className="rounded-lg border border-slate-200 px-3 py-2 text-xs"
+                      >
+                        Details
+                      </button>
+                      {order.status === 'New' && (
+                        <button
+                          onClick={() => setShowConfirm(order)}
+                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs text-white"
+                        >
+                          Confirm
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </section>
 
-        {toast && (
-          <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">
-            <div className="flex items-center gap-2">
-              <Bell size={16} />
-              {toast}
+        {filtered.length > perPage && (
+          <div className="flex items-center justify-between text-sm text-slate-500">
+            <span>
+              Page {page} of {Math.ceil(filtered.length / perPage)}
+            </span>
+            <div className="flex gap-2">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((prev) => prev - 1)}
+                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                disabled={page >= Math.ceil(filtered.length / perPage)}
+                onClick={() => setPage((prev) => prev + 1)}
+                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+              >
+                Next
+              </button>
             </div>
           </div>
         )}
@@ -435,7 +503,7 @@ export function SellerOrdersPage() {
             onConfirm={(processingTime) => {
               updateStatus(showConfirm.id, 'Confirmed')
               setShowConfirm(null)
-              setToast(`Order ${showConfirm.id} confirmed (${processingTime})`)
+              pushToast(`Order ${showConfirm.id} confirmed (${processingTime})`, 'success')
             }}
           />
         )}
@@ -447,7 +515,7 @@ export function SellerOrdersPage() {
             onSubmit={() => {
               updateStatus(showShip.id, 'Shipped')
               setShowShip(null)
-              setToast(`Order ${showShip.id} marked as shipped`)
+              pushToast(`Order ${showShip.id} marked as shipped`, 'success')
             }}
           />
         )}
@@ -660,11 +728,11 @@ function Modal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
             <X size={16} />
           </button>
         </div>
@@ -681,6 +749,16 @@ function EmptyState({ query }: { query: string }) {
       <p className="mt-3 text-sm">
         {query ? `No orders match filters` : 'No orders yet'}
       </p>
+    </div>
+  )
+}
+
+function OrderSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[1, 2, 3, 4].map((row) => (
+        <div key={row} className="h-12 rounded-lg bg-slate-100 animate-pulse" />
+      ))}
     </div>
   )
 }

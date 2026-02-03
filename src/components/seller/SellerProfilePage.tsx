@@ -5,6 +5,7 @@ import {
   UploadCloud,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type TabKey =
   | 'business'
@@ -24,6 +25,7 @@ const TABS: { key: TabKey; label: string }[] = [
 ]
 
 export function SellerProfilePage() {
+  const { pushToast } = useSellerToast()
   const [activeTab, setActiveTab] = useState<TabKey>('business')
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +33,7 @@ export function SellerProfilePage() {
   const showMessage = (message: string) => {
     setSuccess(message)
     setError(null)
+    pushToast(message, 'success')
     window.setTimeout(() => setSuccess(null), 2500)
   }
 
@@ -202,9 +205,19 @@ function BankTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
     ifsc: '',
     primary: false,
   })
+  const [bankError, setBankError] = useState('')
 
   const addAccount = () => {
+    setBankError('')
     if (!newAccount.bankName || !newAccount.number || newAccount.number !== newAccount.confirm) return
+    if (!/^[0-9]{8,20}$/.test(newAccount.number)) {
+      setBankError('Account number must be 8-20 digits.')
+      return
+    }
+    if (newAccount.ifsc && !/^[A-Za-z0-9]{4,15}$/.test(newAccount.ifsc)) {
+      setBankError('Invalid IFSC/Routing format.')
+      return
+    }
     setAccounts((prev) => [
       ...prev,
       {
@@ -273,6 +286,7 @@ function BankTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
           </button>
           <p className="text-xs text-slate-500">Verify via ₹1 penny drop or upload cancelled cheque.</p>
         </div>
+        {bankError && <p className="text-xs text-red-500 mt-2">{bankError}</p>}
       </SectionCard>
     </div>
   )
@@ -549,13 +563,17 @@ function RichTextField({ label, value, onChange }: { label: string; value: strin
       <div
         contentEditable
         className="min-h-[120px] rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
-        onInput={(event) => onChange((event.target as HTMLDivElement).innerText)}
+        onInput={(event) => onChange(sanitizeHtml((event.target as HTMLDivElement).innerText))}
         suppressContentEditableWarning
       >
         {value}
       </div>
     </div>
   )
+}
+
+function sanitizeHtml(input: string) {
+  return input.replace(/[<>]/g, '')
 }
 
 function DocumentRow({ label, status }: { label: string; status: string }) {

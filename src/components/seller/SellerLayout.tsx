@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { SellerHeader } from './SellerHeader'
 import { SellerSidebar } from './SellerSidebar'
+import { SellerMobileNav } from './SellerMobileNav'
 
 interface SellerLayoutProps {
   children: React.ReactNode
@@ -24,11 +25,12 @@ export function SellerLayout({ children }: SellerLayoutProps) {
           <SellerHeader onMenuClick={() => setIsSidebarOpen(true)} />
 
           {/* Page content */}
-          <main className="p-4 lg:p-6">
+          <main className="p-4 lg:p-6 pb-24 lg:pb-6">
             {children}
           </main>
         </div>
       </div>
+      <SellerMobileNav />
     </div>
   )
 }

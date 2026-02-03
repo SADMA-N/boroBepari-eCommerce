@@ -50,11 +50,17 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
       } else {
         setToken(null)
         setSeller(null)
+        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/seller')) {
+          window.location.href = '/seller/login'
+        }
       }
     } catch (error) {
       console.error('Failed to validate seller token:', error)
       setToken(null)
       setSeller(null)
+      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/seller')) {
+        window.location.href = '/seller/login'
+      }
     } finally {
       setIsLoading(false)
     }

@@ -5,6 +5,7 @@ import {
   redirect,
   useRouterState,
 } from '@tanstack/react-router'
+import React from 'react'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
@@ -88,6 +89,23 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const isSellerRoute = pathname.startsWith('/seller')
   const isAdminRoute = pathname.startsWith('/admin')
   const showBuyerShell = !isSellerRoute && !isAdminRoute
+  const [hasSellerToken, setHasSellerToken] = React.useState(false)
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    setHasSellerToken(!!localStorage.getItem('seller_token'))
+  }, [])
+
+  React.useEffect(() => {
+    if (!hasSellerToken) return
+    if (isAdminRoute) {
+      window.location.href = '/seller/dashboard'
+      return
+    }
+    if (!isSellerRoute) {
+      window.location.href = '/seller/dashboard'
+    }
+  }, [hasSellerToken, isSellerRoute, isAdminRoute])
 
   return (
     <html lang="en">

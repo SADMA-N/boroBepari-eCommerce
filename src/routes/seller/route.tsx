@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { SellerAuthProvider } from '@/contexts/SellerAuthContext'
+import { SellerToastProvider } from '@/components/seller/SellerToastProvider'
 
 export const Route = createFileRoute('/seller')({
   component: SellerRouteWrapper,
@@ -8,7 +9,9 @@ export const Route = createFileRoute('/seller')({
 function SellerRouteWrapper() {
   return (
     <SellerAuthProvider>
-      <Outlet />
+      <SellerToastProvider>
+        <Outlet />
+      </SellerToastProvider>
     </SellerAuthProvider>
   )
 }

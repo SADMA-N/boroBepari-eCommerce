@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Bell,
   ChevronDown,
   FileText,
   Filter,
-  MessageCircle,
-  Plus,
   Timer,
   X,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type RFQStatus =
   | 'New'
@@ -123,6 +121,7 @@ const PAYMENT_TERMS = ['Full payment', '30% deposit', '50% deposit']
 const DELIVERY_TIMES = ['2-3 days', '5-7 days', '7-10 days']
 
 export function SellerRFQsPage() {
+  const { pushToast } = useSellerToast()
   const [rfqs, setRfqs] = useState<RFQ[]>(RFQS)
   const [tab, setTab] = useState<RFQStatus>('New')
   const [query, setQuery] = useState('')
@@ -131,15 +130,21 @@ export function SellerRFQsPage() {
   const [dateRange, setDateRange] = useState('Last 7 Days')
   const [detail, setDetail] = useState<RFQ | null>(null)
   const [quoteModal, setQuoteModal] = useState<RFQ | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const perPage = 8
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 600)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setToast('New RFQ received: RFQ-3013')
-      window.setTimeout(() => setToast(null), 3000)
+      pushToast('New RFQ received: RFQ-3013', 'info')
     }, 25000)
     return () => window.clearInterval(interval)
-  }, [])
+  }, [pushToast])
 
   const counts = useMemo(() => {
     return STATUS_TABS.reduce((acc, status) => {
@@ -162,6 +167,11 @@ export function SellerRFQsPage() {
         return a.id.localeCompare(b.id)
       })
   }, [rfqs, tab, query, category, sortBy])
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * perPage
+    return filtered.slice(start, start + perPage)
+  }, [filtered, page])
 
   const analytics = useMemo(() => {
     const responded = rfqs.filter((rfq) => rfq.status !== 'New').length
@@ -260,11 +270,13 @@ export function SellerRFQsPage() {
             </button>
           </div>
 
-          {filtered.length === 0 ? (
+          {loading ? (
+            <RfqSkeleton />
+          ) : filtered.length === 0 ? (
             <EmptyState />
           ) : (
             <div className="grid gap-4">
-              {filtered.map((rfq) => (
+              {paged.map((rfq) => (
                 <div key={rfq.id} className="rounded-2xl border border-slate-200 p-4">
                   <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                     <div className="flex items-center gap-3">
@@ -310,6 +322,30 @@ export function SellerRFQsPage() {
           )}
         </section>
 
+        {filtered.length > perPage && (
+          <div className="flex items-center justify-between text-sm text-slate-500">
+            <span>
+              Page {page} of {Math.ceil(filtered.length / perPage)}
+            </span>
+            <div className="flex gap-2">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((prev) => prev - 1)}
+                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                disabled={page >= Math.ceil(filtered.length / perPage)}
+                onClick={() => setPage((prev) => prev + 1)}
+                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
         {detail && (
           <RFQDetailPanel
             rfq={detail}
@@ -330,18 +366,9 @@ export function SellerRFQsPage() {
                 prev.map((item) => (item.id === quoteModal.id ? { ...item, status: 'Quoted', quote } : item)),
               )
               setQuoteModal(null)
-              setToast(`Quote sent for ${quoteModal.id}`)
+              pushToast(`Quote sent for ${quoteModal.id}`, 'success')
             }}
           />
-        )}
-
-        {toast && (
-          <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-lg">
-            <div className="flex items-center gap-2">
-              <Bell size={16} />
-              {toast}
-            </div>
-          </div>
         )}
       </div>
     </SellerProtectedRoute>
@@ -399,11 +426,11 @@ function RFQDetailPanel({
   onSendQuote: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/40" role="dialog" aria-modal="true">
       <div className="w-full max-w-xl bg-white p-6 overflow-y-auto">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{rfq.id}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close details" autoFocus>
             <X size={18} />
           </button>
         </div>
@@ -576,11 +603,11 @@ function Modal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
             <X size={16} />
           </button>
         </div>
@@ -595,6 +622,16 @@ function EmptyState() {
     <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
       <Timer size={28} className="mx-auto text-slate-400" />
       <p className="mt-3 text-sm">No RFQs match filters</p>
+    </div>
+  )
+}
+
+function RfqSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[1, 2, 3].map((row) => (
+        <div key={row} className="h-20 rounded-lg bg-slate-100 animate-pulse" />
+      ))}
     </div>
   )
 }

@@ -28,6 +28,8 @@ import { Route as SellerRegisterRouteImport } from './routes/seller/register'
 import { Route as SellerProfileRouteImport } from './routes/seller/profile'
 import { Route as SellerLoginRouteImport } from './routes/seller/login'
 import { Route as SellerKycRouteImport } from './routes/seller/kyc'
+import { Route as SellerHelpRouteImport } from './routes/seller/help'
+import { Route as SellerFaqRouteImport } from './routes/seller/faq'
 import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as OrderConfirmationOrderIdRouteImport } from './routes/order-confirmation/$orderId'
@@ -181,6 +183,16 @@ const SellerLoginRoute = SellerLoginRouteImport.update({
 const SellerKycRoute = SellerKycRouteImport.update({
   id: '/kyc',
   path: '/kyc',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerHelpRoute = SellerHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerFaqRoute = SellerFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => SellerRouteRoute,
 } as any)
 const SellerDashboardRoute = SellerDashboardRouteImport.update({
@@ -517,6 +529,8 @@ export interface FileRoutesByFullPath {
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/faq': typeof SellerFaqRoute
+  '/seller/help': typeof SellerHelpRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
   '/seller/profile': typeof SellerProfileRoute
@@ -594,6 +608,8 @@ export interface FileRoutesByTo {
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/faq': typeof SellerFaqRoute
+  '/seller/help': typeof SellerHelpRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
   '/seller/profile': typeof SellerProfileRoute
@@ -675,6 +691,8 @@ export interface FileRoutesById {
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/faq': typeof SellerFaqRoute
+  '/seller/help': typeof SellerHelpRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
   '/seller/profile': typeof SellerProfileRoute
@@ -757,6 +775,8 @@ export interface FileRouteTypes {
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
     | '/seller/dashboard'
+    | '/seller/faq'
+    | '/seller/help'
     | '/seller/kyc'
     | '/seller/login'
     | '/seller/profile'
@@ -834,6 +854,8 @@ export interface FileRouteTypes {
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
     | '/seller/dashboard'
+    | '/seller/faq'
+    | '/seller/help'
     | '/seller/kyc'
     | '/seller/login'
     | '/seller/profile'
@@ -914,6 +936,8 @@ export interface FileRouteTypes {
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
     | '/seller/dashboard'
+    | '/seller/faq'
+    | '/seller/help'
     | '/seller/kyc'
     | '/seller/login'
     | '/seller/profile'
@@ -1152,6 +1176,20 @@ declare module '@tanstack/react-router' {
       path: '/kyc'
       fullPath: '/seller/kyc'
       preLoaderRoute: typeof SellerKycRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/help': {
+      id: '/seller/help'
+      path: '/help'
+      fullPath: '/seller/help'
+      preLoaderRoute: typeof SellerHelpRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/faq': {
+      id: '/seller/faq'
+      path: '/faq'
+      fullPath: '/seller/faq'
+      preLoaderRoute: typeof SellerFaqRouteImport
       parentRoute: typeof SellerRouteRoute
     }
     '/seller/dashboard': {
@@ -1590,6 +1628,8 @@ const CheckoutRouteRouteWithChildren = CheckoutRouteRoute._addFileChildren(
 
 interface SellerRouteRouteChildren {
   SellerDashboardRoute: typeof SellerDashboardRoute
+  SellerFaqRoute: typeof SellerFaqRoute
+  SellerHelpRoute: typeof SellerHelpRoute
   SellerKycRoute: typeof SellerKycRoute
   SellerLoginRoute: typeof SellerLoginRoute
   SellerProfileRoute: typeof SellerProfileRoute
@@ -1605,6 +1645,8 @@ interface SellerRouteRouteChildren {
 
 const SellerRouteRouteChildren: SellerRouteRouteChildren = {
   SellerDashboardRoute: SellerDashboardRoute,
+  SellerFaqRoute: SellerFaqRoute,
+  SellerHelpRoute: SellerHelpRoute,
   SellerKycRoute: SellerKycRoute,
   SellerLoginRoute: SellerLoginRoute,
   SellerProfileRoute: SellerProfileRoute,

@@ -22,7 +22,7 @@ const navItems = [
   { label: 'RFQs', path: '/seller/rfqs', icon: FileText },
   { label: 'Analytics', path: '/seller/analytics', icon: BarChart3 },
   { label: 'Payouts', path: '/seller/payouts', icon: Wallet },
-  { label: 'Settings', path: '/seller/settings', icon: Settings },
+  { label: 'Settings', path: '/seller/profile', icon: Settings },
 ]
 
 export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {

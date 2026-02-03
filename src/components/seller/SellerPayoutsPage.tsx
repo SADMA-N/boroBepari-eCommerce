@@ -6,6 +6,7 @@ import {
   X,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type PayoutStatus = 'Pending' | 'Processing' | 'Completed' | 'Failed'
 
@@ -123,6 +124,7 @@ const escrowOrders = [
 ]
 
 export function SellerPayoutsPage() {
+  const { pushToast } = useSellerToast()
   const [showWithdraw, setShowWithdraw] = useState(false)
   const [withdrawAmount, setWithdrawAmount] = useState('')
   const [selectedBank, setSelectedBank] = useState(bankAccounts[0]?.id ?? '')
@@ -418,6 +420,10 @@ export function SellerPayoutsPage() {
             bankAccounts={bankAccounts}
             minimumError={minimumError}
             onClose={() => setShowWithdraw(false)}
+            onConfirm={() => {
+              setShowWithdraw(false)
+              pushToast('Withdrawal request submitted', 'success')
+            }}
           />
         )}
       </div>
@@ -495,6 +501,7 @@ function WithdrawModal({
   bankAccounts,
   minimumError,
   onClose,
+  onConfirm,
 }: {
   available: number
   amount: string
@@ -506,13 +513,14 @@ function WithdrawModal({
   bankAccounts: BankAccount[]
   minimumError: string
   onClose: () => void
+  onConfirm: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">Request Withdrawal</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
             <X size={16} />
           </button>
         </div>
@@ -545,6 +553,7 @@ function WithdrawModal({
           <button
             className="w-full rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
             disabled={!amount || Number(amount) > available || Boolean(minimumError)}
+            onClick={onConfirm}
           >
             Confirm Withdrawal
           </button>

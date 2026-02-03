@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Download, UploadCloud, X } from 'lucide-react'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type ImportRow = {
   rowNumber: number
@@ -71,6 +72,7 @@ export function BulkImportModal({
   onClose: () => void
   onViewProducts: () => void
 }) {
+  const { pushToast } = useSellerToast()
   const [fileError, setFileError] = useState('')
   const [rows, setRows] = useState<ImportRow[]>([])
   const [errors, setErrors] = useState<ValidationError[]>([])
@@ -103,6 +105,7 @@ export function BulkImportModal({
       window.clearInterval(interval)
       setState('complete')
       setImportStats({ success: validRows.length, failed: errors.length })
+      pushToast('Bulk import complete', 'success')
     }, 5200)
     return () => {
       window.clearInterval(interval)
@@ -151,8 +154,10 @@ export function BulkImportModal({
       setRows(formattedRows)
       setErrors(rowErrors)
       setState('ready')
+      pushToast('File parsed successfully', 'success')
     } catch (error) {
       setFileError('Parsing failed. Please check your file format.')
+      pushToast('Parsing failed. Please retry.', 'error')
       setState('idle')
     }
   }
@@ -173,11 +178,11 @@ export function BulkImportModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-5xl rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <h2 className="text-lg font-semibold text-slate-900">Import Products in Bulk</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
             <X size={18} />
           </button>
         </div>

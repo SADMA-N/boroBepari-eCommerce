@@ -59,6 +59,7 @@ async function saveDocument(
   return `/uploads/kyc/${sellerId}/${safeName}`
 }
 
+/** Server handler to accept seller KYC payloads and persist documents. */
 export const submitSellerKyc = createServerFn({ method: 'POST' })
   .validator((input) => submitSchema.parse(input))
   .handler(async ({ data }) => {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
   ChevronDown,
@@ -89,9 +89,15 @@ export function SellerProductsPage() {
   const [editing, setEditing] = useState<{ id: string; field: 'price' | 'stock' } | null>(null)
   const [loadingEdit, setLoadingEdit] = useState<string | null>(null)
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
+  const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [showImport, setShowImport] = useState(false)
   const perPage = 20
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 600)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   const filtered = useMemo(() => {
     const matchesQuery = (product: Product) =>
@@ -285,7 +291,9 @@ export function SellerProductsPage() {
           </div>
         </section>
 
-        {filtered.length === 0 ? (
+        {loading ? (
+          <ProductSkeleton />
+        ) : filtered.length === 0 ? (
           <EmptyState
             query={query}
             onClear={() => {
@@ -557,6 +565,16 @@ function EmptyState({ query, onClear }: { query: string; onClear: () => void }) 
           </Link>
         </>
       )}
+    </div>
+  )
+}
+
+function ProductSkeleton() {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
+      {[1, 2, 3, 4].map((row) => (
+        <div key={row} className="h-12 rounded-lg bg-slate-100 animate-pulse" />
+      ))}
     </div>
   )
 }

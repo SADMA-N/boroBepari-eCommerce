@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type PricingTier = { id: string; minQty: string; maxQty: string; price: string }
 type SpecRow = { id: string; key: string; value: string }
@@ -53,6 +54,8 @@ const MAIN_CATEGORIES = [
   },
 ]
 
+const EXISTING_SKUS = ['GLV-204', 'PKG-810', 'TSH-532', 'CKW-119']
+
 const DELIVERY_OPTIONS = ['2-3 days', '3-5 days', '5-7 days']
 const RETURN_POLICIES = ['7 days', '15 days', '30 days', 'No returns']
 const SHIP_FROM = ['Dhaka Warehouse', 'Chittagong Warehouse', 'Khulna Warehouse']
@@ -66,6 +69,7 @@ const SECTION_IDS = [
 ]
 
 export function AddProductPage() {
+  const { pushToast } = useSellerToast()
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState('basic')
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -75,6 +79,7 @@ export function AddProductPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [submitMode, setSubmitMode] = useState<SubmitMode>('draft')
+  const [submitError, setSubmitError] = useState('')
 
   const [title, setTitle] = useState('')
   const [mainCategory, setMainCategory] = useState('')
@@ -481,8 +486,12 @@ export function AddProductPage() {
     const nextErrors: Record<string, string> = {}
     if (!title.trim()) nextErrors.title = 'Product title is required.'
     if (title.length > 200) nextErrors.title = 'Max 200 characters allowed.'
-    if (!mainCategory) nextErrors.mainCategory = 'Select a main category.'
-    if (!subCategory) nextErrors.subCategory = 'Select a subcategory.'
+    if (!mainCategory || !MAIN_CATEGORIES.some((cat) => cat.name === mainCategory)) {
+      nextErrors.mainCategory = 'Select a valid main category.'
+    }
+    if (!subCategory || !subCategories.includes(subCategory)) {
+      nextErrors.subCategory = 'Select a valid subcategory.'
+    }
     if (!descriptionText.trim()) nextErrors.description = 'Product description is required.'
     if (descriptionText.length > 2000) nextErrors.description = 'Max 2000 characters allowed.'
     if (images.length === 0) nextErrors.images = 'Primary image is required.'
@@ -503,6 +512,7 @@ export function AddProductPage() {
     }
     if (!moq) nextErrors.moq = 'MOQ is required.'
     if (!stock) nextErrors.stock = 'Stock is required.'
+    if (sku && EXISTING_SKUS.includes(sku)) nextErrors.sku = 'SKU already exists.'
     if (!weight) nextErrors.weight = 'Product weight is required.'
     if (!shipFrom) nextErrors.shipFrom = 'Select ship-from location.'
     if (!deliveryTime) nextErrors.deliveryTime = 'Select delivery time.'
@@ -518,8 +528,17 @@ export function AddProductPage() {
 
   const handleSubmit = (mode: SubmitMode) => {
     setSubmitMode(mode)
+    setSubmitError('')
     if (!validateAll()) return
-    void submitProduct(mode).then(() => setShowSuccess(true))
+    void submitProduct(mode)
+      .then(() => {
+        setShowSuccess(true)
+        pushToast(mode === 'publish' ? 'Product published' : 'Draft saved', 'success')
+      })
+      .catch(() => {
+        setSubmitError('Failed to save product. Please retry.')
+        pushToast('Failed to save product. Please retry.', 'error')
+      })
   }
 
   const handlePreview = () => {
@@ -603,6 +622,15 @@ export function AddProductPage() {
               </div>
             </header>
 
+            {submitError && (
+              <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+                {submitError}{' '}
+                <button type="button" onClick={() => handleSubmit(submitMode)} className="underline">
+                  Retry
+                </button>
+              </div>
+            )}
+
             {errorSummary.length > 0 && (
               <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
                 <p className="font-semibold">Please fix the following errors:</p>
@@ -664,7 +692,7 @@ export function AddProductPage() {
                   contentEditable
                   className="min-h-[140px] rounded-b-lg border border-t-0 border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none"
                   onInput={(event) => {
-                    const html = (event.target as HTMLDivElement).innerHTML
+                    const html = sanitizeHtml((event.target as HTMLDivElement).innerHTML)
                     const text = (event.target as HTMLDivElement).innerText
                     if (text.length <= 2000) {
                       setDescriptionHtml(html)
@@ -866,7 +894,7 @@ export function AddProductPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <Field label="Minimum Order Quantity (MOQ)" required value={moq} onChange={setMoq} error={errors.moq} />
                 <Field label="Available Stock" required value={stock} onChange={setStock} error={errors.stock} />
-                <Field label="SKU" value={sku} onChange={setSku} />
+                <Field label="SKU" value={sku} onChange={setSku} error={errors.sku} />
                 <Field
                   label="Low Stock Threshold"
                   value={lowStockThreshold}
@@ -1205,11 +1233,11 @@ function Modal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
             <X size={18} />
           </button>
         </div>
@@ -1222,6 +1250,23 @@ function Modal({
 async function submitProduct(mode: SubmitMode) {
   await new Promise((resolve) => setTimeout(resolve, 800))
   return { status: mode }
+}
+
+function sanitizeHtml(input: string) {
+  if (typeof window === 'undefined') return input
+  const allowed = new Set(['B', 'I', 'UL', 'LI', 'P', 'BR'])
+  const doc = new DOMParser().parseFromString(input, 'text/html')
+  const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT)
+  const nodes: Element[] = []
+  while (walker.nextNode()) {
+    nodes.push(walker.currentNode as Element)
+  }
+  nodes.forEach((node) => {
+    if (!allowed.has(node.tagName)) {
+      node.replaceWith(...Array.from(node.childNodes))
+    }
+  })
+  return doc.body.innerHTML
 }
 
 async function compressImage(file: File) {

@@ -14,6 +14,7 @@ import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { submitSellerKyc } from '@/lib/seller-kyc-server'
 import type { KycStatus } from '@/types/seller'
+import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type UploadKey =
   | 'tradeLicense'
@@ -49,6 +50,7 @@ const INVENTORY_RANGES = [
 ]
 
 export function SellerKYCPage() {
+  const { pushToast } = useSellerToast()
   const { seller, refreshSeller } = useSellerAuth()
   const search = useSearch({ from: '/seller/kyc', strict: false })
   const [localStatus, setLocalStatus] = useState<KycStatus | null>(null)
@@ -194,9 +196,11 @@ export function SellerKYCPage() {
       setSubmittedAt(new Date(result.submittedAt))
       setLocalStatus('submitted')
       setSuccessMessage(true)
+      pushToast('Documents submitted successfully', 'success')
       await refreshSeller()
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : 'Failed to submit documents')
+      pushToast('Submission failed. Please retry.', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -591,13 +595,13 @@ function ConfirmationModal({
   onConfirm: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
       <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-slate-900">
             Review your documents before submitting
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
             ✕
           </button>
         </div>

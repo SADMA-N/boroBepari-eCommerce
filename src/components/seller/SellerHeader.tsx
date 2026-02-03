@@ -90,15 +90,14 @@ export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
                     </span>
                   )}
                 </div>
-                <button
+                <Link
+                  to="/seller/profile"
                   onClick={() => setIsDropdownOpen(false)}
                   className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  disabled
                 >
                   <Settings size={16} />
                   Settings
-                  <span className="ml-auto text-xs text-gray-400">Coming soon</span>
-                </button>
+                </Link>
                 <button
                   onClick={() => {
                     setIsDropdownOpen(false)
