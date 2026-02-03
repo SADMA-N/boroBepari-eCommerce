@@ -25,6 +25,7 @@ import { Route as SellerIndexRouteImport } from './routes/seller/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as SellerRegisterRouteImport } from './routes/seller/register'
+import { Route as SellerProfileRouteImport } from './routes/seller/profile'
 import { Route as SellerLoginRouteImport } from './routes/seller/login'
 import { Route as SellerKycRouteImport } from './routes/seller/kyc'
 import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
@@ -165,6 +166,11 @@ const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
 const SellerRegisterRoute = SellerRegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerProfileRoute = SellerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => SellerRouteRoute,
 } as any)
 const SellerLoginRoute = SellerLoginRouteImport.update({
@@ -513,6 +519,7 @@ export interface FileRoutesByFullPath {
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
+  '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -589,6 +596,7 @@ export interface FileRoutesByTo {
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
+  '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout': typeof CheckoutIndexRoute
@@ -669,6 +677,7 @@ export interface FileRoutesById {
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
+  '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -750,6 +759,7 @@ export interface FileRouteTypes {
     | '/seller/dashboard'
     | '/seller/kyc'
     | '/seller/login'
+    | '/seller/profile'
     | '/seller/register'
     | '/supplier/rfqs'
     | '/checkout/'
@@ -826,6 +836,7 @@ export interface FileRouteTypes {
     | '/seller/dashboard'
     | '/seller/kyc'
     | '/seller/login'
+    | '/seller/profile'
     | '/seller/register'
     | '/supplier/rfqs'
     | '/checkout'
@@ -905,6 +916,7 @@ export interface FileRouteTypes {
     | '/seller/dashboard'
     | '/seller/kyc'
     | '/seller/login'
+    | '/seller/profile'
     | '/seller/register'
     | '/supplier/rfqs'
     | '/checkout/'
@@ -1119,6 +1131,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/seller/register'
       preLoaderRoute: typeof SellerRegisterRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/profile': {
+      id: '/seller/profile'
+      path: '/profile'
+      fullPath: '/seller/profile'
+      preLoaderRoute: typeof SellerProfileRouteImport
       parentRoute: typeof SellerRouteRoute
     }
     '/seller/login': {
@@ -1573,6 +1592,7 @@ interface SellerRouteRouteChildren {
   SellerDashboardRoute: typeof SellerDashboardRoute
   SellerKycRoute: typeof SellerKycRoute
   SellerLoginRoute: typeof SellerLoginRoute
+  SellerProfileRoute: typeof SellerProfileRoute
   SellerRegisterRoute: typeof SellerRegisterRoute
   SellerIndexRoute: typeof SellerIndexRoute
   SellerProductsAddRoute: typeof SellerProductsAddRoute
@@ -1587,6 +1607,7 @@ const SellerRouteRouteChildren: SellerRouteRouteChildren = {
   SellerDashboardRoute: SellerDashboardRoute,
   SellerKycRoute: SellerKycRoute,
   SellerLoginRoute: SellerLoginRoute,
+  SellerProfileRoute: SellerProfileRoute,
   SellerRegisterRoute: SellerRegisterRoute,
   SellerIndexRoute: SellerIndexRoute,
   SellerProductsAddRoute: SellerProductsAddRoute,
