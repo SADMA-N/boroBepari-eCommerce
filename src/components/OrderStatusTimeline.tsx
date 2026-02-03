@@ -114,6 +114,7 @@ export default function OrderStatusTimeline({
   const [copiedTracking, setCopiedTracking] = useState(false)
   const [statusNotification, setStatusNotification] = useState<string | null>(null)
   const previousStatus = useRef<string | null>(null)
+  const lastRefreshRef = useRef<number>(0)
 
   const isCancelled = status === 'cancelled'
   const isReturned = status === 'returned'
@@ -137,6 +138,11 @@ export default function OrderStatusTimeline({
   // Handle refresh
   const handleRefresh = useCallback(async () => {
     if (isRefreshing || !onRefresh) return
+    const now = Date.now()
+    if (now - lastRefreshRef.current < 15000) {
+      return
+    }
+    lastRefreshRef.current = now
 
     setIsRefreshing(true)
     try {

@@ -4,15 +4,24 @@ import { orders, user } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { sendCancellationEmail } from '@/lib/email'
 import { sendOrderStatusEmail, sendSmsNotification, sendPushNotification } from '@/lib/notifications'
+import { auth } from '@/lib/auth'
 
 export const Route = createFileRoute('/api/orders/$orderId/status')({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: async ({ params, request }) => {
         const orderId = Number(params.orderId)
         if (Number.isNaN(orderId)) {
           return new Response(JSON.stringify({ error: 'Invalid order id' }), {
             status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+
+        const session = await auth.api.getSession({ headers: request.headers })
+        if (!session?.user) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
             headers: { 'Content-Type': 'application/json' },
           })
         }
@@ -24,6 +33,13 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
         if (!order) {
           return new Response(JSON.stringify({ error: 'Order not found' }), {
             status: 404,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+
+        if (order.userId !== session.user.id) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
             headers: { 'Content-Type': 'application/json' },
           })
         }
@@ -47,6 +63,14 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
           })
         }
 
+        const session = await auth.api.getSession({ headers: request.headers })
+        if (!session?.user) {
+          return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+
         const payload = await request.json().catch(() => ({}))
         const action = payload?.action
 
@@ -64,6 +88,13 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
         if (!order) {
           return new Response(JSON.stringify({ error: 'Order not found' }), {
             status: 404,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+
+        if (order.userId !== session.user.id) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
             headers: { 'Content-Type': 'application/json' },
           })
         }

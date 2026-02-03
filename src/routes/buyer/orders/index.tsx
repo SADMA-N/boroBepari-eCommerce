@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import type { MouseEvent } from 'react'
 import {
   Search,
@@ -42,6 +42,7 @@ function BuyerOrderHistoryPage() {
   const [sortBy, setSortBy] = useState<SortOption>('date_desc')
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [orders, setOrders] = useState<any[]>([])
   const [pagination, setPagination] = useState({
     page: 1,
@@ -57,6 +58,7 @@ function BuyerOrderHistoryPage() {
     delivered: 0,
     cancelled: 0,
   })
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
 
   // Debounced search
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -70,7 +72,11 @@ function BuyerOrderHistoryPage() {
 
   // Fetch orders
   const fetchOrders = useCallback(async () => {
-    setIsLoading(true)
+    if (page === 1) {
+      setIsLoading(true)
+    } else {
+      setIsLoadingMore(true)
+    }
     try {
       const result = await getBuyerOrders({
         filter: activeTab,
@@ -80,13 +86,19 @@ function BuyerOrderHistoryPage() {
         limit: 10,
       })
       const filteredOrders = filterOrdersByTab(result.orders, activeTab)
-      setOrders(filteredOrders)
+      setOrders((prev) => {
+        if (page === 1) return filteredOrders
+        const existingIds = new Set(prev.map((o) => o.id))
+        const merged = filteredOrders.filter((o) => !existingIds.has(o.id))
+        return [...prev, ...merged]
+      })
       setPagination(result.pagination)
       setCounts(result.counts)
     } catch (error) {
       console.error('Failed to fetch orders:', error)
     } finally {
       setIsLoading(false)
+      setIsLoadingMore(false)
     }
   }, [activeTab, debouncedSearch, page, sortBy])
 
@@ -103,6 +115,23 @@ function BuyerOrderHistoryPage() {
     }, 60000)
     return () => clearInterval(interval)
   }, [fetchOrders, isAuthenticated, authLoading])
+
+  useEffect(() => {
+    if (!loadMoreRef.current) return
+    if (!pagination.hasNext) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && !isLoading) {
+          setPage((prev) => Math.min(prev + 1, pagination.totalPages))
+        }
+      },
+      { rootMargin: '200px' },
+    )
+
+    observer.observe(loadMoreRef.current)
+    return () => observer.disconnect()
+  }, [isLoading, isLoadingMore, pagination.hasNext, pagination.totalPages])
 
   // Handle tab change
   const handleTabChange = (tab: FilterTab) => {
@@ -262,6 +291,12 @@ function BuyerOrderHistoryPage() {
           {orders.map((order) => (
             <OrderCard key={order.id} order={order} />
           ))}
+          <div ref={loadMoreRef} />
+          {isLoadingMore && (
+            <div className="flex items-center justify-center py-6 text-sm text-gray-500">
+              Loading more orders...
+            </div>
+          )}
         </div>
       )}
 

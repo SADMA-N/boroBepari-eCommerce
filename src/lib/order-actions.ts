@@ -7,8 +7,14 @@ import { authMiddleware } from './auth-server'
 import { sendOrderStatusEmail } from '@/lib/notifications'
 
 export const getOrder = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
   .inputValidator((orderId: number) => orderId)
-  .handler(async ({ data: orderId }) => {
+  .handler(async ({ data: orderId, context }) => {
+    const { session } = context
+    if (!session?.user) {
+      throw new Error('Unauthorized')
+    }
+
     const order = await db.query.orders.findFirst({
       where: eq(orders.id, orderId),
       with: {
@@ -22,15 +28,19 @@ export const getOrder = createServerFn({ method: 'GET' })
           },
         },
         user: {
-            with: {
-                addresses: true
-            }
-        }
+          with: {
+            addresses: true,
+          },
+        },
       },
     })
 
     if (!order) {
-        return null
+      return null
+    }
+
+    if (order.userId !== session.user.id) {
+      throw new Error('Forbidden')
     }
 
     return order
@@ -52,27 +62,50 @@ const createOrderSchema = z.object({
 
 export const createOrder = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => createOrderSchema.parse(data))
-  .handler(async ({ data }) => {
+  .middleware([authMiddleware])
+  .handler(async ({ data, context }) => {
+    const { session } = context
+    if (!session?.user) {
+      throw new Error('Unauthorized')
+    }
+
+    const normalizedItems = data.items.map(item => ({
+      ...item,
+      lineTotal: item.price * item.quantity,
+    }))
+
+    const calculatedTotal = normalizedItems.reduce((sum, item) => sum + item.lineTotal, 0)
+    const totalAmount = Math.round(calculatedTotal * 100) / 100
+    const depositAmount = Math.max(0, data.depositAmount ?? 0)
+    const balanceDue = Math.max(0, totalAmount - depositAmount)
+
+    if (Math.abs(totalAmount - data.totalAmount) > 0.01) {
+      console.warn('[createOrder] total mismatch, using calculated total', {
+        provided: data.totalAmount,
+        calculated: totalAmount,
+      })
+    }
+
     // 1. Create Order
     const [newOrder] = await db.insert(orders).values({
-      userId: data.userId,
-      totalAmount: data.totalAmount.toString(),
+      userId: session.user.id,
+      totalAmount: totalAmount.toString(),
       status: 'pending',
       paymentStatus: 'pending',
       paymentMethod: data.paymentMethod,
-      depositAmount: data.depositAmount.toString(),
-      balanceDue: data.balanceDue.toString(),
+      depositAmount: depositAmount.toString(),
+      balanceDue: balanceDue.toString(),
       notes: data.notes,
     }).returning()
 
     // 2. Create Order Items
-    if (data.items.length > 0) {
+    if (normalizedItems.length > 0) {
       await db.insert(orderItems).values(
-        data.items.map(item => ({
+        normalizedItems.map(item => ({
           orderId: newOrder.id,
           productId: item.productId,
           quantity: item.quantity,
-          price: item.price.toString(),
+          price: item.lineTotal.toString(),
         }))
       )
     }

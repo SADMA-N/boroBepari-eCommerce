@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   Package,
@@ -123,13 +123,29 @@ function OrderDetailPage() {
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
   const [cancelReason, setCancelReason] = useState('ordered_by_mistake')
   const [cancelReasonNote, setCancelReasonNote] = useState('')
+  const [itemsExpanded, setItemsExpanded] = useState(false)
+  const previousStatusRef = useRef<string | null>(null)
+
+  const cachedOrder = useMemo(() => {
+    if (typeof window === 'undefined') return null
+    try {
+      const stored = sessionStorage.getItem(`bb_order_${order?.id}`)
+      if (!stored) return null
+      const parsed = JSON.parse(stored)
+      if (!parsed?.id || parsed.id !== order?.id) return null
+      return parsed
+    } catch (error) {
+      console.error('Failed to read cached order', error)
+      return null
+    }
+  }, [order?.id])
+
   const [cancelledAt, setCancelledAt] = useState<Date | string | null>(
-    order?.cancelledAt ?? null,
+    cachedOrder?.cancelledAt ?? order?.cancelledAt ?? null,
   )
   const [cancellationReason, setCancellationReason] = useState<string | null>(
-    order?.cancellationReason ?? null,
+    cachedOrder?.cancellationReason ?? order?.cancellationReason ?? null,
   )
-  const previousStatusRef = useRef<string | null>(null)
 
   if (!order) {
     return (
@@ -179,15 +195,19 @@ function OrderDetailPage() {
     return acc
   }, {})
 
-  const [statusState, setStatusState] = useState(order.status)
+  const [statusState, setStatusState] = useState(cachedOrder?.status ?? order.status)
   const [statusUpdatedAt, setStatusUpdatedAt] = useState<Date | string | undefined>(
-    order.updatedAt,
+    cachedOrder?.updatedAt ?? order.updatedAt,
   )
   const [trackingInfo, setTrackingInfo] = useState(() =>
-    buildMockTrackingInfo(createdAt, order),
+    buildMockTrackingInfo(createdAt, cachedOrder ?? order),
   )
   const [stageTimestamps, setStageTimestamps] = useState(() =>
-    buildStageTimestamps(createdAt, order.status, order.updatedAt),
+    buildStageTimestamps(
+      createdAt,
+      cachedOrder?.status ?? order.status,
+      cachedOrder?.updatedAt ?? order.updatedAt,
+    ),
   )
 
   const isDelivered = statusState === 'delivered'
@@ -298,6 +318,22 @@ function OrderDetailPage() {
   const handleDownloadInvoice = () => {
     void downloadOrGenerateInvoice()
   }
+
+  useEffect(() => {
+    if (invoiceUrl) return
+    const fetchInvoice = async () => {
+      try {
+        const response = await fetch(`/api/orders/${order.id}/invoice`)
+        const data = await response.json().catch(() => ({}))
+        if (data?.invoiceUrl) {
+          setInvoiceUrl(data.invoiceUrl)
+        }
+      } catch (error) {
+        console.error('Failed to load invoice url', error)
+      }
+    }
+    fetchInvoice()
+  }, [invoiceUrl, order.id])
 
   const downloadOrGenerateInvoice = async () => {
     if (invoiceUrl) {
@@ -481,6 +517,24 @@ function OrderDetailPage() {
     }
     previousStatusRef.current = statusState
   }, [addNotification, order, preferences, statusState, trackingInfo])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      sessionStorage.setItem(
+        `bb_order_${order.id}`,
+        JSON.stringify({
+          ...order,
+          status: statusState,
+          updatedAt: statusUpdatedAt,
+          cancelledAt,
+          cancellationReason,
+        }),
+      )
+    } catch (error) {
+      console.error('Failed to cache order', error)
+    }
+  }, [order, statusState, statusUpdatedAt, cancelledAt, cancellationReason])
 
   const handleSupplierSelectionChange = (key: string) => {
     setSupplierSelection((prev) => ({
@@ -683,78 +737,90 @@ function OrderDetailPage() {
             )}
 
             {/* Order Items by Supplier */}
-            {Object.values(itemsBySupplier).map((supplier: any) => (
-              <div key={supplier.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                {/* Supplier Header */}
-                <div className="px-6 py-4 bg-gray-50 border-b flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-                      <Package size={20} className="text-gray-500" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-gray-900">{supplier.name}</h3>
-                        {supplier.verified && (
-                          <BadgeCheck size={16} className="text-blue-500" />
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500">{supplier.items.length} item(s)</p>
-                    </div>
-                  </div>
-                  {supplier.slug && (
-                    <Link
-                      to={`/suppliers/${supplier.slug}`}
-                      className="text-sm text-orange-600 hover:underline flex items-center gap-1"
-                    >
-                      <MessageSquare size={14} />
-                      Contact Supplier
-                    </Link>
-                  )}
-                </div>
+            <div className="flex items-center justify-between md:hidden">
+              <h3 className="text-base font-semibold text-gray-900">Order Items</h3>
+              <button
+                onClick={() => setItemsExpanded((prev) => !prev)}
+                className="text-xs text-orange-600 font-medium"
+              >
+                {itemsExpanded ? 'Hide items' : 'Show items'}
+              </button>
+            </div>
 
-                {/* Items */}
-                <div className="divide-y">
-                  {supplier.items.map((item: any) => (
-                    <div key={item.id} className="p-6 flex gap-4">
+            <div className={`${itemsExpanded ? 'block' : 'hidden'} md:block space-y-6`}>
+              {Object.values(itemsBySupplier).map((supplier: any) => (
+                <div key={supplier.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                  {/* Supplier Header */}
+                  <div className="px-6 py-4 bg-gray-50 border-b flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <Package size={20} className="text-gray-500" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-900">{supplier.name}</h3>
+                          {supplier.verified && (
+                            <BadgeCheck size={16} className="text-blue-500" />
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">{supplier.items.length} item(s)</p>
+                      </div>
+                    </div>
+                    {supplier.slug && (
                       <Link
-                        to={`/products/${item.product?.slug || item.productId}`}
-                        className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden"
+                        to={`/suppliers/${supplier.slug}`}
+                        className="text-sm text-orange-600 hover:underline flex items-center gap-1"
                       >
-                        <img
-                          src={item.product?.images?.[0] || `https://picsum.photos/seed/product${item.productId}/200/200`}
-                          alt={item.product?.name}
-                          className="w-full h-full object-cover"
-                        />
+                        <MessageSquare size={14} />
+                        Contact Supplier
                       </Link>
-                      <div className="flex-1 min-w-0">
+                    )}
+                  </div>
+
+                  {/* Items */}
+                  <div className="divide-y">
+                    {supplier.items.map((item: any) => (
+                      <div key={item.id} className="p-6 flex gap-4">
                         <Link
                           to={`/products/${item.product?.slug || item.productId}`}
-                          className="font-medium text-gray-900 hover:text-orange-600 line-clamp-2"
+                          className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden"
                         >
-                          {item.product?.name || 'Product'}
+                          <img
+                            src={item.product?.images?.[0] || `https://picsum.photos/seed/product${item.productId}/200/200`}
+                            alt={item.product?.name}
+                            className="w-full h-full object-cover"
+                          />
                         </Link>
-                        <div className="mt-1 text-sm text-gray-500">
-                          Qty: <span className="font-medium text-gray-700">{item.quantity}</span>
-                          {item.product?.unit && <span className="ml-1">{item.product.unit}(s)</span>}
+                        <div className="flex-1 min-w-0">
+                          <Link
+                            to={`/products/${item.product?.slug || item.productId}`}
+                            className="font-medium text-gray-900 hover:text-orange-600 line-clamp-2"
+                          >
+                            {item.product?.name || 'Product'}
+                          </Link>
+                          <div className="mt-1 text-sm text-gray-500">
+                            Qty: <span className="font-medium text-gray-700">{item.quantity}</span>
+                            {item.product?.unit && <span className="ml-1">{item.product.unit}(s)</span>}
+                          </div>
+                          <div className="mt-1 text-sm text-gray-500">
+                            Unit Price: <span className="font-medium text-gray-700">{formatBDT(parseFloat(item.price) / item.quantity)}</span>
+                          </div>
+                          {isDelivered && (
+                            <button className="mt-2 text-sm text-orange-600 hover:underline flex items-center gap-1">
+                              <Star size={14} />
+                              Write Review
+                            </button>
+                          )}
                         </div>
-                        <div className="mt-1 text-sm text-gray-500">
-                          Unit Price: <span className="font-medium text-gray-700">{formatBDT(parseFloat(item.price) / item.quantity)}</span>
+                        <div className="text-right">
+                          <p className="font-semibold text-gray-900">{formatBDT(parseFloat(item.price))}</p>
                         </div>
-                        {isDelivered && (
-                          <button className="mt-2 text-sm text-orange-600 hover:underline flex items-center gap-1">
-                            <Star size={14} />
-                            Write Review
-                          </button>
-                        )}
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-gray-900">{formatBDT(parseFloat(item.price))}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -1133,6 +1199,7 @@ function OrderDetailPage() {
         title={`Cancel Order #${formatOrderLabel(order)}?`}
         subtitle="Are you sure you want to cancel this order? Refunds are processed to the original payment method within 3-5 business days."
         onClose={() => setCancelModalOpen(false)}
+        position="bottom"
       >
         <div className="space-y-4">
           <label className="text-sm font-medium text-gray-700">Reason for cancellation</label>
@@ -1178,6 +1245,24 @@ function OrderDetailPage() {
           </button>
         </div>
       </ReorderModalShell>
+
+      {isShipped && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg md:hidden">
+          <button
+            onClick={() => {
+              if (trackingInfo?.trackingUrl) {
+                window.open(trackingInfo.trackingUrl, '_blank', 'noopener,noreferrer')
+              } else {
+                setToast({ message: 'Tracking details are not available yet.', isVisible: true })
+              }
+            }}
+            className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
+          >
+            <Truck size={18} />
+            Track Order
+          </button>
+        </div>
+      )}
     </div>
   )
 }
@@ -1188,23 +1273,29 @@ function ReorderModalShell({
   subtitle,
   onClose,
   children,
+  position = 'center',
 }: {
   isOpen: boolean
   title: string
   subtitle?: string
   onClose: () => void
   children: ReactNode
+  position?: 'center' | 'bottom'
 }) {
   if (!isOpen) return null
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
+      className={`fixed inset-0 z-50 flex ${
+        position === 'bottom' ? 'items-end sm:items-center' : 'items-center'
+      } justify-center bg-black/50 p-4 animate-in fade-in duration-200`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="reorder-modal-title"
     >
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+      <div className={`bg-white shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] ${
+        position === 'bottom' ? 'rounded-t-2xl sm:rounded-xl' : 'rounded-xl'
+      }`}>
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <div>
             <h2 id="reorder-modal-title" className="text-lg font-bold text-gray-900">
