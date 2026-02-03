@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useCallback, useState } from 'react'
+import type { ReactNode } from 'react'
 import {
   Package,
   Truck,
@@ -21,10 +22,17 @@ import {
   FileText,
   Loader2,
   Home,
-  ShoppingCart,
+  RefreshCw,
+  AlertTriangle,
+  ExternalLink,
 } from 'lucide-react'
 import { format, addDays, addHours } from 'date-fns'
-import { formatBDT } from '@/data/mock-products'
+import {
+  formatBDT,
+  getProductById,
+  getProductsByCategory,
+  getSupplierById,
+} from '@/data/mock-products'
 import { getOrder } from '@/lib/order-actions'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
@@ -60,11 +68,50 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
   released: { label: 'Released', color: 'text-green-600' },
 }
 
+type ReorderItem = {
+  id: string
+  productId: number
+  productName: string
+  productSlug?: string
+  categoryId?: number
+  supplierId: number | null
+  supplierName: string
+  quantity: number
+  oldPrice: number
+  newPrice: number
+  priceChanged: boolean
+  inStock: boolean
+  supplierActive: boolean
+  available: boolean
+  image?: string
+}
+
+type SupplierGroup = {
+  key: string
+  supplierId: number | null
+  supplierName: string
+  itemCount: number
+}
+
+const REORDER_HIGHLIGHT_STORAGE_KEY = 'bb_reorder_highlight'
+const REORDER_ANALYTICS_STORAGE_KEY = 'bb_reorder_analytics'
+
 function OrderDetailPage() {
   const order = Route.useLoaderData()
   const { addItem } = useCart()
+  const navigate = Route.useNavigate()
   const [toast, setToast] = useState({ message: '', isVisible: false })
   const [isReordering, setIsReordering] = useState(false)
+  const [reorderItems, setReorderItems] = useState<ReorderItem[]>([])
+  const [supplierGroups, setSupplierGroups] = useState<SupplierGroup[]>([])
+  const [supplierSelection, setSupplierSelection] = useState<Record<string, boolean>>({})
+  const [priceChangeItems, setPriceChangeItems] = useState<ReorderItem[]>([])
+  const [unavailableItems, setUnavailableItems] = useState<ReorderItem[]>([])
+  const [availableItems, setAvailableItems] = useState<ReorderItem[]>([])
+  const [alternativeProducts, setAlternativeProducts] = useState<ReorderItem[]>([])
+  const [reorderModal, setReorderModal] = useState<
+    'supplier' | 'price' | 'unavailable' | 'alternatives' | null
+  >(null)
 
   if (!order) {
     return (
@@ -136,30 +183,97 @@ function OrderDetailPage() {
     setToast({ message: 'Order ID copied!', isVisible: true })
   }
 
-  const handleReorder = async () => {
-    setIsReordering(true)
-    try {
-      for (const item of order.items) {
-        if (item.product) {
-          addItem({
-            id: item.product.id,
-            name: item.product.name,
-            price: parseFloat(item.price),
-            quantity: item.quantity,
-            image: item.product.images?.[0] || '',
-            supplierId: item.product.supplierId || 0,
-            supplierName: item.product.supplier?.name || 'Unknown',
-            moq: item.product.moq || 1,
-            unit: item.product.unit || 'piece',
-          })
-        }
-      }
-      setToast({ message: 'Items added to cart!', isVisible: true })
-    } catch (error) {
-      setToast({ message: 'Failed to add items to cart', isVisible: true })
-    } finally {
-      setIsReordering(false)
+  const canReorder = statusState === 'delivered'
+
+  const handleReorder = () => {
+    if (!canReorder) {
+      setToast({
+        message: 'Reorder is available once an order is delivered.',
+        isVisible: true,
+      })
+      return
     }
+
+    const items = buildReorderItems(order)
+    const groups = buildSupplierGroups(items)
+    setReorderItems(items)
+    setSupplierGroups(groups)
+
+    if (groups.length > 1) {
+      const initialSelection: Record<string, boolean> = {}
+      groups.forEach((group) => {
+        initialSelection[group.key] = true
+      })
+      setSupplierSelection(initialSelection)
+      setReorderModal('supplier')
+      return
+    }
+
+    evaluateReorderSelection(items)
+  }
+
+  const evaluateReorderSelection = (items: ReorderItem[]) => {
+    const available = items.filter((item) => item.available)
+    const unavailable = items.filter((item) => !item.available)
+    const priceChanges = available.filter((item) => item.priceChanged)
+
+    setAvailableItems(available)
+    setUnavailableItems(unavailable)
+    setPriceChangeItems(priceChanges)
+
+    if (unavailable.length > 0) {
+      setReorderModal('unavailable')
+      return
+    }
+
+    if (priceChanges.length > 0) {
+      setReorderModal('price')
+      return
+    }
+
+    void addItemsToCart(available)
+  }
+
+  const addItemsToCart = async (items: ReorderItem[]) => {
+    if (items.length === 0) {
+      setToast({ message: 'No available items to add.', isVisible: true })
+      return
+    }
+
+    setIsReordering(true)
+    const addedProductIds: number[] = []
+    const failedItems: ReorderItem[] = []
+
+    items.forEach((item) => {
+      const result = addItem({
+        productId: item.productId,
+        quantity: item.quantity,
+        customPrice: item.newPrice,
+      })
+      if (result.success) {
+        addedProductIds.push(item.productId)
+      } else {
+        failedItems.push(item)
+      }
+    })
+
+    setIsReordering(false)
+
+    if (failedItems.length > 0) {
+      setToast({
+        message: `${failedItems.length} item(s) could not be added due to stock limits.`,
+        isVisible: true,
+      })
+    }
+
+    if (addedProductIds.length > 0) {
+      const orderLabel = formatOrderLabel(order)
+      persistReorderHighlight(orderLabel, addedProductIds)
+      trackReorderAnalytics(orderLabel, addedProductIds)
+      navigate({ to: '/cart' })
+    }
+
+    setReorderModal(null)
   }
 
   const handleDownloadInvoice = () => {
@@ -233,6 +347,64 @@ function OrderDetailPage() {
     statusUpdatedAt,
   ])
 
+  const handleSupplierSelectionChange = (key: string) => {
+    setSupplierSelection((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }))
+  }
+
+  const handleSupplierContinue = () => {
+    const selectedKeys = Object.keys(supplierSelection).filter(
+      (key) => supplierSelection[key],
+    )
+    if (selectedKeys.length === 0) {
+      setToast({ message: 'Select at least one supplier to continue.', isVisible: true })
+      return
+    }
+    const selectedItems = reorderItems.filter((item) =>
+      selectedKeys.includes(itemSupplierKey(item)),
+    )
+    setReorderModal(null)
+    evaluateReorderSelection(selectedItems)
+  }
+
+  const handleSupplierQuickReorder = (key: string) => {
+    const selectedItems = reorderItems.filter(
+      (item) => itemSupplierKey(item) === key,
+    )
+    setSupplierSelection({ [key]: true })
+    setReorderModal(null)
+    evaluateReorderSelection(selectedItems)
+  }
+
+  const handleAddAvailableItemsOnly = () => {
+    if (availableItems.length === 0) {
+      setToast({ message: 'No available items to add.', isVisible: true })
+      return
+    }
+
+    if (priceChangeItems.length > 0) {
+      setReorderModal('price')
+      return
+    }
+
+    void addItemsToCart(availableItems)
+  }
+
+  const handleViewAlternatives = () => {
+    const suggestions = buildAlternatives(unavailableItems)
+    setAlternativeProducts(suggestions)
+    setReorderModal('alternatives')
+  }
+
+  const handleNotifyBackInStock = () => {
+    setToast({
+      message: 'We will notify you when unavailable items are back in stock.',
+      isVisible: true,
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Toast
@@ -285,6 +457,20 @@ function OrderDetailPage() {
 
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-2">
+              {canReorder && (
+                <button
+                  onClick={handleReorder}
+                  disabled={isReordering}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-60"
+                >
+                  {isReordering ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <RefreshCw size={18} />
+                  )}
+                  Reorder
+                </button>
+              )}
               {isShipped && (
                 <button className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium">
                   <Truck size={18} />
@@ -531,18 +717,20 @@ function OrderDetailPage() {
 
             {/* Action Buttons */}
             <div className="bg-white rounded-xl shadow-sm border p-6 space-y-3">
-              <button
-                onClick={handleReorder}
-                disabled={isReordering}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium disabled:opacity-50"
-              >
-                {isReordering ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <ShoppingCart size={18} />
-                )}
-                Reorder
-              </button>
+              {canReorder && (
+                <button
+                  onClick={handleReorder}
+                  disabled={isReordering}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50"
+                >
+                  {isReordering ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <RefreshCw size={18} />
+                  )}
+                  Buy Again
+                </button>
+              )}
 
               {canCancel && (
                 <button className="w-full flex items-center justify-center gap-2 py-2.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium">
@@ -562,8 +750,395 @@ function OrderDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Reorder Modals */}
+      <ReorderModalShell
+        isOpen={reorderModal === 'supplier'}
+        title="Reorder by Supplier"
+        subtitle="Select which suppliers you want to reorder from."
+        onClose={() => setReorderModal(null)}
+      >
+        <div className="space-y-3">
+          {supplierGroups.map((group) => (
+            <div
+              key={group.key}
+              className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
+            >
+              <label className="flex items-center gap-3 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(supplierSelection[group.key])}
+                  onChange={() => handleSupplierSelectionChange(group.key)}
+                  className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <span className="font-medium text-gray-900">{group.supplierName}</span>
+                <span className="text-xs text-gray-500">
+                  {group.itemCount} item{group.itemCount > 1 ? 's' : ''}
+                </span>
+              </label>
+              <button
+                onClick={() => handleSupplierQuickReorder(group.key)}
+                className="text-xs text-green-700 hover:text-green-800 font-semibold"
+              >
+                Reorder from {group.supplierName}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={() => setReorderModal(null)}
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSupplierContinue}
+            className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 font-medium"
+          >
+            Continue
+          </button>
+        </div>
+      </ReorderModalShell>
+
+      <ReorderModalShell
+        isOpen={reorderModal === 'unavailable'}
+        title="Some items are unavailable"
+        subtitle="You can still reorder available items or explore alternatives."
+        onClose={() => setReorderModal(null)}
+      >
+        <div className="space-y-4">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 flex items-start gap-2">
+            <AlertTriangle size={16} className="mt-0.5 text-amber-600" />
+            <span>Some items are out of stock or no longer available.</span>
+          </div>
+
+          <div className="space-y-2">
+            {unavailableItems.map((item) => (
+              <div key={item.id} className="flex items-center justify-between text-sm">
+                <span className="text-gray-800">{item.productName}</span>
+                <span className="text-xs text-gray-500">
+                  {!item.supplierActive ? 'Supplier inactive' : item.inStock ? 'Unavailable' : 'Out of stock'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button
+            onClick={handleAddAvailableItemsOnly}
+            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 font-medium"
+          >
+            Add available items only
+          </button>
+          <button
+            onClick={handleViewAlternatives}
+            className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium"
+          >
+            View alternatives
+          </button>
+          <button
+            onClick={handleNotifyBackInStock}
+            className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium"
+          >
+            Notify when back in stock
+          </button>
+        </div>
+      </ReorderModalShell>
+
+      <ReorderModalShell
+        isOpen={reorderModal === 'price'}
+        title="Prices have changed since your last order"
+        subtitle="Review the updated prices before adding to cart."
+        onClose={() => setReorderModal(null)}
+      >
+        <div className="overflow-hidden rounded-lg border border-gray-200">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50 text-gray-600">
+              <tr>
+                <th className="px-4 py-2 text-left font-semibold">Product</th>
+                <th className="px-4 py-2 text-right font-semibold">Old Price</th>
+                <th className="px-4 py-2 text-right font-semibold">New Price</th>
+                <th className="px-4 py-2 text-right font-semibold">Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              {priceChangeItems.map((item) => {
+                const diff = item.newPrice - item.oldPrice
+                return (
+                  <tr key={item.id} className="border-t">
+                    <td className="px-4 py-2 text-gray-800">{item.productName}</td>
+                    <td className="px-4 py-2 text-right text-gray-500">{formatBDT(item.oldPrice)}</td>
+                    <td className="px-4 py-2 text-right text-gray-900">{formatBDT(item.newPrice)}</td>
+                    <td className={`px-4 py-2 text-right ${diff >= 0 ? 'text-red-600' : 'text-green-600'}`}>
+                      {diff >= 0 ? '+' : '-'}{formatBDT(Math.abs(diff))}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={() => setReorderModal(null)}
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => addItemsToCart(availableItems)}
+            className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 font-medium"
+          >
+            Add to Cart with New Prices
+          </button>
+        </div>
+      </ReorderModalShell>
+
+      <ReorderModalShell
+        isOpen={reorderModal === 'alternatives'}
+        title="Suggested Alternatives"
+        subtitle="Here are similar products you can reorder instead."
+        onClose={() => setReorderModal(null)}
+      >
+        {alternativeProducts.length === 0 ? (
+          <div className="text-sm text-gray-500">
+            We couldn't find close alternatives right now.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {alternativeProducts.map((item) => (
+              <div key={item.id} className="rounded-lg border border-gray-200 p-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                    {item.image ? (
+                      <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <Package size={20} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900">{item.productName}</p>
+                    <p className="text-xs text-gray-500 mt-1">{formatBDT(item.newPrice)}</p>
+                    {item.productSlug && (
+                      <Link
+                        to={`/products/${item.productSlug}`}
+                        className="text-xs text-green-700 hover:underline inline-flex items-center gap-1 mt-2"
+                      >
+                        View product <ExternalLink size={12} />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="mt-6">
+          <button
+            onClick={() => setReorderModal(null)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+          >
+            Close
+          </button>
+        </div>
+      </ReorderModalShell>
     </div>
   )
+}
+
+function ReorderModalShell({
+  isOpen,
+  title,
+  subtitle,
+  onClose,
+  children,
+}: {
+  isOpen: boolean
+  title: string
+  subtitle?: string
+  onClose: () => void
+  children: ReactNode
+}) {
+  if (!isOpen) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reorder-modal-title"
+    >
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <div>
+            <h2 id="reorder-modal-title" className="text-lg font-bold text-gray-900">
+              {title}
+            </h2>
+            {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-200"
+            aria-label="Close modal"
+          >
+            <XCircle size={18} />
+          </button>
+        </div>
+        <div className="p-6 overflow-y-auto">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+function itemSupplierKey(item: ReorderItem) {
+  return item.supplierId ? `supplier-${item.supplierId}` : 'supplier-unknown'
+}
+
+function buildReorderItems(order: any): ReorderItem[] {
+  return order.items.map((item: any, index: number) => {
+    const fallbackProduct = item.product || {}
+    const productId = item.productId ?? fallbackProduct.id ?? index
+    const product = getProductById(productId) ?? fallbackProduct
+    const supplierId = product?.supplierId ?? fallbackProduct?.supplierId ?? null
+    const supplier = supplierId ? getSupplierById(supplierId) : undefined
+    const supplierName =
+      supplier?.name ??
+      fallbackProduct?.supplier?.name ??
+      fallbackProduct?.supplierName ??
+      'Unknown Supplier'
+    const oldPrice = parseFloat(item.price)
+    const newPrice = product?.price ? Number(product.price) : oldPrice
+    const productExists = Boolean(product?.id)
+    const inStock = productExists && typeof product?.stock === 'number'
+      ? product.stock >= item.quantity
+      : false
+    const supplierActive = Boolean(supplier) || Boolean(fallbackProduct?.supplier?.id)
+    const available = productExists && inStock && supplierActive
+
+    return {
+      id: `${productId}-${index}`,
+      productId,
+      productName: product?.name || fallbackProduct?.name || 'Product',
+      productSlug: product?.slug || fallbackProduct?.slug,
+      categoryId: product?.categoryId || fallbackProduct?.categoryId,
+      supplierId,
+      supplierName,
+      quantity: item.quantity,
+      oldPrice,
+      newPrice,
+      priceChanged: Math.abs(newPrice - oldPrice) > 0.01,
+      inStock,
+      supplierActive,
+      available,
+      image: product?.images?.[0] || fallbackProduct?.images?.[0],
+    }
+  })
+}
+
+function buildSupplierGroups(items: ReorderItem[]): SupplierGroup[] {
+  const grouped = new Map<string, SupplierGroup>()
+  items.forEach((item) => {
+    const key = itemSupplierKey(item)
+    const existing = grouped.get(key)
+    if (existing) {
+      existing.itemCount += 1
+    } else {
+      grouped.set(key, {
+        key,
+        supplierId: item.supplierId,
+        supplierName: item.supplierName,
+        itemCount: 1,
+      })
+    }
+  })
+  return Array.from(grouped.values())
+}
+
+function buildAlternatives(unavailable: ReorderItem[]) {
+  const suggestions: ReorderItem[] = []
+  const seen = new Set<number>()
+
+  unavailable.forEach((item) => {
+    if (!item.categoryId) return
+    const alternatives = getProductsByCategory(item.categoryId)
+      .filter((product) => product.id !== item.productId)
+      .slice(0, 3)
+
+    alternatives.forEach((product) => {
+      if (seen.has(product.id)) return
+      seen.add(product.id)
+      suggestions.push({
+        id: `alt-${product.id}`,
+        productId: product.id,
+        productName: product.name,
+        productSlug: product.slug,
+        categoryId: product.categoryId,
+        supplierId: product.supplierId,
+        supplierName: getSupplierById(product.supplierId)?.name || 'Supplier',
+        quantity: item.quantity,
+        oldPrice: product.price,
+        newPrice: product.price,
+        priceChanged: false,
+        inStock: product.stock >= item.quantity,
+        supplierActive: true,
+        available: product.stock >= item.quantity,
+        image: product.images?.[0],
+      })
+    })
+  })
+
+  return suggestions.slice(0, 6)
+}
+
+function formatOrderLabel(order: any) {
+  const year = order.createdAt ? new Date(order.createdAt).getFullYear() : new Date().getFullYear()
+  return `BO-${year}-${order.id.toString().padStart(4, '0')}`
+}
+
+function persistReorderHighlight(orderLabel: string, productIds: number[]) {
+  try {
+    sessionStorage.setItem(
+      REORDER_HIGHLIGHT_STORAGE_KEY,
+      JSON.stringify({
+        orderLabel,
+        productIds,
+        addedCount: productIds.length,
+        timestamp: new Date().toISOString(),
+      }),
+    )
+  } catch (error) {
+    console.error('Failed to persist reorder highlight:', error)
+  }
+}
+
+function trackReorderAnalytics(orderLabel: string, productIds: number[]) {
+  try {
+    const stored = localStorage.getItem(REORDER_ANALYTICS_STORAGE_KEY)
+    const payload = stored ? JSON.parse(stored) : { events: [], productCounts: {}, hourlyCounts: {} }
+
+    payload.events.push({
+      orderLabel,
+      productIds,
+      timestamp: new Date().toISOString(),
+    })
+
+    productIds.forEach((id) => {
+      payload.productCounts[id] = (payload.productCounts[id] || 0) + 1
+    })
+
+    const hour = new Date().getHours()
+    payload.hourlyCounts[hour] = (payload.hourlyCounts[hour] || 0) + 1
+
+    localStorage.setItem(REORDER_ANALYTICS_STORAGE_KEY, JSON.stringify(payload))
+  } catch (error) {
+    console.error('Failed to track reorder analytics:', error)
+  }
 }
 
 const STAGE_SEQUENCE = [

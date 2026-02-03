@@ -50,6 +50,8 @@ export const Route = createFileRoute('/cart')({
   component: CartPage,
 })
 
+const REORDER_HIGHLIGHT_STORAGE_KEY = 'bb_reorder_highlight'
+
 // ============================================================================ 
 // Server Validation Banner
 // ============================================================================ 
@@ -269,9 +271,10 @@ interface CartItemRowProps {
   item: CartItemType
   showSupplier?: boolean
   onIncreaseToMoq?: (itemId: string, moq: number) => void
+  isHighlighted?: boolean
 }
 
-function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRowProps) {
+function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighted }: CartItemRowProps) {
   const { removeItem, updateQuantity } = useCart()
   const [inputValue, setInputValue] = useState(item.quantity.toString())
   const [isRemoving, setIsRemoving] = useState(false)
@@ -354,6 +357,7 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
         ${isLocked && !isBelowMoq ? 'border-orange-200 bg-orange-50/20' : ''}
         ${!isBelowMoq && !isLocked ? 'border-gray-100 hover:shadow-md hover:border-gray-200' : ''}
         ${isUpdating ? 'ring-2 ring-green-400 ring-opacity-50' : ''}
+        ${isHighlighted ? 'ring-2 ring-green-300 bg-green-50/40 border-green-200' : ''}
       `}
     >
       {/* MOQ Warning Indicator */}
@@ -572,9 +576,16 @@ interface SupplierGroupProps {
   isExpanded: boolean
   onToggle: () => void
   onIncreaseToMoq: (itemId: string, moq: number) => void
+  highlightedProductIds?: Set<number>
 }
 
-function SupplierGroup({ breakdown, isExpanded, onToggle, onIncreaseToMoq }: SupplierGroupProps) {
+function SupplierGroup({
+  breakdown,
+  isExpanded,
+  onToggle,
+  onIncreaseToMoq,
+  highlightedProductIds,
+}: SupplierGroupProps) {
   const supplier = getSupplierById(breakdown.supplierId)
 
   // Count MOQ violations
@@ -645,7 +656,12 @@ function SupplierGroup({ breakdown, isExpanded, onToggle, onIncreaseToMoq }: Sup
       `}>
         <div className="p-4 space-y-3 border-t bg-gray-50/50">
           {breakdown.items.map((item) => (
-            <CartItemRow key={item.id} item={item} onIncreaseToMoq={onIncreaseToMoq} />
+            <CartItemRow
+              key={item.id}
+              item={item}
+              onIncreaseToMoq={onIncreaseToMoq}
+              isHighlighted={highlightedProductIds?.has(item.productId)}
+            />
           ))}
         </div>
 
@@ -1032,6 +1048,11 @@ function CartPage() {
   const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(new Set())
   const [serverValidationChanges, setServerValidationChanges] = useState<Array<{ itemId: string; type: 'price' | 'stock' | 'removed'; message: string }>>([])
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
+  const [reorderHighlight, setReorderHighlight] = useState<{
+    orderLabel: string
+    productIds: number[]
+    addedCount: number
+  } | null>(null)
   const router = useRouter()
 
   // Validate on mount and when cart items change (debounced via effect deps)
@@ -1075,6 +1096,23 @@ function CartPage() {
     const allSupplierIds = new Set(cart.supplierBreakdown.map((s) => s.supplierId))
     setExpandedSuppliers(allSupplierIds)
   }, [cart.supplierBreakdown.length])
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(REORDER_HIGHLIGHT_STORAGE_KEY)
+      if (!stored) return
+      const parsed = JSON.parse(stored)
+      setReorderHighlight(parsed)
+      sessionStorage.removeItem(REORDER_HIGHLIGHT_STORAGE_KEY)
+    } catch (error) {
+      console.error('Failed to read reorder highlight data', error)
+    }
+  }, [])
+
+  const highlightedProductIds = useMemo(
+    () => new Set(reorderHighlight?.productIds ?? []),
+    [reorderHighlight?.productIds],
+  )
 
   const validation = validateCartItems()
   const hasValidationErrors = !validation.isValid || serverValidationChanges.some(c => c.type === 'stock' || c.type === 'removed')
@@ -1156,6 +1194,22 @@ function CartPage() {
           )}
         </div>
 
+        {reorderHighlight && (
+          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+            <div className="p-2 rounded-full bg-green-100 text-green-600">
+              <Check size={18} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-green-900">
+                {reorderHighlight.addedCount} item{reorderHighlight.addedCount === 1 ? '' : 's'} added from Order #{reorderHighlight.orderLabel}
+              </p>
+              <p className="text-xs text-green-700 mt-1">
+                These items are highlighted below so you can review them quickly.
+              </p>
+            </div>
+          </div>
+        )}
+
         {cart.items.length === 0 ? (
           <EmptyCart />
         ) : (
@@ -1203,6 +1257,7 @@ function CartPage() {
                       item={item}
                       showSupplier
                       onIncreaseToMoq={handleIncreaseToMoq}
+                      isHighlighted={highlightedProductIds.has(item.productId)}
                     />
                   ))}
                 </div>
@@ -1215,6 +1270,7 @@ function CartPage() {
                       isExpanded={expandedSuppliers.has(breakdown.supplierId)}
                       onToggle={() => toggleSupplier(breakdown.supplierId)}
                       onIncreaseToMoq={handleIncreaseToMoq}
+                      highlightedProductIds={highlightedProductIds}
                     />
                   ))}
                 </div>
