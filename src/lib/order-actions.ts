@@ -1,9 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
 import { db } from '@/db'
-import { orders, orderItems, products, addresses } from '@/db/schema'
+import { orders, orderItems, products, addresses, user } from '@/db/schema'
 import { eq, desc, asc, sql, or, ilike, and, inArray } from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-server'
+import { sendOrderStatusEmail } from '@/lib/notifications'
 
 export const getOrder = createServerFn({ method: 'GET' })
   .inputValidator((orderId: number) => orderId)
@@ -74,6 +75,23 @@ export const createOrder = createServerFn({ method: 'POST' })
           price: item.price.toString(),
         }))
       )
+    }
+
+    const buyer = await db.query.user.findFirst({
+      where: eq(user.id, data.userId),
+    })
+
+    if (buyer) {
+      try {
+        void sendOrderStatusEmail({
+          email: buyer.email,
+          name: buyer.name,
+          orderId: newOrder.id,
+          status: 'placed',
+        })
+      } catch (error) {
+        console.error('Failed to trigger order placed email:', error)
+      }
     }
 
     return newOrder

@@ -3,6 +3,7 @@ import { db } from '@/db'
 import { orders, user } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { sendCancellationEmail } from '@/lib/email'
+import { sendOrderStatusEmail, sendSmsNotification, sendPushNotification } from '@/lib/notifications'
 
 export const Route = createFileRoute('/api/orders/$orderId/status')({
   server: {
@@ -49,7 +50,7 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
         const payload = await request.json().catch(() => ({}))
         const action = payload?.action
 
-        if (action !== 'cancel') {
+        if (action !== 'cancel' && action !== 'update') {
           return new Response(JSON.stringify({ error: 'Unsupported action' }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' },
@@ -67,28 +68,71 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
           })
         }
 
-        if (!['placed', 'confirmed'].includes(order.status)) {
+        if (action === 'cancel') {
+          if (!['placed', 'confirmed'].includes(order.status)) {
+            return new Response(
+              JSON.stringify({ error: 'Order cannot be cancelled at this stage.' }),
+              { status: 400, headers: { 'Content-Type': 'application/json' } },
+            )
+          }
+
+          if (order.status === 'cancelled') {
+            return new Response(JSON.stringify({ error: 'Order already cancelled.' }), {
+              status: 409,
+              headers: { 'Content-Type': 'application/json' },
+            })
+          }
+
+          const cancellationReason = payload?.reason ?? 'No reason provided'
+          const [updatedOrder] = await db
+            .update(orders)
+            .set({
+              status: 'cancelled',
+              cancellationReason,
+              cancelledAt: new Date(),
+            })
+            .where(eq(orders.id, orderId))
+            .returning()
+
+          const buyer = await db.query.user.findFirst({
+            where: eq(user.id, order.userId),
+          })
+
+          const refundSummary = buildRefundSummary(order)
+          if (buyer) {
+            await sendCancellationEmail({
+              email: buyer.email,
+              name: buyer.name,
+              orderNumber: buildOrderNumber(order),
+              refundSummary,
+            })
+          }
+
+          // Placeholder supplier notification (hook up to supplier queue service)
+          console.log(`Supplier notification: order ${orderId} cancelled`)
+
           return new Response(
-            JSON.stringify({ error: 'Order cannot be cancelled at this stage.' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } },
+            JSON.stringify({
+              status: updatedOrder?.status ?? 'cancelled',
+              cancellationReason: updatedOrder?.cancellationReason ?? cancellationReason,
+              cancelledAt: updatedOrder?.cancelledAt ?? new Date(),
+              refundSummary,
+            }),
+            { headers: { 'Content-Type': 'application/json' } },
           )
         }
 
-        if (order.status === 'cancelled') {
-          return new Response(JSON.stringify({ error: 'Order already cancelled.' }), {
-            status: 409,
+        const nextStatus = payload?.status
+        if (!nextStatus) {
+          return new Response(JSON.stringify({ error: 'status is required' }), {
+            status: 400,
             headers: { 'Content-Type': 'application/json' },
           })
         }
 
-        const cancellationReason = payload?.reason ?? 'No reason provided'
         const [updatedOrder] = await db
           .update(orders)
-          .set({
-            status: 'cancelled',
-            cancellationReason,
-            cancelledAt: new Date(),
-          })
+          .set({ status: nextStatus })
           .where(eq(orders.id, orderId))
           .returning()
 
@@ -96,25 +140,33 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
           where: eq(user.id, order.userId),
         })
 
-        const refundSummary = buildRefundSummary(order)
         if (buyer) {
-          await sendCancellationEmail({
+          await sendOrderStatusEmail({
             email: buyer.email,
             name: buyer.name,
-            orderNumber: buildOrderNumber(order),
-            refundSummary,
+            orderId: orderId,
+            status: nextStatus as 'placed' | 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'refund_processed',
+            tracking: payload?.tracking,
+          })
+
+          if (['shipped', 'delivered'].includes(nextStatus) && buyer.phoneNumber) {
+            sendSmsNotification({
+              phone: buyer.phoneNumber,
+              message: `Order ${buildOrderNumber(order)} is ${nextStatus.replace(/_/g, ' ')}`,
+            })
+          }
+
+          sendPushNotification({
+            userId: buyer.id,
+            title: `Order ${buildOrderNumber(order)}`,
+            message: `Status updated to ${nextStatus.replace(/_/g, ' ')}`,
           })
         }
 
-        // Placeholder supplier notification (hook up to supplier queue service)
-        console.log(`Supplier notification: order ${orderId} cancelled`)
-
         return new Response(
           JSON.stringify({
-            status: updatedOrder?.status ?? 'cancelled',
-            cancellationReason: updatedOrder?.cancellationReason ?? cancellationReason,
-            cancelledAt: updatedOrder?.cancelledAt ?? new Date(),
-            refundSummary,
+            status: updatedOrder?.status ?? nextStatus,
+            updatedAt: updatedOrder?.updatedAt ?? new Date(),
           }),
           { headers: { 'Content-Type': 'application/json' } },
         )

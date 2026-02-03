@@ -36,6 +36,7 @@ import { Route as CheckoutPaymentCallbackRouteImport } from './routes/checkout/p
 import { Route as CheckoutPaymentRouteImport } from './routes/checkout/payment'
 import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/$categorySlug'
 import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
+import { Route as BuyerNotificationsRouteImport } from './routes/buyer/notifications'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
@@ -206,6 +207,11 @@ const CategoriesCategorySlugRoute = CategoriesCategorySlugRouteImport.update({
 const BuyerRfqsRoute = BuyerRfqsRouteImport.update({
   id: '/buyer/rfqs',
   path: '/buyer/rfqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerNotificationsRoute = BuyerNotificationsRouteImport.update({
+  id: '/buyer/notifications',
+  path: '/buyer/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
@@ -403,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -465,6 +472,7 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -530,6 +538,7 @@ export interface FileRoutesById {
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -596,6 +605,7 @@ export interface FileRouteTypes {
     | '/buyer/orders'
     | '/api/$'
     | '/auth/set-password'
+    | '/buyer/notifications'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -658,6 +668,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/api/$'
     | '/auth/set-password'
+    | '/buyer/notifications'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -722,6 +733,7 @@ export interface FileRouteTypes {
     | '/buyer/orders'
     | '/api/$'
     | '/auth/set-password'
+    | '/buyer/notifications'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -787,6 +799,7 @@ export interface RootRouteChildren {
   BuyerOrdersRouteRoute: typeof BuyerOrdersRouteRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
+  BuyerNotificationsRoute: typeof BuyerNotificationsRoute
   BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
@@ -1015,6 +1028,13 @@ declare module '@tanstack/react-router' {
       path: '/buyer/rfqs'
       fullPath: '/buyer/rfqs'
       preLoaderRoute: typeof BuyerRfqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/notifications': {
+      id: '/buyer/notifications'
+      path: '/buyer/notifications'
+      fullPath: '/buyer/notifications'
+      preLoaderRoute: typeof BuyerNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/set-password': {
@@ -1340,6 +1360,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerOrdersRouteRoute: BuyerOrdersRouteRouteWithChildren,
   ApiSplatRoute: ApiSplatRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
+  BuyerNotificationsRoute: BuyerNotificationsRoute,
   BuyerRfqsRoute: BuyerRfqsRouteWithChildren,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,

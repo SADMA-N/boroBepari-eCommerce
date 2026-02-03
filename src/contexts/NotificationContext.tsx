@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { subMinutes } from 'date-fns'
 import { useAuth } from './AuthContext'
 import Toast from '@/components/Toast'
@@ -9,19 +9,52 @@ export interface Notification {
   message: string
   type: 'info' | 'success' | 'warning' | 'error'
   isRead: boolean
+  archived?: boolean
   createdAt: Date
   link?: string
+  orderId?: number
+  category?: 'order' | 'rfq' | 'system'
+  status?: string
+}
+
+export type NotificationChannel = 'in_app' | 'email' | 'sms' | 'push'
+
+export interface NotificationPreferences {
+  orderPlaced: boolean
+  orderConfirmed: boolean
+  orderShipped: boolean
+  orderOutForDelivery: boolean
+  orderDelivered: boolean
+  orderCancelled: boolean
+  refundProcessed: boolean
+  channels: {
+    email: boolean
+    sms: boolean
+    push: boolean
+    inApp: boolean
+  }
+  frequency: 'immediate' | 'daily'
 }
 
 interface NotificationContextType {
   notifications: Notification[]
   unreadCount: number
+  orderUnreadCount: number
+  preferences: NotificationPreferences
   markAsRead: (id: string) => void
+  toggleRead: (id: string) => void
   markAllAsRead: () => void
-  addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'isRead'>) => void
+  archiveNotification: (id: string) => void
+  restoreNotification: (id: string) => void
+  addNotification: (notification: Omit<Notification, 'createdAt' | 'isRead'> & { id?: string }) => void
+  updatePreferences: (prefs: Partial<NotificationPreferences>) => void
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
+
+const STORAGE_KEY = 'bb_notifications'
+const PREFS_STORAGE_KEY = 'bb_notification_prefs'
+const QUEUE_STORAGE_KEY = 'bb_notification_queue'
 
 // Initial mock notifications
 const initialNotifications: Notification[] = [
@@ -32,7 +65,8 @@ const initialNotifications: Notification[] = [
     type: 'info',
     isRead: false,
     createdAt: subMinutes(new Date(), 15),
-    link: '/buyer/rfqs/1'
+    link: '/buyer/rfqs/1',
+    category: 'rfq',
   },
   {
     id: '2',
@@ -41,67 +75,201 @@ const initialNotifications: Notification[] = [
     type: 'warning',
     isRead: false,
     createdAt: subMinutes(new Date(), 120),
-    link: '/buyer/rfqs/2'
+    link: '/buyer/rfqs/2',
+    category: 'rfq',
   }
 ]
 
+const defaultPreferences: NotificationPreferences = {
+  orderPlaced: true,
+  orderConfirmed: true,
+  orderShipped: true,
+  orderOutForDelivery: true,
+  orderDelivered: true,
+  orderCancelled: true,
+  refundProcessed: true,
+  channels: {
+    email: true,
+    sms: true,
+    push: false,
+    inApp: true,
+  },
+  frequency: 'immediate',
+}
+
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications)
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    try {
+      if (typeof window === 'undefined') return initialNotifications
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored) as Array<Notification & { createdAt: string }>
+        return parsed.map((n) => ({ ...n, createdAt: new Date(n.createdAt) }))
+      }
+    } catch (error) {
+      console.error('Failed to load notifications', error)
+    }
+    return initialNotifications
+  })
+  const [preferences, setPreferences] = useState<NotificationPreferences>(() => {
+    try {
+      if (typeof window === 'undefined') return defaultPreferences
+      const stored = localStorage.getItem(PREFS_STORAGE_KEY)
+      if (stored) {
+        return { ...defaultPreferences, ...JSON.parse(stored) }
+      }
+    } catch (error) {
+      console.error('Failed to load notification preferences', error)
+    }
+    return defaultPreferences
+  })
   const { isAuthenticated } = useAuth()
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
 
-  const unreadCount = notifications.filter(n => !n.isRead).length
+  const unreadCount = notifications.filter(n => !n.isRead && !n.archived).length
+  const orderUnreadCount = useMemo(
+    () => notifications.filter(n => !n.isRead && !n.archived && n.category === 'order').length,
+    [notifications],
+  )
 
-  // Poll for new notifications (mock)
+  // Persist notifications
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(
+          notifications.map((n) => ({
+            ...n,
+            createdAt: n.createdAt.toISOString(),
+          })),
+        ),
+      )
+    } catch (error) {
+      console.error('Failed to persist notifications', error)
+    }
+  }, [notifications])
+
+  // Persist preferences
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(preferences))
+    } catch (error) {
+      console.error('Failed to persist notification preferences', error)
+    }
+  }, [preferences])
+
+  // Poll for new notifications (queue + mock)
   useEffect(() => {
     if (!isAuthenticated) return
+    if (typeof window === 'undefined') return
 
     const interval = setInterval(() => {
-      // Simulate random incoming notification (10% chance every 30s)
-      if (Math.random() > 0.9) {
-        const newNotif: Notification = {
-          id: Date.now().toString(),
-          title: 'New Message',
-          message: 'You have a new message from a supplier.',
-          type: 'info',
-          isRead: false,
-          createdAt: new Date(),
-          link: '/buyer/rfqs'
-        }
-        setNotifications(prev => [newNotif, ...prev])
-        setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
-      }
+      flushNotificationQueue()
     }, 30000)
 
     return () => clearInterval(interval)
   }, [isAuthenticated])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === QUEUE_STORAGE_KEY) {
+        flushNotificationQueue()
+      }
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
+
+  const flushNotificationQueue = () => {
+    try {
+      if (typeof window === 'undefined') return
+      const queued = localStorage.getItem(QUEUE_STORAGE_KEY)
+      if (!queued) return
+      const parsed = JSON.parse(queued) as Array<Notification & { createdAt?: string }>
+      if (!parsed.length) return
+      setNotifications((prev) => {
+        const existingIds = new Set(prev.map((n) => n.id))
+        const merged = parsed
+          .filter((n) => !existingIds.has(n.id))
+          .map((n) => ({
+            ...n,
+            createdAt: n.createdAt ? new Date(n.createdAt) : new Date(),
+            isRead: n.isRead ?? false,
+          }))
+        return [...merged, ...prev]
+      })
+      localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify([]))
+    } catch (error) {
+      console.error('Failed to flush notification queue', error)
+    }
+  }
+
   const markAsRead = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n))
+  }
+
+  const toggleRead = (id: string) => {
+    setNotifications(prev =>
+      prev.map(n => n.id === id ? { ...n, isRead: !n.isRead } : n),
+    )
   }
 
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
   }
 
-  const addNotification = (notif: Omit<Notification, 'id' | 'createdAt' | 'isRead'>) => {
+  const archiveNotification = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, archived: true } : n))
+  }
+
+  const restoreNotification = (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, archived: false } : n))
+  }
+
+  const addNotification = (notif: Omit<Notification, 'createdAt' | 'isRead'> & { id?: string }) => {
+    if (!preferences.channels.inApp) {
+      return
+    }
     const newNotif: Notification = {
       ...notif,
-      id: Date.now().toString(),
+      id: notif.id ?? Date.now().toString(),
       isRead: false,
-      createdAt: new Date()
+      createdAt: new Date(),
+      archived: false,
     }
-    setNotifications(prev => [newNotif, ...prev])
-    setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
+    setNotifications(prev => {
+      if (prev.some(n => n.id === newNotif.id)) return prev
+      return [newNotif, ...prev]
+    })
+    if (preferences.channels.inApp) {
+      setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
+    }
+  }
+
+  const updatePreferences = (prefs: Partial<NotificationPreferences>) => {
+    setPreferences(prev => ({
+      ...prev,
+      ...prefs,
+      channels: { ...prev.channels, ...(prefs as NotificationPreferences).channels },
+    }))
   }
 
   return (
     <NotificationContext.Provider value={{
       notifications,
       unreadCount,
+      orderUnreadCount,
+      preferences,
       markAsRead,
+      toggleRead,
       markAllAsRead,
-      addNotification
+      archiveNotification,
+      restoreNotification,
+      addNotification,
+      updatePreferences,
     }}>
       {children}
       <Toast 

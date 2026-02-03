@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   Package,
@@ -38,6 +38,8 @@ import { getOrder } from '@/lib/order-actions'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
 import OrderStatusTimeline from '@/components/OrderStatusTimeline'
+import { useNotifications } from '@/contexts/NotificationContext'
+import type { NotificationPreferences } from '@/contexts/NotificationContext'
 
 export const Route = createFileRoute('/buyer/orders/$orderId')({
   component: OrderDetailPage,
@@ -101,6 +103,7 @@ function OrderDetailPage() {
   const order = Route.useLoaderData()
   const { addItem } = useCart()
   const navigate = Route.useNavigate()
+  const { addNotification, preferences } = useNotifications()
   const [toast, setToast] = useState({ message: '', isVisible: false })
   const [isReordering, setIsReordering] = useState(false)
   const [reorderItems, setReorderItems] = useState<ReorderItem[]>([])
@@ -126,6 +129,7 @@ function OrderDetailPage() {
   const [cancellationReason, setCancellationReason] = useState<string | null>(
     order?.cancellationReason ?? null,
   )
+  const previousStatusRef = useRef<string | null>(null)
 
   if (!order) {
     return (
@@ -466,6 +470,17 @@ function OrderDetailPage() {
     statusState,
     statusUpdatedAt,
   ])
+
+  useEffect(() => {
+    if (!statusState) return
+    if (previousStatusRef.current && previousStatusRef.current !== statusState) {
+      const payload = buildOrderStatusNotification(order, statusState, trackingInfo)
+      if (payload && shouldNotifyStatus(statusState, preferences)) {
+        addNotification(payload)
+      }
+    }
+    previousStatusRef.current = statusState
+  }, [addNotification, order, preferences, statusState, trackingInfo])
 
   const handleSupplierSelectionChange = (key: string) => {
     setSupplierSelection((prev) => ({
@@ -1230,6 +1245,86 @@ function getCancelReasonLabel(value: string) {
     default:
       return 'Other'
   }
+}
+
+function shouldNotifyStatus(status: string, preferences: NotificationPreferences) {
+  switch (status) {
+    case 'placed':
+      return preferences.orderPlaced
+    case 'confirmed':
+      return preferences.orderConfirmed
+    case 'shipped':
+      return preferences.orderShipped
+    case 'out_for_delivery':
+      return preferences.orderOutForDelivery
+    case 'delivered':
+      return preferences.orderDelivered
+    case 'cancelled':
+      return preferences.orderCancelled
+    case 'refund_processed':
+      return preferences.refundProcessed
+    default:
+      return true
+  }
+}
+
+function buildOrderStatusNotification(order: any, status: string, trackingInfo?: any) {
+  const orderLabel = formatOrderLabel(order)
+  const statusLabel = status.replace(/_/g, ' ')
+  const base = {
+    id: `order-${order.id}-${status}`,
+    title: `Order #${orderLabel}`,
+    message: `Status updated to ${statusLabel}.`,
+    type: status === 'cancelled' ? 'warning' : status === 'delivered' ? 'success' : 'info',
+    link: `/buyer/orders/${order.id}`,
+    orderId: order.id,
+    category: 'order' as const,
+    status,
+  }
+
+  if (status === 'shipped' && trackingInfo?.trackingNumber) {
+    return {
+      ...base,
+      message: `Shipped via ${trackingInfo.courierName ?? 'courier'} · Tracking ${trackingInfo.trackingNumber}. Track your delivery.`,
+    }
+  }
+
+  if (status === 'out_for_delivery') {
+    return {
+      ...base,
+      message: 'Out for delivery. Please keep your phone available to receive the package.',
+    }
+  }
+
+  if (status === 'placed') {
+    return {
+      ...base,
+      message: 'Order placed successfully. Supplier confirmation is pending.',
+    }
+  }
+
+  if (status === 'confirmed') {
+    return {
+      ...base,
+      message: 'Order confirmed by supplier. We are preparing your items.',
+    }
+  }
+
+  if (status === 'delivered') {
+    return {
+      ...base,
+      message: 'Delivered successfully. If there is any issue, contact support.',
+    }
+  }
+
+  if (status === 'cancelled') {
+    return {
+      ...base,
+      message: 'Order cancelled. Refund will be processed in 3-5 business days.',
+    }
+  }
+
+  return base
 }
 
 function buildReorderItems(order: any): ReorderItem[] {

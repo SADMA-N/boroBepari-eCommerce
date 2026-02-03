@@ -28,6 +28,17 @@ interface CancellationEmailParams {
   refundSummary: string
 }
 
+interface OrderStatusEmailParams {
+  email: string
+  name: string
+  orderNumber: string
+  statusLabel: string
+  trackingNumber?: string
+  courier?: string
+  eta?: string
+  orderLink?: string
+}
+
 export async function sendVerificationEmail({
   email,
   url,
@@ -230,6 +241,80 @@ export async function sendCancellationEmail({
     return { success: true, data }
   } catch (err) {
     console.error('Unexpected error sending cancellation email:', err)
+    return { success: false, error: err }
+  }
+}
+
+export async function sendOrderStatusEmail({
+  email,
+  name,
+  orderNumber,
+  statusLabel,
+  trackingNumber,
+  courier,
+  eta,
+  orderLink,
+}: OrderStatusEmailParams) {
+  const subject = `Your order ${orderNumber} is ${statusLabel}`
+
+  const trackingBlock = trackingNumber
+    ? `
+      <p><strong>Tracking Number:</strong> ${trackingNumber}</p>
+      <p><strong>Courier:</strong> ${courier ?? 'N/A'}</p>
+      <p><strong>Estimated Delivery:</strong> ${eta ?? 'TBD'}</p>
+    `
+    : ''
+
+  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+    console.log('--- EMAIL DEBUG ---')
+    console.log(`To: ${email}`)
+    console.log(`Subject: ${subject}`)
+    console.log(`Order link: ${orderLink}`)
+    console.log('-------------------')
+
+    if (!process.env.RESEND_API_KEY) {
+      console.warn(
+        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
+      )
+      return { success: true, data: { id: 'mock-email-id' } }
+    }
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'BoroBepari <updates@resend.dev>',
+      to: [email],
+      subject,
+      html: `
+        <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #16a34a;">Order update</h2>
+          <p>Hi ${name},</p>
+          <p>Your order <strong>${orderNumber}</strong> is now <strong>${statusLabel}</strong>.</p>
+          ${trackingBlock}
+          ${
+            orderLink
+              ? `
+            <div style="margin: 24px 0; text-align: center;">
+              <a href="${orderLink}" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                View Order
+              </a>
+            </div>
+          `
+              : ''
+          }
+          <p style="color: #999; font-size: 12px;">Thank you for shopping with BoroBepari.</p>
+        </div>
+      `,
+    })
+
+    if (error) {
+      console.error('Failed to send order status email:', error)
+      return { success: false, error }
+    }
+
+    return { success: true, data }
+  } catch (err) {
+    console.error('Unexpected error sending order status email:', err)
     return { success: false, error: err }
   }
 }

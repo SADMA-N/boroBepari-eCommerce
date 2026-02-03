@@ -1,11 +1,19 @@
 import { useState, useRef, useEffect } from 'react'
-import { Bell, Check, ExternalLink, X } from 'lucide-react'
+import { Bell, Check, X } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useNotifications, Notification } from '@/contexts/NotificationContext'
 import { Link } from '@tanstack/react-router'
 
-export default function NotificationBell() {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
+export default function NotificationBell({
+  showLabel = false,
+  label = 'Notifications',
+  className = '',
+}: {
+  showLabel?: boolean
+  label?: string
+  className?: string
+}) {
+  const { notifications, unreadCount, markAsRead, markAllAsRead, archiveNotification } = useNotifications()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -27,18 +35,24 @@ export default function NotificationBell() {
   }
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div
+      className={`relative ${showLabel ? 'flex flex-col items-center' : ''} ${className}`}
+      ref={dropdownRef}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-orange-500 transition-colors rounded-full hover:bg-gray-100"
+        className={`relative text-gray-600 hover:text-orange-500 transition-colors ${
+          showLabel ? 'flex flex-col items-center' : 'p-2 rounded-full hover:bg-gray-100'
+        }`}
         aria-label="Notifications"
       >
         <Bell size={22} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] flex items-center justify-center border-2 border-white">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] flex items-center justify-center border-2 border-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
+        {showLabel && <span className="text-xs">{label}</span>}
       </button>
 
       {isOpen && (
@@ -63,11 +77,12 @@ export default function NotificationBell() {
               </div>
             ) : (
               <div className="divide-y divide-gray-50">
-                {notifications.map((notif) => (
+                {notifications.filter(n => !n.archived).map((notif) => (
                   <NotificationItem 
                     key={notif.id} 
                     notification={notif} 
                     onMarkRead={(e) => handleMarkAsRead(e, notif.id)} 
+                    onArchive={() => archiveNotification(notif.id)}
                     onClose={() => setIsOpen(false)}
                   />
                 ))}
@@ -76,8 +91,8 @@ export default function NotificationBell() {
           </div>
           
           <div className="p-2 border-t border-gray-100 bg-gray-50 text-center">
-            <Link to="/account" className="text-xs text-gray-500 hover:text-gray-900" onClick={() => setIsOpen(false)}>
-              View Notification Settings
+            <Link to="/buyer/notifications" className="text-xs text-gray-500 hover:text-gray-900" onClick={() => setIsOpen(false)}>
+              View Notifications
             </Link>
           </div>
         </div>
@@ -86,7 +101,17 @@ export default function NotificationBell() {
   )
 }
 
-function NotificationItem({ notification, onMarkRead, onClose }: { notification: Notification, onMarkRead: (e: React.MouseEvent) => void, onClose: () => void }) {
+function NotificationItem({
+  notification,
+  onMarkRead,
+  onArchive,
+  onClose,
+}: {
+  notification: Notification
+  onMarkRead: (e: React.MouseEvent) => void
+  onArchive: () => void
+  onClose: () => void
+}) {
   const Icon = notification.type === 'success' ? Check : 
                notification.type === 'warning' ? AlertTriangleIcon : 
                Bell
@@ -107,11 +132,14 @@ function NotificationItem({ notification, onMarkRead, onClose }: { notification:
            <p className={`text-sm ${notification.isRead ? 'font-medium text-gray-900' : 'font-bold text-gray-900'}`}>
              {notification.title}
            </p>
-           {!notification.isRead && (
+          {!notification.isRead && (
              <button onClick={onMarkRead} className="text-blue-500 hover:text-blue-700 p-1" title="Mark as read">
                <span className="w-2 h-2 rounded-full bg-blue-500 block"></span>
              </button>
            )}
+           <button onClick={onArchive} className="text-gray-300 hover:text-gray-500 p-1" title="Archive">
+             <X size={14} />
+           </button>
         </div>
         <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">{notification.message}</p>
         <p className="text-xs text-gray-400 mt-1.5">{formatDistanceToNow(notification.createdAt, { addSuffix: true })}</p>

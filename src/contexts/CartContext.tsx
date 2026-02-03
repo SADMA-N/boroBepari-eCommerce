@@ -327,7 +327,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // --------------------------------------------------------------------------
   // Cart count
   // --------------------------------------------------------------------------
-  const cartCount = cart.items.reduce((acc, item) => acc + item.quantity, 0)
+  const cartCount = cart.items.length
 
   // --------------------------------------------------------------------------
   // Provider value

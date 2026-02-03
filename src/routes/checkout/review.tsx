@@ -11,6 +11,7 @@ import { createOrder } from '@/lib/order-actions'
 import { validateCartServer } from '@/lib/cart-actions'
 import type { Address } from '@/db/schema'
 import Toast from '@/components/Toast'
+import { useNotifications } from '@/contexts/NotificationContext'
 
 export const Route = createFileRoute('/checkout/review')({
   component: ReviewPage,
@@ -21,6 +22,7 @@ function ReviewPage() {
   const { cart, clearCart } = useCart()
   const { user } = useAuth()
   const router = useRouter()
+  const { addNotification, preferences } = useNotifications()
 
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -104,6 +106,19 @@ function ReviewPage() {
             notes: state.notes
         }
       })
+
+      if (preferences.orderPlaced) {
+        addNotification({
+          id: `order-${newOrder.id}-placed`,
+          title: `Order #BO-${new Date().getFullYear()}-${newOrder.id.toString().padStart(4, '0')}`,
+          message: 'Order placed successfully. We will notify you as it progresses.',
+          type: 'success',
+          link: `/buyer/orders/${newOrder.id}`,
+          orderId: newOrder.id,
+          category: 'order',
+          status: 'placed',
+        })
+      }
 
       setDebugStep('Handling payment redirect')
       // 4. Redirect based on Payment Method

@@ -181,8 +181,8 @@ export default function Header() {
 
               {/* Notifications - Only show if logged in */}
               {isAuthenticated && (
-                <div className="hidden sm:block">
-                  <NotificationBell />
+                <div className="hidden sm:flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors relative">
+                  <NotificationBell showLabel label="Alerts" />
                 </div>
               )}
 

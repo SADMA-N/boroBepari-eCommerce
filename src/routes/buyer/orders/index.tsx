@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { MouseEvent } from 'react'
 import {
   Search,
@@ -17,6 +17,7 @@ import { format } from 'date-fns'
 import { formatBDT } from '@/data/mock-products'
 import { getBuyerOrders, type BuyerOrdersFilter } from '@/lib/order-actions'
 import { useAuth } from '@/contexts/AuthContext'
+import { useNotifications } from '@/contexts/NotificationContext'
 
 export const Route = createFileRoute('/buyer/orders/')({
   component: BuyerOrderHistoryPage,
@@ -35,6 +36,7 @@ const sortOptions: { value: SortOption; label: string }[] = [
 
 function BuyerOrderHistoryPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
+  const { orderUnreadCount } = useNotifications()
   const [activeTab, setActiveTab] = useState<FilterTab>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState<SortOption>('date_desc')
@@ -67,32 +69,40 @@ function BuyerOrderHistoryPage() {
   }, [searchQuery])
 
   // Fetch orders
+  const fetchOrders = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const result = await getBuyerOrders({
+        filter: activeTab,
+        search: debouncedSearch,
+        sortBy,
+        page,
+        limit: 10,
+      })
+      const filteredOrders = filterOrdersByTab(result.orders, activeTab)
+      setOrders(filteredOrders)
+      setPagination(result.pagination)
+      setCounts(result.counts)
+    } catch (error) {
+      console.error('Failed to fetch orders:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [activeTab, debouncedSearch, page, sortBy])
+
   useEffect(() => {
     if (!isAuthenticated || authLoading) return
 
-    const fetchOrders = async () => {
-      setIsLoading(true)
-      try {
-        const result = await getBuyerOrders({
-          filter: activeTab,
-          search: debouncedSearch,
-          sortBy,
-          page,
-          limit: 10,
-        })
-        const filteredOrders = filterOrdersByTab(result.orders, activeTab)
-        setOrders(filteredOrders)
-        setPagination(result.pagination)
-        setCounts(result.counts)
-      } catch (error) {
-        console.error('Failed to fetch orders:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     fetchOrders()
-  }, [isAuthenticated, authLoading, activeTab, debouncedSearch, sortBy, page])
+  }, [isAuthenticated, authLoading, activeTab, debouncedSearch, sortBy, page, fetchOrders])
+
+  useEffect(() => {
+    if (!isAuthenticated || authLoading) return
+    const interval = setInterval(() => {
+      fetchOrders()
+    }, 60000)
+    return () => clearInterval(interval)
+  }, [fetchOrders, isAuthenticated, authLoading])
 
   // Handle tab change
   const handleTabChange = (tab: FilterTab) => {
@@ -135,7 +145,14 @@ function BuyerOrderHistoryPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Order History</h1>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+            Order History
+            {orderUnreadCount > 0 && (
+              <span className="text-xs font-semibold bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+                {orderUnreadCount} updates
+              </span>
+            )}
+          </h1>
           <p className="text-gray-500 text-sm mt-1">
             Track and manage your orders
           </p>
