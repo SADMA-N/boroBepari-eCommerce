@@ -36,9 +36,10 @@ import { Route as CheckoutPaymentCallbackRouteImport } from './routes/checkout/p
 import { Route as CheckoutPaymentRouteImport } from './routes/checkout/payment'
 import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/$categorySlug'
 import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
-import { Route as BuyerOrdersRouteImport } from './routes/buyer/orders'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
+import { Route as BuyerOrdersIndexRouteImport } from './routes/buyer/orders/index'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
@@ -46,6 +47,7 @@ import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
+import { Route as BuyerOrdersOrderIdRouteImport } from './routes/buyer/orders/$orderId'
 import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
 import { Route as ApiOrdersOrderIdRouteImport } from './routes/api/orders/$orderId'
 import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
@@ -206,11 +208,6 @@ const BuyerRfqsRoute = BuyerRfqsRouteImport.update({
   path: '/buyer/rfqs',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BuyerOrdersRoute = BuyerOrdersRouteImport.update({
-  id: '/buyer/orders',
-  path: '/buyer/orders',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
   id: '/auth/set-password',
   path: '/auth/set-password',
@@ -220,6 +217,16 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerOrdersRouteRoute = BuyerOrdersRouteRouteImport.update({
+  id: '/buyer/orders',
+  path: '/buyer/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerOrdersIndexRoute = BuyerOrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerOrdersRouteRoute,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
@@ -255,6 +262,11 @@ const BuyerRfqsRfqIdRoute = BuyerRfqsRfqIdRouteImport.update({
   id: '/$rfqId',
   path: '/$rfqId',
   getParentRoute: () => BuyerRfqsRoute,
+} as any)
+const BuyerOrdersOrderIdRoute = BuyerOrdersOrderIdRouteImport.update({
+  id: '/$orderId',
+  path: '/$orderId',
+  getParentRoute: () => BuyerOrdersRouteRoute,
 } as any)
 const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
   id: '/api/rfq/submit',
@@ -388,9 +400,9 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/buyer/orders': typeof BuyerOrdersRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -413,6 +425,7 @@ export interface FileRoutesByFullPath {
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -420,6 +433,7 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/buyer/orders/': typeof BuyerOrdersIndexRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
   '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
@@ -451,7 +465,6 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/buyer/orders': typeof BuyerOrdersRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -474,6 +487,7 @@ export interface FileRoutesByTo {
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -481,6 +495,7 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/buyer/orders': typeof BuyerOrdersIndexRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
   '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
@@ -512,9 +527,9 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
-  '/buyer/orders': typeof BuyerOrdersRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -537,6 +552,7 @@ export interface FileRoutesById {
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
@@ -544,6 +560,7 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/buyer/orders/': typeof BuyerOrdersIndexRoute
   '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
   '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
@@ -576,9 +593,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/buyer/orders'
     | '/api/$'
     | '/auth/set-password'
-    | '/buyer/orders'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -601,6 +618,7 @@ export interface FileRouteTypes {
     | '/api/cart/validate-coupon'
     | '/api/orders/$orderId'
     | '/api/rfq/submit'
+    | '/buyer/orders/$orderId'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -608,6 +626,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/buyer/orders/'
     | '/api/cart/item/$itemId'
     | '/api/orders/$orderId/invoice'
     | '/api/orders/$orderId/reorder'
@@ -639,7 +658,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/api/$'
     | '/auth/set-password'
-    | '/buyer/orders'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -662,6 +680,7 @@ export interface FileRouteTypes {
     | '/api/cart/validate-coupon'
     | '/api/orders/$orderId'
     | '/api/rfq/submit'
+    | '/buyer/orders/$orderId'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -669,6 +688,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/buyer/orders'
     | '/api/cart/item/$itemId'
     | '/api/orders/$orderId/invoice'
     | '/api/orders/$orderId/reorder'
@@ -699,9 +719,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/buyer/orders'
     | '/api/$'
     | '/auth/set-password'
-    | '/buyer/orders'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -724,6 +744,7 @@ export interface FileRouteTypes {
     | '/api/cart/validate-coupon'
     | '/api/orders/$orderId'
     | '/api/rfq/submit'
+    | '/buyer/orders/$orderId'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
@@ -731,6 +752,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/buyer/orders/'
     | '/api/cart/item/$itemId'
     | '/api/orders/$orderId/invoice'
     | '/api/orders/$orderId/reorder'
@@ -762,9 +784,9 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   WishlistRoute: typeof WishlistRoute
+  BuyerOrdersRouteRoute: typeof BuyerOrdersRouteRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
-  BuyerOrdersRoute: typeof BuyerOrdersRoute
   BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
@@ -995,13 +1017,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerRfqsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/buyer/orders': {
-      id: '/buyer/orders'
-      path: '/buyer/orders'
-      fullPath: '/buyer/orders'
-      preLoaderRoute: typeof BuyerOrdersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/set-password': {
       id: '/auth/set-password'
       path: '/auth/set-password'
@@ -1015,6 +1030,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/buyer/orders': {
+      id: '/buyer/orders'
+      path: '/buyer/orders'
+      fullPath: '/buyer/orders'
+      preLoaderRoute: typeof BuyerOrdersRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/orders/': {
+      id: '/buyer/orders/'
+      path: '/'
+      fullPath: '/buyer/orders/'
+      preLoaderRoute: typeof BuyerOrdersIndexRouteImport
+      parentRoute: typeof BuyerOrdersRouteRoute
     }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
@@ -1064,6 +1093,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/buyer/rfqs/$rfqId'
       preLoaderRoute: typeof BuyerRfqsRfqIdRouteImport
       parentRoute: typeof BuyerRfqsRoute
+    }
+    '/buyer/orders/$orderId': {
+      id: '/buyer/orders/$orderId'
+      path: '/$orderId'
+      fullPath: '/buyer/orders/$orderId'
+      preLoaderRoute: typeof BuyerOrdersOrderIdRouteImport
+      parentRoute: typeof BuyerOrdersRouteRoute
     }
     '/api/rfq/submit': {
       id: '/api/rfq/submit'
@@ -1247,6 +1283,19 @@ const CheckoutRouteRouteWithChildren = CheckoutRouteRoute._addFileChildren(
   CheckoutRouteRouteChildren,
 )
 
+interface BuyerOrdersRouteRouteChildren {
+  BuyerOrdersOrderIdRoute: typeof BuyerOrdersOrderIdRoute
+  BuyerOrdersIndexRoute: typeof BuyerOrdersIndexRoute
+}
+
+const BuyerOrdersRouteRouteChildren: BuyerOrdersRouteRouteChildren = {
+  BuyerOrdersOrderIdRoute: BuyerOrdersOrderIdRoute,
+  BuyerOrdersIndexRoute: BuyerOrdersIndexRoute,
+}
+
+const BuyerOrdersRouteRouteWithChildren =
+  BuyerOrdersRouteRoute._addFileChildren(BuyerOrdersRouteRouteChildren)
+
 interface BuyerRfqsRouteChildren {
   BuyerRfqsRfqIdRoute: typeof BuyerRfqsRfqIdRoute
 }
@@ -1288,9 +1337,9 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   WishlistRoute: WishlistRoute,
+  BuyerOrdersRouteRoute: BuyerOrdersRouteRouteWithChildren,
   ApiSplatRoute: ApiSplatRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
-  BuyerOrdersRoute: BuyerOrdersRoute,
   BuyerRfqsRoute: BuyerRfqsRouteWithChildren,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,

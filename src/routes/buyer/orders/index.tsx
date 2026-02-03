@@ -16,7 +16,7 @@ import { formatBDT } from '@/data/mock-products'
 import { getBuyerOrders, type BuyerOrdersFilter } from '@/lib/order-actions'
 import { useAuth } from '@/contexts/AuthContext'
 
-export const Route = createFileRoute('/buyer/orders')({
+export const Route = createFileRoute('/buyer/orders/')({
   component: BuyerOrderHistoryPage,
 })
 
@@ -348,7 +348,7 @@ function OrderCard({ order }: { order: any }) {
 
   return (
     <Link
-      to={`/order-confirmation/${order.id}`}
+      to={`/buyer/orders/${order.id}`}
       className="block bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group"
     >
       <div className="p-6">

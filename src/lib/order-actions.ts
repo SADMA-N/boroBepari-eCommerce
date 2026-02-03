@@ -13,7 +13,11 @@ export const getOrder = createServerFn({ method: 'GET' })
       with: {
         items: {
           with: {
-            product: true,
+            product: {
+              with: {
+                supplier: true,
+              },
+            },
           },
         },
         user: {
