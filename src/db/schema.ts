@@ -129,6 +129,7 @@ export const addresses = pgTable('addresses', {
     .references(() => user.id),
   name: text('name').notNull(),
   address: text('address').notNull(),
+  city: text('city'),
   postcode: text('postcode').notNull(),
   phone: text('phone').notNull(),
   isDefault: boolean('is_default').default(false),
