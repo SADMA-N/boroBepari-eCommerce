@@ -16,10 +16,11 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OrdersRouteImport } from './routes/orders'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as CheckoutRouteRouteImport } from './routes/checkout/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -93,11 +94,6 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CartRoute = CartRouteImport.update({
   id: '/cart',
   path: '/cart',
@@ -108,10 +104,20 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutRouteRoute = CheckoutRouteRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CheckoutRouteRoute,
 } as any)
 const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
   id: '/supplier/rfqs',
@@ -156,7 +162,7 @@ const DemoDbChatRoute = DemoDbChatRouteImport.update({
 const CheckoutPaymentRoute = CheckoutPaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
-  getParentRoute: () => CheckoutRoute,
+  getParentRoute: () => CheckoutRouteRoute,
 } as any)
 const CategoriesCategorySlugRoute = CategoriesCategorySlugRouteImport.update({
   id: '/categories/$categorySlug',
@@ -305,9 +311,9 @@ const ApiRfqQuoteQuoteIdAcceptRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRouteRouteWithChildren
   '/account': typeof AccountRoute
   '/cart': typeof CartRoute
-  '/checkout': typeof CheckoutRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
@@ -328,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/checkout/': typeof CheckoutIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
@@ -357,7 +364,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/cart': typeof CartRoute
-  '/checkout': typeof CheckoutRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
@@ -378,6 +384,7 @@ export interface FileRoutesByTo {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/checkout': typeof CheckoutIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
@@ -406,9 +413,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkout': typeof CheckoutRouteRouteWithChildren
   '/account': typeof AccountRoute
   '/cart': typeof CartRoute
-  '/checkout': typeof CheckoutRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
@@ -429,6 +436,7 @@ export interface FileRoutesById {
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/checkout/': typeof CheckoutIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
@@ -458,9 +466,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/checkout'
     | '/account'
     | '/cart'
-    | '/checkout'
     | '/forgot-password'
     | '/login'
     | '/orders'
@@ -481,6 +489,7 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/supplier/rfqs'
+    | '/checkout/'
     | '/api/auth/$'
     | '/api/cart/$userId'
     | '/api/cart/add'
@@ -510,7 +519,6 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/cart'
-    | '/checkout'
     | '/forgot-password'
     | '/login'
     | '/orders'
@@ -531,6 +539,7 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/supplier/rfqs'
+    | '/checkout'
     | '/api/auth/$'
     | '/api/cart/$userId'
     | '/api/cart/add'
@@ -558,9 +567,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/checkout'
     | '/account'
     | '/cart'
-    | '/checkout'
     | '/forgot-password'
     | '/login'
     | '/orders'
@@ -581,6 +590,7 @@ export interface FileRouteTypes {
     | '/demo/tanstack-query'
     | '/products/$productSlug'
     | '/supplier/rfqs'
+    | '/checkout/'
     | '/api/auth/$'
     | '/api/cart/$userId'
     | '/api/cart/add'
@@ -609,9 +619,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckoutRouteRoute: typeof CheckoutRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
   CartRoute: typeof CartRoute
-  CheckoutRoute: typeof CheckoutRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   OrdersRoute: typeof OrdersRoute
@@ -707,13 +717,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/cart': {
       id: '/cart'
       path: '/cart'
@@ -728,12 +731,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/checkout/': {
+      id: '/checkout/'
+      path: '/'
+      fullPath: '/checkout/'
+      preLoaderRoute: typeof CheckoutIndexRouteImport
+      parentRoute: typeof CheckoutRouteRoute
     }
     '/supplier/rfqs': {
       id: '/supplier/rfqs'
@@ -796,7 +813,7 @@ declare module '@tanstack/react-router' {
       path: '/payment'
       fullPath: '/checkout/payment'
       preLoaderRoute: typeof CheckoutPaymentRouteImport
-      parentRoute: typeof CheckoutRoute
+      parentRoute: typeof CheckoutRouteRoute
     }
     '/categories/$categorySlug': {
       id: '/categories/$categorySlug'
@@ -997,16 +1014,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CheckoutRouteChildren {
+interface CheckoutRouteRouteChildren {
   CheckoutPaymentRoute: typeof CheckoutPaymentRoute
+  CheckoutIndexRoute: typeof CheckoutIndexRoute
 }
 
-const CheckoutRouteChildren: CheckoutRouteChildren = {
+const CheckoutRouteRouteChildren: CheckoutRouteRouteChildren = {
   CheckoutPaymentRoute: CheckoutPaymentRoute,
+  CheckoutIndexRoute: CheckoutIndexRoute,
 }
 
-const CheckoutRouteWithChildren = CheckoutRoute._addFileChildren(
-  CheckoutRouteChildren,
+const CheckoutRouteRouteWithChildren = CheckoutRouteRoute._addFileChildren(
+  CheckoutRouteRouteChildren,
 )
 
 interface BuyerRfqsRouteChildren {
@@ -1023,9 +1042,9 @@ const BuyerRfqsRouteWithChildren = BuyerRfqsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckoutRouteRoute: CheckoutRouteRouteWithChildren,
   AccountRoute: AccountRoute,
   CartRoute: CartRoute,
-  CheckoutRoute: CheckoutRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   OrdersRoute: OrdersRoute,
