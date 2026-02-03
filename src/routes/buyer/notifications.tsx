@@ -195,7 +195,11 @@ function NotificationsPage() {
                         </div>
                       </div>
                       {notif.link && (
-                        <Link to={notif.link} className="text-xs text-orange-600 hover:underline mt-2 inline-block">
+                        <Link
+                          to={notif.link}
+                          onClick={() => markAsRead(notif.id)}
+                          className="text-xs text-orange-600 hover:underline mt-2 inline-block"
+                        >
                           View details
                         </Link>
                       )}

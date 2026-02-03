@@ -34,6 +34,11 @@ export default function NotificationBell({
     markAsRead(id)
   }
 
+  const handleOpenNotification = (id: string) => {
+    markAsRead(id)
+    setIsOpen(false)
+  }
+
   return (
     <div
       className={`relative ${showLabel ? 'flex flex-col items-center' : ''} ${className}`}
@@ -84,6 +89,7 @@ export default function NotificationBell({
                     onMarkRead={(e) => handleMarkAsRead(e, notif.id)} 
                     onArchive={() => archiveNotification(notif.id)}
                     onClose={() => setIsOpen(false)}
+                    onOpen={() => handleOpenNotification(notif.id)}
                   />
                 ))}
               </div>
@@ -106,11 +112,13 @@ function NotificationItem({
   onMarkRead,
   onArchive,
   onClose,
+  onOpen,
 }: {
   notification: Notification
   onMarkRead: (e: React.MouseEvent) => void
   onArchive: () => void
   onClose: () => void
+  onOpen: () => void
 }) {
   const Icon = notification.type === 'success' ? Check : 
                notification.type === 'warning' ? AlertTriangleIcon : 
@@ -149,7 +157,14 @@ function NotificationItem({
 
   if (notification.link) {
     return (
-      <Link to={notification.link} className="block" onClick={onClose}>
+      <Link
+        to={notification.link}
+        className="block"
+        onClick={() => {
+          onOpen()
+          onClose()
+        }}
+      >
         {Content}
       </Link>
     )
