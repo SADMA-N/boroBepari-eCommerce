@@ -160,12 +160,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         isPriceLocked: !!request.rfqId,
       }
 
-      // Validate MOQ
-      const moqResult = validateMoq(newItem)
-      if (!moqResult.valid) {
-        return { success: false, error: moqResult.message }
-      }
-
       // Validate stock
       const stockResult = validateStock(newItem)
       if (!stockResult.valid) {
@@ -241,14 +235,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const item = cart.items.find((i) => i.id === itemId)
       if (!item) {
         return { success: false, error: 'Item not found in cart' }
-      }
-
-      // Validate MOQ
-      if (quantity < item.moq) {
-        return {
-          success: false,
-          error: `Minimum order quantity is ${item.moq} units`,
-        }
       }
 
       // Validate stock

@@ -123,7 +123,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             updateQuantity(item.id, item.quantity - 1)
                           }
                           className="p-1 hover:bg-gray-50 text-gray-600 disabled:opacity-50"
-                          disabled={item.quantity <= item.moq}
+                          disabled={item.quantity <= 1}
                         >
                           <Minus size={14} />
                         </button>
