@@ -464,7 +464,7 @@ export function SellerDashboardPage() {
             <ActionButton
               icon={<PackagePlus size={18} />}
               label="Add New Product"
-              onClick={() => navigate({ to: '/seller/products/new' })}
+              onClick={() => navigate({ to: '/seller/products/add' })}
             />
             <ActionButton
               icon={<ShoppingCart size={18} />}
