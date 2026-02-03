@@ -5,8 +5,10 @@ import {
   Download,
   MoreVertical,
   PackagePlus,
+  UploadCloud,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { BulkImportModal } from './BulkImportModal'
 
 type ProductStatus = 'Published' | 'Draft'
 type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock'
@@ -88,6 +90,7 @@ export function SellerProductsPage() {
   const [loadingEdit, setLoadingEdit] = useState<string | null>(null)
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
   const [page, setPage] = useState(1)
+  const [showImport, setShowImport] = useState(false)
   const perPage = 20
 
   const filtered = useMemo(() => {
@@ -218,6 +221,14 @@ export function SellerProductsPage() {
                 <BulkActions onAction={handleBulkAction} />
               </div>
             )}
+            <button
+              type="button"
+              onClick={() => setShowImport(true)}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              <UploadCloud size={16} />
+              Bulk Import
+            </button>
             <button
               type="button"
               onClick={() => navigate({ to: '/seller/products/add' })}
@@ -428,6 +439,17 @@ export function SellerProductsPage() {
           </div>
         </footer>
       </div>
+
+      {showImport && (
+        <BulkImportModal
+          onClose={() => setShowImport(false)}
+          onViewProducts={() => {
+            setShowImport(false)
+            setQuery('')
+            setFilter('All')
+          }}
+        />
+      )}
     </SellerProtectedRoute>
   )
 }
