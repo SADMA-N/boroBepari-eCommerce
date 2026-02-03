@@ -165,6 +165,8 @@ export const orders = pgTable('orders', {
   disputeStatus: text('dispute_status'), // 'open', 'resolved', 'closed'
 
   notes: text('notes'),
+  invoiceUrl: text('invoice_url'),
+  invoiceGeneratedAt: timestamp('invoice_generated_at'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })

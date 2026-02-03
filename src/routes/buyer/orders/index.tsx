@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
+import type { MouseEvent } from 'react'
 import {
   Search,
   ChevronRight,
@@ -10,6 +11,7 @@ import {
   Calendar,
   Filter,
   Loader2,
+  FileText,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { formatBDT } from '@/data/mock-products'
@@ -337,6 +339,20 @@ function OrderCard({ order }: { order: any }) {
   const itemCount = order.items?.length || 0
   const totalAmount = parseFloat(order.totalAmount) || 0
   const createdAt = order.createdAt ? new Date(order.createdAt) : new Date()
+  const year = createdAt.getFullYear()
+  const invoiceFileName = `Invoice_BO-${year}-${order.id.toString().padStart(5, '0')}.pdf`
+
+  const handleDownloadInvoice = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (!order.invoiceUrl) return
+    const link = document.createElement('a')
+    link.href = order.invoiceUrl
+    link.download = invoiceFileName
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+  }
 
   // Get first 3 product images
   const productImages = order.items
@@ -406,6 +422,15 @@ function OrderCard({ order }: { order: any }) {
                 {formatBDT(totalAmount)}
               </div>
             </div>
+            {order.invoiceUrl && (
+              <button
+                onClick={handleDownloadInvoice}
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-2 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors text-sm font-medium"
+              >
+                <FileText size={16} />
+                Invoice
+              </button>
+            )}
             <ChevronRight
               size={24}
               className="text-gray-300 group-hover:text-orange-500 transition-colors"

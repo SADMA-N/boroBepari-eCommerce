@@ -25,6 +25,7 @@ function ReviewPage() {
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [toast, setToast] = useState({ message: '', isVisible: false })
+  const [debugStep, setDebugStep] = useState<string | null>(null)
 
   useEffect(() => {
     if (!cart.items.length) {
@@ -57,6 +58,7 @@ function ReviewPage() {
     setIsSubmitting(true)
     
     try {
+      setDebugStep('Validating cart')
       // 1. Validate Cart (Stock/Price)
       const validation = await validateCartServer({
         data: cart.items.map(i => ({
@@ -76,6 +78,7 @@ function ReviewPage() {
         return
       }
 
+      setDebugStep('Preparing order data')
       // 2. Prepare Order Data
       const depositAmount = state.paymentMethod === 'deposit' 
           ? Math.ceil(cart.total * 0.3) 
@@ -84,6 +87,7 @@ function ReviewPage() {
           ? cart.total - depositAmount
           : 0
 
+      setDebugStep('Creating order')
       // 3. Create Order in DB
       const newOrder = await createOrder({
         data: {
@@ -101,6 +105,7 @@ function ReviewPage() {
         }
       })
 
+      setDebugStep('Handling payment redirect')
       // 4. Redirect based on Payment Method
       if (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') {
         const amountToPay = state.paymentMethod === 'deposit' 
@@ -120,8 +125,8 @@ function ReviewPage() {
         }, 1500)
       }
     } catch (error) {
-      console.error(error)
-      setToast({ message: 'Failed to place order', isVisible: true })
+      console.error('Place order failed at step:', debugStep, error)
+      setToast({ message: `Failed to place order (${debugStep ?? 'unknown step'})`, isVisible: true })
       setIsSubmitting(false)
     }
   }
@@ -248,11 +253,11 @@ function ReviewPage() {
                <span className="text-orange-600">{formatCurrency(cart.total)}</span>
              </div>
 
-             <button
-               onClick={handlePlaceOrder}
-               disabled={isSubmitting}
-               className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl transform active:scale-[0.98] flex items-center justify-center gap-2"
-             >
+            <button
+              onClick={handlePlaceOrder}
+              disabled={isSubmitting}
+              className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl transform active:scale-[0.98] flex items-center justify-center gap-2"
+            >
                {isSubmitting ? (
                  <>
                    <Loader2 className="animate-spin" size={20} />
@@ -265,6 +270,12 @@ function ReviewPage() {
                  </>
                )}
              </button>
+
+             {debugStep && (
+               <p className="text-[11px] text-gray-400 mt-2 text-center">
+                 Debug: {debugStep}
+               </p>
+             )}
              
              <p className="text-xs text-center text-gray-500 mt-3">
                By placing this order, you agree to our Terms and Conditions.

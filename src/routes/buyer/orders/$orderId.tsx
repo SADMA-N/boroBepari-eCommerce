@@ -27,6 +27,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { format, addDays, addHours } from 'date-fns'
+import { jsPDF } from 'jspdf'
 import {
   formatBDT,
   getProductById,
@@ -112,6 +113,9 @@ function OrderDetailPage() {
   const [reorderModal, setReorderModal] = useState<
     'supplier' | 'price' | 'unavailable' | 'alternatives' | null
   >(null)
+  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(order?.invoiceUrl ?? null)
+  const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false)
+  const [isEmailingInvoice, setIsEmailingInvoice] = useState(false)
 
   if (!order) {
     return (
@@ -277,8 +281,63 @@ function OrderDetailPage() {
   }
 
   const handleDownloadInvoice = () => {
-    // TODO: Implement PDF generation
-    setToast({ message: 'Invoice download will be available soon', isVisible: true })
+    void downloadOrGenerateInvoice()
+  }
+
+  const downloadOrGenerateInvoice = async () => {
+    if (invoiceUrl) {
+      triggerInvoiceDownload(invoiceUrl, buildInvoiceFileName(order))
+      return
+    }
+
+    setIsGeneratingInvoice(true)
+    try {
+      const invoiceMeta = buildInvoiceMeta(order, defaultAddress)
+      const pdfDataUrl = await generateInvoicePdf(invoiceMeta)
+      setInvoiceUrl(pdfDataUrl)
+      triggerInvoiceDownload(pdfDataUrl, buildInvoiceFileName(order))
+
+      await fetch(`/api/orders/${order.id}/invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'store', invoiceUrl: pdfDataUrl }),
+      }).catch(() => null)
+    } catch (error) {
+      console.error('Failed to generate invoice:', error)
+      setToast({ message: 'Failed to generate invoice. Please try again.', isVisible: true })
+    } finally {
+      setIsGeneratingInvoice(false)
+    }
+  }
+
+  const handleEmailInvoice = async () => {
+    setIsEmailingInvoice(true)
+    try {
+      let urlToEmail = invoiceUrl
+      if (!urlToEmail) {
+        const invoiceMeta = buildInvoiceMeta(order, defaultAddress)
+        urlToEmail = await generateInvoicePdf(invoiceMeta)
+        setInvoiceUrl(urlToEmail)
+        await fetch(`/api/orders/${order.id}/invoice`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'store', invoiceUrl: urlToEmail }),
+        }).catch(() => null)
+      }
+
+      await fetch(`/api/orders/${order.id}/invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'email', invoiceUrl: urlToEmail }),
+      })
+
+      setToast({ message: 'Invoice emailed successfully.', isVisible: true })
+    } catch (error) {
+      console.error('Failed to email invoice:', error)
+      setToast({ message: 'Failed to email invoice. Please try again.', isVisible: true })
+    } finally {
+      setIsEmailingInvoice(false)
+    }
   }
 
   const status = statusConfig[statusState] || statusConfig.pending
@@ -479,10 +538,27 @@ function OrderDetailPage() {
               )}
               <button
                 onClick={handleDownloadInvoice}
+                disabled={isGeneratingInvoice}
                 className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
-                <Download size={18} />
-                Invoice
+                {isGeneratingInvoice ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Download size={18} />
+                )}
+                {invoiceUrl ? 'Download Invoice' : 'Generate Invoice'}
+              </button>
+              <button
+                onClick={handleEmailInvoice}
+                disabled={isEmailingInvoice}
+                className="flex items-center gap-2 px-4 py-2 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors font-medium"
+              >
+                {isEmailingInvoice ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <MessageSquare size={18} />
+                )}
+                Email Invoice
               </button>
             </div>
           </div>
@@ -1138,6 +1214,223 @@ function trackReorderAnalytics(orderLabel: string, productIds: number[]) {
     localStorage.setItem(REORDER_ANALYTICS_STORAGE_KEY, JSON.stringify(payload))
   } catch (error) {
     console.error('Failed to track reorder analytics:', error)
+  }
+}
+
+type InvoiceItem = {
+  name: string
+  quantity: number
+  unitPrice: number
+  total: number
+}
+
+type InvoiceMeta = {
+  invoiceNumber: string
+  invoiceDate: Date
+  orderNumber: string
+  orderDate: Date
+  paymentMethod: string
+  buyerName: string
+  buyerEmail: string
+  buyerPhone: string
+  deliveryAddress: string
+  companyAddress: string
+  companyContact: string
+  taxId: string
+  items: InvoiceItem[]
+  subtotal: number
+  deliveryFee: number
+  discount: number
+  tax: number
+  total: number
+  amountPaid: number
+  balanceDue: number
+  paymentStatus: string
+  transactionReference: string
+}
+
+function buildInvoiceMeta(order: any, address: any | null): InvoiceMeta {
+  const createdAt = order.createdAt ? new Date(order.createdAt) : new Date()
+  const year = createdAt.getFullYear()
+  const invoiceNumber = `INV-${year}-${order.id.toString().padStart(5, '0')}`
+  const orderNumber = `BO-${year}-${order.id.toString().padStart(4, '0')}`
+  const items = order.items.map((item: any) => {
+    const unitPrice = parseFloat(item.price) / item.quantity
+    const total = parseFloat(item.price)
+    return {
+      name: item.product?.name || 'Product',
+      quantity: item.quantity,
+      unitPrice,
+      total,
+    }
+  })
+  const subtotal = items.reduce((sum, item) => sum + item.total, 0)
+  const deliveryFee = 0
+  const discount = 0
+  const tax = 0
+  const total = subtotal + deliveryFee - discount + tax
+  const depositAmount = parseFloat(order.depositAmount || '0') || 0
+  const balanceDue = parseFloat(order.balanceDue || '0') || 0
+  const amountPaid = depositAmount > 0 && balanceDue > 0 ? depositAmount : total
+
+  const addressLine = address
+    ? `${address.address}${address.city ? `, ${address.city}` : ''} ${address.postcode ?? ''}`.trim()
+    : 'No delivery address provided'
+
+  return {
+    invoiceNumber,
+    invoiceDate: createdAt,
+    orderNumber,
+    orderDate: createdAt,
+    paymentMethod: order.paymentMethod || 'N/A',
+    buyerName: order.user?.name || 'Buyer',
+    buyerEmail: order.user?.email || 'N/A',
+    buyerPhone: address?.phone || order.user?.phoneNumber || 'N/A',
+    deliveryAddress: addressLine,
+    companyAddress: 'BoroBepari HQ, 120/A Gulshan Avenue, Dhaka-1212, Bangladesh',
+    companyContact: 'support@borobepari.com · +880 1700-000000',
+    taxId: 'GST/TAX ID: BB-1200-XYZ',
+    items,
+    subtotal,
+    deliveryFee,
+    discount,
+    tax,
+    total,
+    amountPaid,
+    balanceDue,
+    paymentStatus: order.paymentStatus || 'pending',
+    transactionReference: order.transactionId || 'N/A',
+  }
+}
+
+async function generateInvoicePdf(meta: InvoiceMeta) {
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const margin = 40
+  const rowHeight = 18
+  const tableTop = 320
+
+  doc.setFillColor(243, 244, 246)
+  doc.rect(0, 0, pageWidth, 110, 'F')
+
+  const logoDataUrl = await loadImageAsDataUrl('/logo192.png')
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, 'PNG', margin, 20, 48, 48)
+  }
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(20)
+  doc.text('TAX INVOICE', pageWidth - margin, 40, { align: 'right' })
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Invoice: ${meta.invoiceNumber}`, pageWidth - margin, 60, { align: 'right' })
+  doc.text(`Invoice Date: ${format(meta.invoiceDate, 'MMM d, yyyy')}`, pageWidth - margin, 76, { align: 'right' })
+
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'bold')
+  doc.text('BoroBepari', margin, 90)
+  doc.setFont('helvetica', 'normal')
+  doc.text(meta.companyAddress, margin, 108)
+  doc.text(meta.taxId, margin, 126)
+  doc.text(meta.companyContact, margin, 144)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('BILL TO', margin, 190)
+  doc.setFont('helvetica', 'normal')
+  doc.text(meta.buyerName, margin, 208)
+  doc.text(meta.deliveryAddress, margin, 226)
+  doc.text(meta.buyerPhone, margin, 244)
+  doc.text(meta.buyerEmail, margin, 262)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('ORDER DETAILS', pageWidth - margin, 190, { align: 'right' })
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Order: ${meta.orderNumber}`, pageWidth - margin, 208, { align: 'right' })
+  doc.text(`Order Date: ${format(meta.orderDate, 'MMM d, yyyy')}`, pageWidth - margin, 226, { align: 'right' })
+  doc.text(`Payment: ${meta.paymentMethod}`, pageWidth - margin, 244, { align: 'right' })
+
+  doc.setFillColor(229, 231, 235)
+  doc.rect(margin, tableTop - 20, pageWidth - margin * 2, 24, 'F')
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.text('S.No', margin + 8, tableTop - 4)
+  doc.text('Product Name', margin + 60, tableTop - 4)
+  doc.text('Qty', pageWidth - 210, tableTop - 4)
+  doc.text('Unit Price', pageWidth - 150, tableTop - 4)
+  doc.text('Total', pageWidth - 70, tableTop - 4, { align: 'right' })
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(10)
+  let y = tableTop + 6
+  meta.items.forEach((item, index) => {
+    doc.text(String(index + 1), margin + 10, y)
+    doc.text(item.name, margin + 60, y)
+    doc.text(String(item.quantity), pageWidth - 210, y)
+    doc.text(formatBDT(item.unitPrice), pageWidth - 150, y)
+    doc.text(formatBDT(item.total), pageWidth - 70, y, { align: 'right' })
+    y += rowHeight
+  })
+
+  const summaryStart = Math.max(y + 10, tableTop + 140)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Subtotal`, pageWidth - 220, summaryStart)
+  doc.text(formatBDT(meta.subtotal), pageWidth - 70, summaryStart, { align: 'right' })
+  doc.text(`Delivery`, pageWidth - 220, summaryStart + rowHeight)
+  doc.text(formatBDT(meta.deliveryFee), pageWidth - 70, summaryStart + rowHeight, { align: 'right' })
+  doc.text(`Discount`, pageWidth - 220, summaryStart + rowHeight * 2)
+  doc.text(`-${formatBDT(meta.discount)}`, pageWidth - 70, summaryStart + rowHeight * 2, { align: 'right' })
+  doc.text(`Tax`, pageWidth - 220, summaryStart + rowHeight * 3)
+  doc.text(formatBDT(meta.tax), pageWidth - 70, summaryStart + rowHeight * 3, { align: 'right' })
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Grand Total', pageWidth - 220, summaryStart + rowHeight * 4)
+  doc.text(formatBDT(meta.total), pageWidth - 70, summaryStart + rowHeight * 4, { align: 'right' })
+
+  const paymentStart = summaryStart + rowHeight * 6
+  doc.setFont('helvetica', 'bold')
+  doc.text('PAYMENT INFORMATION', margin, paymentStart)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Amount Paid: ${formatBDT(meta.amountPaid)}`, margin, paymentStart + rowHeight)
+  doc.text(`Balance Due: ${formatBDT(meta.balanceDue)}`, margin, paymentStart + rowHeight * 2)
+  doc.text(`Payment Status: ${meta.paymentStatus}`, margin, paymentStart + rowHeight * 3)
+  doc.text(`Transaction Ref: ${meta.transactionReference}`, margin, paymentStart + rowHeight * 4)
+
+  const footerStart = paymentStart + rowHeight * 6
+  doc.setFontSize(9)
+  doc.text('Terms: Payment due upon delivery unless otherwise agreed.', margin, footerStart)
+  doc.text('Return policy: https://borobepari.com/returns', margin, footerStart + 14)
+  doc.text('Thank you for your business!', margin, footerStart + 30)
+
+  return doc.output('datauristring')
+}
+
+function buildInvoiceFileName(order: any) {
+  const year = order.createdAt ? new Date(order.createdAt).getFullYear() : new Date().getFullYear()
+  return `Invoice_BO-${year}-${order.id.toString().padStart(5, '0')}.pdf`
+}
+
+function triggerInvoiceDownload(url: string, filename: string) {
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
+
+async function loadImageAsDataUrl(url: string) {
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    return await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.readAsDataURL(blob)
+    })
+  } catch (error) {
+    console.error('Failed to load invoice logo', error)
+    return null
   }
 }
 

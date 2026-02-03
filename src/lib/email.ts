@@ -13,6 +13,14 @@ interface EmailParams {
   code?: string
 }
 
+interface InvoiceEmailParams {
+  email: string
+  name: string
+  invoiceNumber: string
+  invoiceUrl: string
+  orderNumber: string
+}
+
 export async function sendVerificationEmail({
   email,
   url,
@@ -100,6 +108,67 @@ export async function sendVerificationEmail({
     return { success: true, data }
   } catch (err) {
     console.error(`Unexpected error sending ${type} email:`, err)
+    return { success: false, error: err }
+  }
+}
+
+export async function sendInvoiceEmail({
+  email,
+  name,
+  invoiceNumber,
+  invoiceUrl,
+  orderNumber,
+}: InvoiceEmailParams) {
+  const subject = `Your BoroBepari Invoice ${invoiceNumber}`
+  const title = 'Your invoice is ready'
+
+  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+    console.log('--- EMAIL DEBUG ---')
+    console.log(`To: ${email}`)
+    console.log(`Subject: ${subject}`)
+    console.log(`Invoice URL: ${invoiceUrl}`)
+    console.log('-------------------')
+
+    if (!process.env.RESEND_API_KEY) {
+      console.warn(
+        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
+      )
+      return { success: true, data: { id: 'mock-email-id' } }
+    }
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'BoroBepari <billing@resend.dev>',
+      to: [email],
+      subject,
+      html: `
+        <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #16a34a;">${title}</h2>
+          <p>Hello ${name},</p>
+          <p>Your invoice for order <strong>${orderNumber}</strong> is ready.</p>
+          <p>Invoice Number: <strong>${invoiceNumber}</strong></p>
+          <div style="margin: 24px 0; text-align: center;">
+            <a href="${invoiceUrl}" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              Download Invoice
+            </a>
+          </div>
+          <p style="color: #666; font-size: 14px;">If the button doesn't work, copy and paste this link:</p>
+          <p style="word-break: break-all; color: #16a34a; font-size: 12px;">${invoiceUrl}</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;" />
+          <p style="color: #999; font-size: 12px;">Thank you for your business.</p>
+        </div>
+      `,
+    })
+
+    if (error) {
+      console.error('Failed to send invoice email:', error)
+      return { success: false, error }
+    }
+
+    return { success: true, data }
+  } catch (err) {
+    console.error('Unexpected error sending invoice email:', err)
     return { success: false, error: err }
   }
 }
