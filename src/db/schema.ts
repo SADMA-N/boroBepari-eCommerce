@@ -154,6 +154,16 @@ export const orders = pgTable('orders', {
   paymentStatus: text('payment_status').default('pending').notNull(),
   transactionId: text('transaction_id'),
   paymentMethod: text('payment_method'),
+  
+  // Escrow & Deposit Fields
+  depositAmount: decimal('deposit_amount', { precision: 12, scale: 2 }).default('0'),
+  balanceDue: decimal('balance_due', { precision: 12, scale: 2 }).default('0'),
+  depositPaidAt: timestamp('deposit_paid_at'),
+  fullPaymentPaidAt: timestamp('full_payment_paid_at'),
+  escrowReleasedAt: timestamp('escrow_released_at'),
+  escrowReleaseDeadline: timestamp('escrow_release_deadline'),
+  disputeStatus: text('dispute_status'), // 'open', 'resolved', 'closed'
+
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

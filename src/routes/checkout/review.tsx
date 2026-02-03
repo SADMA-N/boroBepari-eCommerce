@@ -7,6 +7,7 @@ import { CheckoutLayout } from '@/components/checkout/CheckoutLayout'
 import { formatCurrency } from '@/lib/cart-utils'
 import { useEffect, useState } from 'react'
 import { getAddresses } from '@/lib/address-actions'
+import { createOrder } from '@/lib/order-actions'
 import type { Address } from '@/db/schema'
 import Toast from '@/components/Toast'
 
@@ -48,32 +49,53 @@ function ReviewPage() {
   }, [cart.items.length, state.shippingAddressId, state.paymentMethod, user?.id, router])
 
   const handlePlaceOrder = async () => {
+    if (!user?.id) {
+        setToast({ message: 'You must be logged in', isVisible: true })
+        return
+    }
     setIsSubmitting(true)
     
-    // Simulate order creation
     try {
-      if (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') {
-        // Redirect to Mock Payment Gateway
-        // We'll use a backend API to initiate this in a real scenario
-        // For now, we simulate the API call response:
-        const amountToPay = state.paymentMethod === 'deposit' 
+      const depositAmount = state.paymentMethod === 'deposit' 
           ? Math.ceil(cart.total * 0.3) 
+          : 0
+      const balanceDue = state.paymentMethod === 'deposit' 
+          ? cart.total - depositAmount
+          : 0
+
+      // 1. Create Order in DB
+      const newOrder = await createOrder({
+        data: {
+            userId: user.id,
+            items: cart.items.map(item => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.unitPrice
+            })),
+            totalAmount: cart.total,
+            paymentMethod: state.paymentMethod || 'cod',
+            depositAmount,
+            balanceDue,
+            notes: state.notes
+        }
+      })
+
+      if (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') {
+        // Redirect to Mock Payment Gateway with REAL Order ID
+        const amountToPay = state.paymentMethod === 'deposit' 
+          ? depositAmount 
           : cart.total
           
-        const mockPaymentUrl = `/mock-payment/bkash?amount=${amountToPay}&orderId=${Date.now()}&callbackUrl=${encodeURIComponent(window.location.origin + '/checkout/payment-callback')}`
+        const mockPaymentUrl = `/mock-payment/bkash?amount=${amountToPay}&orderId=${newOrder.id}&callbackUrl=${encodeURIComponent(window.location.origin + '/checkout/payment-callback')}`
         
         window.location.href = mockPaymentUrl
       } else {
-        // COD - Direct success
-        // In real app, call API to create order
+        // COD
         await new Promise(resolve => setTimeout(resolve, 1000))
         clearCart()
         setToast({ message: 'Order placed successfully!', isVisible: true })
-        // Redirect to success page
         setTimeout(() => {
-            // Ideally navigate to order confirmation with real ID
-            const mockId = Date.now().toString()
-            router.navigate({ to: '/order-confirmation/$orderId', params: { orderId: mockId } }) 
+            router.navigate({ to: '/order-confirmation/$orderId', params: { orderId: newOrder.id.toString() } })
         }, 1500)
       }
     } catch (error) {
@@ -140,6 +162,11 @@ function ReviewPage() {
               <p className="text-sm font-medium text-gray-900">
                 {getPaymentMethodLabel(state.paymentMethod)}
               </p>
+              {state.paymentMethod === 'deposit' && (
+                  <p className="text-xs text-orange-600 font-medium mt-1">
+                      Paying 30% Deposit Now
+                  </p>
+              )}
               {state.poNumber && (
                 <p className="text-xs text-gray-500 mt-1">PO Number: {state.poNumber}</p>
               )}
