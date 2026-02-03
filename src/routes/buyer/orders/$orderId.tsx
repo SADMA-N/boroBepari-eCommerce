@@ -116,6 +116,16 @@ function OrderDetailPage() {
   const [invoiceUrl, setInvoiceUrl] = useState<string | null>(order?.invoiceUrl ?? null)
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false)
   const [isEmailingInvoice, setIsEmailingInvoice] = useState(false)
+  const [isCancellingOrder, setIsCancellingOrder] = useState(false)
+  const [cancelModalOpen, setCancelModalOpen] = useState(false)
+  const [cancelReason, setCancelReason] = useState('ordered_by_mistake')
+  const [cancelReasonNote, setCancelReasonNote] = useState('')
+  const [cancelledAt, setCancelledAt] = useState<Date | string | null>(
+    order?.cancelledAt ?? null,
+  )
+  const [cancellationReason, setCancellationReason] = useState<string | null>(
+    order?.cancellationReason ?? null,
+  )
 
   if (!order) {
     return (
@@ -178,7 +188,8 @@ function OrderDetailPage() {
 
   const isDelivered = statusState === 'delivered'
   const isShipped = ['shipped', 'out_for_delivery'].includes(statusState)
-  const canCancel = ['pending', 'placed', 'confirmed'].includes(statusState)
+  const canCancel = ['placed', 'confirmed'].includes(statusState)
+  const isCancelled = statusState === 'cancelled'
   const estimatedDelivery =
     trackingInfo?.expectedDelivery ?? addDays(createdAt, 7)
 
@@ -340,6 +351,52 @@ function OrderDetailPage() {
     }
   }
 
+  const handleCancelOrder = async () => {
+    if (!canCancel || isCancelled) {
+      setToast({ message: 'This order can no longer be cancelled.', isVisible: true })
+      return
+    }
+
+    const reasonLabel = getCancelReasonLabel(cancelReason)
+    const finalReason =
+      cancelReason === 'other' && cancelReasonNote.trim()
+        ? `Other: ${cancelReasonNote.trim()}`
+        : reasonLabel
+
+    setIsCancellingOrder(true)
+    try {
+      const response = await fetch(`/api/orders/${order.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel', reason: finalReason }),
+      })
+      const data = await response.json().catch(() => ({}))
+
+      if (!response.ok) {
+        setToast({
+          message: data?.error ?? 'Unable to cancel this order.',
+          isVisible: true,
+        })
+        setIsCancellingOrder(false)
+        return
+      }
+
+      setStatusState('cancelled')
+      setCancellationReason(data?.cancellationReason ?? finalReason)
+      setCancelledAt(data?.cancelledAt ?? new Date())
+      setToast({
+        message: 'Order cancelled. Refund will be processed within 3-5 business days.',
+        isVisible: true,
+      })
+      setCancelModalOpen(false)
+    } catch (error) {
+      console.error('Failed to cancel order:', error)
+      setToast({ message: 'Failed to cancel order. Please try again.', isVisible: true })
+    } finally {
+      setIsCancellingOrder(false)
+    }
+  }
+
   const status = statusConfig[statusState] || statusConfig.pending
   const paymentStatus = paymentStatusConfig[order.paymentStatus] || paymentStatusConfig.pending
   const showOutForDelivery = Boolean(
@@ -358,7 +415,7 @@ function OrderDetailPage() {
 
     try {
       const [statusResponse, trackingResponse] = await Promise.allSettled([
-        fetch(`/api/orders/${order.id}/status`, { method: 'PATCH' }),
+        fetch(`/api/orders/${order.id}/status`),
         fetch(`/api/orders/${order.id}/track`, { method: 'POST' }),
       ])
 
@@ -378,6 +435,10 @@ function OrderDetailPage() {
 
       setStatusState(nextStatus)
       setStatusUpdatedAt(statusJson?.updatedAt ?? new Date())
+      if (statusJson?.status === 'cancelled') {
+        setCancellationReason(statusJson?.cancellationReason ?? cancellationReason)
+        setCancelledAt(statusJson?.cancelledAt ?? cancelledAt ?? new Date())
+      }
 
       const nextStageTimestamps =
         statusJson?.stageTimestamps ??
@@ -516,7 +577,7 @@ function OrderDetailPage() {
 
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-2">
-              {canReorder && (
+              {canReorder && !isCancelled && (
                 <button
                   onClick={handleReorder}
                   disabled={isReordering}
@@ -581,6 +642,30 @@ function OrderDetailPage() {
                 showOutForDelivery={showOutForDelivery}
               />
             </div>
+
+            {isCancelled && (
+              <div className="bg-red-50 border border-red-100 rounded-xl p-5">
+                <h3 className="text-sm font-semibold text-red-700">Cancellation Details</h3>
+                <p className="text-sm text-red-600 mt-2">
+                  Reason: {cancellationReason ?? 'Not provided'}
+                </p>
+                {cancelledAt && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Cancelled on {format(new Date(cancelledAt), 'MMM d, yyyy h:mm a')}
+                  </p>
+                )}
+                <p className="text-xs text-red-500 mt-2">
+                  Refund will be processed in 3-5 business days to the original payment method.
+                </p>
+                <Link
+                  to="/search"
+                  className="inline-flex items-center gap-2 mt-4 text-sm text-red-700 font-medium hover:underline"
+                >
+                  Shop Similar Products
+                  <ChevronRight size={14} />
+                </Link>
+              </div>
+            )}
 
             {/* Order Items by Supplier */}
             {Object.values(itemsBySupplier).map((supplier: any) => (
@@ -793,7 +878,7 @@ function OrderDetailPage() {
 
             {/* Action Buttons */}
             <div className="bg-white rounded-xl shadow-sm border p-6 space-y-3">
-              {canReorder && (
+              {canReorder && !isCancelled && (
                 <button
                   onClick={handleReorder}
                   disabled={isReordering}
@@ -809,8 +894,11 @@ function OrderDetailPage() {
               )}
 
               {canCancel && (
-                <button className="w-full flex items-center justify-center gap-2 py-2.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium">
-                  <XCircle size={18} />
+                <button
+                  onClick={() => setCancelModalOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                >
+                  <AlertTriangle size={18} />
                   Cancel Order
                 </button>
               )}
@@ -1024,6 +1112,57 @@ function OrderDetailPage() {
           </button>
         </div>
       </ReorderModalShell>
+
+      <ReorderModalShell
+        isOpen={cancelModalOpen}
+        title={`Cancel Order #${formatOrderLabel(order)}?`}
+        subtitle="Are you sure you want to cancel this order? Refunds are processed to the original payment method within 3-5 business days."
+        onClose={() => setCancelModalOpen(false)}
+      >
+        <div className="space-y-4">
+          <label className="text-sm font-medium text-gray-700">Reason for cancellation</label>
+          <select
+            value={cancelReason}
+            onChange={(event) => setCancelReason(event.target.value)}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+          >
+            <option value="ordered_by_mistake">Ordered by mistake</option>
+            <option value="better_price">Found better price elsewhere</option>
+            <option value="changed_mind">Changed my mind</option>
+            <option value="delivery_too_long">Delivery time too long</option>
+            <option value="other">Other</option>
+          </select>
+
+          {cancelReason === 'other' && (
+            <textarea
+              value={cancelReasonNote}
+              onChange={(event) => setCancelReasonNote(event.target.value)}
+              placeholder="Tell us more"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 min-h-[90px]"
+            />
+          )}
+
+          <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-xs text-red-600">
+            Refunds are sent to the original payment method. Deposit payments will be refunded for the paid amount only.
+          </div>
+        </div>
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={() => setCancelModalOpen(false)}
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+          >
+            Keep Order
+          </button>
+          <button
+            onClick={handleCancelOrder}
+            disabled={isCancellingOrder}
+            className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 font-medium disabled:opacity-60"
+          >
+            {isCancellingOrder ? 'Cancelling...' : 'Cancel Order'}
+          </button>
+        </div>
+      </ReorderModalShell>
     </div>
   )
 }
@@ -1074,6 +1213,23 @@ function ReorderModalShell({
 
 function itemSupplierKey(item: ReorderItem) {
   return item.supplierId ? `supplier-${item.supplierId}` : 'supplier-unknown'
+}
+
+function getCancelReasonLabel(value: string) {
+  switch (value) {
+    case 'ordered_by_mistake':
+      return 'Ordered by mistake'
+    case 'better_price':
+      return 'Found better price elsewhere'
+    case 'changed_mind':
+      return 'Changed my mind'
+    case 'delivery_too_long':
+      return 'Delivery time too long'
+    case 'other':
+      return 'Other'
+    default:
+      return 'Other'
+  }
 }
 
 function buildReorderItems(order: any): ReorderItem[] {

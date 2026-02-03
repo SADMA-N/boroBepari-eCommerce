@@ -80,7 +80,8 @@ function BuyerOrderHistoryPage() {
           page,
           limit: 10,
         })
-        setOrders(result.orders)
+        const filteredOrders = filterOrdersByTab(result.orders, activeTab)
+        setOrders(filteredOrders)
         setPagination(result.pagination)
         setCounts(result.counts)
       } catch (error) {
@@ -309,6 +310,28 @@ function BuyerOrderHistoryPage() {
       )}
     </div>
   )
+}
+
+function filterOrdersByTab(orders: any[], tab: FilterTab) {
+  if (tab === 'all') return orders
+
+  const activeStatuses = ['placed', 'confirmed', 'processing', 'shipped', 'out_for_delivery', 'pending']
+  const deliveredStatuses = ['delivered']
+  const cancelledStatuses = ['cancelled', 'returned']
+
+  if (tab === 'active') {
+    return orders.filter((order) => activeStatuses.includes(order.status))
+  }
+
+  if (tab === 'delivered') {
+    return orders.filter((order) => deliveredStatuses.includes(order.status))
+  }
+
+  if (tab === 'cancelled') {
+    return orders.filter((order) => cancelledStatuses.includes(order.status))
+  }
+
+  return orders
 }
 
 function OrderCard({ order }: { order: any }) {

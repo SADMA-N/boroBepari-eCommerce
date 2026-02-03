@@ -21,6 +21,13 @@ interface InvoiceEmailParams {
   orderNumber: string
 }
 
+interface CancellationEmailParams {
+  email: string
+  name: string
+  orderNumber: string
+  refundSummary: string
+}
+
 export async function sendVerificationEmail({
   email,
   url,
@@ -169,6 +176,60 @@ export async function sendInvoiceEmail({
     return { success: true, data }
   } catch (err) {
     console.error('Unexpected error sending invoice email:', err)
+    return { success: false, error: err }
+  }
+}
+
+export async function sendCancellationEmail({
+  email,
+  name,
+  orderNumber,
+  refundSummary,
+}: CancellationEmailParams) {
+  const subject = `Your order ${orderNumber} has been cancelled`
+  const title = 'Order cancelled'
+
+  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+    console.log('--- EMAIL DEBUG ---')
+    console.log(`To: ${email}`)
+    console.log(`Subject: ${subject}`)
+    console.log(`Refund: ${refundSummary}`)
+    console.log('-------------------')
+
+    if (!process.env.RESEND_API_KEY) {
+      console.warn(
+        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
+      )
+      return { success: true, data: { id: 'mock-email-id' } }
+    }
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'BoroBepari <billing@resend.dev>',
+      to: [email],
+      subject,
+      html: `
+        <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #dc2626;">${title}</h2>
+          <p>Hello ${name},</p>
+          <p>Your order <strong>${orderNumber}</strong> has been cancelled.</p>
+          <p>${refundSummary}</p>
+          <p style="color: #666; font-size: 14px;">Refunds are processed to the original payment method within 3-5 business days.</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;" />
+          <p style="color: #999; font-size: 12px;">If you have questions, reply to this email or contact support.</p>
+        </div>
+      `,
+    })
+
+    if (error) {
+      console.error('Failed to send cancellation email:', error)
+      return { success: false, error }
+    }
+
+    return { success: true, data }
+  } catch (err) {
+    console.error('Unexpected error sending cancellation email:', err)
     return { success: false, error: err }
   }
 }

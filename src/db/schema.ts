@@ -167,6 +167,8 @@ export const orders = pgTable('orders', {
   notes: text('notes'),
   invoiceUrl: text('invoice_url'),
   invoiceGeneratedAt: timestamp('invoice_generated_at'),
+  cancellationReason: text('cancellation_reason'),
+  cancelledAt: timestamp('cancelled_at'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })
