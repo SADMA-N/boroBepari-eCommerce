@@ -26,7 +26,7 @@ dev_output.log
 node_modules/
 epic3prompt.txt
 epic4prompt.txt
-
+/epic5prompt.txt
 
 # Logs
 *.log

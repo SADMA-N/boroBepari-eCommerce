@@ -36,6 +36,7 @@ import { Route as CheckoutPaymentCallbackRouteImport } from './routes/checkout/p
 import { Route as CheckoutPaymentRouteImport } from './routes/checkout/payment'
 import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/$categorySlug'
 import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
+import { Route as BuyerOrdersRouteImport } from './routes/buyer/orders'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
@@ -203,6 +204,11 @@ const CategoriesCategorySlugRoute = CategoriesCategorySlugRouteImport.update({
 const BuyerRfqsRoute = BuyerRfqsRouteImport.update({
   id: '/buyer/rfqs',
   path: '/buyer/rfqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerOrdersRoute = BuyerOrdersRouteImport.update({
+  id: '/buyer/orders',
+  path: '/buyer/orders',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
@@ -384,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/orders': typeof BuyerOrdersRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -444,6 +451,7 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/orders': typeof BuyerOrdersRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -506,6 +514,7 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
   '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/orders': typeof BuyerOrdersRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
@@ -569,6 +578,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/api/$'
     | '/auth/set-password'
+    | '/buyer/orders'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -629,6 +639,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/api/$'
     | '/auth/set-password'
+    | '/buyer/orders'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -690,6 +701,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/api/$'
     | '/auth/set-password'
+    | '/buyer/orders'
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
@@ -752,6 +764,7 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   ApiSplatRoute: typeof ApiSplatRoute
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
+  BuyerOrdersRoute: typeof BuyerOrdersRoute
   BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
@@ -980,6 +993,13 @@ declare module '@tanstack/react-router' {
       path: '/buyer/rfqs'
       fullPath: '/buyer/rfqs'
       preLoaderRoute: typeof BuyerRfqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/orders': {
+      id: '/buyer/orders'
+      path: '/buyer/orders'
+      fullPath: '/buyer/orders'
+      preLoaderRoute: typeof BuyerOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/set-password': {
@@ -1270,6 +1290,7 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   ApiSplatRoute: ApiSplatRoute,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
+  BuyerOrdersRoute: BuyerOrdersRoute,
   BuyerRfqsRoute: BuyerRfqsRouteWithChildren,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,
