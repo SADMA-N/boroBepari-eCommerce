@@ -8,6 +8,7 @@ import { formatCurrency } from '@/lib/cart-utils'
 import { useEffect, useState } from 'react'
 import { getAddresses } from '@/lib/address-actions'
 import { createOrder } from '@/lib/order-actions'
+import { validateCartServer } from '@/lib/cart-actions'
 import type { Address } from '@/db/schema'
 import Toast from '@/components/Toast'
 
@@ -56,6 +57,26 @@ function ReviewPage() {
     setIsSubmitting(true)
     
     try {
+      // 1. Validate Cart (Stock/Price)
+      const validation = await validateCartServer({
+        data: cart.items.map(i => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          id: i.id
+        }))
+      })
+
+      if (!validation.valid) {
+        setToast({ message: 'Cart items have changed. Please review your cart.', isVisible: true })
+        setTimeout(() => {
+          router.navigate({ to: '/cart' })
+        }, 1500)
+        setIsSubmitting(false)
+        return
+      }
+
+      // 2. Prepare Order Data
       const depositAmount = state.paymentMethod === 'deposit' 
           ? Math.ceil(cart.total * 0.3) 
           : 0
@@ -63,7 +84,7 @@ function ReviewPage() {
           ? cart.total - depositAmount
           : 0
 
-      // 1. Create Order in DB
+      // 3. Create Order in DB
       const newOrder = await createOrder({
         data: {
             userId: user.id,
@@ -80,8 +101,8 @@ function ReviewPage() {
         }
       })
 
+      // 4. Redirect based on Payment Method
       if (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') {
-        // Redirect to Mock Payment Gateway with REAL Order ID
         const amountToPay = state.paymentMethod === 'deposit' 
           ? depositAmount 
           : cart.total

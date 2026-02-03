@@ -8,9 +8,10 @@
  * - Coupon code validation via API
  * - Order summary with checkout button
  * - Responsive design with sticky checkout on mobile
+ * - Server-side stock and price validation
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {
   AlertCircle,
   AlertTriangle,
@@ -36,20 +37,61 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useCart } from '../contexts/CartContext'
 import { getSupplierById } from '../data/mock-products'
 import { formatCurrency } from '@/lib/cart-utils'
 import { useCouponValidation } from '@/hooks/useCouponValidation'
 import type { CartItem as CartItemType, SupplierBreakdown, CartValidation } from '@/types/cart'
+import { validateCartServer } from '@/lib/cart-actions'
+import Toast from '@/components/Toast'
 
 export const Route = createFileRoute('/cart')({
   component: CartPage,
 })
 
-// ============================================================================
+// ============================================================================ 
+// Server Validation Banner
+// ============================================================================ 
+
+interface ServerValidationBannerProps {
+  changes: Array<{ itemId: string; type: 'price' | 'stock' | 'removed'; message: string }>
+  onDismiss: () => void
+}
+
+function ServerValidationBanner({ changes, onDismiss }: ServerValidationBannerProps) {
+  if (changes.length === 0) return null
+
+  return (
+    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+      <AlertTriangle className="text-yellow-600 mt-0.5 flex-shrink-0" size={20} />
+      <div className="flex-1">
+        <h3 className="font-bold text-yellow-800 text-sm">Cart Updated</h3>
+        <ul className="mt-1 space-y-1">
+          {changes.map((change, idx) => (
+            <li key={idx} className="text-sm text-yellow-700">
+              {change.message}
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs text-yellow-600 mt-2">
+          Please review your cart items before proceeding.
+        </p>
+      </div>
+      <button 
+        onClick={onDismiss}
+        className="text-yellow-500 hover:text-yellow-700"
+        aria-label="Dismiss warning"
+      >
+        <X size={18} />
+      </button>
+    </div>
+  )
+}
+
+// ============================================================================ 
 // MOQ Warning Banner Component
-// ============================================================================
+// ============================================================================ 
 
 interface MoqWarningBannerProps {
   validation: CartValidation
@@ -93,11 +135,13 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
   if (violatingItems.length === 0) return null
 
   return (
-    <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+    <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-top-2 duration-300 mb-6">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between p-4 hover:bg-red-100/50 transition-colors"
+        aria-expanded={isExpanded}
+        aria-controls="moq-warning-content"
       >
         <div className="flex items-center gap-3">
           <div className="p-2 bg-red-100 rounded-lg">
@@ -133,10 +177,13 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
       </button>
 
       {/* Expandable Content */}
-      <div className={`
-        transition-all duration-300 ease-in-out overflow-hidden
-        ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
-      `}>
+      <div 
+        id="moq-warning-content"
+        className={`
+          transition-all duration-300 ease-in-out overflow-hidden
+          ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
+        `}
+      >
         <div className="px-4 pb-4 space-y-3">
           {/* Mobile Fix All Button */}
           <button
@@ -193,6 +240,7 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
                         onClick={() => onRemoveItem(item.id)}
                         className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                         title="Remove item"
+                        aria-label={`Remove ${item.productName}`}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -213,9 +261,9 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
   )
 }
 
-// ============================================================================
+// ============================================================================ 
 // Cart Item Row Component
-// ============================================================================
+// ============================================================================ 
 
 interface CartItemRowProps {
   item: CartItemType
@@ -323,6 +371,7 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
         to="/products/$productSlug"
         params={{ productSlug: item.productId.toString() }}
         className="w-full sm:w-28 h-28 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative group"
+        aria-label={`View details for ${item.productName}`}
       >
         <img
           src={item.image}
@@ -362,6 +411,7 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
             onClick={handleRemove}
             className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
             title="Remove from cart"
+            aria-label={`Remove ${item.productName} from cart`}
           >
             <Trash2 size={18} />
           </button>
@@ -464,6 +514,7 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
             className="p-2.5 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             disabled={item.quantity <= 1 || isLocked}
             title={isLocked ? 'Quantity fixed for quote' : 'Decrease quantity'}
+            aria-label="Decrease quantity"
           >
             <Minus size={16} />
           </button>
@@ -477,6 +528,7 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
             onBlur={handleInputBlur}
             onKeyDown={handleInputKeyDown}
             disabled={isLocked}
+            aria-label="Quantity"
             className={`
               w-14 text-center font-bold border-x-2
               focus:outline-none focus:bg-orange-50
@@ -490,6 +542,7 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
             className="p-2.5 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             disabled={item.quantity >= item.stock || isLocked}
             title={isLocked ? 'Quantity fixed for quote' : 'Increase quantity'}
+            aria-label="Increase quantity"
           >
             <Plus size={16} />
           </button>
@@ -510,9 +563,9 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq }: CartItemRo
   )
 }
 
-// ============================================================================
+// ============================================================================ 
 // Supplier Group Component
-// ============================================================================
+// ============================================================================ 
 
 interface SupplierGroupProps {
   breakdown: SupplierBreakdown
@@ -525,7 +578,7 @@ function SupplierGroup({ breakdown, isExpanded, onToggle, onIncreaseToMoq }: Sup
   const supplier = getSupplierById(breakdown.supplierId)
 
   // Count MOQ violations
-  const moqViolations = breakdown.items.filter((item) => item.quantity < item.moq).length
+  const moqViolationCount = breakdown.items.filter((item) => item.quantity < item.moq).length
 
   return (
     <div className={`
@@ -539,6 +592,7 @@ function SupplierGroup({ breakdown, isExpanded, onToggle, onIncreaseToMoq }: Sup
           w-full flex items-center justify-between p-4 transition-colors
           ${moqViolations > 0 ? 'bg-amber-50 hover:bg-amber-100' : 'bg-gray-50 hover:bg-gray-100'}
         `}
+        aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-lg shadow-sm ${moqViolations > 0 ? 'bg-amber-100' : 'bg-white'}`}>
@@ -614,9 +668,9 @@ function SupplierGroup({ breakdown, isExpanded, onToggle, onIncreaseToMoq }: Sup
   )
 }
 
-// ============================================================================
+// ============================================================================ 
 // Empty Cart Component
-// ============================================================================
+// ============================================================================ 
 
 function EmptyCart() {
   return (
@@ -628,7 +682,7 @@ function EmptyCart() {
         Your cart is empty
       </h2>
       <p className="text-gray-500 mb-8 max-w-md mx-auto">
-        Looks like you haven't added any products yet. Start exploring our catalog to find the best deals for your business.
+        Looks like you haven\'t added any products yet. Start exploring our catalog to find the best deals for your business.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
@@ -649,9 +703,9 @@ function EmptyCart() {
   )
 }
 
-// ============================================================================
+// ============================================================================ 
 // Coupon Input Component
-// ============================================================================
+// ============================================================================ 
 
 function CouponSection() {
   const [couponInput, setCouponInput] = useState('')
@@ -715,6 +769,7 @@ function CouponSection() {
                 onKeyDown={handleKeyDown}
                 placeholder="Enter code"
                 disabled={isValidating}
+                aria-label="Enter coupon code"
                 className={`
                   w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm uppercase
                   focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
@@ -743,7 +798,7 @@ function CouponSection() {
           </div>
 
           {error && (
-            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2" role="alert">
               <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-red-700">{error}</p>
             </div>
@@ -767,7 +822,7 @@ function CouponSection() {
       )}
 
       {successMessage && !appliedCoupon && (
-        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2" role="status">
           <Check size={16} className="text-green-600" />
           <p className="text-sm text-green-700 font-medium">{successMessage}</p>
         </div>
@@ -813,17 +868,18 @@ function CouponSection() {
   )
 }
 
-// ============================================================================
+// ============================================================================ 
 // Order Summary Component
-// ============================================================================
+// ============================================================================ 
 
 interface OrderSummaryProps {
   cart: ReturnType<typeof useCart>['cart']
   hasValidationErrors: boolean
   moqViolationCount: number
+  onCheckout: () => void
 }
 
-function OrderSummary({ cart, hasValidationErrors, moqViolationCount }: OrderSummaryProps) {
+function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout }: OrderSummaryProps) {
   const originalTotal = cart.subtotal + cart.deliveryFee
   const hasDiscount = cart.discount > 0
 
@@ -908,6 +964,7 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount }: OrderSum
 
         {/* Checkout Button */}
         <button
+          onClick={!hasValidationErrors ? onCheckout : undefined}
           disabled={hasValidationErrors}
           className={`
             w-full mt-6 py-3.5 rounded-lg font-bold text-white
@@ -966,13 +1023,53 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount }: OrderSum
   )
 }
 
-// ============================================================================
+// ============================================================================ 
 // Main Cart Page Component
-// ============================================================================
+// ============================================================================ 
 
 function CartPage() {
   const { cart, cartCount, clearCart, validateCartItems, updateQuantity, removeItem } = useCart()
   const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(new Set())
+  const [serverValidationChanges, setServerValidationChanges] = useState<Array<{ itemId: string; type: 'price' | 'stock' | 'removed'; message: string }>>([])
+  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
+  const router = useRouter()
+
+  // Validate on mount and when cart items change (debounced via effect deps)
+  // We use a ref to prevent spamming validation on every keystroke if local state updates rapidly,
+  // but cart context updates are typically "committed" changes.
+  useEffect(() => {
+    let isMounted = true
+    
+    async function validate() {
+      if (cart.items.length === 0) return
+
+      try {
+        const result = await validateCartServer({
+          data: cart.items.map(i => ({
+            productId: i.productId,
+            quantity: i.quantity,
+            unitPrice: i.unitPrice,
+            id: i.id
+          }))
+        })
+
+        if (isMounted && !result.valid) {
+          setServerValidationChanges(result.changes)
+          // Ideally we might auto-update cart here, but for now we warn
+        } else if (isMounted) {
+          setServerValidationChanges([])
+        }
+      } catch (err) {
+        console.error('Validation failed', err)
+      }
+    }
+
+    const timer = setTimeout(validate, 1000) // Debounce validation call
+    return () => {
+      isMounted = false
+      clearTimeout(timer)
+    }
+  }, [cart.items]) // Re-validate when cart items change
 
   useEffect(() => {
     const allSupplierIds = new Set(cart.supplierBreakdown.map((s) => s.supplierId))
@@ -980,7 +1077,7 @@ function CartPage() {
   }, [cart.supplierBreakdown.length])
 
   const validation = validateCartItems()
-  const hasValidationErrors = !validation.isValid
+  const hasValidationErrors = !validation.isValid || serverValidationChanges.some(c => c.type === 'stock' || c.type === 'removed')
 
   // Count MOQ violations
   const moqViolationCount = useMemo(() => {
@@ -1012,10 +1109,20 @@ function CartPage() {
     updateQuantity(itemId, moq)
   }
 
+  const handleCheckout = () => {
+    router.navigate({ to: '/checkout' })
+  }
+
   const isSingleSupplier = cart.supplierBreakdown.length === 1
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Toast 
+        message={toast.message} 
+        isVisible={toast.isVisible} 
+        onClose={() => setToast(prev => ({...prev, isVisible: false}))} 
+      />
+
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 sm:mb-8">
@@ -1055,6 +1162,12 @@ function CartPage() {
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Cart Items */}
             <div className="flex-1 space-y-4">
+              
+              <ServerValidationBanner 
+                changes={serverValidationChanges} 
+                onDismiss={() => setServerValidationChanges([])} 
+              />
+
               {/* MOQ Warning Banner */}
               {moqViolationCount > 0 && (
                 <MoqWarningBanner
@@ -1115,6 +1228,7 @@ function CartPage() {
                   cart={cart}
                   hasValidationErrors={hasValidationErrors}
                   moqViolationCount={moqViolationCount}
+                  onCheckout={handleCheckout}
                 />
               </div>
             </div>
@@ -1141,6 +1255,7 @@ function CartPage() {
               )}
             </div>
             <button
+              onClick={!hasValidationErrors ? handleCheckout : undefined}
               disabled={hasValidationErrors}
               className={`
                 flex-1 max-w-[200px] py-3 rounded-lg font-bold text-white
