@@ -18,10 +18,16 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as SellerRouteRouteImport } from './routes/seller/route'
 import { Route as CheckoutRouteRouteImport } from './routes/checkout/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SellerIndexRouteImport } from './routes/seller/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
+import { Route as SellerRegisterRouteImport } from './routes/seller/register'
+import { Route as SellerLoginRouteImport } from './routes/seller/login'
+import { Route as SellerKycRouteImport } from './routes/seller/kyc'
+import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as OrderConfirmationOrderIdRouteImport } from './routes/order-confirmation/$orderId'
 import { Route as MockPaymentBkashRouteImport } from './routes/mock-payment/bkash'
@@ -120,6 +126,11 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerRouteRoute = SellerRouteRouteImport.update({
+  id: '/seller',
+  path: '/seller',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRouteRoute = CheckoutRouteRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -130,6 +141,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerIndexRoute = SellerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
 const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -139,6 +155,26 @@ const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
   id: '/supplier/rfqs',
   path: '/supplier/rfqs',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SellerRegisterRoute = SellerRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerLoginRoute = SellerLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerKycRoute = SellerKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerDashboardRoute = SellerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => SellerRouteRoute,
 } as any)
 const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
   id: '/products/$productSlug',
@@ -409,6 +445,7 @@ const ApiRfqQuoteQuoteIdAcceptRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRouteRouteWithChildren
+  '/seller': typeof SellerRouteRouteWithChildren
   '/account': typeof AccountRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -437,8 +474,13 @@ export interface FileRoutesByFullPath {
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/kyc': typeof SellerKycRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
+  '/seller/': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
@@ -502,8 +544,13 @@ export interface FileRoutesByTo {
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/kyc': typeof SellerKycRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout': typeof CheckoutIndexRoute
+  '/seller': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
@@ -542,6 +589,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/checkout': typeof CheckoutRouteRouteWithChildren
+  '/seller': typeof SellerRouteRouteWithChildren
   '/account': typeof AccountRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -570,8 +618,13 @@ export interface FileRoutesById {
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/kyc': typeof SellerKycRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
+  '/seller/': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
   '/api/cart/add': typeof ApiCartAddRoute
@@ -611,6 +664,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/checkout'
+    | '/seller'
     | '/account'
     | '/cart'
     | '/forgot-password'
@@ -639,8 +693,13 @@ export interface FileRouteTypes {
     | '/mock-payment/bkash'
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
+    | '/seller/dashboard'
+    | '/seller/kyc'
+    | '/seller/login'
+    | '/seller/register'
     | '/supplier/rfqs'
     | '/checkout/'
+    | '/seller/'
     | '/api/auth/$'
     | '/api/cart/$userId'
     | '/api/cart/add'
@@ -704,8 +763,13 @@ export interface FileRouteTypes {
     | '/mock-payment/bkash'
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
+    | '/seller/dashboard'
+    | '/seller/kyc'
+    | '/seller/login'
+    | '/seller/register'
     | '/supplier/rfqs'
     | '/checkout'
+    | '/seller'
     | '/api/auth/$'
     | '/api/cart/$userId'
     | '/api/cart/add'
@@ -743,6 +807,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/checkout'
+    | '/seller'
     | '/account'
     | '/cart'
     | '/forgot-password'
@@ -771,8 +836,13 @@ export interface FileRouteTypes {
     | '/mock-payment/bkash'
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
+    | '/seller/dashboard'
+    | '/seller/kyc'
+    | '/seller/login'
+    | '/seller/register'
     | '/supplier/rfqs'
     | '/checkout/'
+    | '/seller/'
     | '/api/auth/$'
     | '/api/cart/$userId'
     | '/api/cart/add'
@@ -811,6 +881,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckoutRouteRoute: typeof CheckoutRouteRouteWithChildren
+  SellerRouteRoute: typeof SellerRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
   CartRoute: typeof CartRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -929,6 +1000,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller': {
+      id: '/seller'
+      path: '/seller'
+      fullPath: '/seller'
+      preLoaderRoute: typeof SellerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -943,6 +1021,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller/': {
+      id: '/seller/'
+      path: '/'
+      fullPath: '/seller/'
+      preLoaderRoute: typeof SellerIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
     '/checkout/': {
       id: '/checkout/'
       path: '/'
@@ -956,6 +1041,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/supplier/rfqs'
       preLoaderRoute: typeof SupplierRfqsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/seller/register': {
+      id: '/seller/register'
+      path: '/register'
+      fullPath: '/seller/register'
+      preLoaderRoute: typeof SellerRegisterRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/login': {
+      id: '/seller/login'
+      path: '/login'
+      fullPath: '/seller/login'
+      preLoaderRoute: typeof SellerLoginRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/kyc': {
+      id: '/seller/kyc'
+      path: '/kyc'
+      fullPath: '/seller/kyc'
+      preLoaderRoute: typeof SellerKycRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/dashboard': {
+      id: '/seller/dashboard'
+      path: '/dashboard'
+      fullPath: '/seller/dashboard'
+      preLoaderRoute: typeof SellerDashboardRouteImport
+      parentRoute: typeof SellerRouteRoute
     }
     '/products/$productSlug': {
       id: '/products/$productSlug'
@@ -1342,6 +1455,26 @@ const CheckoutRouteRouteWithChildren = CheckoutRouteRoute._addFileChildren(
   CheckoutRouteRouteChildren,
 )
 
+interface SellerRouteRouteChildren {
+  SellerDashboardRoute: typeof SellerDashboardRoute
+  SellerKycRoute: typeof SellerKycRoute
+  SellerLoginRoute: typeof SellerLoginRoute
+  SellerRegisterRoute: typeof SellerRegisterRoute
+  SellerIndexRoute: typeof SellerIndexRoute
+}
+
+const SellerRouteRouteChildren: SellerRouteRouteChildren = {
+  SellerDashboardRoute: SellerDashboardRoute,
+  SellerKycRoute: SellerKycRoute,
+  SellerLoginRoute: SellerLoginRoute,
+  SellerRegisterRoute: SellerRegisterRoute,
+  SellerIndexRoute: SellerIndexRoute,
+}
+
+const SellerRouteRouteWithChildren = SellerRouteRoute._addFileChildren(
+  SellerRouteRouteChildren,
+)
+
 interface BuyerOrdersRouteRouteChildren {
   BuyerOrdersOrderIdRoute: typeof BuyerOrdersOrderIdRoute
   BuyerOrdersIndexRoute: typeof BuyerOrdersIndexRoute
@@ -1399,6 +1532,7 @@ const ApiOrdersOrderIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckoutRouteRoute: CheckoutRouteRouteWithChildren,
+  SellerRouteRoute: SellerRouteRouteWithChildren,
   AccountRoute: AccountRoute,
   CartRoute: CartRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,

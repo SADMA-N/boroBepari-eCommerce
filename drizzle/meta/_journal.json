@@ -29,6 +29,13 @@
       "when": 1769949690817,
       "tag": "0003_quick_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770141703832,
+      "tag": "0004_broad_thanos",
+      "breakpoints": true
     }
   ]
 }

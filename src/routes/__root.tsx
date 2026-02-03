@@ -3,6 +3,7 @@ import {
   Scripts,
   createRootRouteWithContext,
   redirect,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -27,6 +28,8 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ location }) => {
     if (
+      location.pathname.startsWith('/seller') ||
+      location.pathname.startsWith('/admin') ||
       location.pathname.startsWith('/auth/set-password') ||
       location.pathname.startsWith('/api') ||
       location.pathname.startsWith('/login') ||
@@ -81,34 +84,57 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const isSellerRoute = pathname.startsWith('/seller')
+  const isAdminRoute = pathname.startsWith('/admin')
+  const showBuyerShell = !isSellerRoute && !isAdminRoute
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body className="antialiased">
-        <AuthProvider>
-          <NotificationProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <Header />
-                {children}
-                <TanStackDevtools
-                  config={{
-                    position: 'bottom-right',
-                  }}
-                  plugins={[
-                    {
-                      name: 'Tanstack Router',
-                      render: <TanStackRouterDevtoolsPanel />,
-                    },
-                    TanStackQueryDevtools,
-                  ]}
-                />
-              </WishlistProvider>
-            </CartProvider>
-          </NotificationProvider>
-        </AuthProvider>
+        {showBuyerShell ? (
+          <AuthProvider>
+            <NotificationProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <Header />
+                  {children}
+                  <TanStackDevtools
+                    config={{
+                      position: 'bottom-right',
+                    }}
+                    plugins={[
+                      {
+                        name: 'Tanstack Router',
+                        render: <TanStackRouterDevtoolsPanel />,
+                      },
+                      TanStackQueryDevtools,
+                    ]}
+                  />
+                </WishlistProvider>
+              </CartProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        ) : (
+          <>
+            {children}
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                TanStackQueryDevtools,
+              ]}
+            />
+          </>
+        )}
         <Scripts />
       </body>
     </html>

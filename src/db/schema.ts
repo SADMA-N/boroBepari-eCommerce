@@ -12,6 +12,18 @@ import {
 import { relations } from 'drizzle-orm'
 
 export const genderEnum = pgEnum('gender', ['male', 'female'])
+export const kycStatusEnum = pgEnum('kyc_status', [
+  'pending',
+  'submitted',
+  'approved',
+  'rejected',
+])
+export const verificationBadgeEnum = pgEnum('verification_badge', [
+  'none',
+  'basic',
+  'verified',
+  'premium',
+])
 
 // Categories table
 export const categories = pgTable('categories', {
@@ -53,6 +65,32 @@ export const suppliers = pgTable('suppliers', {
 export const suppliersRelations = relations(suppliers, ({ many }) => ({
   products: many(products),
 }))
+
+// Sellers table (for seller portal authentication)
+export const sellers = pgTable('sellers', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  password: text('password').notNull(),
+  businessName: text('business_name').notNull(),
+  phone: text('phone'),
+  kycStatus: kycStatusEnum('kyc_status').default('pending').notNull(),
+  verificationBadge: verificationBadgeEnum('verification_badge')
+    .default('none')
+    .notNull(),
+  supplierId: integer('supplier_id').references(() => suppliers.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export const sellersRelations = relations(sellers, ({ one }) => ({
+  supplier: one(suppliers, {
+    fields: [sellers.supplierId],
+    references: [suppliers.id],
+  }),
+}))
+
+export type Seller = typeof sellers.$inferSelect
+export type NewSeller = typeof sellers.$inferInsert
 
 // Products table
 export const products = pgTable('products', {

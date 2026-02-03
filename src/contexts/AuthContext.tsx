@@ -3,6 +3,8 @@ import { useRouter } from '@tanstack/react-router'
 import { authClient } from '@/lib/auth-client'
 import { checkUserPasswordStatus } from '@/lib/auth-server'
 
+const BUYER_TOKEN_KEY = 'buyer_token'
+
 interface User {
   id: string
   name: string
@@ -31,6 +33,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const user = session?.user as User | null
 
   const logout = async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(BUYER_TOKEN_KEY)
+    }
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
@@ -78,6 +83,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     verifyPasswordStatus()
   }, [user?.id, isLoading, router])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    if (user?.id) {
+      localStorage.setItem(BUYER_TOKEN_KEY, user.id)
+    } else {
+      localStorage.removeItem(BUYER_TOKEN_KEY)
+    }
+  }, [user?.id])
 
   return (
     <AuthContext.Provider

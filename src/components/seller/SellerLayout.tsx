@@ -1,0 +1,34 @@
+import { useState } from 'react'
+import { SellerHeader } from './SellerHeader'
+import { SellerSidebar } from './SellerSidebar'
+
+interface SellerLayoutProps {
+  children: React.ReactNode
+}
+
+export function SellerLayout({ children }: SellerLayoutProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex">
+        {/* Sidebar */}
+        <SellerSidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+
+        {/* Main content area */}
+        <div className="flex-1 lg:ml-0">
+          {/* Header */}
+          <SellerHeader onMenuClick={() => setIsSidebarOpen(true)} />
+
+          {/* Page content */}
+          <main className="p-4 lg:p-6">
+            {children}
+          </main>
+        </div>
+      </div>
+    </div>
+  )
+}
