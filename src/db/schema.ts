@@ -151,6 +151,10 @@ export const orders = pgTable('orders', {
     .references(() => user.id),
   totalAmount: decimal('total_amount', { precision: 12, scale: 2 }).notNull(),
   status: text('status').notNull().default('pending'),
+  paymentStatus: text('payment_status').default('pending').notNull(),
+  transactionId: text('transaction_id'),
+  paymentMethod: text('payment_method'),
+  notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })

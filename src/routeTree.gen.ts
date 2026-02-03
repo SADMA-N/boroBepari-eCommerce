@@ -23,12 +23,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
+import { Route as MockPaymentBkashRouteImport } from './routes/mock-payment/bkash'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
 import { Route as DemoHonoTodoRouteImport } from './routes/demo/hono-todo'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoDbChatApiRouteImport } from './routes/demo/db-chat-api'
 import { Route as DemoDbChatRouteImport } from './routes/demo/db-chat'
+import { Route as CheckoutReviewRouteImport } from './routes/checkout/review'
+import { Route as CheckoutPaymentCallbackRouteImport } from './routes/checkout/payment-callback'
 import { Route as CheckoutPaymentRouteImport } from './routes/checkout/payment'
 import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/$categorySlug'
 import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
@@ -129,6 +132,11 @@ const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
   path: '/products/$productSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MockPaymentBkashRoute = MockPaymentBkashRouteImport.update({
+  id: '/mock-payment/bkash',
+  path: '/mock-payment/bkash',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
   id: '/demo/tanstack-query',
   path: '/demo/tanstack-query',
@@ -158,6 +166,16 @@ const DemoDbChatRoute = DemoDbChatRouteImport.update({
   id: '/demo/db-chat',
   path: '/demo/db-chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutReviewRoute = CheckoutReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => CheckoutRouteRoute,
+} as any)
+const CheckoutPaymentCallbackRoute = CheckoutPaymentCallbackRouteImport.update({
+  id: '/payment-callback',
+  path: '/payment-callback',
+  getParentRoute: () => CheckoutRouteRoute,
 } as any)
 const CheckoutPaymentRoute = CheckoutPaymentRouteImport.update({
   id: '/payment',
@@ -326,12 +344,15 @@ export interface FileRoutesByFullPath {
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
+  '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
+  '/checkout/review': typeof CheckoutReviewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -376,12 +397,15 @@ export interface FileRoutesByTo {
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
+  '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
+  '/checkout/review': typeof CheckoutReviewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout': typeof CheckoutIndexRoute
@@ -428,12 +452,15 @@ export interface FileRoutesById {
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
+  '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
+  '/checkout/review': typeof CheckoutReviewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
   '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -481,12 +508,15 @@ export interface FileRouteTypes {
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
+    | '/checkout/payment-callback'
+    | '/checkout/review'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
     | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/mock-payment/bkash'
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/checkout/'
@@ -531,12 +561,15 @@ export interface FileRouteTypes {
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
+    | '/checkout/payment-callback'
+    | '/checkout/review'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
     | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/mock-payment/bkash'
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/checkout'
@@ -582,12 +615,15 @@ export interface FileRouteTypes {
     | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
+    | '/checkout/payment-callback'
+    | '/checkout/review'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
     | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/mock-payment/bkash'
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/checkout/'
@@ -639,6 +675,7 @@ export interface RootRouteChildren {
   DemoHonoTodoRoute: typeof DemoHonoTodoRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  MockPaymentBkashRoute: typeof MockPaymentBkashRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   SupplierRfqsRoute: typeof SupplierRfqsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -766,6 +803,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsProductSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mock-payment/bkash': {
+      id: '/mock-payment/bkash'
+      path: '/mock-payment/bkash'
+      fullPath: '/mock-payment/bkash'
+      preLoaderRoute: typeof MockPaymentBkashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
@@ -807,6 +851,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/demo/db-chat'
       preLoaderRoute: typeof DemoDbChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/checkout/review': {
+      id: '/checkout/review'
+      path: '/review'
+      fullPath: '/checkout/review'
+      preLoaderRoute: typeof CheckoutReviewRouteImport
+      parentRoute: typeof CheckoutRouteRoute
+    }
+    '/checkout/payment-callback': {
+      id: '/checkout/payment-callback'
+      path: '/payment-callback'
+      fullPath: '/checkout/payment-callback'
+      preLoaderRoute: typeof CheckoutPaymentCallbackRouteImport
+      parentRoute: typeof CheckoutRouteRoute
     }
     '/checkout/payment': {
       id: '/checkout/payment'
@@ -1016,11 +1074,15 @@ declare module '@tanstack/react-router' {
 
 interface CheckoutRouteRouteChildren {
   CheckoutPaymentRoute: typeof CheckoutPaymentRoute
+  CheckoutPaymentCallbackRoute: typeof CheckoutPaymentCallbackRoute
+  CheckoutReviewRoute: typeof CheckoutReviewRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
 }
 
 const CheckoutRouteRouteChildren: CheckoutRouteRouteChildren = {
   CheckoutPaymentRoute: CheckoutPaymentRoute,
+  CheckoutPaymentCallbackRoute: CheckoutPaymentCallbackRoute,
+  CheckoutReviewRoute: CheckoutReviewRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
 }
 
@@ -1062,6 +1124,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoHonoTodoRoute: DemoHonoTodoRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  MockPaymentBkashRoute: MockPaymentBkashRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
   SupplierRfqsRoute: SupplierRfqsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
