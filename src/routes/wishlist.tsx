@@ -21,7 +21,7 @@ export const Route = createFileRoute('/wishlist')({
 
 function WishlistItem({ product }: { product: MockProduct }) {
   const { removeFromWishlist } = useWishlist()
-  const { addToCart } = useCart()
+  const { addItem } = useCart()
   const [quantity, setQuantity] = useState(product.moq)
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -29,10 +29,14 @@ function WishlistItem({ product }: { product: MockProduct }) {
   const supplier = getSupplierById(product.supplierId)
 
   const handleAddToCart = () => {
-    addToCart(product.id, quantity)
-    setToastMessage(
-      `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
-    )
+    const result = addItem({ productId: product.id, quantity })
+    if (result.success) {
+      setToastMessage(
+        `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+      )
+    } else {
+      setToastMessage(result.error || 'Failed to add to cart')
+    }
     setShowToast(true)
   }
 

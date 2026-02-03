@@ -464,6 +464,10 @@ export const getCategoryBySlug = (slug: string): MockCategory | undefined => {
   return mockCategories.find((c) => c.slug === slug)
 }
 
+export const getProductById = (id: number): MockProduct | undefined => {
+  return mockProducts.find((p) => p.id === id)
+}
+
 export const getVerifiedSuppliers = (): Array<MockSupplier> => {
   return mockSuppliers.filter((s) => s.verified)
 }

@@ -41,7 +41,7 @@ export const Route = createFileRoute('/products/$productSlug')({
 function ProductDetailPage() {
   const { product, supplier } = Route.useLoaderData()
   const { toggleWishlist, isInWishlist } = useWishlist()
-  const { addToCart } = useCart()
+  const { addItem } = useCart()
   const { isAuthenticated } = useAuth()
 
   const [selectedImage, setSelectedImage] = useState(product.images[0])
@@ -83,10 +83,14 @@ function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
-    addToCart(product.id, quantity)
-    setToastMessage(
-      `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
-    )
+    const result = addItem({ productId: product.id, quantity })
+    if (result.success) {
+      setToastMessage(
+        `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+      )
+    } else {
+      setToastMessage(result.error || 'Failed to add to cart')
+    }
     setShowToast(true)
   }
 

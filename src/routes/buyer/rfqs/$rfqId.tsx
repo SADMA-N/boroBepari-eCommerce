@@ -47,7 +47,7 @@ function RFQDetailPage() {
   const [sortOption, setSortOption] = useState<SortOption>('price-asc')
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const { addToCart } = useCart()
+  const { addItem } = useCart()
   const router = useRouter()
 
   // Modal State
@@ -140,7 +140,9 @@ function RFQDetailPage() {
   }
 
   const handleCheckout = (quote: MockQuote) => {
-    addToCart(rfq.productId!, rfq.quantity!, {
+    addItem({
+      productId: rfq.productId!,
+      quantity: rfq.quantity!,
       customPrice: Number(quote.unitPrice),
       rfqId: rfq.id,
       quoteId: quote.id

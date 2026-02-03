@@ -39,6 +39,9 @@ import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
 import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
+import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
+import { Route as ApiCartAddRouteImport } from './routes/api/cart/add'
+import { Route as ApiCartUserIdRouteImport } from './routes/api/cart/$userId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
@@ -48,6 +51,7 @@ import { Route as ApiRfqSupplierSupplierIdRouteImport } from './routes/api/rfq/s
 import { Route as ApiRfqBuyerBuyerIdRouteImport } from './routes/api/rfq/buyer/$buyerId'
 import { Route as ApiRfqRfqIdQuotesRouteImport } from './routes/api/rfq/$rfqId.quotes'
 import { Route as ApiRfqRfqIdQuoteRouteImport } from './routes/api/rfq/$rfqId.quote'
+import { Route as ApiCartItemItemIdRouteImport } from './routes/api/cart/item/$itemId'
 import { Route as ApiRfqQuoteQuoteIdRejectRouteImport } from './routes/api/rfq/quote/$quoteId.reject'
 import { Route as ApiRfqQuoteQuoteIdCounterRouteImport } from './routes/api/rfq/quote/$quoteId.counter'
 import { Route as ApiRfqQuoteQuoteIdAcceptRouteImport } from './routes/api/rfq/quote/$quoteId.accept'
@@ -202,6 +206,21 @@ const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
   path: '/api/rfq/submit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCartValidateCouponRoute = ApiCartValidateCouponRouteImport.update({
+  id: '/api/cart/validate-coupon',
+  path: '/api/cart/validate-coupon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartAddRoute = ApiCartAddRouteImport.update({
+  id: '/api/cart/add',
+  path: '/api/cart/add',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartUserIdRoute = ApiCartUserIdRouteImport.update({
+  id: '/api/cart/$userId',
+  path: '/api/cart/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -248,6 +267,11 @@ const ApiRfqRfqIdQuoteRoute = ApiRfqRfqIdQuoteRouteImport.update({
   path: '/api/rfq/$rfqId/quote',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCartItemItemIdRoute = ApiCartItemItemIdRouteImport.update({
+  id: '/api/cart/item/$itemId',
+  path: '/api/cart/item/$itemId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRfqQuoteQuoteIdRejectRoute =
   ApiRfqQuoteQuoteIdRejectRouteImport.update({
     id: '/api/rfq/quote/$quoteId/reject',
@@ -291,6 +315,9 @@ export interface FileRoutesByFullPath {
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -299,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -335,6 +363,9 @@ export interface FileRoutesByTo {
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -343,6 +374,7 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -380,6 +412,9 @@ export interface FileRoutesById {
   '/products/$productSlug': typeof ProductsProductSlugRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -388,6 +423,7 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
   '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
   '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
   '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
@@ -426,6 +462,9 @@ export interface FileRouteTypes {
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/api/auth/$'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -434,6 +473,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/cart/item/$itemId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -470,6 +510,9 @@ export interface FileRouteTypes {
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/api/auth/$'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -478,6 +521,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/cart/item/$itemId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -514,6 +558,9 @@ export interface FileRouteTypes {
     | '/products/$productSlug'
     | '/supplier/rfqs'
     | '/api/auth/$'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
     | '/api/rfq/submit'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -522,6 +569,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/api/cart/item/$itemId'
     | '/api/rfq/$rfqId/quote'
     | '/api/rfq/$rfqId/quotes'
     | '/api/rfq/buyer/$buyerId'
@@ -559,6 +607,9 @@ export interface RootRouteChildren {
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   SupplierRfqsRoute: typeof SupplierRfqsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCartUserIdRoute: typeof ApiCartUserIdRoute
+  ApiCartAddRoute: typeof ApiCartAddRoute
+  ApiCartValidateCouponRoute: typeof ApiCartValidateCouponRoute
   ApiRfqSubmitRoute: typeof ApiRfqSubmitRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
@@ -566,6 +617,7 @@ export interface RootRouteChildren {
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
+  ApiCartItemItemIdRoute: typeof ApiCartItemItemIdRoute
   ApiRfqRfqIdQuoteRoute: typeof ApiRfqRfqIdQuoteRoute
   ApiRfqRfqIdQuotesRoute: typeof ApiRfqRfqIdQuotesRoute
   ApiRfqBuyerBuyerIdRoute: typeof ApiRfqBuyerBuyerIdRoute
@@ -791,6 +843,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRfqSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cart/validate-coupon': {
+      id: '/api/cart/validate-coupon'
+      path: '/api/cart/validate-coupon'
+      fullPath: '/api/cart/validate-coupon'
+      preLoaderRoute: typeof ApiCartValidateCouponRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/add': {
+      id: '/api/cart/add'
+      path: '/api/cart/add'
+      fullPath: '/api/cart/add'
+      preLoaderRoute: typeof ApiCartAddRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/$userId': {
+      id: '/api/cart/$userId'
+      path: '/api/cart/$userId'
+      fullPath: '/api/cart/$userId'
+      preLoaderRoute: typeof ApiCartUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -854,6 +927,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRfqRfqIdQuoteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cart/item/$itemId': {
+      id: '/api/cart/item/$itemId'
+      path: '/api/cart/item/$itemId'
+      fullPath: '/api/cart/item/$itemId'
+      preLoaderRoute: typeof ApiCartItemItemIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/rfq/quote/$quoteId/reject': {
       id: '/api/rfq/quote/$quoteId/reject'
       path: '/api/rfq/quote/$quoteId/reject'
@@ -914,6 +994,9 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsProductSlugRoute: ProductsProductSlugRoute,
   SupplierRfqsRoute: SupplierRfqsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCartUserIdRoute: ApiCartUserIdRoute,
+  ApiCartAddRoute: ApiCartAddRoute,
+  ApiCartValidateCouponRoute: ApiCartValidateCouponRoute,
   ApiRfqSubmitRoute: ApiRfqSubmitRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
@@ -921,6 +1004,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
+  ApiCartItemItemIdRoute: ApiCartItemItemIdRoute,
   ApiRfqRfqIdQuoteRoute: ApiRfqRfqIdQuoteRoute,
   ApiRfqRfqIdQuotesRoute: ApiRfqRfqIdQuotesRoute,
   ApiRfqBuyerBuyerIdRoute: ApiRfqBuyerBuyerIdRoute,
