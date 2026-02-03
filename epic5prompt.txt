@@ -166,6 +166,7 @@ Add breadcrumb navigation and ensure mobile-responsive layout.
 ```
 
 **Commit Message:** `feat(epic-5): create order detail page with comprehensive information`
+---> done
 
 ---
 

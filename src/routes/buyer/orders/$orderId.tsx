@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   Package,
   Truck,
   Download,
-  RefreshCw,
   XCircle,
   HelpCircle,
   ChevronRight,
@@ -13,7 +12,6 @@ import {
   Phone,
   CreditCard,
   CheckCircle,
-  Clock,
   AlertCircle,
   BadgeCheck,
   MessageSquare,
@@ -25,12 +23,12 @@ import {
   Home,
   ShoppingCart,
 } from 'lucide-react'
-import { format, addDays } from 'date-fns'
+import { format, addDays, addHours } from 'date-fns'
 import { formatBDT } from '@/data/mock-products'
 import { getOrder } from '@/lib/order-actions'
-import { useAuth } from '@/contexts/AuthContext'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
+import OrderStatusTimeline from '@/components/OrderStatusTimeline'
 
 export const Route = createFileRoute('/buyer/orders/$orderId')({
   component: OrderDetailPage,
@@ -45,8 +43,8 @@ export const Route = createFileRoute('/buyer/orders/$orderId')({
 const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
   pending: { label: 'Pending', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
   placed: { label: 'Placed', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  confirmed: { label: 'Confirmed', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  processing: { label: 'Processing', color: 'text-purple-700', bgColor: 'bg-purple-100' },
+  confirmed: { label: 'Confirmed by Supplier', color: 'text-blue-700', bgColor: 'bg-blue-100' },
+  processing: { label: 'Processing/Packing', color: 'text-purple-700', bgColor: 'bg-purple-100' },
   shipped: { label: 'Shipped', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
   out_for_delivery: { label: 'Out for Delivery', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
   delivered: { label: 'Delivered', color: 'text-green-700', bgColor: 'bg-green-100' },
@@ -64,7 +62,6 @@ const paymentStatusConfig: Record<string, { label: string; color: string }> = {
 
 function OrderDetailPage() {
   const order = Route.useLoaderData()
-  const { isAuthenticated } = useAuth()
   const { addItem } = useCart()
   const [toast, setToast] = useState({ message: '', isVisible: false })
   const [isReordering, setIsReordering] = useState(false)
@@ -93,9 +90,6 @@ function OrderDetailPage() {
   const createdAt = order.createdAt ? new Date(order.createdAt) : new Date()
   const isDeposit = depositAmount > 0
   const isEscrow = order.paymentStatus === 'escrow_hold'
-  const isDelivered = order.status === 'delivered'
-  const isShipped = ['shipped', 'out_for_delivery'].includes(order.status)
-  const canCancel = ['pending', 'placed', 'confirmed'].includes(order.status)
 
   // Get default address
   const defaultAddress = (order as any).user?.addresses?.find((a: any) => a.isDefault) ||
@@ -120,8 +114,22 @@ function OrderDetailPage() {
     return acc
   }, {})
 
-  // Estimated delivery date (mock: 5-7 days from order)
-  const estimatedDelivery = addDays(createdAt, 7)
+  const [statusState, setStatusState] = useState(order.status)
+  const [statusUpdatedAt, setStatusUpdatedAt] = useState<Date | string | undefined>(
+    order.updatedAt,
+  )
+  const [trackingInfo, setTrackingInfo] = useState(() =>
+    buildMockTrackingInfo(createdAt, order),
+  )
+  const [stageTimestamps, setStageTimestamps] = useState(() =>
+    buildStageTimestamps(createdAt, order.status, order.updatedAt),
+  )
+
+  const isDelivered = statusState === 'delivered'
+  const isShipped = ['shipped', 'out_for_delivery'].includes(statusState)
+  const canCancel = ['pending', 'placed', 'confirmed'].includes(statusState)
+  const estimatedDelivery =
+    trackingInfo?.expectedDelivery ?? addDays(createdAt, 7)
 
   const handleCopyOrderId = () => {
     navigator.clipboard.writeText(order.id.toString().padStart(6, '0'))
@@ -159,8 +167,71 @@ function OrderDetailPage() {
     setToast({ message: 'Invoice download will be available soon', isVisible: true })
   }
 
-  const status = statusConfig[order.status] || statusConfig.pending
+  const status = statusConfig[statusState] || statusConfig.pending
   const paymentStatus = paymentStatusConfig[order.paymentStatus] || paymentStatusConfig.pending
+  const showOutForDelivery = Boolean(
+    (order as any).outForDeliveryEligible ??
+    ['out_for_delivery', 'delivered'].includes(statusState),
+  )
+
+  const handleRefreshStatus = useCallback(async () => {
+    const mockTimestamps = buildStageTimestamps(createdAt, statusState, statusUpdatedAt, true)
+    const fallbackTracking = buildMockTrackingInfo(createdAt, order)
+    const fallbackStatus = getMockStatusByNow(
+      new Date(),
+      mockTimestamps,
+      showOutForDelivery,
+    )
+
+    try {
+      const [statusResponse, trackingResponse] = await Promise.allSettled([
+        fetch(`/api/orders/${order.id}/status`, { method: 'PATCH' }),
+        fetch(`/api/orders/${order.id}/track`, { method: 'POST' }),
+      ])
+
+      const statusJson =
+        statusResponse.status === 'fulfilled'
+          ? await statusResponse.value.json().catch(() => null)
+          : null
+      const trackingJson =
+        trackingResponse.status === 'fulfilled'
+          ? await trackingResponse.value.json().catch(() => null)
+          : null
+
+      const nextStatus = ensureForwardStatus(
+        statusState,
+        statusJson?.status ?? fallbackStatus ?? statusState,
+      )
+
+      setStatusState(nextStatus)
+      setStatusUpdatedAt(statusJson?.updatedAt ?? new Date())
+
+      const nextStageTimestamps =
+        statusJson?.stageTimestamps ??
+        buildStageTimestamps(
+          createdAt,
+          nextStatus,
+          statusJson?.updatedAt ?? statusUpdatedAt,
+          true,
+        )
+      setStageTimestamps(nextStageTimestamps)
+
+      const nextTracking = trackingJson?.trackingInfo ?? fallbackTracking
+      setTrackingInfo(nextTracking)
+    } catch (error) {
+      console.error('Failed to refresh order status:', error)
+      setStatusState((prev) => ensureForwardStatus(prev, fallbackStatus ?? prev))
+      setStageTimestamps((prev) => prev ?? mockTimestamps)
+      setTrackingInfo((prev) => prev ?? fallbackTracking)
+      setStatusUpdatedAt(new Date())
+    }
+  }, [
+    createdAt,
+    order,
+    showOutForDelivery,
+    statusState,
+    statusUpdatedAt,
+  ])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -237,7 +308,16 @@ function OrderDetailPage() {
             {/* Order Status Timeline */}
             <div className="bg-white rounded-xl shadow-sm border p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Order Status</h2>
-              <OrderTimeline order={order} />
+              <OrderStatusTimeline
+                orderId={order.id}
+                status={statusState}
+                createdAt={createdAt}
+                updatedAt={statusUpdatedAt}
+                trackingInfo={trackingInfo}
+                onRefresh={handleRefreshStatus}
+                stageTimestamps={stageTimestamps}
+                showOutForDelivery={showOutForDelivery}
+              />
             </div>
 
             {/* Order Items by Supplier */}
@@ -486,104 +566,89 @@ function OrderDetailPage() {
   )
 }
 
-function OrderTimeline({ order }: { order: any }) {
-  const steps = [
-    {
-      key: 'placed',
-      label: 'Order Placed',
-      description: 'Your order has been received',
-      icon: Package,
-      completed: true,
-      date: order.createdAt,
-    },
-    {
-      key: 'confirmed',
-      label: 'Confirmed',
-      description: 'Order confirmed by supplier',
-      icon: CheckCircle,
-      completed: ['confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered'].includes(order.status),
-      date: null,
-    },
-    {
-      key: 'processing',
-      label: 'Processing',
-      description: 'Your order is being prepared',
-      icon: Clock,
-      completed: ['processing', 'shipped', 'out_for_delivery', 'delivered'].includes(order.status),
-      date: null,
-    },
-    {
-      key: 'shipped',
-      label: 'Shipped',
-      description: 'Your order is on the way',
-      icon: Truck,
-      completed: ['shipped', 'out_for_delivery', 'delivered'].includes(order.status),
-      date: null,
-    },
-    {
-      key: 'delivered',
-      label: 'Delivered',
-      description: 'Order delivered successfully',
-      icon: CheckCircle,
-      completed: order.status === 'delivered',
-      date: order.status === 'delivered' ? order.updatedAt : null,
-    },
-  ]
+const STAGE_SEQUENCE = [
+  'placed',
+  'confirmed',
+  'processing',
+  'shipped',
+  'out_for_delivery',
+  'delivered',
+] as const
 
-  // Handle cancelled/returned status
-  if (['cancelled', 'returned'].includes(order.status)) {
-    return (
-      <div className="flex items-center gap-4 p-4 bg-red-50 rounded-lg border border-red-100">
-        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-          <XCircle className="text-red-600" size={24} />
-        </div>
-        <div>
-          <h4 className="font-semibold text-red-800">
-            Order {order.status === 'cancelled' ? 'Cancelled' : 'Returned'}
-          </h4>
-          <p className="text-sm text-red-600">
-            This order has been {order.status}. Contact support for more information.
-          </p>
-        </div>
-      </div>
-    )
+type StageKey = (typeof STAGE_SEQUENCE)[number]
+type StageTimestamps = Partial<Record<StageKey, Date | string>>
+
+function buildStageTimestamps(
+  createdAt: Date,
+  status: string,
+  updatedAt?: Date | string,
+  includeAllStages = false,
+): StageTimestamps {
+  const base = createdAt
+  const timestamps: StageTimestamps = {
+    placed: base,
+    confirmed: addHours(base, 4),
+    processing: addDays(base, 1),
+    shipped: addDays(base, 2),
+    out_for_delivery: addDays(base, 3),
+    delivered: addDays(base, 4),
   }
 
-  return (
-    <div className="relative">
-      {/* Vertical line */}
-      <div className="absolute left-4 top-8 bottom-8 w-0.5 bg-gray-200" />
+  const statusIndex = STAGE_SEQUENCE.indexOf(status as StageKey)
+  if (statusIndex === -1) return { placed: base }
 
-      <div className="space-y-6">
-        {steps.map((step, idx) => (
-          <div key={step.key} className="relative flex gap-4">
-            <div
-              className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step.completed
-                  ? 'bg-green-500 border-green-500 text-white'
-                  : 'bg-white border-gray-200 text-gray-400'
-              }`}
-            >
-              <step.icon size={14} />
-            </div>
-            <div className="flex-1 pb-2">
-              <div className="flex items-center justify-between">
-                <h4 className={`font-medium ${step.completed ? 'text-gray-900' : 'text-gray-400'}`}>
-                  {step.label}
-                </h4>
-                {step.date && (
-                  <span className="text-xs text-gray-500">
-                    {format(new Date(step.date), 'MMM d, h:mm a')}
-                  </span>
-                )}
-              </div>
-              <p className={`text-sm ${step.completed ? 'text-gray-500' : 'text-gray-400'}`}>
-                {step.description}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+  if (includeAllStages) {
+    if (updatedAt && STAGE_SEQUENCE.includes(status as StageKey)) {
+      timestamps[status as StageKey] = updatedAt
+    }
+    return timestamps
+  }
+
+  const visible: StageTimestamps = {}
+  STAGE_SEQUENCE.forEach((key, index) => {
+    if (index <= statusIndex) {
+      visible[key] =
+        key === (status as StageKey) && updatedAt ? updatedAt : timestamps[key]
+    }
+  })
+  return visible
+}
+
+function getMockStatusByNow(
+  now: Date,
+  timestamps: StageTimestamps,
+  includeOutForDelivery: boolean,
+) {
+  const filtered = includeOutForDelivery
+    ? STAGE_SEQUENCE
+    : STAGE_SEQUENCE.filter((stage) => stage !== 'out_for_delivery')
+
+  let current: StageKey = 'placed'
+  filtered.forEach((stage) => {
+    const stageTime = timestamps[stage]
+    if (stageTime && new Date(stageTime) <= now) {
+      current = stage as StageKey
+    }
+  })
+  return current
+}
+
+function ensureForwardStatus(current: string, next: string) {
+  if (['cancelled', 'returned'].includes(current)) return current
+  if (['cancelled', 'returned'].includes(next)) return next
+  const currentIndex = STAGE_SEQUENCE.indexOf(current as StageKey)
+  const nextIndex = STAGE_SEQUENCE.indexOf(next as StageKey)
+  if (nextIndex === -1) return current
+  if (currentIndex === -1) return next
+  return nextIndex >= currentIndex ? next : current
+}
+
+function buildMockTrackingInfo(createdAt: Date, order: any) {
+  const trackingNumber = `BB-${order.id.toString().padStart(6, '0')}-TRK`
+  return {
+    courierName: 'Sundarban Courier',
+    trackingNumber,
+    trackingUrl: `https://track.sundarbancourier.com/?tn=${trackingNumber}`,
+    expectedDelivery: addDays(createdAt, 7),
+  }
 }
