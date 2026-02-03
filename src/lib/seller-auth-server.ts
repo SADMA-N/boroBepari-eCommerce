@@ -157,16 +157,20 @@ export const sellerRegister = createServerFn({ method: 'POST' })
 export const sellerLogin = createServerFn({ method: 'POST' })
   .validator(
     z.object({
-      email: z.string().email('Invalid email address'),
+      identifier: z.string().min(1, 'Email or phone is required'),
       password: z.string().min(1, 'Password is required'),
     }),
   )
   .handler(async ({ data }) => {
-    const { email, password } = data
+    const { identifier, password } = data
 
     // Find seller
+    const trimmed = identifier.trim()
+    const isEmail = trimmed.includes('@')
     const seller = await db.query.sellers.findFirst({
-      where: eq(schema.sellers.email, email.toLowerCase()),
+      where: isEmail
+        ? eq(schema.sellers.email, trimmed.toLowerCase())
+        : eq(schema.sellers.phone, trimmed),
     })
 
     if (!seller) {

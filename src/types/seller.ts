@@ -24,6 +24,6 @@ export interface SellerRegisterData {
 }
 
 export interface SellerLoginData {
-  email: string
+  identifier: string
   password: string
 }

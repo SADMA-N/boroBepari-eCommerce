@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import { useRouter } from '@tanstack/react-router'
 import type { SellerUser } from '@/types/seller'
 import { validateSellerToken, sellerLogin, sellerRegister } from '@/lib/seller-auth-server'
 import type { SellerLoginData, SellerRegisterData } from '@/types/seller'
@@ -10,7 +9,7 @@ interface SellerAuthContextType {
   seller: SellerUser | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (data: SellerLoginData) => Promise<void>
+  login: (data: SellerLoginData) => Promise<SellerUser>
   register: (data: SellerRegisterData) => Promise<void>
   logout: () => void
   refreshSeller: () => Promise<void>
@@ -21,7 +20,6 @@ const SellerAuthContext = createContext<SellerAuthContextType | undefined>(undef
 export function SellerAuthProvider({ children }: { children: React.ReactNode }) {
   const [seller, setSeller] = useState<SellerUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
 
   const getToken = useCallback(() => {
     if (typeof window === 'undefined') return null
@@ -66,15 +64,15 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
     const result = await sellerLogin({ data })
     setToken(result.token)
     setSeller(result.seller)
-    router.navigate({ to: '/seller/dashboard' })
-  }, [setToken, router])
+    return result.seller
+  }, [setToken])
 
   const register = useCallback(async (data: SellerRegisterData) => {
     const result = await sellerRegister({ data })
     setToken(result.token)
     setSeller(result.seller)
-    router.navigate({ to: '/seller/kyc' })
-  }, [setToken, router])
+    window.location.href = '/seller/kyc'
+  }, [setToken])
 
   const logout = useCallback(() => {
     setToken(null)
