@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { mockProducts } from '../data/mock-products'
 import type { MockProduct } from '../data/mock-products'
+import { useAuth } from './AuthContext'
 
 interface WishlistContextType {
   wishlistIds: Array<number>
@@ -16,6 +17,7 @@ const WishlistContext = createContext<WishlistContextType | undefined>(
 )
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth()
   const [wishlistIds, setWishlistIds] = useState<Array<number>>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('wishlist')
@@ -35,6 +37,19 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       }
       return prev
     })
+    const product = mockProducts.find((p) => p.id === productId)
+    if (product && product.stock === 0 && user?.email) {
+      fetch('/api/stock-alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId,
+          email: user.email,
+          userId: user.id,
+          source: 'wishlist',
+        }),
+      }).catch((error) => console.error('Failed to create wishlist stock alert', error))
+    }
   }
 
   const removeFromWishlist = (productId: number) => {
@@ -42,6 +57,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }
 
   const toggleWishlist = (productId: number) => {
+    const wasInWishlist = wishlistIds.includes(productId)
     setWishlistIds((prev) => {
       if (prev.includes(productId)) {
         return prev.filter((id) => id !== productId)
@@ -49,6 +65,21 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         return [...prev, productId]
       }
     })
+    if (!wasInWishlist) {
+      const product = mockProducts.find((p) => p.id === productId)
+      if (product && product.stock === 0 && user?.email) {
+        fetch('/api/stock-alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId,
+            email: user.email,
+            userId: user.id,
+            source: 'wishlist',
+          }),
+        }).catch((error) => console.error('Failed to create wishlist stock alert', error))
+      }
+    }
   }
 
   const isInWishlist = (productId: number) => {

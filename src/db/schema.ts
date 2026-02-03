@@ -199,6 +199,34 @@ export const orderItems = pgTable('order_items', {
 
 })
 
+export const stockAlerts = pgTable('stock_alerts', {
+  id: serial().primaryKey(),
+  userId: text('user_id').references(() => user.id),
+  productId: integer('product_id')
+    .notNull()
+    .references(() => products.id),
+  email: text('email').notNull(),
+  phone: text('phone'),
+  source: text('source').default('manual'),
+  isActive: boolean('is_active').default(true),
+  notifiedAt: timestamp('notified_at'),
+  acknowledgedAt: timestamp('acknowledged_at'),
+  expiresAt: timestamp('expires_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const stockAlertsRelations = relations(stockAlerts, ({ one }) => ({
+  user: one(user, {
+    fields: [stockAlerts.userId],
+    references: [user.id],
+  }),
+  product: one(products, {
+    fields: [stockAlerts.productId],
+    references: [products.id],
+  }),
+}))
+
 
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({

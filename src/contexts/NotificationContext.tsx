@@ -123,7 +123,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
     return defaultPreferences
   })
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
 
   const unreadCount = notifications.filter(n => !n.isRead && !n.archived).length
@@ -248,6 +248,48 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
     }
   }
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.id) return
+    if (typeof window === 'undefined') return
+
+    const fetchStockAlerts = async () => {
+      try {
+        const response = await fetch(`/api/stock-alerts?userId=${user.id}&includeNotified=1`)
+        const data = await response.json().catch(() => ({}))
+        const notified = data?.notified ?? []
+        if (!Array.isArray(notified) || notified.length === 0) return
+
+        const ids: number[] = []
+        notified.forEach((alert: any) => {
+          ids.push(alert.id)
+          const product = alert.product
+          addNotification({
+            id: `stock-alert-${alert.id}`,
+            title: `${product?.name ?? 'Product'} is back in stock`,
+            message: 'The product you were waiting for is now available.',
+            type: 'success',
+            link: product?.slug ? `/products/${product.slug}` : undefined,
+            category: 'system',
+            orderId: undefined,
+            status: 'restocked',
+          })
+        })
+
+        if (ids.length) {
+          await fetch('/api/stock-alerts', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'acknowledge', ids }),
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch stock alerts', error)
+      }
+    }
+
+    fetchStockAlerts()
+  }, [addNotification, isAuthenticated, user?.id])
 
   const updatePreferences = (prefs: Partial<NotificationPreferences>) => {
     setPreferences(prev => ({

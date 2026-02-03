@@ -38,6 +38,7 @@ import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/
 import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
 import { Route as BuyerNotificationsRouteImport } from './routes/buyer/notifications'
 import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
+import { Route as ApiStockAlertsRouteImport } from './routes/api/stock-alerts'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
 import { Route as BuyerOrdersIndexRouteImport } from './routes/buyer/orders/index'
@@ -49,6 +50,7 @@ import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
 import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
 import { Route as BuyerOrdersOrderIdRouteImport } from './routes/buyer/orders/$orderId'
+import { Route as ApiStockAlertsTriggerRouteImport } from './routes/api/stock-alerts/trigger'
 import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
 import { Route as ApiOrdersOrderIdRouteImport } from './routes/api/orders/$orderId'
 import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
@@ -219,6 +221,11 @@ const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
   path: '/auth/set-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStockAlertsRoute = ApiStockAlertsRouteImport.update({
+  id: '/api/stock-alerts',
+  path: '/api/stock-alerts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
@@ -273,6 +280,11 @@ const BuyerOrdersOrderIdRoute = BuyerOrdersOrderIdRouteImport.update({
   id: '/$orderId',
   path: '/$orderId',
   getParentRoute: () => BuyerOrdersRouteRoute,
+} as any)
+const ApiStockAlertsTriggerRoute = ApiStockAlertsTriggerRouteImport.update({
+  id: '/trigger',
+  path: '/trigger',
+  getParentRoute: () => ApiStockAlertsRoute,
 } as any)
 const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
   id: '/api/rfq/submit',
@@ -408,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/notifications': typeof BuyerNotificationsRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
@@ -432,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/api/stock-alerts/trigger': typeof ApiStockAlertsTriggerRoute
   '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -471,6 +485,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/api/$': typeof ApiSplatRoute
+  '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/notifications': typeof BuyerNotificationsRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
@@ -495,6 +510,7 @@ export interface FileRoutesByTo {
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/api/stock-alerts/trigger': typeof ApiStockAlertsTriggerRoute
   '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -537,6 +553,7 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
+  '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/notifications': typeof BuyerNotificationsRoute
   '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
@@ -561,6 +578,7 @@ export interface FileRoutesById {
   '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
   '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
   '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/api/stock-alerts/trigger': typeof ApiStockAlertsTriggerRoute
   '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
   '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
@@ -604,6 +622,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/buyer/orders'
     | '/api/$'
+    | '/api/stock-alerts'
     | '/auth/set-password'
     | '/buyer/notifications'
     | '/buyer/rfqs'
@@ -628,6 +647,7 @@ export interface FileRouteTypes {
     | '/api/cart/validate-coupon'
     | '/api/orders/$orderId'
     | '/api/rfq/submit'
+    | '/api/stock-alerts/trigger'
     | '/buyer/orders/$orderId'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -667,6 +687,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/api/$'
+    | '/api/stock-alerts'
     | '/auth/set-password'
     | '/buyer/notifications'
     | '/buyer/rfqs'
@@ -691,6 +712,7 @@ export interface FileRouteTypes {
     | '/api/cart/validate-coupon'
     | '/api/orders/$orderId'
     | '/api/rfq/submit'
+    | '/api/stock-alerts/trigger'
     | '/buyer/orders/$orderId'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -732,6 +754,7 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/buyer/orders'
     | '/api/$'
+    | '/api/stock-alerts'
     | '/auth/set-password'
     | '/buyer/notifications'
     | '/buyer/rfqs'
@@ -756,6 +779,7 @@ export interface FileRouteTypes {
     | '/api/cart/validate-coupon'
     | '/api/orders/$orderId'
     | '/api/rfq/submit'
+    | '/api/stock-alerts/trigger'
     | '/buyer/orders/$orderId'
     | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
@@ -798,6 +822,7 @@ export interface RootRouteChildren {
   WishlistRoute: typeof WishlistRoute
   BuyerOrdersRouteRoute: typeof BuyerOrdersRouteRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
+  ApiStockAlertsRoute: typeof ApiStockAlertsRouteWithChildren
   AuthSetPasswordRoute: typeof AuthSetPasswordRoute
   BuyerNotificationsRoute: typeof BuyerNotificationsRoute
   BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
@@ -1044,6 +1069,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stock-alerts': {
+      id: '/api/stock-alerts'
+      path: '/api/stock-alerts'
+      fullPath: '/api/stock-alerts'
+      preLoaderRoute: typeof ApiStockAlertsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -1120,6 +1152,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/buyer/orders/$orderId'
       preLoaderRoute: typeof BuyerOrdersOrderIdRouteImport
       parentRoute: typeof BuyerOrdersRouteRoute
+    }
+    '/api/stock-alerts/trigger': {
+      id: '/api/stock-alerts/trigger'
+      path: '/trigger'
+      fullPath: '/api/stock-alerts/trigger'
+      preLoaderRoute: typeof ApiStockAlertsTriggerRouteImport
+      parentRoute: typeof ApiStockAlertsRoute
     }
     '/api/rfq/submit': {
       id: '/api/rfq/submit'
@@ -1316,6 +1355,18 @@ const BuyerOrdersRouteRouteChildren: BuyerOrdersRouteRouteChildren = {
 const BuyerOrdersRouteRouteWithChildren =
   BuyerOrdersRouteRoute._addFileChildren(BuyerOrdersRouteRouteChildren)
 
+interface ApiStockAlertsRouteChildren {
+  ApiStockAlertsTriggerRoute: typeof ApiStockAlertsTriggerRoute
+}
+
+const ApiStockAlertsRouteChildren: ApiStockAlertsRouteChildren = {
+  ApiStockAlertsTriggerRoute: ApiStockAlertsTriggerRoute,
+}
+
+const ApiStockAlertsRouteWithChildren = ApiStockAlertsRoute._addFileChildren(
+  ApiStockAlertsRouteChildren,
+)
+
 interface BuyerRfqsRouteChildren {
   BuyerRfqsRfqIdRoute: typeof BuyerRfqsRfqIdRoute
 }
@@ -1359,6 +1410,7 @@ const rootRouteChildren: RootRouteChildren = {
   WishlistRoute: WishlistRoute,
   BuyerOrdersRouteRoute: BuyerOrdersRouteRouteWithChildren,
   ApiSplatRoute: ApiSplatRoute,
+  ApiStockAlertsRoute: ApiStockAlertsRouteWithChildren,
   AuthSetPasswordRoute: AuthSetPasswordRoute,
   BuyerNotificationsRoute: BuyerNotificationsRoute,
   BuyerRfqsRoute: BuyerRfqsRouteWithChildren,

@@ -39,6 +39,16 @@ interface OrderStatusEmailParams {
   orderLink?: string
 }
 
+interface StockAlertEmailParams {
+  email: string
+  name: string
+  productName: string
+  productImage?: string
+  price: string
+  moq: string
+  productLink: string
+}
+
 export async function sendVerificationEmail({
   email,
   url,
@@ -315,6 +325,76 @@ export async function sendOrderStatusEmail({
     return { success: true, data }
   } catch (err) {
     console.error('Unexpected error sending order status email:', err)
+    return { success: false, error: err }
+  }
+}
+
+export async function sendStockAlertEmail({
+  email,
+  name,
+  productName,
+  productImage,
+  price,
+  moq,
+  productLink,
+}: StockAlertEmailParams) {
+  const subject = `${productName} is back in stock!`
+
+  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+    console.log('--- EMAIL DEBUG ---')
+    console.log(`To: ${email}`)
+    console.log(`Subject: ${subject}`)
+    console.log(`Product link: ${productLink}`)
+    console.log('-------------------')
+
+    if (!process.env.RESEND_API_KEY) {
+      console.warn(
+        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
+      )
+      return { success: true, data: { id: 'mock-email-id' } }
+    }
+  }
+
+  const imageBlock = productImage
+    ? `<img src="${productImage}" alt="${productName}" style="width:120px;height:120px;object-fit:cover;border-radius:12px;" />`
+    : ''
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'BoroBepari <updates@resend.dev>',
+      to: [email],
+      subject,
+      html: `
+        <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #16a34a;">${productName} is back in stock!</h2>
+          <p>Hi ${name},</p>
+          <p>The product you were waiting for is now available.</p>
+          <div style="display:flex; gap:16px; align-items:center; margin:16px 0;">
+            ${imageBlock}
+            <div>
+              <p style="margin:0 0 6px 0;"><strong>Product:</strong> ${productName}</p>
+              <p style="margin:0 0 6px 0;"><strong>Price:</strong> ${price}</p>
+              <p style="margin:0;"><strong>MOQ:</strong> ${moq}</p>
+            </div>
+          </div>
+          <div style="margin: 24px 0; text-align: center;">
+            <a href="${productLink}" style="background-color: #16a34a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              Shop Now
+            </a>
+          </div>
+          <p style="color: #999; font-size: 12px;">If you no longer want alerts for this product, you can manage alerts in your account.</p>
+        </div>
+      `,
+    })
+
+    if (error) {
+      console.error('Failed to send stock alert email:', error)
+      return { success: false, error }
+    }
+
+    return { success: true, data }
+  } catch (err) {
+    console.error('Unexpected error sending stock alert email:', err)
     return { success: false, error: err }
   }
 }

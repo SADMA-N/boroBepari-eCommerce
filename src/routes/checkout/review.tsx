@@ -12,6 +12,7 @@ import { validateCartServer } from '@/lib/cart-actions'
 import type { Address } from '@/db/schema'
 import Toast from '@/components/Toast'
 import { useNotifications } from '@/contexts/NotificationContext'
+import { useWishlist } from '@/contexts/WishlistContext'
 
 export const Route = createFileRoute('/checkout/review')({
   component: ReviewPage,
@@ -23,6 +24,7 @@ function ReviewPage() {
   const { user } = useAuth()
   const router = useRouter()
   const { addNotification, preferences } = useNotifications()
+  const { removeFromWishlist } = useWishlist()
 
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -106,6 +108,8 @@ function ReviewPage() {
             notes: state.notes
         }
       })
+
+      cart.items.forEach((item) => removeFromWishlist(item.productId))
 
       if (preferences.orderPlaced) {
         addNotification({

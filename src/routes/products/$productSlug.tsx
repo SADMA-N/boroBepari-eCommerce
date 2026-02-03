@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   AlertCircle,
   CheckCircle,
@@ -25,6 +25,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import Toast from '../../components/Toast'
 import RFQFormModal from '../../components/RFQFormModal'
 import AuthModal from '../../components/AuthModal'
+import { useNotifications } from '@/contexts/NotificationContext'
 
 export const Route = createFileRoute('/products/$productSlug')({
   loader: ({ params }) => {
@@ -42,7 +43,8 @@ function ProductDetailPage() {
   const { product, supplier } = Route.useLoaderData()
   const { toggleWishlist, isInWishlist } = useWishlist()
   const { addItem } = useCart()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
+  const { addNotification } = useNotifications()
 
   const [selectedImage, setSelectedImage] = useState(product.images[0])
   const [activeTab, setActiveTab] = useState('overview')
@@ -54,6 +56,16 @@ function ProductDetailPage() {
   // Modal States
   const [isRfqOpen, setIsRfqOpen] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isStockAlertOpen, setIsStockAlertOpen] = useState(false)
+  const [alertEmail, setAlertEmail] = useState('')
+  const [alertPhone, setAlertPhone] = useState('')
+  const [isSubmittingAlert, setIsSubmittingAlert] = useState(false)
+
+  useEffect(() => {
+    if (user?.email) {
+      setAlertEmail(user.email)
+    }
+  }, [user?.email])
 
   const isOutOfStock = product.stock === 0
   const maxQuantity = isSample ? 5 : product.stock
@@ -100,6 +112,57 @@ function ProductDetailPage() {
       return
     }
     setIsRfqOpen(true)
+  }
+
+  const handleOpenStockAlert = () => {
+    setIsStockAlertOpen(true)
+  }
+
+  const handleSubmitStockAlert = async () => {
+    if (!alertEmail) {
+      setToastMessage('Please provide an email for stock alerts.')
+      setShowToast(true)
+      return
+    }
+    setIsSubmittingAlert(true)
+    try {
+      const response = await fetch('/api/stock-alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          email: alertEmail,
+          phone: alertPhone,
+          userId: user?.id ?? null,
+          source: 'manual',
+        }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        setToastMessage(data?.error ?? 'Unable to subscribe for alerts.')
+      } else if (data?.alreadySubscribed) {
+        setToastMessage('You are already subscribed for this stock alert.')
+      } else {
+        setToastMessage('We will notify you as soon as this product is back in stock.')
+        addNotification({
+          id: `stock-alert-${product.id}-${Date.now()}`,
+          title: `${product.name} stock alert`,
+          message: 'You will be notified when this product is back in stock.',
+          type: 'info',
+          link: `/products/${product.slug}`,
+          category: 'system',
+        })
+      }
+      setShowToast(true)
+      setIsStockAlertOpen(false)
+      setAlertPhone('')
+    } catch (error) {
+      console.error('Failed to create stock alert:', error)
+      setToastMessage('Failed to create stock alert. Please try again.')
+      setShowToast(true)
+    } finally {
+      setIsSubmittingAlert(false)
+    }
   }
 
   return (
@@ -350,8 +413,11 @@ function ProductDetailPage() {
             </div>
 
             {isOutOfStock && (
-              <button className="w-full border border-blue-600 text-blue-600 py-3 px-4 rounded-lg font-semibold hover:bg-blue-50 transition">
-                Notify Me
+              <button
+                onClick={handleOpenStockAlert}
+                className="w-full border border-blue-600 text-blue-600 py-3 px-4 rounded-lg font-semibold hover:bg-blue-50 transition"
+              >
+                Notify Me When Available
               </button>
             )}
           </div>
@@ -514,6 +580,70 @@ function ProductDetailPage() {
           )}
         </div>
       </div>
+
+      {isStockAlertOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="stock-alert-title"
+        >
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+              <div>
+                <h2 id="stock-alert-title" className="text-lg font-bold text-gray-900">
+                  Notify Me When Available
+                </h2>
+                <p className="text-xs text-gray-500 mt-1">
+                  We will alert you when this product is back in stock.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsStockAlertOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-200"
+                aria-label="Close modal"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  value={alertEmail}
+                  onChange={(e) => setAlertEmail(e.target.value)}
+                  className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">Phone (optional)</label>
+                <input
+                  type="tel"
+                  value={alertPhone}
+                  onChange={(e) => setAlertPhone(e.target.value)}
+                  className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsStockAlertOpen(false)}
+                  className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitStockAlert}
+                  disabled={isSubmittingAlert}
+                  className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium disabled:opacity-60"
+                >
+                  {isSubmittingAlert ? 'Saving...' : 'Notify Me'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Bell, CheckCircle, Archive, RotateCcw, Filter, Settings, ArrowLeft } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNotifications } from '@/contexts/NotificationContext'
+import { useAuth } from '@/contexts/AuthContext'
 
 export const Route = createFileRoute('/buyer/notifications')({
   component: NotificationsPage,
@@ -21,8 +22,41 @@ function NotificationsPage() {
     restoreNotification,
     updatePreferences,
   } = useNotifications()
+  const { user } = useAuth()
   const [filter, setFilter] = useState<FilterType>('all')
   const [orderFilter, setOrderFilter] = useState('')
+  const [stockAlerts, setStockAlerts] = useState<any[]>([])
+  const [isLoadingAlerts, setIsLoadingAlerts] = useState(false)
+
+  useEffect(() => {
+    if (!user?.id) return
+    const fetchAlerts = async () => {
+      setIsLoadingAlerts(true)
+      try {
+        const response = await fetch(`/api/stock-alerts?userId=${user.id}`)
+        const data = await response.json().catch(() => ({}))
+        setStockAlerts(data?.alerts ?? [])
+      } catch (error) {
+        console.error('Failed to fetch stock alerts', error)
+      } finally {
+        setIsLoadingAlerts(false)
+      }
+    }
+    fetchAlerts()
+  }, [user?.id])
+
+  const handleUnsubscribeAlert = async (alertId: number) => {
+    try {
+      await fetch('/api/stock-alerts', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ alertId }),
+      })
+      setStockAlerts((prev) => prev.filter((alert) => alert.id !== alertId))
+    } catch (error) {
+      console.error('Failed to unsubscribe stock alert', error)
+    }
+  }
 
   const filteredNotifications = useMemo(() => {
     const orderIdFilter = orderFilter.trim()
@@ -260,6 +294,41 @@ function NotificationsPage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white rounded-xl border p-5">
+              <h3 className="font-semibold text-gray-900 mb-3">Stock Alerts</h3>
+              {isLoadingAlerts ? (
+                <p className="text-sm text-gray-500">Loading alerts...</p>
+              ) : stockAlerts.length === 0 ? (
+                <p className="text-sm text-gray-500">No stock alerts set.</p>
+              ) : (
+                <div className="space-y-3">
+                  {stockAlerts.map((alert) => (
+                    <div key={alert.id} className="border border-gray-100 rounded-lg p-3 text-sm">
+                      <p className="font-medium text-gray-900">
+                        {alert.product?.name ?? 'Product'}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Expires {alert.expiresAt ? new Date(alert.expiresAt).toLocaleDateString() : 'N/A'}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2">
+                        {alert.product?.slug && (
+                          <Link to={`/products/${alert.product.slug}`} className="text-xs text-orange-600 hover:underline">
+                            View product
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => handleUnsubscribeAlert(alert.id)}
+                          className="text-xs text-gray-400 hover:text-gray-600"
+                        >
+                          Unsubscribe
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
