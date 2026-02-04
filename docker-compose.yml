@@ -1,13 +1,9 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
     container_name: borobepari-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: borobepari
+    env_file:
+      - .env
     ports:
       - '5432:5432'
     volumes:
