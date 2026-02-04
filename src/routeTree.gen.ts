@@ -53,6 +53,7 @@ import { Route as ApiStockAlertsRouteImport } from './routes/api/stock-alerts'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminSuppliersRouteImport } from './routes/admin/suppliers'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminKycRouteImport } from './routes/admin/kyc'
@@ -320,6 +321,11 @@ const AdminSuppliersRoute = AdminSuppliersRouteImport.update({
   path: '/suppliers',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminProductsRoute = AdminProductsRouteImport.update({
   id: '/products',
   path: '/products',
@@ -570,6 +576,7 @@ export interface FileRoutesByFullPath {
   '/admin/kyc': typeof AdminKycRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/suppliers': typeof AdminSuppliersRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
@@ -657,6 +664,7 @@ export interface FileRoutesByTo {
   '/admin/kyc': typeof AdminKycRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/suppliers': typeof AdminSuppliersRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
@@ -749,6 +757,7 @@ export interface FileRoutesById {
   '/admin/kyc': typeof AdminKycRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
   '/admin/suppliers': typeof AdminSuppliersRoute
   '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
@@ -842,6 +851,7 @@ export interface FileRouteTypes {
     | '/admin/kyc'
     | '/admin/login'
     | '/admin/products'
+    | '/admin/settings'
     | '/admin/suppliers'
     | '/admin/users'
     | '/api/$'
@@ -929,6 +939,7 @@ export interface FileRouteTypes {
     | '/admin/kyc'
     | '/admin/login'
     | '/admin/products'
+    | '/admin/settings'
     | '/admin/suppliers'
     | '/admin/users'
     | '/api/$'
@@ -1020,6 +1031,7 @@ export interface FileRouteTypes {
     | '/admin/kyc'
     | '/admin/login'
     | '/admin/products'
+    | '/admin/settings'
     | '/admin/suppliers'
     | '/admin/users'
     | '/api/$'
@@ -1460,6 +1472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSuppliersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/products': {
       id: '/admin/products'
       path: '/products'
@@ -1784,6 +1803,7 @@ interface AdminRouteRouteChildren {
   AdminKycRoute: typeof AdminKycRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminProductsRoute: typeof AdminProductsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSuppliersRoute: typeof AdminSuppliersRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1795,6 +1815,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminKycRoute: AdminKycRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminProductsRoute: AdminProductsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
   AdminSuppliersRoute: AdminSuppliersRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
