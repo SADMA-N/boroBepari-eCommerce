@@ -27,6 +27,8 @@ node_modules/
 
 # Logs
 *.log
+curl_output.txt
+.vscode/
 
 # Scripts
 get-docker.sh
