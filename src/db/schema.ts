@@ -12,6 +12,7 @@ import {
 import { relations } from 'drizzle-orm'
 
 export const genderEnum = pgEnum('gender', ['male', 'female'])
+export const adminRoleEnum = pgEnum('admin_role', ['super_admin', 'admin', 'moderator'])
 export const kycStatusEnum = pgEnum('kyc_status', [
   'pending',
   'submitted',
@@ -480,3 +481,20 @@ export type Rfq = typeof rfqs.$inferSelect
 export type NewRfq = typeof rfqs.$inferInsert
 export type Quote = typeof quotes.$inferSelect
 export type NewQuote = typeof quotes.$inferInsert
+
+// Admin table for admin portal
+export const admins = pgTable('admins', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  password: text('password').notNull(),
+  name: text('name').notNull(),
+  role: adminRoleEnum('role').default('admin').notNull(),
+  avatar: text('avatar'),
+  isActive: boolean('is_active').default(true).notNull(),
+  lastLoginAt: timestamp('last_login_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+})
+
+export type Admin = typeof admins.$inferSelect
+export type NewAdmin = typeof admins.$inferInsert

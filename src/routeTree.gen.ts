@@ -20,9 +20,11 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as SellerRouteRouteImport } from './routes/seller/route'
 import { Route as CheckoutRouteRouteImport } from './routes/checkout/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellerIndexRouteImport } from './routes/seller/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
 import { Route as SellerRegisterRouteImport } from './routes/seller/register'
 import { Route as SellerProfileRouteImport } from './routes/seller/profile'
@@ -49,6 +51,12 @@ import { Route as BuyerNotificationsRouteImport } from './routes/buyer/notificat
 import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
 import { Route as ApiStockAlertsRouteImport } from './routes/api/stock-alerts'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminSuppliersRouteImport } from './routes/admin/suppliers'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminKycRouteImport } from './routes/admin/kyc'
+import { Route as AdminDisputesRouteImport } from './routes/admin/disputes'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
 import { Route as SellerRfqsIndexRouteImport } from './routes/seller/rfqs/index'
 import { Route as SellerProductsIndexRouteImport } from './routes/seller/products/index'
@@ -145,6 +153,11 @@ const CheckoutRouteRoute = CheckoutRouteRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -159,6 +172,11 @@ const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CheckoutRouteRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
   id: '/supplier/rfqs',
@@ -290,6 +308,36 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSuppliersRoute = AdminSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDisputesRoute = AdminDisputesRouteImport.update({
+  id: '/disputes',
+  path: '/disputes',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const BuyerOrdersRouteRoute = BuyerOrdersRouteRouteImport.update({
   id: '/buyer/orders',
@@ -498,6 +546,7 @@ const ApiRfqQuoteQuoteIdAcceptRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/checkout': typeof CheckoutRouteRouteWithChildren
   '/seller': typeof SellerRouteRouteWithChildren
   '/account': typeof AccountRoute
@@ -510,6 +559,12 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/kyc': typeof AdminKycRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/suppliers': typeof AdminSuppliersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
   '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
@@ -536,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/seller/': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -589,6 +645,12 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/kyc': typeof AdminKycRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/suppliers': typeof AdminSuppliersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
   '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
@@ -615,6 +677,7 @@ export interface FileRoutesByTo {
   '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
   '/seller': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -660,6 +723,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/checkout': typeof CheckoutRouteRouteWithChildren
   '/seller': typeof SellerRouteRouteWithChildren
   '/account': typeof AccountRoute
@@ -672,6 +736,12 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/kyc': typeof AdminKycRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/suppliers': typeof AdminSuppliersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
   '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
@@ -698,6 +768,7 @@ export interface FileRoutesById {
   '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
   '/seller/': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -744,6 +815,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/checkout'
     | '/seller'
     | '/account'
@@ -756,6 +828,12 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/buyer/orders'
+    | '/admin/dashboard'
+    | '/admin/disputes'
+    | '/admin/kyc'
+    | '/admin/login'
+    | '/admin/suppliers'
+    | '/admin/users'
     | '/api/$'
     | '/api/stock-alerts'
     | '/auth/set-password'
@@ -782,6 +860,7 @@ export interface FileRouteTypes {
     | '/seller/profile'
     | '/seller/register'
     | '/supplier/rfqs'
+    | '/admin/'
     | '/checkout/'
     | '/seller/'
     | '/api/auth/$'
@@ -835,6 +914,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/admin/dashboard'
+    | '/admin/disputes'
+    | '/admin/kyc'
+    | '/admin/login'
+    | '/admin/suppliers'
+    | '/admin/users'
     | '/api/$'
     | '/api/stock-alerts'
     | '/auth/set-password'
@@ -861,6 +946,7 @@ export interface FileRouteTypes {
     | '/seller/profile'
     | '/seller/register'
     | '/supplier/rfqs'
+    | '/admin'
     | '/checkout'
     | '/seller'
     | '/api/auth/$'
@@ -905,6 +991,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/checkout'
     | '/seller'
     | '/account'
@@ -917,6 +1004,12 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/buyer/orders'
+    | '/admin/dashboard'
+    | '/admin/disputes'
+    | '/admin/kyc'
+    | '/admin/login'
+    | '/admin/suppliers'
+    | '/admin/users'
     | '/api/$'
     | '/api/stock-alerts'
     | '/auth/set-password'
@@ -943,6 +1036,7 @@ export interface FileRouteTypes {
     | '/seller/profile'
     | '/seller/register'
     | '/supplier/rfqs'
+    | '/admin/'
     | '/checkout/'
     | '/seller/'
     | '/api/auth/$'
@@ -988,6 +1082,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   CheckoutRouteRoute: typeof CheckoutRouteRouteWithChildren
   SellerRouteRoute: typeof SellerRouteRouteWithChildren
   AccountRoute: typeof AccountRoute
@@ -1122,6 +1217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -1142,6 +1244,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/checkout/'
       preLoaderRoute: typeof CheckoutIndexRouteImport
       parentRoute: typeof CheckoutRouteRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/supplier/rfqs': {
       id: '/supplier/rfqs'
@@ -1324,6 +1433,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/suppliers': {
+      id: '/admin/suppliers'
+      path: '/suppliers'
+      fullPath: '/admin/suppliers'
+      preLoaderRoute: typeof AdminSuppliersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/kyc': {
+      id: '/admin/kyc'
+      path: '/kyc'
+      fullPath: '/admin/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/disputes': {
+      id: '/admin/disputes'
+      path: '/disputes'
+      fullPath: '/admin/disputes'
+      preLoaderRoute: typeof AdminDisputesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/buyer/orders': {
       id: '/buyer/orders'
@@ -1608,6 +1759,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDisputesRoute: typeof AdminDisputesRoute
+  AdminKycRoute: typeof AdminKycRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminSuppliersRoute: typeof AdminSuppliersRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDisputesRoute: AdminDisputesRoute,
+  AdminKycRoute: AdminKycRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminSuppliersRoute: AdminSuppliersRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 interface CheckoutRouteRouteChildren {
   CheckoutPaymentRoute: typeof CheckoutPaymentRoute
   CheckoutPaymentCallbackRoute: typeof CheckoutPaymentCallbackRoute
@@ -1720,6 +1895,7 @@ const ApiOrdersOrderIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   CheckoutRouteRoute: CheckoutRouteRouteWithChildren,
   SellerRouteRoute: SellerRouteRouteWithChildren,
   AccountRoute: AccountRoute,
