@@ -284,7 +284,7 @@ function BankTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
           <button onClick={addAccount} className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
             Add Account
           </button>
-          <p className="text-xs text-slate-500">Verify via ₹1 penny drop or upload cancelled cheque.</p>
+          <p className="text-xs text-slate-500">Verify via ৳1 penny drop or upload cancelled cheque.</p>
         </div>
         {bankError && <p className="text-xs text-red-500 mt-2">{bankError}</p>}
       </SectionCard>
@@ -432,7 +432,7 @@ function StoreTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
           Auto-accept orders
         </label>
         <Field label="Auto-decline RFQs below MOQ" value="50" onChange={() => {}} />
-        <Field label="Minimum target price threshold" value="₹100" onChange={() => {}} />
+        <Field label="Minimum target price threshold" value="৳100" onChange={() => {}} />
       </SectionCard>
       <SectionCard title="Integration Settings">
         <Field label="API Key" value="sk_live_********" onChange={() => {}} />

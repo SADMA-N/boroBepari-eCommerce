@@ -398,7 +398,7 @@ export function SellerOrdersPage() {
                         </td>
                         <td>{order.buyer}</td>
                         <td>{order.items}</td>
-                        <td>₹{order.total.toLocaleString()}</td>
+                        <td>৳{order.total.toLocaleString()}</td>
                         <td>
                           <span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}>
                             {order.status}
@@ -447,7 +447,7 @@ export function SellerOrdersPage() {
                       </span>
                     </div>
                     <div className="mt-3 text-sm text-slate-600">
-                      ₹{order.total.toLocaleString()} · {order.items} items · {order.paymentStatus}
+                      ৳{order.total.toLocaleString()} · {order.items} items · {order.paymentStatus}
                     </div>
                     <div className="mt-3 flex gap-2">
                       <button
@@ -560,7 +560,7 @@ function OrderDetail({ order }: { order: Order }) {
                   <p className="text-xs text-slate-400">Qty: {item.quantity}</p>
                 </div>
               </div>
-              <p className="text-sm text-slate-700">₹{(item.quantity * item.unitPrice).toLocaleString()}</p>
+              <p className="text-sm text-slate-700">৳{(item.quantity * item.unitPrice).toLocaleString()}</p>
             </div>
           ))}
         </div>

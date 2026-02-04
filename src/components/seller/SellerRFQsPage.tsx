@@ -289,7 +289,7 @@ export function SellerRFQsPage() {
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-600">
                       <InfoItem label="Quantity" value={`${rfq.quantity} units`} />
-                      <InfoItem label="Target Price" value={`₹${rfq.targetPrice}`} />
+                      <InfoItem label="Target Price" value={`৳${rfq.targetPrice}`} />
                       <InfoItem label="Location" value={rfq.location} />
                       <InfoItem label="Time left" value={`${rfq.hoursLeft}h`} />
                     </div>
@@ -444,7 +444,7 @@ function RFQDetailPanel({
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm text-slate-600">
             <InfoItem label="Quantity" value={`${rfq.quantity}`} />
-            <InfoItem label="Target Price" value={`₹${rfq.targetPrice}`} />
+            <InfoItem label="Target Price" value={`৳${rfq.targetPrice}`} />
             <InfoItem label="Delivery Location" value={rfq.location} />
             <InfoItem label="Time remaining" value={`${rfq.hoursLeft} hours`} />
           </div>
@@ -479,7 +479,7 @@ function RFQDetailPanel({
           )}
           {rfq.counterOffer && (
             <div className="rounded-xl border border-orange-100 bg-orange-50 p-4 text-sm text-orange-700">
-              Buyer countered with ₹{rfq.counterOffer}. Respond with a new offer or accept.
+              Buyer countered with ৳{rfq.counterOffer}. Respond with a new offer or accept.
             </div>
           )}
           <div className="flex flex-wrap gap-2">
@@ -526,11 +526,11 @@ function SendQuoteModal({
           <input
             value={unitPrice}
             onChange={(event) => setUnitPrice(event.target.value)}
-            placeholder="Unit price (₹)"
+            placeholder="Unit price (৳)"
             className="rounded-lg border border-slate-200 px-3 py-2"
           />
           <div className="rounded-lg border border-slate-200 px-3 py-2 text-slate-700">
-            Total: ₹{total.toLocaleString()}
+            Total: ৳{total.toLocaleString()}
           </div>
         </div>
         <select value={validity} onChange={(event) => setValidity(event.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2">
@@ -557,7 +557,7 @@ function SendQuoteModal({
         />
         <input type="file" className="text-sm" />
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-          Buyer target: ₹{rfq.targetPrice} · Your quote: ₹{unitPrice || '--'}
+          Buyer target: ৳{rfq.targetPrice} · Your quote: ৳{unitPrice || '--'}
           {unitPrice && (
             <span className={`ml-2 font-semibold ${diff > 0 ? 'text-red-500' : 'text-green-600'}`}>
               {diff > 0 ? '+' : ''}{diffPercent}%

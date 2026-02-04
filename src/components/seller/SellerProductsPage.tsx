@@ -356,7 +356,7 @@ export function SellerProductsPage() {
                           onClick={() => setEditing({ id: product.id, field: 'price' })}
                           className="text-slate-700 hover:text-orange-600"
                         >
-                          ₹{product.price} / Min: {product.moq}
+                          ৳{product.price} / Min: {product.moq}
                           {loadingEdit === product.id && (
                             <span className="ml-2 text-xs text-slate-400">Saving...</span>
                           )}
@@ -408,7 +408,7 @@ export function SellerProductsPage() {
                       <p className="font-semibold text-slate-800">{product.title}</p>
                       <p className="text-xs text-slate-400">{product.sku}</p>
                       <p className="mt-2 text-sm text-slate-700">
-                        ₹{product.price} · MOQ {product.moq}
+                        ৳{product.price} · MOQ {product.moq}
                       </p>
                       <span className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${stockBadge(product)}`}>
                         {stockStatus(product)}

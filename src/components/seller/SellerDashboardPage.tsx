@@ -190,21 +190,21 @@ export function SellerDashboardPage() {
       id: 'rfq-1',
       product: 'Industrial Safety Gloves',
       quantity: '1,200 pairs',
-      price: '₹120 / pair',
+      price: '৳120 / pair',
       timeLeft: '6h 45m',
     },
     {
       id: 'rfq-2',
       product: 'HDPE Packaging Bags',
       quantity: '5,000 units',
-      price: '₹18 / unit',
+      price: '৳18 / unit',
       timeLeft: '12h 10m',
     },
     {
       id: 'rfq-3',
       product: 'Cotton T-Shirts (Bulk)',
       quantity: '800 pieces',
-      price: '₹210 / piece',
+      price: '৳210 / piece',
       timeLeft: '1d 4h',
     },
   ]
@@ -267,7 +267,7 @@ export function SellerDashboardPage() {
           <MetricCard
             icon={<DollarSign size={18} />}
             label="Revenue"
-            value={`₹${metrics.revenue.value.toLocaleString()}`}
+            value={`৳${metrics.revenue.value.toLocaleString()}`}
             trend={metrics.revenue.trend}
             onClick={() => navigate({ to: '/seller/analytics' })}
           />
@@ -307,7 +307,7 @@ export function SellerDashboardPage() {
                     <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#94a3b8" />
                     <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" />
                     <Tooltip
-                      formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Revenue']}
+                      formatter={(value: number) => [`৳${value.toLocaleString()}`, 'Revenue']}
                     />
                     <Line
                       type="monotone"
@@ -403,7 +403,7 @@ export function SellerDashboardPage() {
                         <td className="py-3 font-medium text-slate-800">{order.id}</td>
                         <td>{order.buyer}</td>
                         <td>{order.items}</td>
-                        <td>₹{order.amount.toLocaleString()}</td>
+                        <td>৳{order.amount.toLocaleString()}</td>
                         <td>
                           <StatusBadge status={order.status} />
                         </td>

@@ -327,7 +327,7 @@ export function BulkImportModal({
                         <tr key={row.rowNumber}>
                           <td className="py-1 text-slate-800">{row.title}</td>
                           <td>{row.category}</td>
-                          <td>₹{row.price}</td>
+                          <td>৳{row.price}</td>
                           <td>{row.moq}</td>
                           <td>{row.stock}</td>
                         </tr>

@@ -153,7 +153,7 @@ export function SellerPayoutsPage() {
 
   const minimumError =
     withdrawAmount && Number(withdrawAmount) < 500
-      ? 'Minimum withdrawal amount is ₹500.'
+      ? 'Minimum withdrawal amount is ৳500.'
       : ''
 
   return (
@@ -240,7 +240,7 @@ export function SellerPayoutsPage() {
                     <tr key={payout.id}>
                       <td className="py-2 font-semibold text-slate-800">{payout.id}</td>
                       <td>{payout.requestedAt}</td>
-                      <td>₹{payout.amount.toLocaleString()}</td>
+                      <td>৳{payout.amount.toLocaleString()}</td>
                       <td>
                         <span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(payout.status)}`}>
                           {payout.status}
@@ -315,9 +315,9 @@ export function SellerPayoutsPage() {
                     <td>{tx.description}</td>
                     <td>{tx.reference}</td>
                     <td className={tx.type === 'credit' ? 'text-green-600' : 'text-red-500'}>
-                      {tx.type === 'credit' ? '+' : '-'}₹{tx.amount.toLocaleString()}
+                      {tx.type === 'credit' ? '+' : '-'}৳{tx.amount.toLocaleString()}
                     </td>
-                    <td>₹{tx.balanceAfter.toLocaleString()}</td>
+                    <td>৳{tx.balanceAfter.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -329,7 +329,7 @@ export function SellerPayoutsPage() {
               <h2 className="text-lg font-semibold text-slate-900">Commission Breakdown</h2>
               <p className="text-sm text-slate-500">Commission rate: 3% per order</p>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
-                Monthly commission: ₹12,800
+                Monthly commission: ৳12,800
               </div>
               <button className="text-sm text-orange-600">View commission policy</button>
             </div>
@@ -338,11 +338,11 @@ export function SellerPayoutsPage() {
               {escrowOrders.map((order) => (
                 <div key={order.id} className="flex items-center justify-between text-sm text-slate-600">
                   <span>{order.id}</span>
-                  <span>₹{order.amount.toLocaleString()}</span>
+                  <span>৳{order.amount.toLocaleString()}</span>
                   <span>{order.daysRemaining} days</span>
                 </div>
               ))}
-              <p className="text-xs text-slate-400">Total escrow: ₹{pendingBalance.toLocaleString()}</p>
+              <p className="text-xs text-slate-400">Total escrow: ৳{pendingBalance.toLocaleString()}</p>
             </div>
           </div>
         </section>
@@ -454,7 +454,7 @@ function BalanceCard({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
       <p className="text-sm text-slate-500">{title}</p>
-      <p className="text-2xl font-bold text-slate-900">₹{amount.toLocaleString()}</p>
+      <p className="text-2xl font-bold text-slate-900">৳{amount.toLocaleString()}</p>
       {subtext && <p className="text-xs text-slate-400">{subtext}</p>}
       {updated && <p className="text-xs text-slate-400">{updated}</p>}
       {actionLabel && onAction && (
@@ -478,7 +478,7 @@ function BalanceCard({
               {details.map((item) => (
                 <div key={item.id} className="flex items-center justify-between">
                   <span>{item.id}</span>
-                  <span>₹{item.amount.toLocaleString()}</span>
+                  <span>৳{item.amount.toLocaleString()}</span>
                   <span>{item.daysRemaining} days</span>
                 </div>
               ))}
@@ -526,7 +526,7 @@ function WithdrawModal({
         </div>
         <div className="mt-4 space-y-3 text-sm text-slate-600">
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-            Available balance: ₹{available.toLocaleString()}
+            Available balance: ৳{available.toLocaleString()}
           </div>
           <input
             value={amount}
@@ -548,7 +548,7 @@ function WithdrawModal({
           </select>
           <p className="text-xs text-slate-400">Expected transfer date: 3-5 business days</p>
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
-            Withdrawal fee: ₹{fee.toFixed(2)} · Net amount: ₹{netAmount.toFixed(2)}
+            Withdrawal fee: ৳{fee.toFixed(2)} · Net amount: ৳{netAmount.toFixed(2)}
           </div>
           <button
             className="w-full rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"

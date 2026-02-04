@@ -168,7 +168,7 @@ export function SellerAnalyticsPage() {
         <section className="grid md:grid-cols-2 xl:grid-cols-5 gap-4">
           <KpiCard
             title="Total Revenue (GMV)"
-            value={`₹${KPI_DATA.revenue.value.toLocaleString()}`}
+            value={`৳${KPI_DATA.revenue.value.toLocaleString()}`}
             change={KPI_DATA.revenue.change}
             spark={KPI_DATA.revenue.spark}
             compare={compare}
@@ -177,7 +177,7 @@ export function SellerAnalyticsPage() {
             title="Total Orders"
             value={`${KPI_DATA.orders.value}`}
             change={KPI_DATA.orders.change}
-            subtitle={`Avg order: ₹${KPI_DATA.orders.aov.toLocaleString()}`}
+            subtitle={`Avg order: ৳${KPI_DATA.orders.aov.toLocaleString()}`}
             compare={compare}
           />
           <KpiCard
@@ -323,7 +323,7 @@ export function SellerAnalyticsPage() {
                         </div>
                       </td>
                       <td>{product.units}</td>
-                      <td>₹{product.revenue.toLocaleString()}</td>
+                      <td>৳{product.revenue.toLocaleString()}</td>
                       <td>{product.rating}</td>
                       <td>
                         <span className={product.stock === 'Low' ? 'text-orange-600' : 'text-green-600'}>
@@ -343,7 +343,7 @@ export function SellerAnalyticsPage() {
               {GEO_DATA.map((city) => (
                 <div key={city.city} className="flex items-center justify-between text-sm text-slate-600">
                   <span>{city.city}</span>
-                  <span>{city.orders} orders · ₹{city.revenue.toLocaleString()}</span>
+                  <span>{city.orders} orders · ৳{city.revenue.toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -356,7 +356,7 @@ export function SellerAnalyticsPage() {
         <section className="grid lg:grid-cols-3 gap-6">
           <InfoCard title="Customer Analytics" items={[
             { label: 'New vs Returning', value: '62% / 38%' },
-            { label: 'Customer lifetime value', value: '₹48,200' },
+            { label: 'Customer lifetime value', value: '৳48,200' },
             { label: 'Top buyers', value: 'Shahjalal Traders, Metro Retail' },
           ]} />
           <InfoCard title="RFQ Analytics" items={RFQ_ANALYTICS} />

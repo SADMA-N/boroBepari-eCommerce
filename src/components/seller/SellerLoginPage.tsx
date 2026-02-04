@@ -218,7 +218,7 @@ export function SellerLoginPage() {
               </div>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 <StatCard value="10,000+" label="Active Sellers" />
-                <StatCard value="₹50 Crore+" label="Monthly GMV" />
+                <StatCard value="৳50 Crore+" label="Monthly GMV" />
                 <StatCard value="95%" label="On-time Settlement" />
               </div>
             </div>
