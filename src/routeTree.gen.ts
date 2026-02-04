@@ -59,6 +59,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminKycRouteImport } from './routes/admin/kyc'
 import { Route as AdminDisputesRouteImport } from './routes/admin/disputes'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminAuditLogsRouteImport } from './routes/admin/audit-logs'
 import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
 import { Route as SellerRfqsIndexRouteImport } from './routes/seller/rfqs/index'
 import { Route as SellerProductsIndexRouteImport } from './routes/seller/products/index'
@@ -351,6 +352,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const BuyerOrdersRouteRoute = BuyerOrdersRouteRouteImport.update({
   id: '/buyer/orders',
   path: '/buyer/orders',
@@ -571,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/kyc': typeof AdminKycRoute
@@ -659,6 +666,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/kyc': typeof AdminKycRoute
@@ -752,6 +760,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/kyc': typeof AdminKycRoute
@@ -846,6 +855,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/buyer/orders'
+    | '/admin/audit-logs'
     | '/admin/dashboard'
     | '/admin/disputes'
     | '/admin/kyc'
@@ -934,6 +944,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/admin/audit-logs'
     | '/admin/dashboard'
     | '/admin/disputes'
     | '/admin/kyc'
@@ -1026,6 +1037,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/buyer/orders'
+    | '/admin/audit-logs'
     | '/admin/dashboard'
     | '/admin/disputes'
     | '/admin/kyc'
@@ -1514,6 +1526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/audit-logs': {
+      id: '/admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/buyer/orders': {
       id: '/buyer/orders'
       path: '/buyer/orders'
@@ -1798,6 +1817,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminKycRoute: typeof AdminKycRoute
@@ -1810,6 +1830,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDisputesRoute: AdminDisputesRoute,
   AdminKycRoute: AdminKycRoute,
