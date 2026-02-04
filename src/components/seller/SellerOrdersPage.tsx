@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   ChevronDown,
@@ -380,8 +380,8 @@ export function SellerOrdersPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-600">
                   {paged.map((order) => (
-                    <>
-                  <tr key={order.id} className="hover:bg-slate-50">
+                    <Fragment key={order.id}>
+                  <tr className="hover:bg-slate-50">
                         <td className="py-3">
                           <input
                             type="checkbox"
@@ -429,7 +429,7 @@ export function SellerOrdersPage() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </tbody>
                 </table>

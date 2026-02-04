@@ -15,6 +15,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   Line,
   LineChart,
@@ -232,7 +233,7 @@ export function SellerAnalyticsPage() {
               </button>
             </div>
           </div>
-          <div className="h-72">
+          <div className="h-72 min-h-[288px] min-w-0">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -253,7 +254,7 @@ export function SellerAnalyticsPage() {
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
             <h2 className="text-lg font-semibold text-slate-900">Sales by Category</h2>
-            <div className="mt-4 h-64">
+            <div className="mt-4 h-64 min-h-[256px] min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={CATEGORY_DATA} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90}>
@@ -433,7 +434,7 @@ function KpiCard({
         <p className="text-xs text-slate-400">vs previous period</p>
       )}
       {spark && (
-        <div className="h-10">
+        <div className="h-10 min-h-[40px] min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={spark.map((point, index) => ({ index, value: point }))}>
               <Area type="monotone" dataKey="value" stroke="#f97316" fill="#fde7d0" />
