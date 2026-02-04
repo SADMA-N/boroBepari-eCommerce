@@ -11,7 +11,7 @@
  * - Server-side stock and price validation
  */
 
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import {
   AlertCircle,
   AlertTriangle,
@@ -37,12 +37,12 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCart } from '../contexts/CartContext'
 import { getSupplierById } from '../data/mock-products'
+import type { CartItem as CartItemType, CartValidation, SupplierBreakdown } from '@/types/cart'
 import { formatCurrency } from '@/lib/cart-utils'
 import { useCouponValidation } from '@/hooks/useCouponValidation'
-import type { CartItem as CartItemType, SupplierBreakdown, CartValidation } from '@/types/cart'
 import { validateCartServer } from '@/lib/cart-actions'
 import Toast from '@/components/Toast'
 
@@ -97,7 +97,7 @@ function ServerValidationBanner({ changes, onDismiss }: ServerValidationBannerPr
 
 interface MoqWarningBannerProps {
   validation: CartValidation
-  items: CartItemType[]
+  items: Array<CartItemType>
   onFixAll: () => void
   onRemoveItem: (itemId: string) => void
 }
@@ -118,7 +118,7 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
 
   // Group by supplier
   const groupedBySupplier = useMemo(() => {
-    const groups: Record<number, { supplier: ReturnType<typeof getSupplierById>; items: typeof violatingItems }> = {}
+    const groups: Partial<Record<number, { supplier: ReturnType<typeof getSupplierById>; items: typeof violatingItems }>> = {}
 
     violatingItems.forEach((v) => {
       const supplierId = v.item.supplierId
@@ -1050,7 +1050,7 @@ function CartPage() {
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
   const [reorderHighlight, setReorderHighlight] = useState<{
     orderLabel: string
-    productIds: number[]
+    productIds: Array<number>
     addedCount: number
   } | null>(null)
   const router = useRouter()

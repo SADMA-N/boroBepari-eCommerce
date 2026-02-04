@@ -10,10 +10,10 @@ import {
   UploadCloud,
   XCircle,
 } from 'lucide-react'
+import type { KycStatus } from '@/types/seller'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { submitSellerKyc } from '@/lib/seller-kyc-server'
-import type { KycStatus } from '@/types/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 type UploadKey =
@@ -67,7 +67,7 @@ export function SellerKYCPage() {
     bankProof: null,
   })
   const [description, setDescription] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<Array<string>>([])
   const [inventoryRange, setInventoryRange] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -77,7 +77,7 @@ export function SellerKYCPage() {
 
   const rejectionReason = useMemo(() => {
     if (seller?.kycRejectionReason) return seller.kycRejectionReason
-    if (search && typeof search.reason === 'string') return search.reason
+    if (typeof search.reason === 'string') return search.reason
     return 'Missing or unclear documents'
   }, [search, seller?.kycRejectionReason])
 
@@ -143,12 +143,12 @@ export function SellerKYCPage() {
 
   const handleDrop = (key: UploadKey, event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
-    const file = event.dataTransfer.files?.[0]
+    const file = event.dataTransfer.files.item(0)
     if (file) void updateUpload(key, file)
   }
 
   const handleBrowse = (key: UploadKey, files: FileList | null) => {
-    const file = files?.[0]
+    const file = files?.item(0)
     if (file) void updateUpload(key, file)
   }
 
@@ -681,7 +681,7 @@ async function buildSubmissionPayload(
   token: string,
   uploads: Record<UploadKey, UploadItem | null>,
   description: string,
-  categories: string[],
+  categories: Array<string>,
   inventoryRange: string,
 ) {
   const tradeLicense = uploads.tradeLicense?.file

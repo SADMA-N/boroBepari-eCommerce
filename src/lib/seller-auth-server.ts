@@ -1,9 +1,9 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import type { SellerUser } from '@/types/seller'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
-import type { SellerUser } from '@/types/seller'
 
 // Simple JWT-like token generation and verification
 // In production, use a proper JWT library like jose

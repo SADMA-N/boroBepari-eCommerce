@@ -1,4 +1,4 @@
-import { MapPin, Pencil, Trash2, CheckCircle, Store, Home, Building2 } from 'lucide-react'
+import { Building2, CheckCircle, Home, MapPin, Pencil, Store, Trash2 } from 'lucide-react'
 import type { Address } from '@/db/schema'
 
 interface AddressCardProps {

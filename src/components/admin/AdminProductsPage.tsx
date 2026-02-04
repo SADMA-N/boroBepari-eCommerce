@@ -1,31 +1,31 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Search,
-  MoreVertical,
-  Download,
-  ChevronDown,
-  Filter,
   AlertTriangle,
-  CheckCircle,
   Ban,
-  Trash2,
-  Eye,
+  CheckCircle,
+  ChevronDown,
+  Download,
   Edit3,
-  Flag,
+  Eye,
   FileText,
+  Filter,
+  Flag,
   Image,
-  X,
-  Tag,
   Layers,
+  MoreVertical,
+  Search,
+  Tag,
+  Trash2,
+  X,
 } from 'lucide-react'
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -57,13 +57,13 @@ type Product = {
   orders: number
   flags: number
   addedAt: string
-  images: string[]
+  images: Array<string>
   description: string
-  specs: string[]
+  specs: Array<string>
   tieredPricing: Array<{ min: number; price: number }>
   stockHistory: Array<{ date: string; stock: number }>
   priceHistory: Array<{ date: string; price: number }>
-  reports: ProductReport[]
+  reports: Array<ProductReport>
   analytics: {
     views: number
     wishlists: number
@@ -84,7 +84,7 @@ const CATEGORIES = [
   'Construction Materials',
 ]
 
-const PRODUCTS: Product[] = [
+const PRODUCTS: Array<Product> = [
   {
     id: 'PRD-1001',
     name: 'Cotton Bedsheets (Set of 6)',
@@ -336,7 +336,7 @@ export function AdminProductsPage() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [sortBy, setSortBy] = useState<SortKey>('date')
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [selectedIds, setSelectedIds] = useState<Array<string>>([])
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [detailProduct, setDetailProduct] = useState<Product | null>(null)
   const [detailTab, setDetailTab] = useState<DetailTab>('info')
@@ -922,7 +922,7 @@ export function AdminProductsPage() {
             </div>
             <div className="border-b border-slate-200 px-6">
               <div className="flex flex-wrap gap-6 text-sm">
-                {(['info', 'pricing', 'reports', 'analytics'] as DetailTab[]).map((tab) => (
+                {(['info', 'pricing', 'reports', 'analytics'] as Array<DetailTab>).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}

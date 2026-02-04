@@ -32,7 +32,7 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
     validators: {
       onChange: guestAddressSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       onSubmit(value)
     },
   })

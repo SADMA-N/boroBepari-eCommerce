@@ -23,14 +23,14 @@ interface StoredCoupon extends CouponCode {
   /** Current usage count */
   usedCount: number
   /** User IDs that have already used this coupon (for single-use) */
-  usedByUsers: string[]
+  usedByUsers: Array<string>
   /** Whether the coupon is active */
   isActive: boolean
   /** Description for display */
   description: string
 }
 
-const COUPON_DATABASE: Record<string, StoredCoupon> = {
+const COUPON_DATABASE: Partial<Record<string, StoredCoupon>> = {
   WELCOME10: {
     code: 'WELCOME10',
     discountType: 'percentage',

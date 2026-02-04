@@ -1,5 +1,5 @@
-import { createFileRoute, notFound, Link, useRouter } from '@tanstack/react-router'
-import { useState, useMemo } from 'react'
+import { Link, createFileRoute, notFound, useRouter } from '@tanstack/react-router'
+import { useMemo, useState } from 'react'
 import { 
   AlertTriangle, 
   ArrowLeft,
@@ -18,10 +18,11 @@ import {
   ThumbsUp,
   XCircle
 } from 'lucide-react'
-import { format, differenceInDays } from 'date-fns'
-import { mockRfqs, MockRfq, MockQuote } from '@/data/mock-rfqs'
+import { differenceInDays, format } from 'date-fns'
+import type { MockQuote } from '@/data/mock-rfqs';
+import { MockRfq, mockRfqs } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
-import { AcceptQuoteModal, RejectQuoteModal, CounterOfferModal } from '@/components/QuoteActionModals'
+import { AcceptQuoteModal, CounterOfferModal, RejectQuoteModal } from '@/components/QuoteActionModals'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
 
@@ -67,7 +68,7 @@ function RFQDetailPage() {
   }
 
   const sortedQuotes = useMemo(() => {
-    const quotes = [...(rfq.quotes || [])]
+    const quotes = [...rfq.quotes]
     return quotes.sort((a, b) => {
       if (sortOption === 'price-asc') return Number(a.unitPrice) - Number(b.unitPrice)
       if (sortOption === 'price-desc') return Number(b.unitPrice) - Number(a.unitPrice)
@@ -96,7 +97,7 @@ function RFQDetailPage() {
     // Update local state
     const updatedQuotes = rfq.quotes.map(q => 
       q.id === selectedQuote.id ? { ...q, status: 'accepted' } : { ...q, status: 'rejected' } // Auto reject others? Usually yes or keep pending. Let's keep pending for now or reject.
-    ) as MockQuote[]
+    ) as Array<MockQuote>
 
     setRfq(prev => ({
       ...prev,
@@ -116,7 +117,7 @@ function RFQDetailPage() {
 
     const updatedQuotes = rfq.quotes.map(q => 
       q.id === selectedQuote.id ? { ...q, status: 'rejected' } : q
-    ) as MockQuote[]
+    )
 
     setRfq(prev => ({ ...prev, quotes: updatedQuotes }))
     setToast({ message: 'Quote rejected.', isVisible: true })
@@ -132,7 +133,7 @@ function RFQDetailPage() {
     // In real app, this might create a new quote entry or update status
     const updatedQuotes = rfq.quotes.map(q => 
       q.id === selectedQuote.id ? { ...q, status: 'countered' } : q
-    ) as MockQuote[]
+    )
 
     setRfq(prev => ({ ...prev, quotes: updatedQuotes }))
     setToast({ message: 'Counter offer sent successfully!', isVisible: true })

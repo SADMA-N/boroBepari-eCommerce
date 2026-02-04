@@ -74,8 +74,8 @@ export function BulkImportModal({
 }) {
   const { pushToast } = useSellerToast()
   const [fileError, setFileError] = useState('')
-  const [rows, setRows] = useState<ImportRow[]>([])
-  const [errors, setErrors] = useState<ValidationError[]>([])
+  const [rows, setRows] = useState<Array<ImportRow>>([])
+  const [errors, setErrors] = useState<Array<ValidationError>>([])
   const [state, setState] = useState<ImportState>('idle')
   const [showAllValid, setShowAllValid] = useState(false)
   const [uploadImagesSeparately, setUploadImagesSeparately] = useState(false)
@@ -232,7 +232,7 @@ export function BulkImportModal({
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => {
                 event.preventDefault()
-                void handleFile(event.dataTransfer.files?.[0] || null)
+                void handleFile(event.dataTransfer.files.item(0) || null)
               }}
             >
               <UploadCloud className="mx-auto text-slate-400" size={28} />
@@ -244,7 +244,7 @@ export function BulkImportModal({
                     type="file"
                     className="hidden"
                     accept=".csv,.xlsx,.xls"
-                    onChange={(event) => void handleFile(event.target.files?.[0] || null)}
+                    onChange={(event) => void handleFile(event.target.files?.item(0) || null)}
                   />
                 </label>
               </p>
@@ -463,7 +463,7 @@ async function parseExcel(file: File) {
   const data = await file.arrayBuffer()
   const workbook = read(data)
   const sheet = workbook.Sheets[workbook.SheetNames[0]]
-  const rows = utils.sheet_to_json<string[]>(sheet, { header: 1 })
+  const rows = utils.sheet_to_json<Array<string>>(sheet, { header: 1 })
   const [headerRow, ...dataRows] = rows
   return dataRows.map((row, index) => {
     const record: Record<string, string> = {}
@@ -475,7 +475,7 @@ async function parseExcel(file: File) {
 }
 
 function parseCsvLine(line: string) {
-  const result: string[] = []
+  const result: Array<string> = []
   let current = ''
   let inQuotes = false
   for (let i = 0; i < line.length; i += 1) {
@@ -524,11 +524,11 @@ function toImportRow(record: Record<string, string>, rowNumber: number): ImportR
   }
 }
 
-function validateRows(rows: ImportRow[], uploadImagesSeparately: boolean) {
-  const errors: ValidationError[] = []
+function validateRows(rows: Array<ImportRow>, uploadImagesSeparately: boolean) {
+  const errors: Array<ValidationError> = []
   const skuSet = new Set<string>()
   const formattedRows = rows.map((row) => {
-    const rowErrors: ValidationError[] = []
+    const rowErrors: Array<ValidationError> = []
     REQUIRED_FIELDS.forEach((field) => {
       if (!row[field as keyof ImportRow]) {
         rowErrors.push({

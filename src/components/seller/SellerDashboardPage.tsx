@@ -13,16 +13,16 @@ import {
   Sparkles,
 } from 'lucide-react'
 import {
-  ResponsiveContainer,
-  LineChart,
+  CartesianGrid,
+  Cell,
   Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts'
 import { SellerProtectedRoute } from '@/components/seller'
 

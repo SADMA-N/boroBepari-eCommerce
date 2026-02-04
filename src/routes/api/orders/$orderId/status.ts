@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { orders, user } from '@/db/schema'
-import { eq } from 'drizzle-orm'
 import { sendCancellationEmail } from '@/lib/email'
-import { sendOrderStatusEmail, sendSmsNotification, sendPushNotification } from '@/lib/notifications'
+import { sendOrderStatusEmail, sendPushNotification, sendSmsNotification } from '@/lib/notifications'
 import { auth } from '@/lib/auth'
 
 export const Route = createFileRoute('/api/orders/$orderId/status')({
@@ -144,9 +144,9 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
 
           return new Response(
             JSON.stringify({
-              status: updatedOrder?.status ?? 'cancelled',
-              cancellationReason: updatedOrder?.cancellationReason ?? cancellationReason,
-              cancelledAt: updatedOrder?.cancelledAt ?? new Date(),
+              status: updatedOrder.status,
+              cancellationReason: updatedOrder.cancellationReason,
+              cancelledAt: updatedOrder.cancelledAt,
               refundSummary,
             }),
             { headers: { 'Content-Type': 'application/json' } },
@@ -196,8 +196,8 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
 
         return new Response(
           JSON.stringify({
-            status: updatedOrder?.status ?? nextStatus,
-            updatedAt: updatedOrder?.updatedAt ?? new Date(),
+            status: updatedOrder.status,
+            updatedAt: updatedOrder.updatedAt,
           }),
           { headers: { 'Content-Type': 'application/json' } },
         )
@@ -207,8 +207,8 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
 })
 
 function buildRefundSummary(order: typeof orders.$inferSelect) {
-  const total = Number(order.totalAmount ?? 0)
-  const deposit = Number(order.depositAmount ?? 0)
+  const total = Number(order.totalAmount)
+  const deposit = Number(order.depositAmount)
   const paymentStatus = order.paymentStatus
 
   if (paymentStatus === 'escrow_hold') {

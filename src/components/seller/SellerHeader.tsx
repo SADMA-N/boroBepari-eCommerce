@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Menu, Bell, ChevronDown, User, Settings, LogOut } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, Menu, Settings, User } from 'lucide-react'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
 
 interface SellerHeaderProps {

@@ -37,7 +37,7 @@ type Transaction = {
   balanceAfter: number
 }
 
-const bankAccounts: BankAccount[] = [
+const bankAccounts: Array<BankAccount> = [
   {
     id: 'bank-1',
     bankName: 'BRAC Bank',
@@ -54,7 +54,7 @@ const bankAccounts: BankAccount[] = [
   },
 ]
 
-const payouts: Payout[] = [
+const payouts: Array<Payout> = [
   {
     id: 'PO-2041',
     requestedAt: 'Feb 1, 2026',
@@ -81,7 +81,7 @@ const payouts: Payout[] = [
   },
 ]
 
-const transactions: Transaction[] = [
+const transactions: Array<Transaction> = [
   {
     date: 'Feb 3, 2026',
     description: 'Order Payment Received',
@@ -448,7 +448,7 @@ function BalanceCard({
   updated?: string
   subtext?: string
   expandable?: boolean
-  details?: { id: string; amount: number; releaseDate: string; daysRemaining: number }[]
+  details?: Array<{ id: string; amount: number; releaseDate: string; daysRemaining: number }>
 }) {
   const [expanded, setExpanded] = useState(false)
   return (
@@ -498,7 +498,7 @@ function WithdrawModal({
   netAmount,
   selectedBank,
   onBankChange,
-  bankAccounts,
+  bankAccounts: bankAccountList,
   minimumError,
   onClose,
   onConfirm,
@@ -510,7 +510,7 @@ function WithdrawModal({
   netAmount: number
   selectedBank: string
   onBankChange: (value: string) => void
-  bankAccounts: BankAccount[]
+  bankAccounts: Array<BankAccount>
   minimumError: string
   onClose: () => void
   onConfirm: () => void
@@ -540,7 +540,7 @@ function WithdrawModal({
             onChange={(event) => onBankChange(event.target.value)}
             className="w-full rounded-lg border border-slate-200 px-3 py-2"
           >
-            {bankAccounts.map((account) => (
+            {bankAccountList.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.bankName} · {account.accountNumber}
               </option>

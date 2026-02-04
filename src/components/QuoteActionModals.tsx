@@ -1,6 +1,6 @@
-import { formatBDT } from '@/data/mock-products'
-import { CheckCircle, AlertTriangle, X, Loader2, DollarSign } from 'lucide-react'
+import { AlertTriangle, CheckCircle, DollarSign, Loader2, X } from 'lucide-react'
 import { useState } from 'react'
+import { formatBDT } from '@/data/mock-products'
 
 interface BaseModalProps {
   isOpen: boolean

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { and, eq, inArray } from 'drizzle-orm'
 import { db } from '@/db'
 import { products, stockAlerts } from '@/db/schema'
-import { and, eq, inArray } from 'drizzle-orm'
 import { sendStockAlertEmail } from '@/lib/email'
 import { sendSmsNotification } from '@/lib/notifications'
 
@@ -37,7 +37,7 @@ export const Route = createFileRoute('/api/stock-alerts/trigger')({
           },
         })
 
-        const notifiedIds: number[] = []
+        const notifiedIds: Array<number> = []
         for (const alert of alerts) {
           await sendStockAlertEmail({
             email: alert.email,

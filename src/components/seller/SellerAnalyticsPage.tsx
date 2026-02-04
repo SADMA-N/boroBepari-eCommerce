@@ -412,7 +412,7 @@ function KpiCard({
   value: string
   change?: number
   subtitle?: string
-  spark?: number[]
+  spark?: Array<number>
   compare?: boolean
 }) {
   const trendUp = change !== undefined && change >= 0
@@ -435,7 +435,7 @@ function KpiCard({
       {spark && (
         <div className="h-10">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={spark.map((value, index) => ({ index, value }))}>
+            <AreaChart data={spark.map((point, index) => ({ index, value: point }))}>
               <Area type="monotone" dataKey="value" stroke="#f97316" fill="#fde7d0" />
             </AreaChart>
           </ResponsiveContainer>
@@ -445,7 +445,7 @@ function KpiCard({
   )
 }
 
-function InfoCard({ title, items }: { title: string; items: { label: string; value: string }[] }) {
+function InfoCard({ title, items }: { title: string; items: Array<{ label: string; value: string }> }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
       <h3 className="text-lg font-semibold text-slate-900">{title}</h3>

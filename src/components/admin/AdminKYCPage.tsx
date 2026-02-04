@@ -1,25 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Search,
-  Clock,
   AlertTriangle,
-  FileCheck,
-  FileX2,
-  ShieldCheck,
-  ChevronDown,
-  UserPlus,
-  Download,
-  X,
-  Image,
-  RotateCw,
-  ZoomIn,
-  ZoomOut,
   ArrowLeft,
   ArrowRight,
-  CheckCircle,
   Ban,
+  CheckCircle,
+  ChevronDown,
+  Clock,
+  Download,
+  FileCheck,
+  FileX2,
+  Image,
   MessageSquare,
+  RotateCw,
+  Search,
+  ShieldCheck,
   User,
+  UserPlus,
+  X,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -47,7 +47,7 @@ type KycSubmission = {
   auditTrail: Array<{ id: string; actor: string; action: string; time: string; notes?: string }>
 }
 
-const MOCK_KYC: KycSubmission[] = [
+const MOCK_KYC: Array<KycSubmission> = [
   {
     id: 'KYC-1001',
     businessName: 'Chittagong Electronics',
@@ -200,16 +200,16 @@ export function AdminKYCPage() {
   const [priorityFilter, setPriorityFilter] = useState<Priority | 'all'>('all')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [selectedIds, setSelectedIds] = useState<Array<string>>([])
   const [reviewItem, setReviewItem] = useState<KycSubmission | null>(null)
   const [docIndex, setDocIndex] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [rotation, setRotation] = useState(0)
-  const [checklist, setChecklist] = useState<string[]>([])
+  const [checklist, setChecklist] = useState<Array<string>>([])
   const [internalNotes, setInternalNotes] = useState('')
   const [approveOpen, setApproveOpen] = useState(false)
   const [rejectOpen, setRejectOpen] = useState(false)
-  const [rejectReasons, setRejectReasons] = useState<string[]>([])
+  const [rejectReasons, setRejectReasons] = useState<Array<string>>([])
   const [rejectOther, setRejectOther] = useState('')
   const [rejectFeedback, setRejectFeedback] = useState('')
   const [requestInfoOpen, setRequestInfoOpen] = useState(false)
@@ -283,8 +283,9 @@ export function AdminKYCPage() {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
   }
 
-  const activeDocs = reviewItem?.documents || []
-  const currentDoc = activeDocs[docIndex]
+  const activeDocs = reviewItem ? reviewItem.documents : []
+  const currentDoc =
+    activeDocs.length > 0 ? activeDocs[Math.min(docIndex, activeDocs.length - 1)] : null
 
   return (
     <AdminProtectedRoute requiredPermissions={['kyc.review']}>
@@ -544,7 +545,7 @@ export function AdminKYCPage() {
                 </div>
                 <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900 p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{currentDoc?.label}</p>
+                    <p className="text-sm font-medium">{currentDoc ? currentDoc.label : 'Document'}</p>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setZoom((prev) => Math.min(prev + 0.1, 2))}

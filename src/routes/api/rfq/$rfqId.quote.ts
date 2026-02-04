@@ -4,7 +4,7 @@ import { createQuoteSchema } from '@/lib/rfq-validation'
 export const Route = createFileRoute('/api/rfq/$rfqId/quote')({
   server: {
     handlers: {
-      POST: async ({ request, params }) => {
+      POST: ({ request, params }) => {
         const { rfqId } = params
         // TODO: Parse body using createQuoteSchema
         // TODO: Validate RFQ exists and is open

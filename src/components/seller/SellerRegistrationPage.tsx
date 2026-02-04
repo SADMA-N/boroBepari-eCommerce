@@ -185,7 +185,7 @@ export function SellerRegistrationPage() {
     if (step === 3) setStep(2)
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validateStep3()) return
     setIsSubmitting(true)
     setTimeout(() => {
@@ -581,7 +581,7 @@ function SelectField({
   onChange: (value: string) => void
   required?: boolean
   error?: string
-  options: string[]
+  options: Array<string>
 }) {
   return (
     <div>

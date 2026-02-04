@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
-import { ArrowLeft, Loader2, Phone, Lock } from 'lucide-react'
+import { ArrowLeft, Loader2, Lock, Phone } from 'lucide-react'
 import { z } from 'zod'
 
 export const Route = createFileRoute('/mock-payment/bkash')({

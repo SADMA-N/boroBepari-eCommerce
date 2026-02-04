@@ -1,8 +1,8 @@
 import { useForm } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
-import { Loader2, MapPin, X, Home, Briefcase, Warehouse } from 'lucide-react'
+import { Briefcase, Home, Loader2, MapPin, Warehouse, X } from 'lucide-react'
 import { z } from 'zod'
-import { type NewAddress } from '@/db/schema'
+import type {NewAddress} from '@/db/schema';
 
 // Schema
 const addressSchema = z.object({

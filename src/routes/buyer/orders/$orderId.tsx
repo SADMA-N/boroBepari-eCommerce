@@ -1,33 +1,34 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import {
-  Package,
-  Truck,
-  Download,
-  XCircle,
-  HelpCircle,
-  ChevronRight,
-  Calendar,
-  MapPin,
-  Phone,
-  CreditCard,
-  CheckCircle,
   AlertCircle,
-  BadgeCheck,
-  MessageSquare,
-  Star,
-  ArrowLeft,
-  Copy,
-  FileText,
-  Loader2,
-  Home,
-  RefreshCw,
   AlertTriangle,
+  ArrowLeft,
+  BadgeCheck,
+  Calendar,
+  CheckCircle,
+  ChevronRight,
+  Copy,
+  CreditCard,
+  Download,
   ExternalLink,
+  FileText,
+  HelpCircle,
+  Home,
+  Loader2,
+  MapPin,
+  MessageSquare,
+  Package,
+  Phone,
+  RefreshCw,
+  Star,
+  Truck,
+  XCircle,
 } from 'lucide-react'
-import { format, addDays, addHours } from 'date-fns'
+import { addDays, addHours, format } from 'date-fns'
 import { jsPDF } from 'jspdf'
+import type { ReactNode } from 'react'
+import type { NotificationPreferences } from '@/contexts/NotificationContext'
 import {
   formatBDT,
   getProductById,
@@ -39,7 +40,6 @@ import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
 import OrderStatusTimeline from '@/components/OrderStatusTimeline'
 import { useNotifications } from '@/contexts/NotificationContext'
-import type { NotificationPreferences } from '@/contexts/NotificationContext'
 
 export const Route = createFileRoute('/buyer/orders/$orderId')({
   component: OrderDetailPage,
@@ -106,13 +106,13 @@ function OrderDetailPage() {
   const { addNotification, preferences } = useNotifications()
   const [toast, setToast] = useState({ message: '', isVisible: false })
   const [isReordering, setIsReordering] = useState(false)
-  const [reorderItems, setReorderItems] = useState<ReorderItem[]>([])
-  const [supplierGroups, setSupplierGroups] = useState<SupplierGroup[]>([])
+  const [reorderItems, setReorderItems] = useState<Array<ReorderItem>>([])
+  const [supplierGroups, setSupplierGroups] = useState<Array<SupplierGroup>>([])
   const [supplierSelection, setSupplierSelection] = useState<Record<string, boolean>>({})
-  const [priceChangeItems, setPriceChangeItems] = useState<ReorderItem[]>([])
-  const [unavailableItems, setUnavailableItems] = useState<ReorderItem[]>([])
-  const [availableItems, setAvailableItems] = useState<ReorderItem[]>([])
-  const [alternativeProducts, setAlternativeProducts] = useState<ReorderItem[]>([])
+  const [priceChangeItems, setPriceChangeItems] = useState<Array<ReorderItem>>([])
+  const [unavailableItems, setUnavailableItems] = useState<Array<ReorderItem>>([])
+  const [availableItems, setAvailableItems] = useState<Array<ReorderItem>>([])
+  const [alternativeProducts, setAlternativeProducts] = useState<Array<ReorderItem>>([])
   const [reorderModal, setReorderModal] = useState<
     'supplier' | 'price' | 'unavailable' | 'alternatives' | null
   >(null)
@@ -214,8 +214,7 @@ function OrderDetailPage() {
   const isShipped = ['shipped', 'out_for_delivery'].includes(statusState)
   const canCancel = ['placed', 'confirmed'].includes(statusState)
   const isCancelled = statusState === 'cancelled'
-  const estimatedDelivery =
-    trackingInfo?.expectedDelivery ?? addDays(createdAt, 7)
+  const estimatedDelivery = trackingInfo.expectedDelivery
 
   const handleCopyOrderId = () => {
     navigator.clipboard.writeText(order.id.toString().padStart(6, '0'))
@@ -251,7 +250,7 @@ function OrderDetailPage() {
     evaluateReorderSelection(items)
   }
 
-  const evaluateReorderSelection = (items: ReorderItem[]) => {
+  const evaluateReorderSelection = (items: Array<ReorderItem>) => {
     const available = items.filter((item) => item.available)
     const unavailable = items.filter((item) => !item.available)
     const priceChanges = available.filter((item) => item.priceChanged)
@@ -273,15 +272,15 @@ function OrderDetailPage() {
     void addItemsToCart(available)
   }
 
-  const addItemsToCart = async (items: ReorderItem[]) => {
+  const addItemsToCart = (items: Array<ReorderItem>) => {
     if (items.length === 0) {
       setToast({ message: 'No available items to add.', isVisible: true })
       return
     }
 
     setIsReordering(true)
-    const addedProductIds: number[] = []
-    const failedItems: ReorderItem[] = []
+    const addedProductIds: Array<number> = []
+    const failedItems: Array<ReorderItem> = []
 
     items.forEach((item) => {
       const result = addItem({
@@ -437,8 +436,8 @@ function OrderDetailPage() {
     }
   }
 
-  const status = statusConfig[statusState] || statusConfig.pending
-  const paymentStatus = paymentStatusConfig[order.paymentStatus] || paymentStatusConfig.pending
+  const status = statusConfig[statusState]
+  const paymentStatus = paymentStatusConfig[order.paymentStatus]
   const showOutForDelivery = Boolean(
     (order as any).outForDeliveryEligible ??
     ['out_for_delivery', 'delivered'].includes(statusState),
@@ -494,9 +493,9 @@ function OrderDetailPage() {
       setTrackingInfo(nextTracking)
     } catch (error) {
       console.error('Failed to refresh order status:', error)
-      setStatusState((prev) => ensureForwardStatus(prev, fallbackStatus ?? prev))
-      setStageTimestamps((prev) => prev ?? mockTimestamps)
-      setTrackingInfo((prev) => prev ?? fallbackTracking)
+      setStatusState((prev) => ensureForwardStatus(prev, fallbackStatus))
+      setStageTimestamps(() => mockTimestamps)
+      setTrackingInfo(() => fallbackTracking)
       setStatusUpdatedAt(new Date())
     }
   }, [
@@ -511,7 +510,7 @@ function OrderDetailPage() {
     if (!statusState) return
     if (previousStatusRef.current && previousStatusRef.current !== statusState) {
       const payload = buildOrderStatusNotification(order, statusState, trackingInfo)
-      if (payload && shouldNotifyStatus(statusState, preferences)) {
+      if (shouldNotifyStatus(statusState, preferences)) {
         addNotification(payload)
       }
     }
@@ -1250,7 +1249,7 @@ function OrderDetailPage() {
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg md:hidden">
           <button
             onClick={() => {
-              if (trackingInfo?.trackingUrl) {
+              if (trackingInfo.trackingUrl) {
                 window.open(trackingInfo.trackingUrl, '_blank', 'noopener,noreferrer')
               } else {
                 setToast({ message: 'Tracking details are not available yet.', isVisible: true })
@@ -1418,7 +1417,7 @@ function buildOrderStatusNotification(order: any, status: string, trackingInfo?:
   return base
 }
 
-function buildReorderItems(order: any): ReorderItem[] {
+function buildReorderItems(order: any): Array<ReorderItem> {
   return order.items.map((item: any, index: number) => {
     const fallbackProduct = item.product || {}
     const productId = item.productId ?? fallbackProduct.id ?? index
@@ -1459,7 +1458,7 @@ function buildReorderItems(order: any): ReorderItem[] {
   })
 }
 
-function buildSupplierGroups(items: ReorderItem[]): SupplierGroup[] {
+function buildSupplierGroups(items: Array<ReorderItem>): Array<SupplierGroup> {
   const grouped = new Map<string, SupplierGroup>()
   items.forEach((item) => {
     const key = itemSupplierKey(item)
@@ -1478,8 +1477,8 @@ function buildSupplierGroups(items: ReorderItem[]): SupplierGroup[] {
   return Array.from(grouped.values())
 }
 
-function buildAlternatives(unavailable: ReorderItem[]) {
-  const suggestions: ReorderItem[] = []
+function buildAlternatives(unavailable: Array<ReorderItem>) {
+  const suggestions: Array<ReorderItem> = []
   const seen = new Set<number>()
 
   unavailable.forEach((item) => {
@@ -1506,7 +1505,7 @@ function buildAlternatives(unavailable: ReorderItem[]) {
         inStock: product.stock >= item.quantity,
         supplierActive: true,
         available: product.stock >= item.quantity,
-        image: product.images?.[0],
+        image: product.images[0],
       })
     })
   })
@@ -1519,7 +1518,7 @@ function formatOrderLabel(order: any) {
   return `BO-${year}-${order.id.toString().padStart(4, '0')}`
 }
 
-function persistReorderHighlight(orderLabel: string, productIds: number[]) {
+function persistReorderHighlight(orderLabel: string, productIds: Array<number>) {
   try {
     sessionStorage.setItem(
       REORDER_HIGHLIGHT_STORAGE_KEY,
@@ -1535,7 +1534,7 @@ function persistReorderHighlight(orderLabel: string, productIds: number[]) {
   }
 }
 
-function trackReorderAnalytics(orderLabel: string, productIds: number[]) {
+function trackReorderAnalytics(orderLabel: string, productIds: Array<number>) {
   try {
     const stored = localStorage.getItem(REORDER_ANALYTICS_STORAGE_KEY)
     const payload = stored ? JSON.parse(stored) : { events: [], productCounts: {}, hourlyCounts: {} }
@@ -1579,7 +1578,7 @@ type InvoiceMeta = {
   companyAddress: string
   companyContact: string
   taxId: string
-  items: InvoiceItem[]
+  items: Array<InvoiceItem>
   subtotal: number
   deliveryFee: number
   discount: number
@@ -1837,7 +1836,7 @@ function getMockStatusByNow(
   filtered.forEach((stage) => {
     const stageTime = timestamps[stage]
     if (stageTime && new Date(stageTime) <= now) {
-      current = stage as StageKey
+      current = stage
     }
   })
   return current

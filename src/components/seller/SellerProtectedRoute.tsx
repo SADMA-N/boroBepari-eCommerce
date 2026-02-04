@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { useNavigate, useLocation } from '@tanstack/react-router'
-import { useSellerAuth } from '@/contexts/SellerAuthContext'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { SellerLayout } from './SellerLayout'
+import { useSellerAuth } from '@/contexts/SellerAuthContext'
 
 interface SellerProtectedRouteProps {
   children: React.ReactNode

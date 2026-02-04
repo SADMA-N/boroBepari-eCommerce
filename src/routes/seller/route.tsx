@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { SellerAuthProvider } from '@/contexts/SellerAuthContext'
 import { SellerToastProvider } from '@/components/seller/SellerToastProvider'
 

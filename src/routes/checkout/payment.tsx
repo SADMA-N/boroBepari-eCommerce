@@ -1,7 +1,8 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { ArrowLeft, ArrowRight, CreditCard, Banknote, Percent, Info, AlertTriangle, ShieldCheck } from 'lucide-react'
-import { useCheckout, type PaymentMethod } from '@/contexts/CheckoutContext'
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { AlertTriangle, ArrowLeft, ArrowRight, Banknote, CreditCard, Info, Percent, ShieldCheck } from 'lucide-react'
+import type {PaymentMethod} from '@/contexts/CheckoutContext';
+import {  useCheckout } from '@/contexts/CheckoutContext'
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { CheckoutLayout } from '@/components/checkout/CheckoutLayout'
@@ -33,7 +34,7 @@ function PaymentPage() {
   const isVerified = isAuthenticated // && user?.emailVerified // Assuming basic auth is enough for now, or strict check
   // For demo, let's say all logged in users can see it but disable if not specific check
   // The requirement says "Disable if buyer not verified". I'll use a mock check.
-  const isBusinessVerified = true // Mock: user?.isVerified
+  const isBusinessVerified = isVerified
 
   useEffect(() => {
     setIsPaymentVerified(isBusinessVerified)

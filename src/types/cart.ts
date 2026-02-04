@@ -48,7 +48,7 @@ export interface SupplierBreakdown {
   /** Supplier name for display */
   supplierName: string
   /** Items from this supplier */
-  items: CartItem[]
+  items: Array<CartItem>
   /** Subtotal for this supplier's items */
   subtotal: number
   /** Estimated delivery fee for this supplier */
@@ -74,9 +74,9 @@ export interface CouponCode {
   /** Optional: Maximum discount amount for percentage coupons */
   maxDiscount?: number
   /** Optional: Specific product IDs this coupon applies to */
-  applicableProductIds?: number[]
+  applicableProductIds?: Array<number>
   /** Optional: Specific supplier IDs this coupon applies to */
-  applicableSupplierIds?: number[]
+  applicableSupplierIds?: Array<number>
 }
 
 /**
@@ -84,7 +84,7 @@ export interface CouponCode {
  */
 export interface Cart {
   /** Array of cart items */
-  items: CartItem[]
+  items: Array<CartItem>
   /** Subtotal before discounts and delivery (sum of all line totals) */
   subtotal: number
   /** Total delivery fee (sum of all supplier delivery fees) */
@@ -94,7 +94,7 @@ export interface Cart {
   /** Final total (subtotal + deliveryFee - discount) */
   total: number
   /** Breakdown of items by supplier */
-  supplierBreakdown: SupplierBreakdown[]
+  supplierBreakdown: Array<SupplierBreakdown>
   /** Currently applied coupon (if any) */
   appliedCoupon?: CouponCode
 }
@@ -125,9 +125,9 @@ export interface CartValidation {
   /** Whether the entire cart is valid for checkout */
   isValid: boolean
   /** Validation results for each item */
-  itemValidations: CartItemValidation[]
+  itemValidations: Array<CartItemValidation>
   /** Cart-level errors (e.g., coupon expired) */
-  cartErrors: string[]
+  cartErrors: Array<string>
 }
 
 /**
@@ -174,7 +174,7 @@ export interface ValidateCouponResponse {
  */
 export interface StoredCart {
   /** Cart items to persist */
-  items: CartItem[]
+  items: Array<CartItem>
   /** Applied coupon code (if any) */
   appliedCouponCode?: string
   /** Timestamp when cart was last updated */

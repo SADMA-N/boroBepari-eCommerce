@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Bell, CheckCircle, Archive, RotateCcw, Filter, Settings, ArrowLeft } from 'lucide-react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { Archive, ArrowLeft, Bell, CheckCircle, Filter, RotateCcw, Settings } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useEffect, useMemo, useState } from 'react'
 import { useNotifications } from '@/contexts/NotificationContext'
@@ -25,7 +25,7 @@ function NotificationsPage() {
   const { user } = useAuth()
   const [filter, setFilter] = useState<FilterType>('all')
   const [orderFilter, setOrderFilter] = useState('')
-  const [stockAlerts, setStockAlerts] = useState<any[]>([])
+  const [stockAlerts, setStockAlerts] = useState<Array<any>>([])
   const [isLoadingAlerts, setIsLoadingAlerts] = useState(false)
 
   useEffect(() => {
@@ -103,7 +103,7 @@ function NotificationsPage() {
                 <Filter size={16} />
                 Filter
               </div>
-              {(['all', 'unread', 'order', 'rfq', 'system', 'archived'] as FilterType[]).map((item) => (
+              {(['all', 'unread', 'order', 'rfq', 'system', 'archived'] as Array<FilterType>).map((item) => (
                 <button
                   key={item}
                   onClick={() => setFilter(item)}

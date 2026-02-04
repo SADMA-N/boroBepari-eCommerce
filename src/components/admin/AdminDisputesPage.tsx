@@ -1,34 +1,34 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Search,
   AlertTriangle,
-  Clock,
-  CheckCircle,
   Ban,
-  MessageSquare,
-  User,
   Building2,
+  CheckCircle,
+  ChevronDown,
+  Clock,
+  DollarSign,
   FileText,
   Flag,
-  ChevronDown,
-  X,
   Mail,
-  DollarSign,
+  MessageSquare,
   Scale,
+  Search,
+  User,
+  X,
 } from 'lucide-react'
 import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  LineChart,
-  Line,
-  CartesianGrid,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -60,14 +60,14 @@ type Dispute = {
   deliveryStatus: string
   trackingInfo: string
   description: string
-  evidence: { images: string[]; documents: string[] }
+  evidence: { images: Array<string>; documents: Array<string> }
   products: Array<{ name: string; qty: number; price: number }>
   timeline: Array<{ id: string; label: string; time: string }>
   conversation: Array<{ id: string; author: string; role: 'buyer' | 'seller' | 'admin'; message: string; time: string }>
   auditTrail: Array<{ id: string; actor: string; action: string; time: string; notes?: string }>
 }
 
-const DISPUTES: Dispute[] = [
+const DISPUTES: Array<Dispute> = [
   {
     id: 'DSP-1001',
     orderNumber: 'ORD-45892',

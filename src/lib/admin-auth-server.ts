@@ -1,9 +1,9 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import type { AdminUser } from '@/types/admin'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
-import type { AdminUser } from '@/types/admin'
 
 const SECRET = process.env.ADMIN_AUTH_SECRET || 'admin-secret-key-change-in-production'
 const ADMIN_2FA_CODE = process.env.ADMIN_2FA_CODE || '123456'

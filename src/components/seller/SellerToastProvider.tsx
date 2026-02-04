@@ -17,7 +17,7 @@ const ToastContext = createContext<ToastContextValue | undefined>(undefined)
  * Provides a toast queue for seller pages.
  */
 export function SellerToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([])
+  const [toasts, setToasts] = useState<Array<Toast>>([])
 
   const pushToast = useCallback((message: string, tone: Toast['tone'] = 'info') => {
     const id = crypto.randomUUID()

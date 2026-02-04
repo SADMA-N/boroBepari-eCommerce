@@ -28,7 +28,7 @@ type RFQ = {
   hoursLeft: number
   status: RFQStatus
   notes: string
-  attachments: string[]
+  attachments: Array<string>
   category: string
   counterOffer?: number
   quote?: {
@@ -46,7 +46,7 @@ type RFQ = {
   }
 }
 
-const RFQS: RFQ[] = [
+const RFQS: Array<RFQ> = [
   {
     id: 'RFQ-3012',
     product: 'Industrial Safety Gloves',
@@ -108,7 +108,7 @@ const RFQS: RFQ[] = [
   },
 ]
 
-const STATUS_TABS: RFQStatus[] = [
+const STATUS_TABS: Array<RFQStatus> = [
   'New',
   'Quoted',
   'Accepted',
@@ -122,7 +122,7 @@ const DELIVERY_TIMES = ['2-3 days', '5-7 days', '7-10 days']
 
 export function SellerRFQsPage() {
   const { pushToast } = useSellerToast()
-  const [rfqs, setRfqs] = useState<RFQ[]>(RFQS)
+  const [rfqs, setRfqs] = useState<Array<RFQ>>(RFQS)
   const [tab, setTab] = useState<RFQStatus>('New')
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')

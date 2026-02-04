@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
-import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { AdminLayout } from './AdminLayout'
 import type { AdminPermission } from '@/types/admin'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 interface AdminProtectedRouteProps {
   children: React.ReactNode
   requiredPermission?: AdminPermission
-  requiredPermissions?: AdminPermission[]
+  requiredPermissions?: Array<AdminPermission>
   requireAll?: boolean
 }
 

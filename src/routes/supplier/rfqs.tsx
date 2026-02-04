@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useMemo, useEffect } from 'react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
 import { 
   AlertCircle, 
   Calendar, 
@@ -14,8 +14,9 @@ import {
   Timer, 
   X 
 } from 'lucide-react'
-import { format, addDays, differenceInHours } from 'date-fns'
-import { mockRfqs, MockRfq } from '@/data/mock-rfqs'
+import { addDays, differenceInHours, format } from 'date-fns'
+import type { MockRfq } from '@/data/mock-rfqs';
+import { mockRfqs } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
 import Toast from '@/components/Toast'
 
@@ -33,13 +34,15 @@ function SupplierRFQInbox() {
 
   // Mock filtering: In a real app, this would be an API call filtering by supplierId
   const supplierRfqs = useMemo(() => {
+    const now = new Date()
     // For demo, we treat 'pending' as 'new' for supplier
     // and assume some logic to determine if it's 'quoted' by THIS supplier
     return mockRfqs.filter(rfq => {
       if (activeTab === 'new') return rfq.status === 'pending'
       if (activeTab === 'quoted') return rfq.status === 'quoted' // Or pending but has quote from us
       if (activeTab === 'accepted') return rfq.status === 'accepted'
-      if (activeTab === 'expired') return rfq.status === 'expired'
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (activeTab === 'expired') return rfq.expiresAt ? rfq.expiresAt < now : false
       return true
     })
   }, [activeTab])
@@ -73,7 +76,7 @@ function SupplierRFQInbox() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
         <div className="border-b px-4 overflow-x-auto">
           <div className="flex space-x-6 min-w-max">
-            {(['new', 'quoted', 'accepted', 'expired'] as SupplierTab[]).map((tab) => (
+            {(['new', 'quoted', 'accepted', 'expired'] as Array<SupplierTab>).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}

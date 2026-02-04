@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  Package,
+  AlertCircle,
   CheckCircle,
   Clock,
-  Truck,
-  MapPin,
-  Home,
-  XCircle,
-  RotateCcw,
-  RefreshCw,
   Copy,
   ExternalLink,
+  Home,
   Loader2,
-  AlertCircle,
+  MapPin,
+  Package,
+  RefreshCw,
+  RotateCcw,
+  Truck,
+  XCircle,
 } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -217,7 +217,7 @@ export default function OrderStatusTimeline({
   const getStageDate = (stageIndex: number) => {
     const stageKey = visibleStages[stageIndex]?.key as OrderStageKey | undefined
     if (stageKey && stageTimestamps?.[stageKey]) {
-      return new Date(stageTimestamps[stageKey] as Date | string)
+      return new Date(stageTimestamps[stageKey])
     }
     if (stageIndex === 0) return new Date(createdAt)
     if (stageIndex <= currentStageIndex && updatedAt) {
@@ -549,7 +549,7 @@ export function OrderStatusBadge({ status }: { status: string }) {
     returned: { label: 'Returned', color: 'text-orange-700', bgColor: 'bg-orange-100' },
   }
 
-  const config = statusConfig[status] || statusConfig.pending
+  const config = statusConfig[status]
 
   return (
     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${config.bgColor} ${config.color}`}>

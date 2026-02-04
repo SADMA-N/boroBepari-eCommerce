@@ -1,21 +1,21 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import {
-  CheckCircle,
-  Package,
-  Download,
-  Share2,
-  Copy,
-  Truck,
   Calendar,
-  MapPin,
+  CheckCircle,
+  Copy,
   CreditCard,
+  Download,
+  MapPin,
+  Package,
+  Share2,
   ShieldCheck,
+  Truck,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { addDays } from 'date-fns'
 import { getOrder } from '@/lib/order-actions'
 import { formatCurrency } from '@/lib/cart-utils'
 import Toast from '@/components/Toast'
-import { addDays } from 'date-fns'
 
 export const Route = createFileRoute('/order-confirmation/$orderId')({
   component: OrderConfirmationPage,

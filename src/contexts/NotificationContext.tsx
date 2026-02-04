@@ -37,7 +37,7 @@ export interface NotificationPreferences {
 }
 
 interface NotificationContextType {
-  notifications: Notification[]
+  notifications: Array<Notification>
   unreadCount: number
   orderUnreadCount: number
   preferences: NotificationPreferences
@@ -57,7 +57,7 @@ const PREFS_STORAGE_KEY = 'bb_notification_prefs'
 const QUEUE_STORAGE_KEY = 'bb_notification_queue'
 
 // Initial mock notifications
-const initialNotifications: Notification[] = [
+const initialNotifications: Array<Notification> = [
   {
     id: '1',
     title: 'New Quote Received',
@@ -98,7 +98,7 @@ const defaultPreferences: NotificationPreferences = {
 }
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  const [notifications, setNotifications] = useState<Notification[]>(() => {
+  const [notifications, setNotifications] = useState<Array<Notification>>(() => {
     try {
       if (typeof window === 'undefined') return initialNotifications
       const stored = localStorage.getItem(STORAGE_KEY)
@@ -197,7 +197,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           .map((n) => ({
             ...n,
             createdAt: n.createdAt ? new Date(n.createdAt) : new Date(),
-            isRead: n.isRead ?? false,
+            isRead: n.isRead,
           }))
         return [...merged, ...prev]
       })
@@ -229,7 +229,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, archived: false } : n))
   }
 
-  const addNotification = (notif: Omit<Notification, 'createdAt' | 'isRead'> & { id?: string }) => {
+  const addNotification = (notif: Omit<Notification, 'createdAt' | 'isRead' | 'id'> & { id?: string }) => {
     if (!preferences.channels.inApp) {
       return
     }
@@ -244,9 +244,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       if (prev.some(n => n.id === newNotif.id)) return prev
       return [newNotif, ...prev]
     })
-    if (preferences.channels.inApp) {
-      setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
-    }
+    setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
   }
 
   useEffect(() => {
@@ -260,7 +258,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         const notified = data?.notified ?? []
         if (!Array.isArray(notified) || notified.length === 0) return
 
-        const ids: number[] = []
+        const ids: Array<number> = []
         notified.forEach((alert: any) => {
           ids.push(alert.id)
           const product = alert.product

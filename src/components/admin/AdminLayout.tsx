@@ -1,25 +1,25 @@
 import { useState } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
 import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  FileCheck,
-  ShoppingCart,
   AlertTriangle,
-  Package,
   BarChart3,
-  Settings,
-  ScrollText,
   Bell,
+  Building2,
   ChevronDown,
+  FileCheck,
+  LayoutDashboard,
   LogOut,
   Menu,
-  X,
+  Package,
+  ScrollText,
+  Settings,
   Shield,
+  ShoppingCart,
+  Users,
+  X,
 } from 'lucide-react'
+import type { AdminPermission, AdminRole } from '@/types/admin'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import type { AdminRole, AdminPermission } from '@/types/admin'
 
 const NAV_ITEMS: Array<{
   to: string

@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/api/cart/item/$itemId')({
   server: {
     handlers: {
-      PATCH: async ({ params }) => {
+      PATCH: ({ params }) => {
         // Placeholder: Update item quantity
         return new Response(JSON.stringify({ 
           success: true,
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/api/cart/item/$itemId')({
           headers: { 'Content-Type': 'application/json' },
         })
       },
-      DELETE: async ({ params }) => {
+      DELETE: ({ params }) => {
         // Placeholder: Remove item
         return new Response(JSON.stringify({ 
           success: true,

@@ -3,9 +3,9 @@ import path from 'node:path'
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { verifySellerToken } from './seller-auth-server'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
-import { verifySellerToken } from './seller-auth-server'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'] as const

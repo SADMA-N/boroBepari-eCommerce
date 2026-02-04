@@ -1,47 +1,47 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
-  TrendingUp,
-  TrendingDown,
-  Users,
-  ShoppingCart,
-  DollarSign,
-  FileCheck,
+  Activity,
+  AlertCircle,
   AlertTriangle,
+  Building2,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  Clock,
+  CreditCard,
+  Database,
+  DollarSign,
+  ExternalLink,
+  FileCheck,
+  FileText,
+  Flag,
+  HardDrive,
   Package,
   RefreshCw,
-  Calendar,
-  ChevronDown,
-  Activity,
-  Database,
   Server,
-  HardDrive,
-  Clock,
-  X,
-  AlertCircle,
-  CheckCircle,
-  UserPlus,
   ShoppingBag,
-  FileText,
-  CreditCard,
-  Flag,
-  Building2,
+  ShoppingCart,
   Star,
-  ExternalLink,
+  TrendingDown,
+  TrendingUp,
+  UserPlus,
+  Users,
+  X,
 } from 'lucide-react'
 import {
-  LineChart,
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Cell,
   Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 
@@ -176,7 +176,7 @@ export function AdminDashboardPage() {
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false)
-  const [dismissedAlerts, setDismissedAlerts] = useState<number[]>([])
+  const [dismissedAlerts, setDismissedAlerts] = useState<Array<number>>([])
   const [gmvData, setGmvData] = useState(() => generateGMVData(30))
   const [userGrowthData, setUserGrowthData] = useState(() => generateUserGrowthData(30))
 

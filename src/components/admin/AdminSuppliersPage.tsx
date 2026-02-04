@@ -1,35 +1,35 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Search,
-  MoreVertical,
-  CheckCircle,
-  XCircle,
-  Eye,
+  AlertTriangle,
+  Ban,
+  BarChart3,
   Building2,
+  CheckCircle,
+  ChevronDown,
+  Download,
+  Eye,
+  FileCheck,
+  FileText,
+  FileX2,
+  Filter,
+  Image,
+  MoreVertical,
+  Search,
   ShieldCheck,
   ShieldX,
-  Ban,
   Trash2,
-  Download,
   UserPlus,
-  Filter,
-  ChevronDown,
   X,
-  AlertTriangle,
-  FileCheck,
-  FileX2,
-  Image,
-  BarChart3,
-  FileText,
+  XCircle,
 } from 'lucide-react'
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -94,7 +94,7 @@ const CATEGORIES = [
   'Construction Materials',
 ]
 
-const SUPPLIERS: Supplier[] = [
+const SUPPLIERS: Array<Supplier> = [
   {
     id: 'BB-S-1021',
     businessName: 'Rahim Textiles Ltd.',
@@ -314,15 +314,15 @@ export function AdminSuppliersPage() {
   const [kycFilter, setKycFilter] = useState<KycStatus | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<SupplierStatus | 'all'>('all')
   const [performanceFilter, setPerformanceFilter] = useState<PerformanceFilter>('all')
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<Array<string>>([])
   const [sortBy, setSortBy] = useState<SortKey>('date')
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [selectedIds, setSelectedIds] = useState<Array<string>>([])
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [detailSupplier, setDetailSupplier] = useState<Supplier | null>(null)
   const [detailTab, setDetailTab] = useState<DetailTab>('business')
   const [approveOpen, setApproveOpen] = useState(false)
   const [rejectOpen, setRejectOpen] = useState(false)
-  const [rejectReasons, setRejectReasons] = useState<string[]>([])
+  const [rejectReasons, setRejectReasons] = useState<Array<string>>([])
   const [rejectOther, setRejectOther] = useState('')
   const [rejectCorrections, setRejectCorrections] = useState('')
   const [approveNotes, setApproveNotes] = useState('')
@@ -695,7 +695,7 @@ export function AdminSuppliersPage() {
                       ? 'bg-red-50'
                       : supplier.kycStatus === 'pending'
                         ? 'bg-yellow-50'
-                        : supplier.kycStatus === 'verified' && supplier.status === 'active'
+                        : supplier.kycStatus === 'verified'
                           ? 'bg-green-50'
                           : ''
                   return (
@@ -946,7 +946,7 @@ export function AdminSuppliersPage() {
             </div>
             <div className="border-b border-slate-200 px-6">
               <div className="flex flex-wrap gap-6 text-sm">
-                {(['business', 'kyc', 'products', 'orders', 'analytics', 'activity'] as DetailTab[]).map((tab) => (
+                {(['business', 'kyc', 'products', 'orders', 'analytics', 'activity'] as Array<DetailTab>).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}

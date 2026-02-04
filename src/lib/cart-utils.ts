@@ -10,7 +10,7 @@
  * - localStorage persistence helpers
  */
 
-import {
+import type {
   Cart,
   CartItem,
   CartItemValidation,
@@ -125,7 +125,7 @@ export function validateCartItem(item: CartItem): CartItemValidation {
  */
 export function validateCart(cart: Cart): CartValidation {
   const itemValidations = cart.items.map(validateCartItem)
-  const cartErrors: string[] = []
+  const cartErrors: Array<string> = []
 
   // Check if coupon is expired
   if (cart.appliedCoupon) {
@@ -174,8 +174,8 @@ export function validateCart(cart: Cart): CartValidation {
  *   console.log(`${b.supplierName}: ৳${b.subtotal} (${b.itemCount} items)`);
  * });
  */
-export function calculateSupplierBreakdown(items: CartItem[]): SupplierBreakdown[] {
-  const breakdown: Record<number, SupplierBreakdown> = {}
+export function calculateSupplierBreakdown(items: Array<CartItem>): Array<SupplierBreakdown> {
+  const breakdown: Partial<Record<number, SupplierBreakdown>> = {}
 
   items.forEach((item) => {
     if (!breakdown[item.supplierId]) {
@@ -223,7 +223,7 @@ export function calculateSupplierBreakdown(items: CartItem[]): SupplierBreakdown
 export function validateCoupon(
   coupon: CouponCode,
   subtotal: number,
-  items?: CartItem[]
+  items?: Array<CartItem>
 ): { valid: boolean; error?: string } {
   const now = new Date()
   const expiry = new Date(coupon.expiryDate)
@@ -285,7 +285,7 @@ export function validateCoupon(
 export function calculateDiscount(
   coupon: CouponCode,
   subtotal: number,
-  items?: CartItem[]
+  items?: Array<CartItem>
 ): number {
   // First validate the coupon
   const validation = validateCoupon(coupon, subtotal, items)
@@ -343,7 +343,7 @@ export function calculateDiscount(
  * setCart(prev => ({ ...prev, ...totals }));
  */
 export function calculateCartTotals(
-  items: CartItem[],
+  items: Array<CartItem>,
   coupon?: CouponCode
 ): Omit<Cart, 'items' | 'appliedCoupon'> {
   // Calculate subtotal from all items
@@ -459,9 +459,9 @@ export function clearCartFromStorage(): void {
  * updateCart({ items: mergedItems });
  */
 export function mergeGuestCartWithUserCart(
-  guestItems: CartItem[],
-  userItems: CartItem[]
-): CartItem[] {
+  guestItems: Array<CartItem>,
+  userItems: Array<CartItem>
+): Array<CartItem> {
   const mergedItems = [...userItems]
 
   guestItems.forEach((guestItem) => {
@@ -525,7 +525,7 @@ export function formatCurrency(amount: number): string {
  * @returns Total savings amount
  */
 export function calculateSavings(
-  items: CartItem[],
+  items: Array<CartItem>,
   originalPrices: Record<number, number>
 ): number {
   return items.reduce((savings, item) => {

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { orders, user } from '@/db/schema'
-import { eq } from 'drizzle-orm'
 import { sendInvoiceEmail } from '@/lib/email'
 import { auth } from '@/lib/auth'
 
@@ -102,8 +102,8 @@ export const Route = createFileRoute('/api/orders/$orderId/invoice')({
 
           return new Response(
             JSON.stringify({
-              invoiceUrl: updatedOrder?.invoiceUrl ?? invoiceUrl,
-              invoiceGeneratedAt: updatedOrder?.invoiceGeneratedAt ?? new Date(),
+              invoiceUrl: updatedOrder.invoiceUrl,
+              invoiceGeneratedAt: updatedOrder.invoiceGeneratedAt,
             }),
             { headers: { 'Content-Type': 'application/json' } },
           )

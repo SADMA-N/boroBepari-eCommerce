@@ -1,6 +1,7 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { Plus, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react'
+import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight, Loader2, Plus } from 'lucide-react'
+import type { Address, NewAddress } from '@/db/schema'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { useCheckout } from '@/contexts/CheckoutContext'
@@ -8,8 +9,7 @@ import { CheckoutLayout } from '@/components/checkout/CheckoutLayout'
 import { AddressCard } from '@/components/checkout/AddressCard'
 import { AddressFormModal } from '@/components/checkout/AddressFormModal'
 import { GuestAddressForm } from '@/components/checkout/GuestAddressForm'
-import { getAddresses, addAddress, updateAddress, deleteAddress } from '@/lib/address-actions'
-import type { Address, NewAddress } from '@/db/schema'
+import { addAddress, deleteAddress, getAddresses, updateAddress } from '@/lib/address-actions'
 import Toast from '@/components/Toast'
 
 export const Route = createFileRoute('/checkout/')({
@@ -22,7 +22,7 @@ function CheckoutPage() {
   const { state, setShippingAddressId } = useCheckout()
   const router = useRouter()
   
-  const [addresses, setAddresses] = useState<Address[]>([])
+  const [addresses, setAddresses] = useState<Array<Address>>([])
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false)
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(state.shippingAddressId)
   

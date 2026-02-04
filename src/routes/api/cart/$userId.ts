@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/api/cart/$userId')({
   server: {
     handlers: {
-      GET: async ({ params }) => {
+      GET: ({ params }) => {
         // Placeholder: Fetch user cart from DB
         return new Response(JSON.stringify({ 
           items: [], 

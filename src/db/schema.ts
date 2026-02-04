@@ -83,7 +83,7 @@ export const sellers = pgTable('sellers', {
   kycAdditionalInfo: jsonb('kyc_additional_info')
     .$type<{
       description: string
-      categories: string[]
+      categories: Array<string>
       inventoryRange: string
     }>()
     .default({ description: '', categories: [], inventoryRange: '' }),

@@ -10,26 +10,26 @@
  * - Multi-supplier cart support
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import { useAuth } from './AuthContext'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { getProductById } from '../data/mock-products'
+import { useAuth } from './AuthContext'
 import type {
+  AddToCartRequest,
   Cart,
   CartItem,
-  CouponCode,
-  AddToCartRequest,
   CartValidation,
+  CouponCode,
 } from '@/types/cart'
 import {
   calculateCartTotals,
-  validateCart,
-  validateMoq,
-  validateStock,
-  saveCartToStorage,
-  loadCartFromStorage,
   clearCartFromStorage,
   generateCartItemId,
+  loadCartFromStorage,
+  saveCartToStorage,
+  validateCart,
   validateCoupon,
+  validateMoq,
+  validateStock,
 } from '@/lib/cart-utils'
 
 // ============================================================================
@@ -170,7 +170,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         // Check if item already exists
         const existingIndex = prev.items.findIndex((item) => item.id === itemId)
 
-        let updatedItems: CartItem[]
+        let updatedItems: Array<CartItem>
         if (existingIndex > -1) {
           // Update existing item quantity
           updatedItems = prev.items.map((item, index) => {

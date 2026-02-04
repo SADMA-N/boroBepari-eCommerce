@@ -1,15 +1,16 @@
 import {
+  
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
-  useState,
-  type ReactNode,
+  useState
 } from 'react'
+import type {ReactNode} from 'react';
+import type { AdminPermission, AdminPermissions, AdminUser } from '@/types/admin'
 import { adminLogin, validateAdminToken } from '@/lib/admin-auth-server'
-import type { AdminUser, AdminPermissions, AdminPermission } from '@/types/admin'
 import { getAdminPermissions, hasPermission } from '@/types/admin'
 
 const ADMIN_TOKEN_KEY = 'admin_token'
@@ -48,7 +49,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
     validateAdminToken({ data: { token } })
       .then((result) => {
-        if (result.valid && result.admin) {
+        if (result.valid) {
           setAdmin(result.admin)
         } else {
           localStorage.removeItem(ADMIN_TOKEN_KEY)

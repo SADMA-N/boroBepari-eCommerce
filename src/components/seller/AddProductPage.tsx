@@ -73,7 +73,7 @@ export function AddProductPage() {
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState('basic')
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [errorSummary, setErrorSummary] = useState<string[]>([])
+  const [errorSummary, setErrorSummary] = useState<Array<string>>([])
   const [savingStatus, setSavingStatus] = useState<'idle' | 'saving'>('idle')
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
   const [showPreview, setShowPreview] = useState(false)
@@ -88,13 +88,13 @@ export function AddProductPage() {
   const [descriptionHtml, setDescriptionHtml] = useState('')
   const [descriptionText, setDescriptionText] = useState('')
   const [tagInput, setTagInput] = useState('')
-  const [tags, setTags] = useState<string[]>([])
+  const [tags, setTags] = useState<Array<string>>([])
 
-  const [images, setImages] = useState<UploadImage[]>([])
-  const imagesRef = useRef<UploadImage[]>([])
+  const [images, setImages] = useState<Array<UploadImage>>([])
+  const imagesRef = useRef<Array<UploadImage>>([])
 
   const [tieredPricing, setTieredPricing] = useState(false)
-  const [pricingTiers, setPricingTiers] = useState<PricingTier[]>([
+  const [pricingTiers, setPricingTiers] = useState<Array<PricingTier>>([
     { id: crypto.randomUUID(), minQty: '', maxQty: '', price: '' },
     { id: crypto.randomUUID(), minQty: '', maxQty: '', price: '' },
   ])
@@ -105,7 +105,7 @@ export function AddProductPage() {
   const [sku, setSku] = useState('')
   const [lowStockThreshold, setLowStockThreshold] = useState('10')
 
-  const [specs, setSpecs] = useState<SpecRow[]>([
+  const [specs, setSpecs] = useState<Array<SpecRow>>([
     { id: crypto.randomUUID(), key: '', value: '' },
   ])
 
@@ -1180,7 +1180,7 @@ function SelectField({
   label: string
   value: string
   onChange: (value: string) => void
-  options: string[]
+  options: Array<string>
   required?: boolean
   error?: string
   disabled?: boolean
@@ -1257,7 +1257,7 @@ function sanitizeHtml(input: string) {
   const allowed = new Set(['B', 'I', 'UL', 'LI', 'P', 'BR'])
   const doc = new DOMParser().parseFromString(input, 'text/html')
   const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT)
-  const nodes: Element[] = []
+  const nodes: Array<Element> = []
   while (walker.nextNode()) {
     nodes.push(walker.currentNode as Element)
   }

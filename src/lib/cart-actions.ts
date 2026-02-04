@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db'
-import { products } from '@/db/schema'
 import { eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
+import { db } from '@/db'
+import { products } from '@/db/schema'
 
 export const validateCartServer = createServerFn({ method: 'POST' })
   .inputValidator((items: Array<{ productId: number; quantity: number; unitPrice: number; id: string }>) => items)

@@ -15,7 +15,7 @@ type TabKey =
   | 'security'
   | 'store'
 
-const TABS: { key: TabKey; label: string }[] = [
+const TABS: Array<{ key: TabKey; label: string }> = [
   { key: 'business', label: 'Business Profile' },
   { key: 'bank', label: 'Bank Details' },
   { key: 'kyc', label: 'KYC Documents' },
@@ -90,7 +90,7 @@ export function SellerProfilePage() {
 function BusinessTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
   const [businessName, setBusinessName] = useState('BoroBepari Traders')
   const [businessType, setBusinessType] = useState('Manufacturer')
-  const [categories, setCategories] = useState<string[]>(['Industrial Supplies'])
+  const [categories, setCategories] = useState<Array<string>>(['Industrial Supplies'])
   const [tradeLicense, setTradeLicense] = useState('TL-2024-1122')
   const [years, setYears] = useState('8')
   const [description, setDescription] = useState('We supply industrial safety products.')
@@ -520,7 +520,7 @@ function SelectField({
   label: string
   value: string
   onChange: (value: string) => void
-  options: string[]
+  options: Array<string>
 }) {
   return (
     <div>

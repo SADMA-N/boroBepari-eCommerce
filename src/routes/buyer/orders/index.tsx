@@ -1,21 +1,22 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect, useCallback, useRef } from 'react'
-import type { MouseEvent } from 'react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  Search,
-  ChevronRight,
-  ChevronLeft,
-  Package,
-  ShoppingBag,
   ArrowUpDown,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
   Filter,
   Loader2,
-  FileText,
+  Package,
+  Search,
+  ShoppingBag,
 } from 'lucide-react'
 import { format } from 'date-fns'
+import type { MouseEvent } from 'react'
+import type {BuyerOrdersFilter} from '@/lib/order-actions';
 import { formatBDT } from '@/data/mock-products'
-import { getBuyerOrders, type BuyerOrdersFilter } from '@/lib/order-actions'
+import {  getBuyerOrders } from '@/lib/order-actions'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 
@@ -26,7 +27,7 @@ export const Route = createFileRoute('/buyer/orders/')({
 type FilterTab = 'all' | 'active' | 'delivered' | 'cancelled'
 type SortOption = 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc' | 'status'
 
-const sortOptions: { value: SortOption; label: string }[] = [
+const sortOptions: Array<{ value: SortOption; label: string }> = [
   { value: 'date_desc', label: 'Newest First' },
   { value: 'date_asc', label: 'Oldest First' },
   { value: 'amount_desc', label: 'Amount: High to Low' },
@@ -43,7 +44,7 @@ function BuyerOrderHistoryPage() {
   const [page, setPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<Array<any>>([])
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -206,7 +207,7 @@ function BuyerOrderHistoryPage() {
                 { key: 'active', label: 'Active' },
                 { key: 'delivered', label: 'Delivered' },
                 { key: 'cancelled', label: 'Cancelled/Returned' },
-              ] as { key: FilterTab; label: string }[]
+              ] as Array<{ key: FilterTab; label: string }>
             ).map((tab) => (
               <button
                 key={tab.key}
@@ -364,22 +365,23 @@ function BuyerOrderHistoryPage() {
   )
 }
 
-function filterOrdersByTab(orders: any[], tab: FilterTab) {
-  if (tab === 'all') return orders
+function filterOrdersByTab(orders: Array<any>, tab: FilterTab) {
+  const currentTab = String(tab)
+  if (currentTab === 'all') return orders
 
   const activeStatuses = ['placed', 'confirmed', 'processing', 'shipped', 'out_for_delivery', 'pending']
   const deliveredStatuses = ['delivered']
   const cancelledStatuses = ['cancelled', 'returned']
 
-  if (tab === 'active') {
+  if (currentTab === 'active') {
     return orders.filter((order) => activeStatuses.includes(order.status))
   }
 
-  if (tab === 'delivered') {
+  if (currentTab === 'delivered') {
     return orders.filter((order) => deliveredStatuses.includes(order.status))
   }
 
-  if (tab === 'cancelled') {
+  if (currentTab === 'cancelled') {
     return orders.filter((order) => cancelledStatuses.includes(order.status))
   }
 

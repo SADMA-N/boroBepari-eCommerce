@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { mockProducts } from '../data/mock-products'
-import type { MockProduct } from '../data/mock-products'
 import { useAuth } from './AuthContext'
+import type { MockProduct } from '../data/mock-products'
 
 interface WishlistContextType {
   wishlistIds: Array<number>

@@ -1,22 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Search,
-  MoreVertical,
-  Mail,
-  Ban,
-  CheckCircle,
-  UserPlus,
-  Download,
-  Filter,
-  ChevronDown,
-  X,
   AlertTriangle,
-  ShieldAlert,
-  Trash2,
+  Ban,
+  Bell,
+  CheckCircle,
+  ChevronDown,
+  Download,
+  Edit3,
   Eye,
   FileText,
-  Bell,
-  Edit3,
+  Filter,
+  Mail,
+  MoreVertical,
+  Search,
+  ShieldAlert,
+  Trash2,
+  UserPlus,
+  X,
 } from 'lucide-react'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -51,16 +51,16 @@ type User = {
   totalSpent: number
   joinedAt: string
   lastLogin: string
-  addresses: string[]
+  addresses: Array<string>
   businessInfo?: {
     company: string
     type: string
   }
-  orderHistory: UserOrder[]
-  activityLog: UserActivity[]
+  orderHistory: Array<UserOrder>
+  activityLog: Array<UserActivity>
 }
 
-const USERS: User[] = [
+const USERS: Array<User> = [
   {
     id: 'BB-U-0001',
     name: 'Karim Hossain',
@@ -229,7 +229,7 @@ export function AdminUsersPage() {
   const [sortBy, setSortBy] = useState<SortKey>('date')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [selectedIds, setSelectedIds] = useState<Array<string>>([])
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [detailUser, setDetailUser] = useState<User | null>(null)
   const [detailTab, setDetailTab] = useState<DetailTab>('profile')
@@ -729,7 +729,7 @@ export function AdminUsersPage() {
             </div>
             <div className="border-b border-slate-200 px-6">
               <div className="flex gap-6 text-sm">
-                {(['profile', 'orders', 'activity'] as DetailTab[]).map((tab) => (
+                {(['profile', 'orders', 'activity'] as Array<DetailTab>).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}

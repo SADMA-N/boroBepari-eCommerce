@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { db } from '@/db'
-import { stockAlerts } from '@/db/schema'
 import { and, eq, inArray, isNull, lt, or } from 'drizzle-orm'
 import { addDays } from 'date-fns'
+import { db } from '@/db'
+import { stockAlerts } from '@/db/schema'
 
 export const Route = createFileRoute('/api/stock-alerts')({
   server: {
@@ -32,7 +32,7 @@ export const Route = createFileRoute('/api/stock-alerts')({
             .where(inArray(stockAlerts.id, expired.map((e) => e.id)))
         }
 
-        const alerts = await db.query.stockAlerts.findMany({
+        const userAlerts = await db.query.stockAlerts.findMany({
           where: and(eq(stockAlerts.userId, userId)),
           with: {
             product: true,
@@ -41,12 +41,12 @@ export const Route = createFileRoute('/api/stock-alerts')({
         })
 
         const notified = includeNotified
-          ? alerts.filter((alert) => alert.notifiedAt && !alert.acknowledgedAt)
+          ? userAlerts.filter((alert) => alert.notifiedAt && !alert.acknowledgedAt)
           : []
 
         return new Response(
           JSON.stringify({
-            alerts,
+            alerts: userAlerts,
             notified,
           }),
           { headers: { 'Content-Type': 'application/json' } },
@@ -109,7 +109,7 @@ export const Route = createFileRoute('/api/stock-alerts')({
           })
         }
 
-        const ids = payload?.ids as number[] | undefined
+        const ids = payload?.ids as Array<number> | undefined
         if (!ids?.length) {
           return new Response(JSON.stringify({ error: 'ids are required' }), {
             status: 400,

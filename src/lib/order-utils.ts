@@ -1,4 +1,4 @@
-import { format, addBusinessDays } from 'date-fns'
+import { addBusinessDays, format } from 'date-fns'
 
 /**
  * Generates a formatted order number.

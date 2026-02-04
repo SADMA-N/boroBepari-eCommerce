@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/api/rfq/quote/$quoteId/counter')({
   server: {
     handlers: {
-      POST: async ({ request, params }) => {
+      POST: ({ request, params }) => {
         const { quoteId } = params
         // TODO: Parse body for counter offer details
         // TODO: Create counter quote or update status

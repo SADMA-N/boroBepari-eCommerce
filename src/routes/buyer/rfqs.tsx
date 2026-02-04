@@ -1,22 +1,23 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useMemo } from 'react'
+import { Link, createFileRoute } from '@tanstack/react-router'
+import { useMemo, useState } from 'react'
 import { 
+  AlertCircle, 
   ArrowUpDown, 
   Calendar, 
   ChevronRight, 
   Clock, 
   Download, 
   Eye, 
+  FileText, 
   Filter, 
-  MessageSquare, 
-  MoreVertical, 
-  Search,
-  AlertCircle,
-  FileText,
-  MapPin
+  MapPin,
+  MessageSquare,
+  MoreVertical,
+  Search
 } from 'lucide-react'
-import { format, differenceInDays } from 'date-fns'
-import { mockRfqs, MockRfq } from '@/data/mock-rfqs'
+import { differenceInDays, format } from 'date-fns'
+import type { MockRfq } from '@/data/mock-rfqs';
+import { mockRfqs } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
 
 export const Route = createFileRoute('/buyer/rfqs')({
@@ -100,7 +101,7 @@ function BuyerRFQInbox() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
         <div className="border-b px-4 overflow-x-auto">
           <div className="flex space-x-6 min-w-max">
-            {(['all', 'pending', 'quoted', 'accepted', 'expired'] as RfqStatus[]).map((tab) => (
+            {(['all', 'pending', 'quoted', 'accepted', 'expired'] as Array<RfqStatus>).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -305,10 +306,10 @@ function BuyerRFQInbox() {
                 <div>
                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center justify-between">
                      Received Quotes
-                     <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{selectedRfq.quotes?.length || 0}</span>
+                     <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{selectedRfq.quotes.length}</span>
                    </h3>
                    
-                   {(!selectedRfq.quotes || selectedRfq.quotes.length === 0) ? (
+                   {selectedRfq.quotes.length === 0 ? (
                      <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed">
                         <MessageSquare size={32} className="mx-auto text-gray-300 mb-2" />
                         <p className="text-gray-500">No quotes received yet.</p>

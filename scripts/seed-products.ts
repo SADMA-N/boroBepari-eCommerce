@@ -1,7 +1,7 @@
+import { sql } from 'drizzle-orm'
 import { db } from '../src/db'
 import { categories, products, suppliers } from '../src/db/schema'
 import { mockCategories, mockProducts, mockSuppliers } from '../src/data/mock-products'
-import { sql } from 'drizzle-orm'
 
 async function seed() {
   console.log('🌱 Seeding database...')

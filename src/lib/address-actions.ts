@@ -1,7 +1,8 @@
-import { db } from '@/db'
-import { addresses, type Address, type NewAddress } from '@/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { createServerFn } from '@tanstack/react-start'
+import type {Address, NewAddress} from '@/db/schema';
+import { db } from '@/db'
+import {   addresses } from '@/db/schema'
 
 export const getAddresses = createServerFn({ method: 'GET' })
   .inputValidator((userId: string) => userId)

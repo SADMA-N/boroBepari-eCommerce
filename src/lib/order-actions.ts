@@ -1,9 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db'
-import { orders, orderItems, products, addresses, user } from '@/db/schema'
-import { eq, desc, asc, sql, or, ilike, and, inArray } from 'drizzle-orm'
+import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-server'
+import { addresses, orderItems, orders, products, user } from '@/db/schema'
+import { db } from '@/db'
 import { sendOrderStatusEmail } from '@/lib/notifications'
 
 export const getOrder = createServerFn({ method: 'GET' })
@@ -76,7 +76,7 @@ export const createOrder = createServerFn({ method: 'POST' })
 
     const calculatedTotal = normalizedItems.reduce((sum, item) => sum + item.lineTotal, 0)
     const totalAmount = Math.round(calculatedTotal * 100) / 100
-    const depositAmount = Math.max(0, data.depositAmount ?? 0)
+    const depositAmount = Math.max(0, data.depositAmount)
     const balanceDue = Math.max(0, totalAmount - depositAmount)
 
     if (Math.abs(totalAmount - data.totalAmount) > 0.01) {
@@ -191,7 +191,7 @@ export const getBuyerOrders = createServerFn({ method: 'GET' })
     const deliveredStatuses = ['delivered']
     const cancelledStatuses = ['cancelled', 'returned']
 
-    let statusFilter: string[] | undefined
+    let statusFilter: Array<string> | undefined
     if (filter === 'active') {
       statusFilter = activeStatuses
     } else if (filter === 'delivered') {
@@ -237,7 +237,7 @@ export const getBuyerOrders = createServerFn({ method: 'GET' })
         if (order.id.toString().includes(searchLower)) return true
         // Search by product names
         const hasMatchingProduct = order.items.some(item =>
-          item.product?.name?.toLowerCase().includes(searchLower)
+          item.product.name.toLowerCase().includes(searchLower)
         )
         return hasMatchingProduct
       })

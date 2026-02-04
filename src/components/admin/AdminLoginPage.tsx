@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Eye, EyeOff, Shield, Lock } from 'lucide-react'
+import { Eye, EyeOff, Lock, Shield } from 'lucide-react'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 export function AdminLoginPage() {

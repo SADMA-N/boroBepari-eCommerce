@@ -1,6 +1,7 @@
 import { addDays, subDays } from 'date-fns'
-import { MockProduct, mockProducts } from './mock-products'
-import { Rfq, Quote } from '@/db/schema'
+import { mockProducts } from './mock-products'
+import type { MockProduct} from './mock-products';
+import type { Quote, Rfq } from '@/db/schema'
 
 // Extended types for UI with relations
 export interface MockQuote extends Partial<Quote> {
@@ -13,13 +14,13 @@ export interface MockRfq extends Partial<Rfq> {
   id: number
   rfqNumber: string
   product: MockProduct
-  quotes: MockQuote[]
+  quotes: Array<MockQuote>
   quoteCount: number
 }
 
 const getProduct = (id: number) => mockProducts.find(p => p.id === id) || mockProducts[0]
 
-export const mockRfqs: MockRfq[] = [
+export const mockRfqs: Array<MockRfq> = [
   {
     id: 1,
     rfqNumber: 'RFQ-1024',

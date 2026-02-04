@@ -4,7 +4,7 @@ import { createRfqSchema } from '@/lib/rfq-validation'
 export const Route = createFileRoute('/api/rfq/submit')({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: ({ request }) => {
         // TODO: Parse body using createRfqSchema
         // TODO: Create RFQ in database
         // TODO: Return created RFQ

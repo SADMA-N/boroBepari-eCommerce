@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { CheckoutProvider } from '@/contexts/CheckoutContext'
 
 export const Route = createFileRoute('/checkout')({

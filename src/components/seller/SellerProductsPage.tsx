@@ -7,8 +7,8 @@ import {
   PackagePlus,
   UploadCloud,
 } from 'lucide-react'
-import { SellerProtectedRoute } from '@/components/seller'
 import { BulkImportModal } from './BulkImportModal'
+import { SellerProtectedRoute } from '@/components/seller'
 
 type ProductStatus = 'Published' | 'Draft'
 type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock'
@@ -26,7 +26,7 @@ type Product = {
   image: string
 }
 
-const PRODUCTS: Product[] = [
+const PRODUCTS: Array<Product> = [
   {
     id: 'p1',
     title: 'Industrial Safety Gloves',
@@ -85,10 +85,10 @@ export function SellerProductsPage() {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterTab>('All')
   const [sort, setSort] = useState<SortOption>('Newest First')
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<Array<string>>([])
   const [editing, setEditing] = useState<{ id: string; field: 'price' | 'stock' } | null>(null)
   const [loadingEdit, setLoadingEdit] = useState<string | null>(null)
-  const [products, setProducts] = useState<Product[]>(PRODUCTS)
+  const [products, setProducts] = useState<Array<Product>>(PRODUCTS)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [showImport, setShowImport] = useState(false)
@@ -255,7 +255,7 @@ export function SellerProductsPage() {
           />
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              {(['All', 'Published', 'Draft', 'Out of Stock', 'Low Stock'] as FilterTab[]).map((tab) => (
+              {(['All', 'Published', 'Draft', 'Out of Stock', 'Low Stock'] as Array<FilterTab>).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setFilter(tab)}
@@ -279,7 +279,7 @@ export function SellerProductsPage() {
                   'Price: Low to High',
                   'Price: High to Low',
                   'Most Orders',
-                ] as SortOption[]).map((option) => (
+                ] as Array<SortOption>).map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>

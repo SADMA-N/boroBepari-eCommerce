@@ -31,16 +31,16 @@ type Order = {
   buyerEmail: string
   address: string
   paymentMethod: string
-  lineItems: {
+  lineItems: Array<{
     name: string
     image: string
     quantity: number
     unitPrice: number
-  }[]
-  timeline: { label: string; time: string }[]
+  }>
+  timeline: Array<{ label: string; time: string }>
 }
 
-const ORDERS: Order[] = [
+const ORDERS: Array<Order> = [
   {
     id: 'BB-1048',
     buyer: 'Shahjalal Traders',
@@ -126,7 +126,7 @@ const ORDERS: Order[] = [
   },
 ]
 
-const STATUS_TABS: OrderStatus[] = [
+const STATUS_TABS: Array<OrderStatus> = [
   'New',
   'Confirmed',
   'Processing',
@@ -135,11 +135,11 @@ const STATUS_TABS: OrderStatus[] = [
   'Cancelled',
 ]
 
-const PAYMENT_STATUSES: PaymentStatus[] = ['Paid', 'Deposit Paid', 'COD']
+const PAYMENT_STATUSES: Array<PaymentStatus> = ['Paid', 'Deposit Paid', 'COD']
 
 export function SellerOrdersPage() {
   const { pushToast } = useSellerToast()
-  const [orders, setOrders] = useState<Order[]>(ORDERS)
+  const [orders, setOrders] = useState<Array<Order>>(ORDERS)
   const [tab, setTab] = useState<OrderStatus>('New')
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
@@ -147,7 +147,7 @@ export function SellerOrdersPage() {
   const [amountRange, setAmountRange] = useState({ min: '', max: '' })
   const [dateRange, setDateRange] = useState('Last 7 Days')
   const [sortBy, setSortBy] = useState('Date')
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<Array<string>>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const perPage = 10
@@ -335,11 +335,12 @@ export function SellerOrdersPage() {
                     <select
                       className="rounded-lg border border-slate-200 px-2 py-1"
                       onChange={(event) => {
-                        const value = event.target.value as OrderStatus
+                        const value = event.target.value
                         if (!value) return
+                        const nextStatus = value as OrderStatus
                         setOrders((prev) =>
                           prev.map((order) =>
-                            selected.includes(order.id) ? { ...order, status: value } : order,
+                            selected.includes(order.id) ? { ...order, status: nextStatus } : order,
                           ),
                         )
                       }}

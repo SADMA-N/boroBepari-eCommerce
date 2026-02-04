@@ -5,10 +5,10 @@
  * error handling, and integration with the cart context.
  */
 
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import type { CouponCode, ValidateCouponResponse } from '@/types/cart'
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
-import type { CouponCode, ValidateCouponResponse } from '@/types/cart'
 
 interface CouponValidationState {
   /** Whether a validation request is in progress */

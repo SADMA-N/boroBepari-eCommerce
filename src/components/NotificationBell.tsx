@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Bell, Check, X } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
-import { useNotifications, Notification } from '@/contexts/NotificationContext'
 import { Link } from '@tanstack/react-router'
+import type { Notification } from '@/contexts/NotificationContext';
+import { useNotifications } from '@/contexts/NotificationContext'
 
 export default function NotificationBell({
   showLabel = false,

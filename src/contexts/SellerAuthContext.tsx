@@ -1,7 +1,6 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import type { SellerUser } from '@/types/seller'
-import { validateSellerToken, sellerLogin, sellerRegister } from '@/lib/seller-auth-server'
-import type { SellerLoginData, SellerRegisterData } from '@/types/seller'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import type { SellerLoginData, SellerRegisterData, SellerUser  } from '@/types/seller'
+import { sellerLogin, sellerRegister, validateSellerToken } from '@/lib/seller-auth-server'
 
 const SELLER_TOKEN_KEY = 'seller_token'
 
@@ -45,7 +44,7 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
 
     try {
       const result = await validateSellerToken({ data: { token } })
-      if (result.valid && result.seller) {
+      if (result.valid) {
         setSeller(result.seller)
       } else {
         setToken(null)

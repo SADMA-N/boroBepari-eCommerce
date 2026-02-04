@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
-  Search,
-  Download,
-  ChevronDown,
   AlertTriangle,
-  ShieldAlert,
+  ChevronDown,
+  Download,
   Eye,
   RefreshCw,
+  Search,
+  ShieldAlert,
 } from 'lucide-react'
 import {
-  BarChart,
   Bar,
+  BarChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 
@@ -48,7 +48,7 @@ const ADMINS = [
   { id: 'adm-3', name: 'Mitu Das', role: 'moderator' },
 ]
 
-const LOGS: AuditLog[] = [
+const LOGS: Array<AuditLog> = [
   {
     id: 'log-1001',
     timestamp: '2026-02-04 14:20',
@@ -171,7 +171,7 @@ const ACTION_TYPES = [
   'Login/Logout',
 ]
 
-const ACTION_TYPE_MAP: Record<string, string[]> = {
+const ACTION_TYPE_MAP: Record<string, Array<string>> = {
   'User actions': ['User suspended', 'User unsuspended', 'User deleted', 'User details edited', 'Password reset'],
   'Supplier actions': ['Supplier verified', 'Supplier unverified', 'Supplier suspended', 'Supplier deleted'],
   'KYC actions': ['KYC approved', 'KYC rejected'],
@@ -225,7 +225,7 @@ export function AdminAuditLogsPage() {
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
     const allowedActions =
-      actionFilter === 'All' ? null : ACTION_TYPE_MAP[actionFilter] || []
+      actionFilter === 'All' ? null : ACTION_TYPE_MAP[actionFilter]
     return LOGS.filter((log) => {
       const matchesAdmin = adminFilter === 'all' || log.adminId === adminFilter
       const matchesAction = !allowedActions || allowedActions.includes(log.actionType)

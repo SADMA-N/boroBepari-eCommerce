@@ -1,12 +1,12 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
+  BarChart3,
+  FileText,
   LayoutDashboard,
   Package,
-  ShoppingCart,
-  FileText,
-  BarChart3,
-  Wallet,
   Settings,
+  ShoppingCart,
+  Wallet,
   X,
 } from 'lucide-react'
 

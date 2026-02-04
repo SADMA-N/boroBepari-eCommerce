@@ -1,4 +1,4 @@
-import { type Order, type OrderItem } from '@/db/schema'
+import type {Order, OrderItem} from '@/db/schema';
 
 export enum OrderStatus {
   PLACED = 'placed',
