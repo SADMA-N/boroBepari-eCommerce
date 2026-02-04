@@ -3,6 +3,7 @@ import {
   ChevronDown,
   FileText,
   Filter,
+  Search,
   Timer,
   X,
 } from 'lucide-react'

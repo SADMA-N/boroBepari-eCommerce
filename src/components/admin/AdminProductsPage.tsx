@@ -456,7 +456,9 @@ export function AdminProductsPage() {
     link.download = `borobepari-products-${scope}.${suffix}`
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    if (link.isConnected) {
+      link.remove()
+    }
     URL.revokeObjectURL(url)
     setExportOpen(false)
   }

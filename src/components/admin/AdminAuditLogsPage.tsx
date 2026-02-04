@@ -292,7 +292,9 @@ export function AdminAuditLogsPage() {
     link.download = `audit-logs-${from}-${to}.csv`
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    if (link.isConnected) {
+      link.remove()
+    }
     URL.revokeObjectURL(url)
   }
 

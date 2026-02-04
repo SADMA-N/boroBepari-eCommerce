@@ -328,7 +328,9 @@ export function AdminUsersPage() {
     link.download = `borobepari-users-${scope}.${suffix}`
     document.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
+    if (link.isConnected) {
+      link.remove()
+    }
     URL.revokeObjectURL(url)
     setExportOpen(false)
   }
