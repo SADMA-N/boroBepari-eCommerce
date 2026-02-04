@@ -32,6 +32,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 type KycStatus = 'pending' | 'verified' | 'rejected'
 type SupplierStatus = 'active' | 'suspended'
@@ -303,6 +304,12 @@ function statusBadge(status: SupplierStatus) {
 }
 
 export function AdminSuppliersPage() {
+  const { can } = useAdminAuth()
+  const canView = can('suppliers.view')
+  const canVerify = can('suppliers.verify')
+  const canSuspend = can('suppliers.suspend')
+  const canKycApprove = can('kyc.approve')
+  const canKycReject = can('kyc.reject')
   const [searchQuery, setSearchQuery] = useState('')
   const [kycFilter, setKycFilter] = useState<KycStatus | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<SupplierStatus | 'all'>('all')
@@ -329,6 +336,7 @@ export function AdminSuppliersPage() {
   const [bulkSuspendOpen, setBulkSuspendOpen] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
   const [page, setPage] = useState(1)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
   useEffect(() => {
     setPage(1)
@@ -441,7 +449,7 @@ export function AdminSuppliersPage() {
   const selectedCount = selectedIds.length
 
   return (
-    <AdminProtectedRoute requiredPermission="canManageSuppliers">
+    <AdminProtectedRoute requiredPermissions={['suppliers.view']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -449,7 +457,10 @@ export function AdminSuppliersPage() {
             <p className="text-sm text-slate-500">Total: {totalSuppliers} sellers</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <button
+              disabled={!canView}
+              className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
               <UserPlus size={16} />
               + Add Supplier
             </button>
@@ -621,6 +632,7 @@ export function AdminSuppliersPage() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setBulkApproveOpen(true)}
+                disabled={!canKycApprove}
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
               >
                 <FileCheck size={14} />
@@ -628,6 +640,7 @@ export function AdminSuppliersPage() {
               </button>
               <button
                 onClick={() => setBulkVerifyOpen(true)}
+                disabled={!canVerify}
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
               >
                 <ShieldCheck size={14} />
@@ -635,6 +648,7 @@ export function AdminSuppliersPage() {
               </button>
               <button
                 onClick={() => setBulkSuspendOpen(true)}
+                disabled={!canSuspend}
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
               >
                 <Ban size={14} />
@@ -733,16 +747,23 @@ export function AdminSuppliersPage() {
                                     setDetailTab('business')
                                     setOpenMenuId(null)
                                   }}
+                                  disabled={!canView}
                                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
                                 >
                                   <Eye size={14} />
                                   View Profile
                                 </button>
-                                <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                                <button
+                                  disabled={!canView}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                >
                                   <FileText size={14} />
                                   View Products
                                 </button>
-                                <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                                <button
+                                  disabled={!canView}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                >
                                   <FileText size={14} />
                                   View Orders
                                 </button>
@@ -754,6 +775,7 @@ export function AdminSuppliersPage() {
                                         setDetailSupplier(supplier)
                                         setOpenMenuId(null)
                                       }}
+                                      disabled={!canKycApprove}
                                       className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
                                     >
                                       <FileCheck size={14} />
@@ -765,6 +787,7 @@ export function AdminSuppliersPage() {
                                         setDetailSupplier(supplier)
                                         setOpenMenuId(null)
                                       }}
+                                      disabled={!canKycReject}
                                       className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
                                     >
                                       <FileX2 size={14} />
@@ -773,12 +796,18 @@ export function AdminSuppliersPage() {
                                   </>
                                 )}
                                 {supplier.verificationBadge === 'none' ? (
-                                  <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                                  <button
+                                    disabled={!canVerify}
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  >
                                     <ShieldCheck size={14} />
                                     Verify Supplier
                                   </button>
                                 ) : (
-                                  <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                                  <button
+                                    disabled={!canVerify}
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  >
                                     <ShieldX size={14} />
                                     Revoke Verification
                                   </button>
@@ -789,12 +818,16 @@ export function AdminSuppliersPage() {
                                     setDetailSupplier(supplier)
                                     setOpenMenuId(null)
                                   }}
+                                  disabled={!canSuspend}
                                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Account
                                 </button>
-                                <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                                <button
+                                  disabled={!canView}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                >
                                   <BarChart3 size={14} />
                                   View Analytics
                                 </button>
@@ -804,7 +837,8 @@ export function AdminSuppliersPage() {
                                     setDetailSupplier(supplier)
                                     setOpenMenuId(null)
                                   }}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                                  disabled={!canSuspend}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                                 >
                                   <Trash2 size={14} />
                                   Delete Account
@@ -1362,17 +1396,31 @@ export function AdminSuppliersPage() {
                 />
                 I understand this action is permanent
               </label>
+              <input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="Type DELETE to confirm"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
-                onClick={() => setDeleteOpen(false)}
+                onClick={() => {
+                  setDeleteOpen(false)
+                  setDeleteConfirm(false)
+                  setDeleteConfirmText('')
+                }}
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
               >
                 Cancel
               </button>
               <button
-                disabled={!deleteConfirm}
-                onClick={() => setDeleteOpen(false)}
+                disabled={!deleteConfirm || deleteConfirmText !== 'DELETE'}
+                onClick={() => {
+                  setDeleteOpen(false)
+                  setDeleteConfirm(false)
+                  setDeleteConfirmText('')
+                }}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
               >
                 Delete Account

@@ -19,6 +19,7 @@ import {
   Activity,
 } from 'lucide-react'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 type SettingsTab =
   | 'general'
@@ -42,6 +43,8 @@ const TABS: Array<{ id: SettingsTab; label: string; icon: React.ElementType }> =
 const DEFAULT_CATEGORIES = ['Electronics', 'Apparel', 'Home & Kitchen', 'Industrial', 'Grocery']
 
 export function AdminSettingsPage() {
+  const { can } = useAdminAuth()
+  const canEdit = can('settings.edit')
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [maintenanceEnabled, setMaintenanceEnabled] = useState(false)
   const [twoFactorAdmin, setTwoFactorAdmin] = useState(true)
@@ -64,7 +67,7 @@ export function AdminSettingsPage() {
   const ActiveIcon = activeIcon
 
   return (
-    <AdminProtectedRoute requiredPermission="canManageSettings">
+    <AdminProtectedRoute requiredPermissions={['settings.view']}>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Platform Settings</h1>
@@ -104,7 +107,7 @@ export function AdminSettingsPage() {
             </div>
 
             {activeTab === 'general' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Platform Information</h3>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -177,11 +180,11 @@ export function AdminSettingsPage() {
                     <Save size={14} /> Save SEO Settings
                   </button>
                 </section>
-              </div>
+              </fieldset>
             )}
 
             {activeTab === 'commission' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Commission Structure</h3>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -229,11 +232,11 @@ export function AdminSettingsPage() {
                 <button className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
                   <Save size={14} /> Save Commission & Fees
                 </button>
-              </div>
+              </fieldset>
             )}
 
             {activeTab === 'payment' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Payment Gateway Configuration</h3>
                   <div className="rounded-lg border border-slate-200 p-4 space-y-3">
@@ -312,11 +315,11 @@ export function AdminSettingsPage() {
                 <button className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
                   <Save size={14} /> Save Payment Settings
                 </button>
-              </div>
+              </fieldset>
             )}
 
             {activeTab === 'shipping' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Shipping Zones</h3>
                   <div className="space-y-3">
@@ -370,11 +373,11 @@ export function AdminSettingsPage() {
                 <button className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
                   <Save size={14} /> Save Shipping Settings
                 </button>
-              </div>
+              </fieldset>
             )}
 
             {activeTab === 'notifications' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Email Configuration</h3>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -438,11 +441,11 @@ export function AdminSettingsPage() {
                 <button className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
                   <Save size={14} /> Save Notifications
                 </button>
-              </div>
+              </fieldset>
             )}
 
             {activeTab === 'security' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Security Settings</h3>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -465,6 +468,7 @@ export function AdminSettingsPage() {
                     <input className="rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="Session timeout (minutes)" defaultValue="30" />
                     <input className="rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="Max login attempts" defaultValue="5" />
                     <input className="rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="Lockout duration (minutes)" defaultValue="15" />
+                    <input className="rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="IP whitelist (comma-separated)" defaultValue="103.20.58.0/24" />
                   </div>
                 </section>
 
@@ -505,11 +509,11 @@ export function AdminSettingsPage() {
                 <button className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
                   <Save size={14} /> Save Security Settings
                 </button>
-              </div>
+              </fieldset>
             )}
 
             {activeTab === 'maintenance' && (
-              <div className="space-y-6">
+              <fieldset disabled={!canEdit} className="space-y-6">
                 <section className="space-y-4">
                   <h3 className="text-sm font-semibold text-slate-900">Maintenance Controls</h3>
                   <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
@@ -571,7 +575,7 @@ export function AdminSettingsPage() {
                 <button className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
                   <Save size={14} /> Save Maintenance Settings
                 </button>
-              </div>
+              </fieldset>
             )}
           </div>
         </div>

@@ -28,6 +28,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 type ProductStatus = 'published' | 'draft' | 'flagged' | 'out_of_stock' | 'suspended'
 type StockFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
@@ -321,6 +322,10 @@ function statusBadge(status: ProductStatus) {
 }
 
 export function AdminProductsPage() {
+  const { can } = useAdminAuth()
+  const canView = can('products.view')
+  const canModerate = can('products.moderate')
+  const canDelete = can('products.delete')
   const [activeTab, setActiveTab] = useState<ProductStatus | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -346,6 +351,7 @@ export function AdminProductsPage() {
   const [exportOpen, setExportOpen] = useState(false)
   const [bulkCategoryOpen, setBulkCategoryOpen] = useState(false)
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
   useEffect(() => {
     setSelectedIds([])
@@ -456,7 +462,7 @@ export function AdminProductsPage() {
   }
 
   return (
-    <AdminProtectedRoute requiredPermission="canManageProducts">
+    <AdminProtectedRoute requiredPermissions={['products.view']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -656,17 +662,29 @@ export function AdminProductsPage() {
         {selectedIds.length > 0 && (
           <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex flex-wrap items-center gap-2">
             <span className="text-sm text-orange-800">{selectedIds.length} selected</span>
-            <button className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">Bulk Publish</button>
-            <button className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">Bulk Suspend</button>
+            <button
+              disabled={!canModerate}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
+            >
+              Bulk Publish
+            </button>
+            <button
+              disabled={!canModerate}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
+            >
+              Bulk Suspend
+            </button>
             <button
               onClick={() => setBulkDeleteOpen(true)}
+              disabled={!canDelete}
               className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white"
             >
               Bulk Delete
             </button>
             <button
               onClick={() => setBulkCategoryOpen(true)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+              disabled={!canModerate}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
             >
               Bulk Category
             </button>
@@ -721,6 +739,7 @@ export function AdminProductsPage() {
                             setDetailProduct(product)
                             setDetailTab('info')
                           }}
+                          disabled={!canView}
                           className="flex items-center gap-3 text-left"
                         >
                           <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
@@ -775,7 +794,8 @@ export function AdminProductsPage() {
                                 </a>
                                 <button
                                   onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  disabled={!canModerate}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
                                 >
                                   <Edit3 size={14} />
                                   Edit Product
@@ -783,7 +803,8 @@ export function AdminProductsPage() {
                                 {product.status !== 'published' && (
                                   <button
                                     onClick={() => setOpenMenuId(null)}
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                    disabled={!canModerate}
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
                                   >
                                     <CheckCircle size={14} />
                                     Activate Product
@@ -794,7 +815,8 @@ export function AdminProductsPage() {
                                     setSuspendProduct(product)
                                     setOpenMenuId(null)
                                   }}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  disabled={!canModerate}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Product
@@ -805,7 +827,8 @@ export function AdminProductsPage() {
                                     setFlagReviewNotes('')
                                     setOpenMenuId(null)
                                   }}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  disabled={!canModerate}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
                                 >
                                   <Flag size={14} />
                                   View Reports/Flags
@@ -822,7 +845,8 @@ export function AdminProductsPage() {
                                     setDeleteProduct(product)
                                     setOpenMenuId(null)
                                   }}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                                  disabled={!canDelete}
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                                 >
                                   <Trash2 size={14} />
                                   Delete Product
@@ -1212,17 +1236,31 @@ export function AdminProductsPage() {
                 />
                 I understand this action is permanent
               </label>
+              <input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="Type DELETE to confirm"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
-                onClick={() => setDeleteProduct(null)}
+                onClick={() => {
+                  setDeleteProduct(null)
+                  setDeleteConfirm(false)
+                  setDeleteConfirmText('')
+                }}
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
               >
                 Cancel
               </button>
               <button
-                disabled={!deleteConfirm}
-                onClick={() => setDeleteProduct(null)}
+                disabled={!deleteConfirm || deleteConfirmText !== 'DELETE'}
+                onClick={() => {
+                  setDeleteProduct(null)
+                  setDeleteConfirm(false)
+                  setDeleteConfirmText('')
+                }}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
               >
                 Delete Product

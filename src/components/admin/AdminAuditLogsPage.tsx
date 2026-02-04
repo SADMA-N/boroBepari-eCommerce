@@ -310,7 +310,7 @@ export function AdminAuditLogsPage() {
   ]
 
   return (
-    <AdminProtectedRoute requiredPermission="canViewAuditLogs">
+    <AdminProtectedRoute requiredPermissions={['logs.view']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>

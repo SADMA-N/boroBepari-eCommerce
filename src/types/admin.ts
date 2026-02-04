@@ -9,59 +9,111 @@ export interface AdminUser {
   lastLoginAt: string | null
 }
 
-export interface AdminPermissions {
-  canManageUsers: boolean
-  canManageSuppliers: boolean
-  canReviewKYC: boolean
-  canManageOrders: boolean
-  canResolveDisputes: boolean
-  canManageProducts: boolean
-  canViewAnalytics: boolean
-  canManageSettings: boolean
-  canViewAuditLogs: boolean
-  canCreateAdmins: boolean
+export type AdminPermission =
+  | 'users.view'
+  | 'users.edit'
+  | 'users.delete'
+  | 'suppliers.view'
+  | 'suppliers.verify'
+  | 'suppliers.suspend'
+  | 'kyc.review'
+  | 'kyc.approve'
+  | 'kyc.reject'
+  | 'products.view'
+  | 'products.moderate'
+  | 'products.delete'
+  | 'disputes.view'
+  | 'disputes.resolve'
+  | 'settings.view'
+  | 'settings.edit'
+  | 'logs.view'
+
+export type AdminPermissions = Record<AdminPermission, boolean>
+
+const basePermissions: AdminPermissions = {
+  'users.view': false,
+  'users.edit': false,
+  'users.delete': false,
+  'suppliers.view': false,
+  'suppliers.verify': false,
+  'suppliers.suspend': false,
+  'kyc.review': false,
+  'kyc.approve': false,
+  'kyc.reject': false,
+  'products.view': false,
+  'products.moderate': false,
+  'products.delete': false,
+  'disputes.view': false,
+  'disputes.resolve': false,
+  'settings.view': false,
+  'settings.edit': false,
+  'logs.view': false,
 }
 
 export function getAdminPermissions(role: AdminRole): AdminPermissions {
   switch (role) {
     case 'super_admin':
       return {
-        canManageUsers: true,
-        canManageSuppliers: true,
-        canReviewKYC: true,
-        canManageOrders: true,
-        canResolveDisputes: true,
-        canManageProducts: true,
-        canViewAnalytics: true,
-        canManageSettings: true,
-        canViewAuditLogs: true,
-        canCreateAdmins: true,
+        ...basePermissions,
+        'users.view': true,
+        'users.edit': true,
+        'users.delete': true,
+        'suppliers.view': true,
+        'suppliers.verify': true,
+        'suppliers.suspend': true,
+        'kyc.review': true,
+        'kyc.approve': true,
+        'kyc.reject': true,
+        'products.view': true,
+        'products.moderate': true,
+        'products.delete': true,
+        'disputes.view': true,
+        'disputes.resolve': true,
+        'settings.view': true,
+        'settings.edit': true,
+        'logs.view': true,
       }
     case 'admin':
       return {
-        canManageUsers: true,
-        canManageSuppliers: true,
-        canReviewKYC: true,
-        canManageOrders: true,
-        canResolveDisputes: true,
-        canManageProducts: true,
-        canViewAnalytics: true,
-        canManageSettings: false,
-        canViewAuditLogs: true,
-        canCreateAdmins: false,
+        ...basePermissions,
+        'users.view': true,
+        'users.edit': true,
+        'users.delete': true,
+        'suppliers.view': true,
+        'suppliers.verify': true,
+        'suppliers.suspend': true,
+        'kyc.review': true,
+        'kyc.approve': true,
+        'kyc.reject': true,
+        'products.view': true,
+        'products.moderate': true,
+        'products.delete': true,
+        'disputes.view': true,
+        'disputes.resolve': true,
+        'settings.view': true,
+        'settings.edit': false,
+        'logs.view': true,
       }
     case 'moderator':
       return {
-        canManageUsers: false,
-        canManageSuppliers: false,
-        canReviewKYC: true,
-        canManageOrders: false,
-        canResolveDisputes: true,
-        canManageProducts: false,
-        canViewAnalytics: false,
-        canManageSettings: false,
-        canViewAuditLogs: false,
-        canCreateAdmins: false,
+        ...basePermissions,
+        'kyc.review': true,
+        'kyc.approve': true,
+        'kyc.reject': true,
+        'products.view': true,
+        'products.moderate': true,
+        'products.delete': false,
+        'disputes.view': false,
+        'disputes.resolve': false,
+        'settings.view': false,
+        'logs.view': false,
       }
   }
+}
+
+export function hasPermission(
+  permissions: AdminPermissions | null,
+  permission: AdminPermission,
+): boolean {
+  return !!permissions?.[permission]
 }

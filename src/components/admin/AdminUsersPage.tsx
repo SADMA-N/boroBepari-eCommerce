@@ -19,6 +19,7 @@ import {
   Edit3,
 } from 'lucide-react'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 type UserStatus = 'active' | 'suspended' | 'deleted'
 type OrderCountFilter = 'all' | '0' | '1-5' | '6-20' | '20+'
@@ -217,6 +218,10 @@ function statusBadge(status: UserStatus) {
 }
 
 export function AdminUsersPage() {
+  const { can } = useAdminAuth()
+  const canView = can('users.view')
+  const canEdit = can('users.edit')
+  const canDelete = can('users.delete')
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all')
   const [verificationFilter, setVerificationFilter] = useState<'all' | 'verified' | 'unverified'>('all')
@@ -235,10 +240,12 @@ export function AdminUsersPage() {
   const [suspendDuration, setSuspendDuration] = useState('7 days')
   const [suspendNotify, setSuspendNotify] = useState(true)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [page, setPage] = useState(1)
   const [exportOpen, setExportOpen] = useState(false)
   const [bulkSuspendOpen, setBulkSuspendOpen] = useState(false)
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
+  const [bulkDeleteText, setBulkDeleteText] = useState('')
 
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -333,7 +340,7 @@ export function AdminUsersPage() {
   }, [searchQuery, statusFilter, verificationFilter, orderCountFilter, sortBy, dateFrom, dateTo])
 
   return (
-    <AdminProtectedRoute requiredPermission="canManageUsers">
+    <AdminProtectedRoute requiredPermissions={['users.view']}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -342,7 +349,10 @@ export function AdminUsersPage() {
             <p className="text-sm text-slate-500">Total: {totalUsers} buyers</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <button
+              disabled={!canEdit}
+              className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
               <UserPlus size={16} />
               + Add User
             </button>
@@ -504,12 +514,16 @@ export function AdminUsersPage() {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setBulkSuspendOpen(true)}
+                disabled={!canEdit}
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
               >
                 <Ban size={14} />
                 Bulk Suspend
               </button>
-              <button className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200">
+              <button
+                disabled={!canEdit}
+                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200 disabled:opacity-50"
+              >
                 <CheckCircle size={14} />
                 Bulk Unsuspend
               </button>
@@ -519,7 +533,8 @@ export function AdminUsersPage() {
               </button>
               <button
                 onClick={() => setBulkDeleteOpen(true)}
-                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm text-white"
+                disabled={!canDelete}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm text-white disabled:opacity-50"
               >
                 <Trash2 size={14} />
                 Bulk Delete
@@ -595,6 +610,7 @@ export function AdminUsersPage() {
                                   setDetailTab('profile')
                                   setOpenMenuId(null)
                                 }}
+                                disabled={!canView}
                                 className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
                               >
                                 <Eye size={14} />
@@ -602,6 +618,7 @@ export function AdminUsersPage() {
                               </button>
                               <button
                                 className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                disabled={!canView}
                               >
                                 <FileText size={14} />
                                 View Orders
@@ -609,6 +626,7 @@ export function AdminUsersPage() {
                               {user.status === 'suspended' ? (
                                 <button
                                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  disabled={!canEdit}
                                 >
                                   <CheckCircle size={14} />
                                   Unsuspend Account
@@ -619,17 +637,24 @@ export function AdminUsersPage() {
                                     setSuspendUser(user)
                                     setOpenMenuId(null)
                                   }}
+                                  disabled={!canEdit}
                                   className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Account
                                 </button>
                               )}
-                              <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                              <button
+                                disabled={!canEdit}
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                              >
                                 <Mail size={14} />
                                 Reset Password
                               </button>
-                              <button className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50">
+                              <button
+                                disabled={!canEdit}
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                              >
                                 <Bell size={14} />
                                 Send Notification
                               </button>
@@ -638,7 +663,8 @@ export function AdminUsersPage() {
                                   setDeleteUser(user)
                                   setOpenMenuId(null)
                                 }}
-                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                                disabled={!canDelete}
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                               >
                                 <Trash2 size={14} />
                                 Delete Account
@@ -968,22 +994,30 @@ export function AdminUsersPage() {
                 />
                 I understand this action is permanent
               </label>
+              <input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="Type DELETE to confirm"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
                 onClick={() => {
                   setDeleteUser(null)
                   setDeleteConfirm(false)
+                  setDeleteConfirmText('')
                 }}
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
               >
                 Cancel
               </button>
               <button
-                disabled={!deleteConfirm}
+                disabled={!deleteConfirm || deleteConfirmText !== 'DELETE'}
                 onClick={() => {
                   setDeleteUser(null)
                   setDeleteConfirm(false)
+                  setDeleteConfirmText('')
                 }}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
               >
@@ -1054,17 +1088,30 @@ export function AdminUsersPage() {
                 <li>Order history will be anonymized</li>
                 <li>Reviews will remain (anonymized)</li>
               </ul>
+              <input
+                value={bulkDeleteText}
+                onChange={(e) => setBulkDeleteText(e.target.value)}
+                placeholder="Type DELETE to confirm"
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
-                onClick={() => setBulkDeleteOpen(false)}
+                onClick={() => {
+                  setBulkDeleteOpen(false)
+                  setBulkDeleteText('')
+                }}
                 className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
               >
                 Cancel
               </button>
               <button
-                onClick={() => setBulkDeleteOpen(false)}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                disabled={bulkDeleteText !== 'DELETE'}
+                onClick={() => {
+                  setBulkDeleteOpen(false)
+                  setBulkDeleteText('')
+                }}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
               >
                 Delete Accounts
               </button>

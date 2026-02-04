@@ -31,6 +31,7 @@ import {
   CartesianGrid,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 type DisputeStatus = 'open' | 'under_review' | 'resolved' | 'closed' | 'awaiting_response' | 'escalated'
 type Priority = 'normal' | 'high'
@@ -264,6 +265,9 @@ function statusBadge(status: DisputeStatus) {
 }
 
 export function AdminDisputesPage() {
+  const { can } = useAdminAuth()
+  const canView = can('disputes.view')
+  const canResolve = can('disputes.resolve')
   const [activeTab, setActiveTab] = useState<DisputeStatus>('open')
   const [searchQuery, setSearchQuery] = useState('')
   const [issueFilter, setIssueFilter] = useState<IssueType | 'all'>('all')
@@ -329,7 +333,7 @@ export function AdminDisputesPage() {
   }
 
   return (
-    <AdminProtectedRoute requiredPermission="canResolveDisputes">
+    <AdminProtectedRoute requiredPermissions={['disputes.view']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -473,6 +477,7 @@ export function AdminDisputesPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => setSelectedDispute(dispute)}
+                        disabled={!canView}
                         className="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-700"
                       >
                         Review
@@ -698,6 +703,7 @@ export function AdminDisputesPage() {
                     <p className="text-xs text-slate-500">Refund amount: ₹{selectedDispute.amountPaid.toLocaleString()}</p>
                     <button
                       onClick={() => setFullRefundOpen(true)}
+                      disabled={!canResolve}
                       className="mt-2 w-full rounded-lg bg-green-600 px-3 py-2 text-sm text-white"
                     >
                       Process Full Refund
@@ -719,6 +725,7 @@ export function AdminDisputesPage() {
                     />
                     <button
                       onClick={() => setPartialRefundOpen(true)}
+                      disabled={!canResolve}
                       className="w-full rounded-lg bg-orange-600 px-3 py-2 text-sm text-white"
                     >
                       Process Partial Refund
@@ -728,6 +735,7 @@ export function AdminDisputesPage() {
                     <p className="text-sm font-medium text-slate-900">Reject Dispute</p>
                     <button
                       onClick={() => setRejectOpen(true)}
+                      disabled={!canResolve}
                       className="w-full rounded-lg bg-red-600 px-3 py-2 text-sm text-white"
                     >
                       Reject Dispute
@@ -737,6 +745,7 @@ export function AdminDisputesPage() {
                     <p className="text-sm font-medium text-slate-900">Request More Info</p>
                     <button
                       onClick={() => setRequestInfoOpen(true)}
+                      disabled={!canResolve}
                       className="w-full rounded-lg bg-blue-600 px-3 py-2 text-sm text-white"
                     >
                       Send Request
@@ -746,6 +755,7 @@ export function AdminDisputesPage() {
                     <p className="text-sm font-medium text-slate-900">Escalate</p>
                     <button
                       onClick={() => setEscalateOpen(true)}
+                      disabled={!canResolve}
                       className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm text-white"
                     >
                       Escalate Dispute

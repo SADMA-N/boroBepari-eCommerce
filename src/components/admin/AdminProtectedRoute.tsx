@@ -3,16 +3,20 @@ import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { AdminLayout } from './AdminLayout'
-import type { AdminPermissions } from '@/types/admin'
+import type { AdminPermission } from '@/types/admin'
 
 interface AdminProtectedRouteProps {
   children: React.ReactNode
-  requiredPermission?: keyof AdminPermissions
+  requiredPermission?: AdminPermission
+  requiredPermissions?: AdminPermission[]
+  requireAll?: boolean
 }
 
 export function AdminProtectedRoute({
   children,
   requiredPermission,
+  requiredPermissions,
+  requireAll = false,
 }: AdminProtectedRouteProps) {
   const navigate = useNavigate()
   const { admin, permissions, isLoading, isAuthenticated } = useAdminAuth()
@@ -39,25 +43,32 @@ export function AdminProtectedRoute({
   }
 
   // Check specific permission if required
-  if (requiredPermission && permissions && !permissions[requiredPermission]) {
-    return (
-      <AdminLayout>
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-slate-900">Access Denied</h2>
-            <p className="mt-2 text-slate-600">
-              You don't have permission to access this page.
-            </p>
-            <button
-              onClick={() => navigate({ to: '/admin/dashboard' })}
-              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-            >
-              Go to Dashboard
-            </button>
+  const permissionsToCheck = requiredPermissions || (requiredPermission ? [requiredPermission] : [])
+  if (permissionsToCheck.length > 0 && permissions) {
+    const allowed = requireAll
+      ? permissionsToCheck.every((perm) => permissions[perm])
+      : permissionsToCheck.some((perm) => permissions[perm])
+
+    if (!allowed) {
+      return (
+        <AdminLayout>
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-slate-900">Access Denied</h2>
+              <p className="mt-2 text-slate-600">
+                You don't have permission to access this page.
+              </p>
+              <button
+                onClick={() => navigate({ to: '/admin/dashboard' })}
+                className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+              >
+                Go to Dashboard
+              </button>
+            </div>
           </div>
-        </div>
-      </AdminLayout>
-    )
+        </AdminLayout>
+      )
+    }
   }
 
   return <AdminLayout>{children}</AdminLayout>

@@ -22,6 +22,7 @@ import {
   User,
 } from 'lucide-react'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 type KycStatus = 'pending' | 'approved' | 'rejected' | 'resubmitted'
 type Priority = 'normal' | 'urgent'
@@ -190,6 +191,10 @@ const REJECTION_REASONS = [
 ]
 
 export function AdminKYCPage() {
+  const { can } = useAdminAuth()
+  const canReview = can('kyc.review')
+  const canApprove = can('kyc.approve')
+  const canReject = can('kyc.reject')
   const [activeTab, setActiveTab] = useState<KycStatus>('pending')
   const [searchQuery, setSearchQuery] = useState('')
   const [priorityFilter, setPriorityFilter] = useState<Priority | 'all'>('all')
@@ -282,7 +287,7 @@ export function AdminKYCPage() {
   const currentDoc = activeDocs[docIndex]
 
   return (
-    <AdminProtectedRoute requiredPermission="canReviewKYC">
+    <AdminProtectedRoute requiredPermissions={['kyc.review']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -301,12 +306,16 @@ export function AdminKYCPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <button
+              disabled={!canReview}
+              className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
               <UserPlus size={16} />
               Assign to Me
             </button>
             <button
               onClick={() => setBulkApproveOpen(true)}
+              disabled={!canApprove}
               className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
             >
               <ShieldCheck size={16} />
@@ -472,6 +481,7 @@ export function AdminKYCPage() {
                               setZoom(1)
                               setRotation(0)
                             }}
+                            disabled={!canReview}
                             className="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-700"
                           >
                             Review
@@ -630,18 +640,21 @@ export function AdminKYCPage() {
                   <div className="space-y-2">
                     <button
                       onClick={() => setApproveOpen(true)}
+                      disabled={!canApprove}
                       className="w-full rounded-lg bg-green-600 px-4 py-3 text-sm font-semibold text-white hover:bg-green-700"
                     >
                       Approve KYC (A)
                     </button>
                     <button
                       onClick={() => setRejectOpen(true)}
+                      disabled={!canReject}
                       className="w-full rounded-lg bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700"
                     >
                       Reject KYC (R)
                     </button>
                     <button
                       onClick={() => setRequestInfoOpen(true)}
+                      disabled={!canReview}
                       className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700"
                     >
                       Request More Info

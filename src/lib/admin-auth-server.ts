@@ -6,6 +6,10 @@ import * as schema from '@/db/schema'
 import type { AdminUser } from '@/types/admin'
 
 const SECRET = process.env.ADMIN_AUTH_SECRET || 'admin-secret-key-change-in-production'
+const ADMIN_2FA_CODE = process.env.ADMIN_2FA_CODE || '123456'
+const MAX_LOGIN_ATTEMPTS = 5
+const LOGIN_WINDOW_MS = 15 * 60 * 1000
+const loginAttempts = new Map<string, { count: number; firstAttempt: number }>()
 
 function generateToken(adminId: string): string {
   const payload = {
@@ -93,10 +97,18 @@ export const adminLogin = createServerFn({ method: 'POST' })
     z.object({
       email: z.string().email('Invalid email address'),
       password: z.string().min(1, 'Password is required'),
+      otp: z.string().min(6, '2FA code is required'),
     }),
   )
   .handler(async ({ data }) => {
-    const { email, password } = data
+    const { email, password, otp } = data
+
+    const now = Date.now()
+    const key = email.toLowerCase()
+    const attempt = loginAttempts.get(key)
+    if (attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS && attempt.count >= MAX_LOGIN_ATTEMPTS) {
+      throw new Error('Too many login attempts. Please try again later.')
+    }
 
     const admin = await db.query.admins.findFirst({
       where: eq(schema.admins.email, email.toLowerCase()),
@@ -110,10 +122,24 @@ export const adminLogin = createServerFn({ method: 'POST' })
       throw new Error('Account is deactivated')
     }
 
+    if (otp !== ADMIN_2FA_CODE) {
+      const next = attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS
+        ? { count: attempt.count + 1, firstAttempt: attempt.firstAttempt }
+        : { count: 1, firstAttempt: now }
+      loginAttempts.set(key, next)
+      throw new Error('Invalid 2FA code')
+    }
+
     const isValid = await verifyPassword(password, admin.password)
     if (!isValid) {
+      const next = attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS
+        ? { count: attempt.count + 1, firstAttempt: attempt.firstAttempt }
+        : { count: 1, firstAttempt: now }
+      loginAttempts.set(key, next)
       throw new Error('Invalid email or password')
     }
+
+    loginAttempts.delete(key)
 
     // Update last login
     await db

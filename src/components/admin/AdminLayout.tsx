@@ -19,19 +19,24 @@ import {
   Shield,
 } from 'lucide-react'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import type { AdminRole } from '@/types/admin'
+import type { AdminRole, AdminPermission } from '@/types/admin'
 
-const NAV_ITEMS = [
+const NAV_ITEMS: Array<{
+  to: string
+  label: string
+  icon: React.ElementType
+  permission?: AdminPermission
+}> = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/users', label: 'Users Management', icon: Users },
-  { to: '/admin/suppliers', label: 'Suppliers Management', icon: Building2 },
-  { to: '/admin/kyc', label: 'KYC Review Queue', icon: FileCheck },
+  { to: '/admin/users', label: 'Users Management', icon: Users, permission: 'users.view' },
+  { to: '/admin/suppliers', label: 'Suppliers Management', icon: Building2, permission: 'suppliers.view' },
+  { to: '/admin/kyc', label: 'KYC Review Queue', icon: FileCheck, permission: 'kyc.review' },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-  { to: '/admin/disputes', label: 'Disputes', icon: AlertTriangle },
-  { to: '/admin/products', label: 'Products', icon: Package },
+  { to: '/admin/disputes', label: 'Disputes', icon: AlertTriangle, permission: 'disputes.view' },
+  { to: '/admin/products', label: 'Products', icon: Package, permission: 'products.view' },
   { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/admin/settings', label: 'Settings', icon: Settings },
-  { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
+  { to: '/admin/settings', label: 'Settings', icon: Settings, permission: 'settings.view' },
+  { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText, permission: 'logs.view' },
 ]
 
 function getRoleBadgeColor(role: AdminRole): string {
@@ -53,7 +58,7 @@ function formatRole(role: AdminRole): string {
 }
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { admin, logout } = useAdminAuth()
+  const { admin, logout, can } = useAdminAuth()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
@@ -99,7 +104,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             <ul className="space-y-1">
-              {NAV_ITEMS.map((item) => {
+              {NAV_ITEMS.filter((item) => !item.permission || can(item.permission)).map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.to)
                 return (

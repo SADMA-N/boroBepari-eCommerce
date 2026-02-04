@@ -8,6 +8,7 @@ export function AdminLoginPage() {
   const { login } = useAdminAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [otp, setOtp] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -16,14 +17,14 @@ export function AdminLoginPage() {
     event.preventDefault()
     setError('')
 
-    if (!email.trim() || !password.trim()) {
-      setError('Please enter your email and password.')
+    if (!email.trim() || !password.trim() || !otp.trim()) {
+      setError('Please enter your email, password, and 2FA code.')
       return
     }
 
     setIsSubmitting(true)
     try {
-      await login({ email: email.trim(), password })
+      await login({ email: email.trim(), password, otp })
       navigate({ to: '/admin/dashboard' })
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Invalid credentials'
@@ -85,6 +86,18 @@ export function AdminLoginPage() {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                2FA Code
+              </label>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                placeholder="Enter 6-digit code"
+              />
             </div>
 
             <button
