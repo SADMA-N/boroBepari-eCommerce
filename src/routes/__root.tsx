@@ -16,6 +16,7 @@ import { CartProvider } from '../contexts/CartContext'
 import { WishlistProvider } from '../contexts/WishlistContext'
 import { AuthProvider } from '../contexts/AuthContext'
 import { NotificationProvider } from '../contexts/NotificationContext'
+import { ThemeProvider } from '../contexts/ThemeContext'
 
 import appCss from '../styles.css?url'
 
@@ -97,46 +98,48 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        {showBuyerShell ? (
-          <AuthProvider>
-            <NotificationProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <Header />
-                  {children}
-                  <TanStackDevtools
-                    config={{
-                      position: 'bottom-right',
-                    }}
-                    plugins={[
-                      {
-                        name: 'Tanstack Router',
-                        render: <TanStackRouterDevtoolsPanel />,
-                      },
-                      TanStackQueryDevtools,
-                    ]}
-                  />
-                </WishlistProvider>
-              </CartProvider>
-            </NotificationProvider>
-          </AuthProvider>
-        ) : (
-          <>
-            {children}
-            <TanStackDevtools
-              config={{
-                position: 'bottom-right',
-              }}
-              plugins={[
-                {
-                  name: 'Tanstack Router',
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-                TanStackQueryDevtools,
-              ]}
-            />
-          </>
-        )}
+        <ThemeProvider defaultTheme="system" storageKey="borobepari-theme">
+          {showBuyerShell ? (
+            <AuthProvider>
+              <NotificationProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    <Header />
+                    {children}
+                    <TanStackDevtools
+                      config={{
+                        position: 'bottom-right',
+                      }}
+                      plugins={[
+                        {
+                          name: 'Tanstack Router',
+                          render: <TanStackRouterDevtoolsPanel />,
+                        },
+                        TanStackQueryDevtools,
+                      ]}
+                    />
+                  </WishlistProvider>
+                </CartProvider>
+              </NotificationProvider>
+            </AuthProvider>
+          ) : (
+            <>
+              {children}
+              <TanStackDevtools
+                config={{
+                  position: 'bottom-right',
+                }}
+                plugins={[
+                  {
+                    name: 'Tanstack Router',
+                    render: <TanStackRouterDevtoolsPanel />,
+                  },
+                  TanStackQueryDevtools,
+                ]}
+              />
+            </>
+          )}
+        </ThemeProvider>
         <Scripts />
       </body>
     </html>

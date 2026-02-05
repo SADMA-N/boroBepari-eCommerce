@@ -26,16 +26,16 @@ export default function ProductCard({
     : null
 
   return (
-    <div className="group relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100">
+    <div className="group relative bg-white dark:bg-slate-900 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 dark:border-slate-800">
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-100">
+      <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-slate-800">
         <Link
           to="/products/$productSlug"
           params={{ productSlug: product.slug }}
           className="block w-full h-full"
         >
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+            <div className="absolute inset-0 bg-gray-200 dark:bg-slate-700 animate-pulse" />
           )}
           <img
             src={product.images[0]}
@@ -71,7 +71,7 @@ export default function ProductCard({
             className={`p-2 rounded-full shadow-md transition-colors ${
               isWishlisted
                 ? 'bg-red-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100'
+                : 'bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800'
             }`}
             aria-label={
               isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
@@ -84,7 +84,7 @@ export default function ProductCard({
               e.preventDefault()
               onQuickView?.(product)
             }}
-            className="p-2 bg-white rounded-full shadow-md text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-2 bg-white dark:bg-slate-900 rounded-full shadow-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Quick view"
           >
             <Eye size={16} />
@@ -93,7 +93,7 @@ export default function ProductCard({
 
         {/* MOQ Badge */}
         <div className="absolute bottom-2 left-2">
-          <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 text-xs font-medium px-2 py-1 rounded">
+          <span className="inline-flex items-center gap-1 bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-xs font-medium px-2 py-1 rounded transition-colors">
             <Package size={12} />
             MOQ: {product.moq} {product.unit}
           </span>
@@ -101,14 +101,14 @@ export default function ProductCard({
       </div>
 
       {/* Content */}
-      <div className="p-3">
+      <div className="p-3 transition-colors">
         {/* Supplier Info */}
         {supplier && (
           <div className="flex items-center gap-1 mb-1">
             {supplier.verified && (
               <BadgeCheck size={14} className="text-blue-500" />
             )}
-            <span className="text-xs text-gray-500 truncate">
+            <span className="text-xs text-gray-500 dark:text-gray-400 truncate transition-colors">
               {supplier.name}
             </span>
           </div>
@@ -120,14 +120,14 @@ export default function ProductCard({
           params={{ productSlug: product.slug }}
           className="block"
         >
-          <h3 className="text-sm font-medium text-gray-800 line-clamp-2 hover:text-orange-600 transition-colors min-h-[2.5rem]">
+          <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200 line-clamp-2 hover:text-orange-600 dark:hover:text-orange-500 transition-colors min-h-[2.5rem]">
             {product.name}
           </h3>
         </Link>
 
         {/* Rating */}
         {product.reviewCount > 0 && (
-          <div className="flex items-center gap-1 mt-1">
+          <div className="flex items-center gap-1 mt-1 transition-colors">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <svg
@@ -135,7 +135,7 @@ export default function ProductCard({
                   className={`w-3 h-3 ${
                     i < Math.floor(product.rating)
                       ? 'text-yellow-400'
-                      : 'text-gray-300'
+                      : 'text-gray-300 dark:text-gray-600'
                   }`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -144,19 +144,19 @@ export default function ProductCard({
                 </svg>
               ))}
             </div>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               ({product.reviewCount})
             </span>
           </div>
         )}
 
         {/* Price */}
-        <div className="mt-2 flex items-baseline gap-2">
+        <div className="mt-2 flex items-baseline gap-2 transition-colors">
           <span className="text-lg font-bold text-orange-600">
             {formatBDT(product.price)}
           </span>
           {product.originalPrice && (
-            <span className="text-sm text-gray-400 line-through">
+            <span className="text-sm text-gray-400 dark:text-gray-500 line-through">
               {formatBDT(product.originalPrice)}
             </span>
           )}
@@ -164,7 +164,7 @@ export default function ProductCard({
 
         {/* Sold Count */}
         {product.soldCount > 0 && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 transition-colors">
             {product.soldCount.toLocaleString()} sold
           </p>
         )}

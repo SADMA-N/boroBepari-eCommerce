@@ -197,23 +197,23 @@ function AccountPage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 dark:bg-slate-950 min-h-screen py-8 transition-colors">
       <div className="max-w-[1440px] mx-auto px-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 transition-colors">
           Manage My Account
         </h1>
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg shadow-sm p-4 sticky top-24">
+            <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-4 sticky top-24 border dark:border-slate-800 transition-colors">
               <nav className="space-y-1">
                 <button
                   onClick={() => setActiveTab('profile')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-colors ${
                     activeTab === 'profile'
-                      ? 'bg-orange-50 text-orange-600'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-500'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   <User size={20} />
@@ -223,8 +223,8 @@ function AccountPage() {
                   onClick={() => setActiveTab('address')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-colors ${
                     activeTab === 'address'
-                      ? 'bg-orange-50 text-orange-600'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-500'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   <MapPin size={20} />
@@ -234,8 +234,8 @@ function AccountPage() {
                   onClick={() => setActiveTab('orders')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-colors ${
                     activeTab === 'orders'
-                      ? 'bg-orange-50 text-orange-600'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-500'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   <Package size={20} />
@@ -308,14 +308,14 @@ function ProfileSection({ user }: { user: any }) {
   })
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100">
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 border dark:border-slate-800 transition-colors">
+      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100 dark:border-slate-800 dark:text-white transition-colors">
         My Profile
       </h2>
 
       {message && (
         <div
-          className={`p-4 rounded-lg mb-6 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}
+          className={`p-4 rounded-lg mb-6 transition-colors ${message.type === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'}`}
         >
           {message.text}
         </div>
@@ -333,7 +333,7 @@ function ProfileSection({ user }: { user: any }) {
           name="name"
           children={(field) => (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                 Full Name
               </label>
               <input
@@ -341,7 +341,7 @@ function ProfileSection({ user }: { user: any }) {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
               />
             </div>
           )}
@@ -352,7 +352,7 @@ function ProfileSection({ user }: { user: any }) {
             name="dateOfBirth"
             children={(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                   Date of Birth
                 </label>
                 <input
@@ -361,7 +361,7 @@ function ProfileSection({ user }: { user: any }) {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
             )}
@@ -371,7 +371,7 @@ function ProfileSection({ user }: { user: any }) {
             name="gender"
             children={(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                   Gender
                 </label>
                 <select
@@ -379,7 +379,7 @@ function ProfileSection({ user }: { user: any }) {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none bg-white"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                 >
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
@@ -392,15 +392,15 @@ function ProfileSection({ user }: { user: any }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
               Email Address
             </label>
             <input
               value={form.getFieldValue('email')}
               disabled
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-800 bg-gray-50 dark:bg-slate-950 text-gray-500 dark:text-gray-400 cursor-not-allowed transition-colors"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Email cannot be changed
             </p>
           </div>
@@ -409,7 +409,7 @@ function ProfileSection({ user }: { user: any }) {
             name="phoneNumber"
             children={(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                   Phone Number
                 </label>
                 <input
@@ -421,7 +421,7 @@ function ProfileSection({ user }: { user: any }) {
                     if (/^\d*$/.test(val) && val.length <= 11)
                       field.handleChange(val)
                   }}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
             )}
@@ -432,7 +432,7 @@ function ProfileSection({ user }: { user: any }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="px-6 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
           >
             {isLoading && <Loader2 className="animate-spin" size={18} />}
             Save Changes
@@ -477,12 +477,12 @@ function AddressSection({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-        <h2 className="text-xl font-semibold">Address Book</h2>
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 border dark:border-slate-800 transition-colors">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800 transition-colors">
+        <h2 className="text-xl font-semibold dark:text-white">Address Book</h2>
         <button
           onClick={() => setIsEditing(true)}
-          className="flex items-center gap-2 text-sm font-medium text-orange-600 hover:text-orange-700"
+          className="flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-500 hover:text-orange-700 dark:hover:text-orange-400 transition-colors"
         >
           <Plus size={18} />
           Add New Address
@@ -491,30 +491,30 @@ function AddressSection({
 
       <div className="space-y-4">
         {userAddresses.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             No addresses found. Add one to get started.
           </div>
         ) : (
           userAddresses.map((addr) => (
             <div
               key={addr.id}
-              className="border border-gray-200 rounded-lg p-4 hover:border-orange-200 transition-colors"
+              className="border border-gray-200 dark:border-slate-800 rounded-lg p-4 hover:border-orange-200 dark:hover:border-orange-900 transition-all"
             >
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {addr.name}
                     </span>
                     {addr.isDefault && (
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                      <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full font-medium transition-colors">
                         Default
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-600">{addr.address}</p>
-                  <p className="text-gray-600">{addr.postcode}</p>
-                  <p className="text-gray-600 mt-1 flex items-center gap-1.5 text-sm">
+                  <p className="text-gray-600 dark:text-gray-400">{addr.address}</p>
+                  <p className="text-gray-600 dark:text-gray-400">{addr.postcode}</p>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1.5 text-sm transition-colors">
                     <Phone size={14} />
                     {addr.phone}
                   </p>
@@ -525,13 +525,13 @@ function AddressSection({
                       setEditingAddress(addr)
                       setIsEditing(true)
                     }}
-                    className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/20 rounded-lg transition-colors"
                   >
                     <Edit2 size={18} />
                   </button>
                   <button
                     onClick={() => handleDelete(addr.id)}
-                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -585,14 +585,14 @@ function AddressForm({
   })
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100">
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 border dark:border-slate-800 transition-colors">
+      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100 dark:border-slate-800 dark:text-white transition-colors">
         {address ? 'Edit Address' : 'Add New Address'}
       </h2>
 
       {message && (
         <div
-          className={`p-4 rounded-lg mb-6 ${message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}
+          className={`p-4 rounded-lg mb-6 transition-colors ${message.type === 'success' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'}`}
         >
           {message.text}
         </div>
@@ -610,7 +610,7 @@ function AddressForm({
           name="address"
           children={(field) => (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                 Address
               </label>
               <textarea
@@ -618,7 +618,7 @@ function AddressForm({
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                 rows={3}
               />
             </div>
@@ -630,7 +630,7 @@ function AddressForm({
             name="postcode"
             children={(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                   Postcode
                 </label>
                 <input
@@ -638,7 +638,7 @@ function AddressForm({
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
             )}
@@ -648,7 +648,7 @@ function AddressForm({
             name="phone"
             children={(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
                   Phone Number
                 </label>
                 <input
@@ -660,7 +660,7 @@ function AddressForm({
                     if (/^\d*$/.test(val) && val.length <= 11)
                       field.handleChange(val)
                   }}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                 />
               </div>
             )}
@@ -677,9 +677,9 @@ function AddressForm({
                 checked={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.checked)}
-                className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                className="w-4 h-4 text-orange-600 border-gray-300 dark:border-slate-700 rounded focus:ring-orange-500 bg-white dark:bg-slate-800 transition-colors"
               />
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">
                 Make this my default address
               </label>
             </div>
@@ -690,7 +690,7 @@ function AddressForm({
           <button
             type="submit"
             disabled={isLoading}
-            className="px-6 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-200 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
           >
             {isLoading && <Loader2 className="animate-spin" size={18} />}
             Save Address
@@ -698,7 +698,7 @@ function AddressForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-colors"
+            className="px-6 py-2.5 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 focus:ring-4 focus:ring-gray-100 transition-all"
           >
             Cancel
           </button>
@@ -711,17 +711,17 @@ function AddressForm({
 function OrdersSection({ orders }: { orders: Array<any> }) {
   if (orders.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12">
-        <Package size={48} className="mx-auto text-gray-300 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-1">
+      <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 text-center py-12 border dark:border-slate-800 transition-colors">
+        <Package size={48} className="mx-auto text-gray-300 dark:text-gray-700 mb-4 transition-colors" />
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1 transition-colors">
           No Orders Yet
         </h3>
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400 transition-colors">
           Looks like you haven't placed any orders yet.
         </p>
         <a
           href="/"
-          className="inline-block mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          className="inline-block mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all shadow-sm shadow-orange-500/20"
         >
           Start Shopping
         </a>
@@ -730,8 +730,8 @@ function OrdersSection({ orders }: { orders: Array<any> }) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100">
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 border dark:border-slate-800 transition-colors">
+      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100 dark:border-slate-800 dark:text-white transition-colors">
         My Orders
       </h2>
 
@@ -739,40 +739,40 @@ function OrdersSection({ orders }: { orders: Array<any> }) {
         {orders.map((order) => (
           <div
             key={order.id}
-            className="border border-gray-200 rounded-lg overflow-hidden"
+            className="border border-gray-200 dark:border-slate-800 rounded-lg overflow-hidden transition-colors"
           >
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex flex-wrap gap-4 justify-between items-center">
+            <div className="bg-gray-50 dark:bg-slate-800/50 px-6 py-4 border-b border-gray-200 dark:border-slate-800 flex flex-wrap gap-4 justify-between items-center transition-colors">
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 uppercase font-semibold">
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider transition-colors">
                   Order Placed
                 </p>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">
                   {new Date(order.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 uppercase font-semibold">
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider transition-colors">
                   Total Amount
                 </p>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">
                   ৳{Number(order.totalAmount).toFixed(2)}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs text-gray-500 uppercase font-semibold">
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider transition-colors">
                   Order ID
                 </p>
-                <p className="text-sm font-medium text-gray-900">#{order.id}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">#{order.id}</p>
               </div>
               <div>
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium capitalize
+                  className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-colors
                                     ${
                                       order.status === 'delivered'
-                                        ? 'bg-green-100 text-green-700'
+                                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
                                         : order.status === 'cancelled'
-                                          ? 'bg-red-100 text-red-700'
-                                          : 'bg-blue-100 text-blue-700'
+                                          ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                                          : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
                                     }`}
                 >
                   {order.status}
@@ -780,25 +780,25 @@ function OrdersSection({ orders }: { orders: Array<any> }) {
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-6 transition-colors">
               <div className="space-y-4">
                 {order.items.map((item: any) => (
-                  <div key={item.id} className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                  <div key={item.id} className="flex items-center gap-4 transition-colors">
+                    <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden flex-shrink-0 transition-colors border dark:border-slate-700">
                       {/* Placeholder for product image */}
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600 transition-colors">
                         <Package size={24} />
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-900">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">
                         {item.product.name}
                       </h4>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors">
                         Qty: {item.quantity}
                       </p>
                     </div>
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">
                       ৳{Number(item.price).toFixed(2)}
                     </div>
                   </div>

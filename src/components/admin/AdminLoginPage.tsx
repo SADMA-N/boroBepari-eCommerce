@@ -35,17 +35,17 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-slate-900 dark:bg-slate-950 flex items-center justify-center px-4 transition-colors">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-orange-600 mb-4">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-orange-600 mb-4 shadow-lg shadow-orange-600/20">
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">BoroBepari Admin</h1>
           <p className="mt-2 text-slate-400">Sign in to access the admin console</p>
         </div>
 
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8">
+        <div className="bg-slate-800 dark:bg-slate-900 border border-slate-700 dark:border-slate-800 rounded-2xl p-8 shadow-xl transition-colors">
           {error && (
             <div className="mb-6 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
               {error}
@@ -61,7 +61,7 @@ export function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-slate-600 dark:border-slate-700 bg-slate-700 dark:bg-slate-800 px-4 py-3 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition-all"
                 placeholder="admin@borobepari.com"
               />
             </div>
@@ -75,7 +75,7 @@ export function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 pr-12 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                  className="w-full rounded-lg border border-slate-600 dark:border-slate-700 bg-slate-700 dark:bg-slate-800 px-4 py-3 pr-12 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition-all"
                   placeholder="Enter your password"
                 />
                 <button
@@ -95,7 +95,7 @@ export function AdminLoginPage() {
                 type="text"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-3 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                className="w-full rounded-lg border border-slate-600 dark:border-slate-700 bg-slate-700 dark:bg-slate-800 px-4 py-3 text-white placeholder-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 focus:outline-none transition-all"
                 placeholder="Enter 6-digit code"
               />
             </div>
@@ -103,7 +103,7 @@ export function AdminLoginPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-lg bg-orange-600 px-4 py-3 text-sm font-semibold text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+              className="w-full rounded-lg bg-orange-600 px-4 py-3 text-sm font-semibold text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg shadow-orange-600/20"
             >
               {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
@@ -116,7 +116,7 @@ export function AdminLoginPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <Link to="/" className="text-sm text-slate-400 hover:text-slate-300">
+          <Link to="/" className="text-sm text-slate-400 hover:text-slate-300 transition-colors">
             Back to BoroBepari
           </Link>
         </div>

@@ -74,7 +74,7 @@ function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors">
       {/* Hero Section with Sidebar */}
       <section className="max-w-[1440px] mx-auto px-6 py-4">
         <div className="flex gap-4">
@@ -172,7 +172,7 @@ function HomePage() {
 
       {/* Category Discovery */}
       <section className="max-w-[1440px] mx-auto px-6 py-8">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 transition-colors">
           Discover More Categories
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -180,12 +180,14 @@ function HomePage() {
             <a
               key={category.id}
               href={`/categories/${category.slug}`}
-              className="bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow border border-gray-100"
+              className="bg-white dark:bg-slate-900 rounded-lg p-4 text-center hover:shadow-md transition-all border border-gray-100 dark:border-slate-800 group"
             >
-              <div className="text-3xl mb-2">
+              <div className="text-3xl mb-2 transition-transform group-hover:scale-110">
                 {getCategoryEmoji(category.slug)}
               </div>
-              <h3 className="font-medium text-gray-800">{category.name}</h3>
+              <h3 className="font-medium text-gray-800 dark:text-gray-200 transition-colors group-hover:text-orange-500">
+                {category.name}
+              </h3>
             </a>
           ))}
         </div>

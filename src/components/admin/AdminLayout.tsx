@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import type { AdminPermission, AdminRole } from '@/types/admin'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 const NAV_ITEMS: Array<{
   to: string
@@ -66,7 +67,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 transition-colors">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -77,7 +78,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-slate-900 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed top-0 left-0 z-50 h-full w-64 bg-slate-900 dark:bg-slate-900 transform transition-transform duration-200 ease-in-out lg:translate-x-0 border-r dark:border-slate-800 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -85,7 +86,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           {/* Logo */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-slate-800">
             <Link to="/admin/dashboard" className="flex items-center gap-3">
-              <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-orange-600">
+              <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-orange-600 shadow-lg shadow-orange-600/20">
                 <Shield className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -95,7 +96,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-slate-400 hover:text-white"
+              className="lg:hidden text-slate-400 hover:text-white transition-colors"
             >
               <X size={20} />
             </button>
@@ -112,9 +113,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                     <Link
                       to={item.to}
                       onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                         active
-                          ? 'bg-orange-600 text-white'
+                          ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
                           : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                       }`}
                     >
@@ -151,11 +152,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <div className="lg:ml-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 h-16 bg-white border-b border-slate-200">
+        <header className="sticky top-0 z-30 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors">
           <div className="flex items-center justify-between h-full px-4 lg:px-6">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-slate-600 hover:text-slate-900"
+              className="lg:hidden text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
             >
               <Menu size={24} />
             </button>
@@ -163,10 +164,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <div className="flex-1 lg:flex-none" />
 
             <div className="flex items-center gap-4">
+              <ThemeToggle />
+              
               {/* Notifications */}
-              <button className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg">
+              <button className="relative p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                 <Bell size={20} />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500" />
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white dark:border-slate-900" />
               </button>
 
               {/* Profile dropdown */}
@@ -174,15 +177,15 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
                   >
-                    <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-semibold">
+                    <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-semibold transition-colors group-hover:bg-slate-300 dark:group-hover:bg-slate-600">
                       {admin.name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="hidden sm:block text-sm font-medium text-slate-700">
+                    <span className="hidden sm:block text-sm font-medium text-slate-700 dark:text-slate-300">
                       {admin.name}
                     </span>
-                    <ChevronDown size={16} className="text-slate-400" />
+                    <ChevronDown size={16} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {profileOpen && (
@@ -191,17 +194,17 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                         className="fixed inset-0 z-10"
                         onClick={() => setProfileOpen(false)}
                       />
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-20">
-                        <div className="px-4 py-2 border-b border-slate-100">
-                          <p className="text-sm font-medium text-slate-900">{admin.name}</p>
-                          <p className="text-xs text-slate-500">{admin.email}</p>
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-20 transition-colors animate-in fade-in slide-in-from-top-2">
+                        <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
+                          <p className="text-sm font-medium text-slate-900 dark:text-white">{admin.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{admin.email}</p>
                         </div>
                         <button
                           onClick={() => {
                             logout()
                             setProfileOpen(false)
                           }}
-                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors text-left"
                         >
                           <LogOut size={16} />
                           Sign out
@@ -216,7 +219,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-6">{children}</main>
+        <main className="p-4 lg:p-6 text-slate-900 dark:text-slate-100">{children}</main>
       </div>
     </div>
   )

@@ -20,8 +20,8 @@ export default function FeaturedProductsGrid({
 }: FeaturedProductsGridProps) {
   if (products.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No products found</p>
+      <div className="text-center py-12 transition-colors">
+        <p className="text-gray-500 dark:text-gray-400">No products found</p>
       </div>
     )
   }
@@ -33,16 +33,16 @@ export default function FeaturedProductsGrid({
         <div className="flex items-center justify-between mb-4">
           <div>
             {title && (
-              <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors">{title}</h2>
             )}
             {subtitle && (
-              <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors">{subtitle}</p>
             )}
           </div>
           {showViewAll && (
             <a
               href={viewAllLink}
-              className="text-orange-600 hover:text-orange-700 text-sm font-medium"
+              className="text-orange-600 hover:text-orange-700 dark:text-orange-500 dark:hover:text-orange-400 text-sm font-medium transition-colors"
             >
               View All &rarr;
             </a>
@@ -87,13 +87,13 @@ export function FeaturedProductsGridSkeleton({
 
 function ProductCardSkeleton() {
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-      <div className="aspect-square bg-gray-200 animate-pulse" />
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm overflow-hidden border border-gray-100 dark:border-slate-800 transition-colors">
+      <div className="aspect-square bg-gray-200 dark:bg-slate-800 animate-pulse" />
       <div className="p-3 space-y-2">
-        <div className="h-3 w-20 bg-gray-200 rounded animate-pulse" />
-        <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-        <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
-        <div className="h-5 w-24 bg-gray-200 rounded animate-pulse" />
+        <div className="h-3 w-20 bg-gray-200 dark:bg-slate-800 rounded animate-pulse" />
+        <div className="h-4 w-full bg-gray-200 dark:bg-slate-800 rounded animate-pulse" />
+        <div className="h-4 w-3/4 bg-gray-200 dark:bg-slate-800 rounded animate-pulse" />
+        <div className="h-5 w-24 bg-gray-200 dark:bg-slate-800 rounded animate-pulse" />
       </div>
     </div>
   )

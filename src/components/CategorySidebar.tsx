@@ -44,10 +44,10 @@ export default function CategorySidebar({
 }: CategorySidebarProps) {
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border border-gray-100 ${className}`}
+      className={`bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 transition-colors ${className}`}
     >
-      <div className="p-3 border-b border-gray-100">
-        <h3 className="font-semibold text-gray-800">Categories</h3>
+      <div className="p-3 border-b border-gray-100 dark:border-slate-800">
+        <h3 className="font-semibold text-gray-800 dark:text-gray-100">Categories</h3>
       </div>
       <nav className="py-2">
         {categories.map((category) => {
@@ -59,8 +59,8 @@ export default function CategorySidebar({
               key={category.id}
               to="/categories/$categorySlug"
               params={{ categorySlug: category.slug }}
-              className={`flex items-center justify-between px-4 py-2.5 hover:bg-orange-50 transition-colors group ${
-                isActive ? 'bg-orange-50 border-l-2 border-orange-500' : ''
+              className={`flex items-center justify-between px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors group ${
+                isActive ? 'bg-orange-50 dark:bg-orange-950/30 border-l-2 border-orange-500' : ''
               }`}
             >
               <div className="flex items-center gap-3">
@@ -69,14 +69,14 @@ export default function CategorySidebar({
                   className={`${
                     isActive
                       ? 'text-orange-500'
-                      : 'text-gray-500 group-hover:text-orange-500'
+                      : 'text-gray-500 dark:text-gray-400 group-hover:text-orange-500'
                   }`}
                 />
                 <span
                   className={`text-sm ${
                     isActive
-                      ? 'text-orange-600 font-medium'
-                      : 'text-gray-700 group-hover:text-orange-600'
+                      ? 'text-orange-600 dark:text-orange-400 font-medium'
+                      : 'text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400'
                   }`}
                 >
                   {category.name}
@@ -87,7 +87,7 @@ export default function CategorySidebar({
                 className={`${
                   isActive
                     ? 'text-orange-500'
-                    : 'text-gray-400 group-hover:text-orange-500'
+                    : 'text-gray-400 dark:text-gray-500 group-hover:text-orange-500'
                 }`}
               />
             </Link>
@@ -113,12 +113,12 @@ export function CategoryList({
             key={category.id}
             to="/categories/$categorySlug"
             params={{ categorySlug: category.slug }}
-            className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md hover:border-orange-200 transition-all group"
+            className="flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900 transition-all group"
           >
-            <div className="p-3 bg-orange-50 rounded-full group-hover:bg-orange-100 transition-colors">
+            <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-full group-hover:bg-orange-100 dark:group-hover:bg-orange-900/40 transition-colors">
               <IconComponent size={24} className="text-orange-500" />
             </div>
-            <span className="text-sm text-gray-700 text-center font-medium">
+            <span className="text-sm text-gray-700 dark:text-gray-300 text-center font-medium group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
               {category.name}
             </span>
           </Link>
