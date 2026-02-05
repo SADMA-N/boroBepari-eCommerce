@@ -108,21 +108,21 @@ function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-10 text-center border border-gray-100">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-            <Check className="h-10 w-10 text-green-600" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 transition-colors">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-10 text-center border border-gray-100 dark:border-slate-800 transition-colors">
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-6 transition-colors">
+            <Check className="h-10 w-10 text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
             Password Reset Successful
           </h2>
-          <p className="text-gray-600 mb-8 text-sm">
+          <p className="text-gray-600 dark:text-gray-400 mb-8 text-sm transition-colors">
             Your password has been updated. You will be redirected to the login
             page in a few seconds.
           </p>
           <button
             onClick={() => router.navigate({ to: '/login' })}
-            className="w-full py-3 bg-orange-600 text-white font-bold rounded-lg hover:bg-orange-700 transition-all"
+            className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-all shadow-sm shadow-orange-600/20"
           >
             Go to Login Now
           </button>
@@ -132,22 +132,22 @@ function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 py-12 transition-colors">
+      <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100 dark:border-slate-800 transition-colors">
         <div className="text-center mb-8">
-          <div className="mx-auto h-12 w-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-            <Lock className="h-6 w-6 text-orange-600" />
+          <div className="mx-auto h-12 w-12 bg-orange-100 dark:bg-orange-900/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+            <Lock className="h-6 w-6 text-orange-600 dark:text-orange-500" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white transition-colors">
             Reset Password
           </h2>
-          <p className="text-gray-500 text-sm mt-2">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 transition-colors">
             Create a new strong password for your account.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg text-center font-medium animate-in fade-in slide-in-from-top-1">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg text-center font-medium animate-in fade-in slide-in-from-top-1 transition-colors">
             {error}
           </div>
         )}
@@ -155,14 +155,14 @@ function ResetPasswordPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {email && (
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 ml-1 transition-colors">
                 Email Address
               </label>
               <input
                 type="email"
                 readOnly
                 disabled
-                className="appearance-none block w-full px-4 py-3 bg-gray-100 border border-gray-200 text-gray-500 rounded-xl focus:outline-none cursor-not-allowed sm:text-sm font-medium"
+                className="appearance-none block w-full px-4 py-3 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-400 rounded-xl focus:outline-none cursor-not-allowed sm:text-sm font-medium transition-colors"
                 value={decodeURIComponent(email)}
               />
             </div>
@@ -170,13 +170,13 @@ function ResetPasswordPage() {
 
           <div>
             <div className="flex justify-between items-center mb-1 ml-1">
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors">
                 New Password
               </label>
               <button
                 type="button"
                 onClick={generateStrongPassword}
-                className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 uppercase tracking-tight transition-colors"
+                className="text-[10px] font-bold text-orange-600 dark:text-orange-500 hover:text-orange-700 dark:hover:text-orange-400 flex items-center gap-1 uppercase tracking-tight transition-colors"
               >
                 {isGenerating ? (
                   <RefreshCw className="h-3 w-3 animate-spin" />
@@ -190,7 +190,7 @@ function ResetPasswordPage() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
-                className="appearance-none block w-full px-4 py-3 bg-gray-50 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm pr-12"
+                className="appearance-none block w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm pr-12"
                 placeholder="Enter new password"
                 value={password}
                 onChange={(e) => {
@@ -200,7 +200,7 @@ function ResetPasswordPage() {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -208,7 +208,7 @@ function ResetPasswordPage() {
             </div>
 
             {showGenerationMessage && (
-              <div className="mt-2 text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-100 px-3 py-2 rounded-lg animate-in fade-in zoom-in-95 duration-300">
+              <div className="mt-2 text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 px-3 py-2 rounded-lg animate-in fade-in zoom-in-95 duration-300 transition-colors">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-3 w-3" />
                   <span>
@@ -220,13 +220,13 @@ function ResetPasswordPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 ml-1 transition-colors">
               Confirm New Password
             </label>
             <input
               type={showPassword ? 'text' : 'password'}
               required
-              className="appearance-none block w-full px-4 py-3 bg-gray-50 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
+              className="appearance-none block w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
               placeholder="Confirm new password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -234,8 +234,8 @@ function ResetPasswordPage() {
           </div>
 
           {/* Validation Checklist */}
-          <div className="p-4 bg-gray-50 rounded-xl space-y-2 border border-gray-100">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+          <div className="p-4 bg-gray-50 dark:bg-slate-800/50 rounded-xl space-y-2 border border-gray-100 dark:border-slate-800 transition-colors">
+            <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 transition-colors">
               Requirements
             </p>
             <div className="flex flex-col gap-2">
@@ -260,8 +260,8 @@ function ResetPasswordPage() {
             disabled={!isPasswordValid || isLoading}
             className={`w-full py-3.5 rounded-xl text-white font-bold shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 ${
               isPasswordValid && !isLoading
-                ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer'
-                : 'bg-gray-300 cursor-not-allowed'
+                ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer shadow-orange-600/20'
+                : 'bg-gray-300 dark:bg-slate-800 text-gray-500 dark:text-gray-600 cursor-not-allowed'
             }`}
           >
             {isLoading ? (
@@ -284,14 +284,14 @@ function RequirementItem({
   text: string
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 transition-colors">
       {isValid ? (
-        <Check className="h-3.5 w-3.5 text-green-500 font-bold" />
+        <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400 font-bold" />
       ) : (
-        <div className="h-3.5 w-3.5 rounded-full border border-gray-300" />
+        <div className="h-3.5 w-3.5 rounded-full border border-gray-300 dark:border-slate-700" />
       )}
       <span
-        className={`text-xs ${isValid ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
+        className={`text-xs transition-colors ${isValid ? 'text-gray-900 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-600'}`}
       >
         {text}
       </span>

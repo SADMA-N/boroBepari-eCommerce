@@ -81,15 +81,15 @@ export function FrequentlySearched({
   title = 'Frequently Searched',
 }: FrequentlySearchedProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-      <h3 className="font-semibold text-gray-800 mb-3">{title}</h3>
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-4 transition-colors">
+      <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-3 transition-colors">{title}</h3>
       <div className="flex flex-wrap gap-2">
         {keywords.map((keyword, index) => (
           <Link
             key={index}
             to="/search"
             search={{ q: keyword }}
-            className="px-3 py-1.5 bg-gray-100 hover:bg-orange-100 hover:text-orange-600 text-gray-700 text-sm rounded-full transition-colors"
+            className="px-3 py-1.5 bg-gray-100 dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-400 text-gray-700 dark:text-gray-300 text-sm rounded-full transition-all"
           >
             {keyword}
           </Link>

@@ -594,7 +594,7 @@ function OrderDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors">
       <Toast
         message={toast.message}
         isVisible={toast.isVisible}
@@ -603,41 +603,41 @@ function OrderDetailPage() {
 
       <div className="max-w-[1440px] mx-auto px-6 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-          <Link to="/" className="hover:text-orange-600 flex items-center gap-1">
+        <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6 transition-colors">
+          <Link to="/" className="hover:text-orange-600 dark:hover:text-orange-500 flex items-center gap-1 transition-colors">
             <Home size={14} />
             Home
           </Link>
-          <ChevronRight size={14} />
-          <Link to="/buyer/orders" className="hover:text-orange-600">
+          <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
+          <Link to="/buyer/orders" className="hover:text-orange-600 dark:hover:text-orange-500 transition-colors">
             My Orders
           </Link>
-          <ChevronRight size={14} />
-          <span className="text-gray-900 font-medium">Order #{order.id.toString().padStart(6, '0')}</span>
+          <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
+          <span className="text-gray-900 dark:text-gray-100 font-medium transition-colors">Order #{order.id.toString().padStart(6, '0')}</span>
         </nav>
 
         {/* Hero Section */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 mb-6 transition-colors">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white transition-colors">
                   Order #{order.id.toString().padStart(6, '0')}
                 </h1>
                 <button
                   onClick={handleCopyOrderId}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                  className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded transition-colors"
                   title="Copy order ID"
                 >
                   <Copy size={16} />
                 </button>
               </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 transition-colors">
                 <span className="flex items-center gap-1.5">
                   <Calendar size={14} />
                   {format(createdAt, 'MMMM d, yyyy')} at {format(createdAt, 'h:mm a')}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${status.bgColor} ${status.color}`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${status.bgColor} ${status.color} dark:bg-opacity-20`}>
                   {status.label}
                 </span>
               </div>
@@ -649,7 +649,7 @@ function OrderDetailPage() {
                 <button
                   onClick={handleReorder}
                   disabled={isReordering}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-60"
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-medium disabled:opacity-60 shadow-sm shadow-green-600/20"
                 >
                   {isReordering ? (
                     <Loader2 size={18} className="animate-spin" />
@@ -660,7 +660,7 @@ function OrderDetailPage() {
                 </button>
               )}
               {isShipped && (
-                <button className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium">
+                <button className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all font-medium shadow-sm shadow-orange-500/20">
                   <Truck size={18} />
                   Track Order
                 </button>
@@ -668,7 +668,7 @@ function OrderDetailPage() {
               <button
                 onClick={handleDownloadInvoice}
                 disabled={isGeneratingInvoice}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all font-medium"
               >
                 {isGeneratingInvoice ? (
                   <Loader2 size={18} className="animate-spin" />
@@ -680,7 +680,7 @@ function OrderDetailPage() {
               <button
                 onClick={handleEmailInvoice}
                 disabled={isEmailingInvoice}
-                className="flex items-center gap-2 px-4 py-2 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors font-medium"
+                className="flex items-center gap-2 px-4 py-2 border border-green-200 dark:border-green-900/30 text-green-700 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/20 transition-all font-medium"
               >
                 {isEmailingInvoice ? (
                   <Loader2 size={18} className="animate-spin" />
@@ -697,8 +697,8 @@ function OrderDetailPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Order Status Timeline */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Order Status</h2>
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 transition-colors">Order Status</h2>
               <OrderStatusTimeline
                 orderId={order.id}
                 status={statusState}
@@ -712,22 +712,22 @@ function OrderDetailPage() {
             </div>
 
             {isCancelled && (
-              <div className="bg-red-50 border border-red-100 rounded-xl p-5">
-                <h3 className="text-sm font-semibold text-red-700">Cancellation Details</h3>
-                <p className="text-sm text-red-600 mt-2">
+              <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-xl p-5 transition-colors">
+                <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">Cancellation Details</h3>
+                <p className="text-sm text-red-600 dark:text-red-300 mt-2 transition-colors">
                   Reason: {cancellationReason ?? 'Not provided'}
                 </p>
                 {cancelledAt && (
-                  <p className="text-xs text-red-500 mt-1">
+                  <p className="text-xs text-red-500 dark:text-red-500 mt-1">
                     Cancelled on {format(new Date(cancelledAt), 'MMM d, yyyy h:mm a')}
                   </p>
                 )}
-                <p className="text-xs text-red-500 mt-2">
+                <p className="text-xs text-red-500 dark:text-red-500 mt-2">
                   Refund will be processed in 3-5 business days to the original payment method.
                 </p>
                 <Link
                   to="/search"
-                  className="inline-flex items-center gap-2 mt-4 text-sm text-red-700 font-medium hover:underline"
+                  className="inline-flex items-center gap-2 mt-4 text-sm text-red-700 dark:text-red-400 font-medium hover:underline transition-colors"
                 >
                   Shop Similar Products
                   <ChevronRight size={14} />
@@ -736,11 +736,11 @@ function OrderDetailPage() {
             )}
 
             {/* Order Items by Supplier */}
-            <div className="flex items-center justify-between md:hidden">
-              <h3 className="text-base font-semibold text-gray-900">Order Items</h3>
+            <div className="flex items-center justify-between md:hidden transition-colors">
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white">Order Items</h3>
               <button
                 onClick={() => setItemsExpanded((prev) => !prev)}
-                className="text-xs text-orange-600 font-medium"
+                className="text-xs text-orange-600 dark:text-orange-500 font-medium transition-colors"
               >
                 {itemsExpanded ? 'Hide items' : 'Show items'}
               </button>
@@ -748,27 +748,27 @@ function OrderDetailPage() {
 
             <div className={`${itemsExpanded ? 'block' : 'hidden'} md:block space-y-6`}>
               {Object.values(itemsBySupplier).map((supplier: any) => (
-                <div key={supplier.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                <div key={supplier.id} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden transition-colors">
                   {/* Supplier Header */}
-                  <div className="px-6 py-4 bg-gray-50 border-b flex items-center justify-between">
+                  <div className="px-6 py-4 bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <Package size={20} className="text-gray-500" />
+                      <div className="w-10 h-10 bg-gray-200 dark:bg-slate-800 rounded-lg flex items-center justify-center transition-colors">
+                        <Package size={20} className="text-gray-500 dark:text-gray-400" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-gray-900">{supplier.name}</h3>
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 transition-colors">{supplier.name}</h3>
                           {supplier.verified && (
                             <BadgeCheck size={16} className="text-blue-500" />
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">{supplier.items.length} item(s)</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors">{supplier.items.length} item(s)</p>
                       </div>
                     </div>
                     {supplier.slug && (
                       <Link
                         to={`/suppliers/${supplier.slug}`}
-                        className="text-sm text-orange-600 hover:underline flex items-center gap-1"
+                        className="text-sm text-orange-600 dark:text-orange-500 hover:underline flex items-center gap-1 transition-colors"
                       >
                         <MessageSquare size={14} />
                         Contact Supplier
@@ -777,12 +777,12 @@ function OrderDetailPage() {
                   </div>
 
                   {/* Items */}
-                  <div className="divide-y">
+                  <div className="divide-y divide-gray-100 dark:divide-slate-800">
                     {supplier.items.map((item: any) => (
-                      <div key={item.id} className="p-6 flex gap-4">
+                      <div key={item.id} className="p-6 flex gap-4 transition-colors">
                         <Link
                           to={`/products/${item.product?.slug || item.productId}`}
-                          className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden"
+                          className="w-20 h-20 bg-gray-100 dark:bg-slate-800 rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-slate-700 transition-colors"
                         >
                           <img
                             src={item.product?.images?.[0] || `https://picsum.photos/seed/product${item.productId}/200/200`}
@@ -793,26 +793,26 @@ function OrderDetailPage() {
                         <div className="flex-1 min-w-0">
                           <Link
                             to={`/products/${item.product?.slug || item.productId}`}
-                            className="font-medium text-gray-900 hover:text-orange-600 line-clamp-2"
+                            className="font-medium text-gray-900 dark:text-gray-100 hover:text-orange-600 dark:hover:text-orange-500 line-clamp-2 transition-colors"
                           >
                             {item.product?.name || 'Product'}
                           </Link>
-                          <div className="mt-1 text-sm text-gray-500">
-                            Qty: <span className="font-medium text-gray-700">{item.quantity}</span>
+                          <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+                            Qty: <span className="font-medium text-gray-700 dark:text-gray-300">{item.quantity}</span>
                             {item.product?.unit && <span className="ml-1">{item.product.unit}(s)</span>}
                           </div>
-                          <div className="mt-1 text-sm text-gray-500">
-                            Unit Price: <span className="font-medium text-gray-700">{formatBDT(parseFloat(item.price) / item.quantity)}</span>
+                          <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+                            Unit Price: <span className="font-medium text-gray-700 dark:text-gray-300">{formatBDT(parseFloat(item.price) / item.quantity)}</span>
                           </div>
                           {isDelivered && (
-                            <button className="mt-2 text-sm text-orange-600 hover:underline flex items-center gap-1">
+                            <button className="mt-2 text-sm text-orange-600 dark:text-orange-500 hover:underline flex items-center gap-1 transition-colors">
                               <Star size={14} />
                               Write Review
                             </button>
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900">{formatBDT(parseFloat(item.price))}</p>
+                          <p className="font-semibold text-gray-900 dark:text-white transition-colors">{formatBDT(parseFloat(item.price))}</p>
                         </div>
                       </div>
                     ))}
@@ -825,85 +825,85 @@ function OrderDetailPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Delivery Information */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <MapPin size={18} className="text-gray-400" />
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
+                <MapPin size={18} className="text-gray-400 dark:text-gray-500" />
                 Delivery Information
               </h3>
 
               {defaultAddress ? (
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium text-gray-900">{defaultAddress.name}</p>
-                    <p className="text-gray-600 mt-1">{defaultAddress.address}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">{defaultAddress.name}</p>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors">{defaultAddress.address}</p>
                     {defaultAddress.city && (
-                      <p className="text-gray-600">{defaultAddress.city} {defaultAddress.postcode}</p>
+                      <p className="text-gray-600 dark:text-gray-400 transition-colors">{defaultAddress.city} {defaultAddress.postcode}</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors">
                     <Phone size={14} />
                     {defaultAddress.phone}
                   </div>
-                  <hr className="border-gray-100" />
+                  <hr className="border-gray-100 dark:border-slate-800" />
                   <div className="flex items-start gap-2">
-                    <Calendar size={14} className="text-gray-400 mt-0.5" />
+                    <Calendar size={14} className="text-gray-400 dark:text-gray-500 mt-0.5" />
                     <div>
-                      <p className="text-gray-500 text-xs uppercase font-semibold">Estimated Delivery</p>
-                      <p className="font-medium text-gray-900">{format(estimatedDelivery, 'MMMM d, yyyy')}</p>
+                      <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">Estimated Delivery</p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">{format(estimatedDelivery, 'MMMM d, yyyy')}</p>
                     </div>
                   </div>
                   {isDelivered && order.updatedAt && (
                     <div className="flex items-start gap-2">
                       <CheckCircle size={14} className="text-green-500 mt-0.5" />
                       <div>
-                        <p className="text-gray-500 text-xs uppercase font-semibold">Delivered On</p>
-                        <p className="font-medium text-green-600">{format(new Date(order.updatedAt), 'MMMM d, yyyy')}</p>
+                        <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">Delivered On</p>
+                        <p className="font-medium text-green-600 transition-colors">{format(new Date(order.updatedAt), 'MMMM d, yyyy')}</p>
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No delivery address available</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors">No delivery address available</p>
               )}
             </div>
 
             {/* Payment Information */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <CreditCard size={18} className="text-gray-400" />
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
+                <CreditCard size={18} className="text-gray-400 dark:text-gray-500" />
                 Payment Information
               </h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Method</span>
-                  <span className="font-medium text-gray-900 capitalize">
+                  <span className="text-gray-500 dark:text-gray-400 transition-colors">Method</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100 capitalize transition-colors">
                     {order.paymentMethod === 'cod' ? 'Cash on Delivery' :
                      order.paymentMethod === 'deposit' ? '30% Deposit' :
                      order.paymentMethod || 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Status</span>
-                  <span className={`font-medium ${paymentStatus.color}`}>
+                  <span className="text-gray-500 dark:text-gray-400 transition-colors">Status</span>
+                  <span className={`font-medium ${paymentStatus.color} transition-colors`}>
                     {paymentStatus.label}
                   </span>
                 </div>
                 {order.transactionId && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Transaction ID</span>
-                    <span className="font-mono text-xs text-gray-700">{order.transactionId}</span>
+                    <span className="text-gray-500 dark:text-gray-400 transition-colors">Transaction ID</span>
+                    <span className="font-mono text-xs text-gray-700 dark:text-gray-300 transition-colors">{order.transactionId}</span>
                   </div>
                 )}
 
                 {/* Escrow Notice */}
                 {isEscrow && (
-                  <div className="mt-3 p-3 bg-purple-50 rounded-lg border border-purple-100">
+                  <div className="mt-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-100 dark:border-purple-900/30 transition-colors">
                     <div className="flex items-start gap-2">
-                      <AlertCircle size={16} className="text-purple-600 mt-0.5" />
+                      <AlertCircle size={16} className="text-purple-600 dark:text-purple-400 mt-0.5" />
                       <div className="text-xs">
-                        <p className="font-semibold text-purple-800">Payment in Escrow</p>
-                        <p className="text-purple-600 mt-0.5">
+                        <p className="font-semibold text-purple-800 dark:text-purple-300 transition-colors">Payment in Escrow</p>
+                        <p className="text-purple-600 dark:text-purple-400 mt-0.5 transition-colors">
                           Your payment is held securely and will be released 3 days after delivery.
                         </p>
                       </div>
@@ -914,41 +914,41 @@ function OrderDetailPage() {
             </div>
 
             {/* Order Summary */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText size={18} className="text-gray-400" />
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
+                <FileText size={18} className="text-gray-400 dark:text-gray-500" />
                 Order Summary
               </h3>
 
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
                   <span>Subtotal ({order.items.length} items)</span>
                   <span>{formatBDT(totalAmount)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
                   <span>Delivery</span>
-                  <span className="text-green-600">Free</span>
+                  <span className="text-green-600 dark:text-green-400 transition-colors">Free</span>
                 </div>
                 {isDeposit && depositAmount > 0 && (
                   <>
-                    <hr className="border-gray-100 my-2" />
-                    <div className="flex justify-between text-gray-600">
+                    <hr className="border-gray-100 dark:border-slate-800 my-2 transition-colors" />
+                    <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
                       <span>Deposit Paid (30%)</span>
-                      <span className="text-green-600">-{formatBDT(depositAmount)}</span>
+                      <span className="text-green-600 dark:text-green-400 transition-colors">-{formatBDT(depositAmount)}</span>
                     </div>
                   </>
                 )}
-                <hr className="border-gray-100 my-2" />
-                <div className="flex justify-between font-bold text-lg">
+                <hr className="border-gray-100 dark:border-slate-800 my-2 transition-colors" />
+                <div className="flex justify-between font-bold text-lg dark:text-white transition-colors">
                   <span>{balanceDue > 0 ? 'Balance Due' : 'Total Paid'}</span>
-                  <span className={balanceDue > 0 ? 'text-orange-600' : 'text-gray-900'}>
+                  <span className={balanceDue > 0 ? 'text-orange-600 dark:text-orange-500' : 'text-gray-900 dark:text-white'}>
                     {formatBDT(balanceDue > 0 ? balanceDue : totalAmount)}
                   </span>
                 </div>
 
                 {balanceDue > 0 && (
-                  <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-100">
-                    <p className="text-xs text-orange-700">
+                  <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-100 dark:border-orange-900/30 transition-colors">
+                    <p className="text-xs text-orange-700 dark:text-orange-400 transition-colors">
                       <strong>Note:</strong> Please pay the remaining balance of {formatBDT(balanceDue)} upon delivery.
                     </p>
                   </div>
@@ -957,12 +957,12 @@ function OrderDetailPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-white rounded-xl shadow-sm border p-6 space-y-3">
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 space-y-3 transition-colors">
               {canReorder && !isCancelled && (
                 <button
                   onClick={handleReorder}
                   disabled={isReordering}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-medium disabled:opacity-50 shadow-sm shadow-green-600/20"
                 >
                   {isReordering ? (
                     <Loader2 size={18} className="animate-spin" />
@@ -976,7 +976,7 @@ function OrderDetailPage() {
               {canCancel && (
                 <button
                   onClick={() => setCancelModalOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-all font-medium"
                 >
                   <AlertTriangle size={18} />
                   Cancel Order
@@ -985,7 +985,7 @@ function OrderDetailPage() {
 
               <Link
                 to="/help"
-                className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all font-medium"
               >
                 <HelpCircle size={18} />
                 Get Help

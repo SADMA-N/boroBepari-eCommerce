@@ -64,27 +64,27 @@ export default function AuthModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden relative animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200 backdrop-blur-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-md w-full overflow-hidden relative animate-in zoom-in-95 duration-200 transition-colors border border-gray-200 dark:border-slate-800">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-10"
         >
           <X size={24} />
         </button>
 
         <div className="p-8">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
               Login to BoroBepari
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-500 dark:text-gray-400 text-sm transition-colors">
               Access your wholesale account and orders
             </p>
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg text-center font-medium">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg text-center font-medium transition-colors">
               {error}
             </div>
           )}
@@ -93,12 +93,12 @@ export default function AuthModal({
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1"
+                className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1 transition-colors"
               >
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                   <Mail size={18} />
                 </div>
                 <input
@@ -108,7 +108,7 @@ export default function AuthModal({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-sm"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-sm"
                 />
               </div>
             </div>
@@ -117,20 +117,20 @@ export default function AuthModal({
               <div className="flex justify-between items-center mb-1">
                 <label
                   htmlFor="password"
-                  className="block text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider transition-colors"
                 >
                   Password
                 </label>
                 <Link
                   to="/forgot-password"
                   onClick={onClose}
-                  className="text-xs text-orange-600 hover:underline font-medium"
+                  className="text-xs text-orange-600 dark:text-orange-500 hover:underline font-medium transition-colors"
                 >
                   Forgot?
                 </Link>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                   <Lock size={18} />
                 </div>
                 <input
@@ -140,12 +140,12 @@ export default function AuthModal({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-sm"
+                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -155,7 +155,7 @@ export default function AuthModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-70"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg disabled:opacity-70 active:scale-[0.98]"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -167,10 +167,10 @@ export default function AuthModal({
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-gray-200 dark:border-slate-800"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
+              <span className="px-2 bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400 transition-colors">
                 Or continue with
               </span>
             </div>
@@ -180,7 +180,7 @@ export default function AuthModal({
             <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all disabled:opacity-50"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path
@@ -204,12 +204,12 @@ export default function AuthModal({
             </button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-500">
+          <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400 transition-colors">
             Don't have an account?{' '}
             <Link
               to="/register"
               onClick={onClose}
-              className="text-orange-600 font-bold hover:underline"
+              className="text-orange-600 dark:text-orange-500 font-bold hover:underline"
             >
               Register Now
             </Link>

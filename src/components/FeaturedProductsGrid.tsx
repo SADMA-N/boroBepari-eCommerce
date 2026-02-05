@@ -71,10 +71,10 @@ export function FeaturedProductsGridSkeleton({
   count?: number
 }) {
   return (
-    <section className="py-6">
+    <section className="py-6 transition-colors">
       <div className="flex items-center justify-between mb-4">
-        <div className="h-7 w-48 bg-gray-200 rounded animate-pulse" />
-        <div className="h-5 w-20 bg-gray-200 rounded animate-pulse" />
+        <div className="h-7 w-48 bg-gray-200 dark:bg-slate-800 rounded animate-pulse" />
+        <div className="h-5 w-20 bg-gray-200 dark:bg-slate-800 rounded animate-pulse" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {Array.from({ length: count }).map((_, i) => (

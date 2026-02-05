@@ -171,7 +171,7 @@ function HomePage() {
       </section>
 
       {/* Category Discovery */}
-      <section className="max-w-[1440px] mx-auto px-6 py-8">
+      <section className="max-w-[1440px] mx-auto px-6 py-8 transition-colors">
         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 transition-colors">
           Discover More Categories
         </h2>

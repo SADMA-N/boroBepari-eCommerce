@@ -63,16 +63,16 @@ function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 transition-colors">
+      <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100 dark:border-slate-800 transition-colors">
         <div className="text-center mb-8">
-          <div className="mx-auto h-12 w-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-            <Sparkles className="h-6 w-6 text-orange-600" />
+          <div className="mx-auto h-12 w-12 bg-orange-100 dark:bg-orange-900/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+            <Sparkles className="h-6 w-6 text-orange-600 dark:text-orange-500" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors">
             {step === 'email' ? 'Forgot Password?' : 'Check your email'}
           </h2>
-          <p className="text-gray-500 text-sm mt-2">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 transition-colors">
             {step === 'email'
               ? "No worries, we'll send you a verification code."
               : `We've sent a 6-digit code to ${email}`}
@@ -80,7 +80,7 @@ function ForgotPasswordPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg text-center font-medium animate-in fade-in slide-in-from-top-1">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg text-center font-medium animate-in fade-in slide-in-from-top-1 transition-colors">
             {error}
           </div>
         )}
@@ -90,19 +90,19 @@ function ForgotPasswordPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1"
+                className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 ml-1 transition-colors"
               >
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500 transition-colors">
                   <Mail size={18} />
                 </div>
                 <input
                   type="email"
                   id="email"
                   required
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm text-gray-900 dark:text-white"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -113,7 +113,7 @@ function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-70 active:scale-[0.98]"
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-600/20 disabled:opacity-70 active:scale-[0.98]"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -127,12 +127,12 @@ function ForgotPasswordPage() {
             <div>
               <label
                 htmlFor="otp"
-                className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1"
+                className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2 ml-1 transition-colors"
               >
                 Verification Code
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500 transition-colors">
                   <KeyRound size={18} />
                 </div>
                 <input
@@ -140,7 +140,7 @@ function ForgotPasswordPage() {
                   id="otp"
                   required
                   maxLength={6}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm tracking-widest"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-sm tracking-widest text-gray-900 dark:text-white"
                   placeholder="000000"
                   value={otp}
                   onChange={(e) =>
@@ -153,7 +153,7 @@ function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={isLoading || otp.length !== 6}
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-70 active:scale-[0.98]"
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-600/20 disabled:opacity-70 active:scale-[0.98]"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -165,7 +165,7 @@ function ForgotPasswordPage() {
             <button
               type="button"
               onClick={() => setStep('email')}
-              className="w-full text-xs text-orange-600 font-bold hover:underline"
+              className="w-full text-xs text-orange-600 dark:text-orange-500 font-bold hover:underline transition-colors"
             >
               Resend Code / Change Email
             </button>
@@ -176,7 +176,7 @@ function ForgotPasswordPage() {
           <button
             type="button"
             onClick={() => router.navigate({ to: '/login' })}
-            className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 font-bold hover:text-orange-600 transition-colors"
+            className="w-full flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400 font-bold hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
           >
             <ArrowLeft size={16} />
             Back to Login
