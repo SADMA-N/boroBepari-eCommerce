@@ -112,17 +112,27 @@ export const auth = betterAuth({
           })
 
           if (!user?.emailVerified) {
-            throw new Error(
-              'Please verify your email address before logging in.',
-            )
+            // Allow social provider users through — their email is verified by the provider
+            const socialAccount = await db.query.account.findFirst({
+              where: eq(schema.account.userId, session.userId),
+            })
+            if (!socialAccount || socialAccount.providerId === 'credential') {
+              throw new Error(
+                'Please verify your email address before logging in.',
+              )
+            }
           }
         },
         after: async (session) => {
-          await createLoginEvent({
-            userId: session.userId,
-            ipAddress: session.ipAddress,
-            userAgent: session.userAgent,
-          })
+          try {
+            await createLoginEvent({
+              userId: session.userId,
+              ipAddress: session.ipAddress,
+              userAgent: session.userAgent,
+            })
+          } catch (error) {
+            console.error('[Auth] Failed to create login event:', (error as Error).message)
+          }
         },
       },
     },
