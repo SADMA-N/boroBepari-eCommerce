@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { SellerLoginData, SellerRegisterData, SellerUser  } from '@/types/seller'
-import { sellerGoogleLogin, sellerLogin, sellerRegister, validateSellerToken } from '@/lib/seller-auth-server'
+import { sellerGoogleLogin, sellerLogin, sellerRegister, validateSellerToken, updateSellerProfile } from '@/lib/seller-auth-server'
 
 const SELLER_TOKEN_KEY = 'seller_token'
 
@@ -10,6 +10,7 @@ interface SellerAuthContextType {
   isLoading: boolean
   login: (data: SellerLoginData) => Promise<SellerUser>
   googleLogin: (email: string) => Promise<SellerUser>
+  updateProfile: (data: Partial<SellerUser>) => Promise<void>
   register: (data: SellerRegisterData) => Promise<void>
   logout: () => void
   refreshSeller: () => Promise<void>
@@ -80,6 +81,24 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
     return result.seller
   }, [setToken])
 
+  const updateProfile = useCallback(async (data: Partial<SellerUser>) => {
+    // Only pass fields that updateSellerProfile expects
+    const { 
+      businessName, businessType, tradeLicenseNumber, businessCategory, 
+      yearsInBusiness, fullName, phone, address, city, postalCode,
+      bankName, accountHolderName, accountNumber, branchName, routingNumber
+    } = data
+
+    const result = await updateSellerProfile({
+      data: {
+        businessName, businessType, tradeLicenseNumber, businessCategory,
+        yearsInBusiness, fullName, phone, address, city, postalCode,
+        bankName, accountHolderName, accountNumber, branchName, routingNumber
+      }
+    })
+    setSeller(result.seller)
+  }, [])
+
   const register = useCallback(async (data: SellerRegisterData) => {
     await sellerRegister({ data })
     // No setToken or setSeller here, as account is pending email verification
@@ -104,6 +123,7 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
         isLoading,
         login,
         googleLogin,
+        updateProfile,
         register,
         logout,
         refreshSeller,

@@ -5,7 +5,9 @@ import {
   UploadCloud,
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
+import type { SellerUser } from '@/types/seller'
 
 type TabKey =
   | 'business'
@@ -26,16 +28,31 @@ const TABS: Array<{ key: TabKey; label: string }> = [
 
 export function SellerProfilePage() {
   const { pushToast } = useSellerToast()
-  const { seller } = useSellerAuth()
+  const { seller, updateProfile } = useSellerAuth()
   const [activeTab, setActiveTab] = useState<TabKey>('business')
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   const showMessage = (message: string) => {
     setSuccess(message)
     setError(null)
     pushToast(message, 'success')
     window.setTimeout(() => setSuccess(null), 2500)
+  }
+
+  const handleUpdate = async (data: Partial<SellerUser>) => {
+    setIsSaving(true)
+    setError(null)
+    try {
+      await updateProfile(data)
+      showMessage('Profile updated successfully')
+    } catch (err: any) {
+      setError(err.message || 'Failed to update profile')
+      pushToast(err.message || 'Update failed', 'error')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   if (!seller) return null
@@ -68,6 +85,13 @@ export function SellerProfilePage() {
           </div>
         </section>
 
+        {isSaving && (
+          <div className="rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm text-blue-700 flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            Saving changes...
+          </div>
+        )}
+
         {success && (
           <div className="rounded-xl border border-green-100 bg-green-50 p-3 text-sm text-green-700">
             {success}
@@ -79,8 +103,8 @@ export function SellerProfilePage() {
           </div>
         )}
 
-        {activeTab === 'business' && <BusinessTab seller={seller} onSuccess={showMessage} />}
-        {activeTab === 'bank' && <BankTab seller={seller} onSuccess={showMessage} />}
+        {activeTab === 'business' && <BusinessTab seller={seller} onUpdate={handleUpdate} />}
+        {activeTab === 'bank' && <BankTab seller={seller} onUpdate={handleUpdate} />}
         {activeTab === 'kyc' && <KycTab seller={seller} onSuccess={showMessage} />}
         {activeTab === 'notifications' && <NotificationsTab onSuccess={showMessage} />}
         {activeTab === 'security' && <SecurityTab onSuccess={showMessage} />}
@@ -90,7 +114,7 @@ export function SellerProfilePage() {
   )
 }
 
-function BusinessTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: string) => void }) {
+function BusinessTab({ seller, onUpdate }: { seller: SellerUser; onUpdate: (data: Partial<SellerUser>) => Promise<void> }) {
   const [businessName, setBusinessName] = useState(seller.businessName)
   const [businessType, setBusinessType] = useState(seller.businessType || '')
   const [categories, setCategories] = useState<Array<string>>(seller.businessCategory ? [seller.businessCategory] : [])
@@ -107,17 +131,29 @@ function BusinessTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: stri
   const [city, setCity] = useState(seller.city || '')
   const [postal, setPostal] = useState(seller.postalCode || '')
 
-  const [storeName, setStoreName] = useState(seller.businessName)
-  const [banner, setBanner] = useState<File | null>(null)
-  const [storeDesc, setStoreDesc] = useState('')
-  const [hours, setHours] = useState('Sat-Thu, 9AM-8PM')
-  const [returnPolicy, setReturnPolicy] = useState('Returns accepted within 15 days.')
-  const [shippingPolicy, setShippingPolicy] = useState('Ships within 48 hours.')
-
   const toggleCategory = (value: string) => {
     setCategories((prev) =>
       prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value],
     )
+  }
+
+  const handleSaveBusiness = () => {
+    onUpdate({
+      businessName,
+      businessType,
+      businessCategory: categories.join(', '),
+      yearsInBusiness: years ? parseInt(years) : null,
+    })
+  }
+
+  const handleSaveContact = () => {
+    onUpdate({
+      fullName: ownerName,
+      phone,
+      address,
+      city,
+      postalCode: postal,
+    })
   }
 
   return (
@@ -144,12 +180,12 @@ function BusinessTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: stri
             </div>
           </div>
           <Field label="Trade License Number" value={tradeLicense} onChange={setTradeLicense} disabled helper="Locked after verification" />
-          <Field label="Years in Business" value={years} onChange={setYears} />
+          <Field label="Years in Business" value={years} onChange={setYears} type="number" />
           <TextArea label="Business Description" value={description} onChange={setDescription} max={500} />
           <FileField label="Business Logo" onFile={setLogo} helper="PNG/JPEG recommended" />
         </div>
         <div className="mt-4 text-right">
-          <button onClick={() => onSuccess('Business profile updated')} className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
+          <button onClick={handleSaveBusiness} className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors">
             Save Changes
           </button>
         </div>
@@ -158,7 +194,7 @@ function BusinessTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: stri
       <SectionCard title="Contact Information">
         <div className="grid md:grid-cols-2 gap-4">
           <Field label="Owner/Manager Name" value={ownerName} onChange={setOwnerName} required />
-          <Field label="Email" value={email} onChange={setEmail} helper="Verified" />
+          <Field label="Email" value={email} onChange={setEmail} helper="Verified" disabled />
           <Field label="Mobile Number" value={phone} onChange={setPhone} helper="Verified" />
           <Field label="Landline" value={landline} onChange={setLandline} />
           <TextArea label="Business Address" value={address} onChange={setAddress} />
@@ -166,136 +202,68 @@ function BusinessTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: stri
           <Field label="Postal Code" value={postal} onChange={setPostal} />
         </div>
         <div className="mt-4 text-right">
-          <button onClick={() => onSuccess('Contact info updated')} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">
+          <button onClick={handleSaveContact} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
             Update
           </button>
         </div>
       </SectionCard>
-
-      <SectionCard title="Store Profile (Public-facing)">
-        <div className="grid md:grid-cols-2 gap-4">
-          <Field label="Store Name" value={storeName} onChange={setStoreName} />
-          <FileField label="Store Banner (1920x400px)" onFile={setBanner} />
-          <RichTextField label="Store Description" value={storeDesc} onChange={setStoreDesc} />
-          <Field label="Operating Hours" value={hours} onChange={setHours} />
-          <TextArea label="Return Policy" value={returnPolicy} onChange={setReturnPolicy} />
-          <TextArea label="Shipping Policy" value={shippingPolicy} onChange={setShippingPolicy} />
-        </div>
-      </SectionCard>
     </div>
   )
 }
 
-function BankTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: string) => void }) {
-  const [accounts, setAccounts] = useState([
-    {
-      id: 'bank-1',
-      bankName: seller.bankName || 'Not Linked',
-      number: seller.accountNumber ? `XXXX${seller.accountNumber.slice(-4)}` : 'N/A',
-      holder: seller.accountHolderName || seller.fullName || 'N/A',
-      branch: seller.branchName || 'N/A',
-      ifsc: seller.routingNumber || 'N/A',
-      verified: true,
-      primary: true,
-    },
-  ])
-  const [newAccount, setNewAccount] = useState({
-    bankName: '',
-    holder: '',
-    number: '',
-    confirm: '',
-    branch: '',
-    ifsc: '',
-    primary: false,
-  })
-  const [bankError, setBankError] = useState('')
+function BankTab({ seller, onUpdate }: { seller: SellerUser; onUpdate: (data: Partial<SellerUser>) => Promise<void> }) {
+  const [bankName, setBankName] = useState(seller.bankName || '')
+  const [accountHolderName, setAccountHolderName] = useState(seller.accountHolderName || '')
+  const [accountNumber, setAccountNumber] = useState(seller.accountNumber || '')
+  const [branchName, setBranchName] = useState(seller.branchName || '')
+  const [routingNumber, setRoutingNumber] = useState(seller.routingNumber || '')
+  const [isSaving, setIsSaving] = useState(false)
 
-  const addAccount = () => {
-    setBankError('')
-    if (!newAccount.bankName || !newAccount.number || newAccount.number !== newAccount.confirm) return
-    if (!/^[0-9]{8,20}$/.test(newAccount.number)) {
-      setBankError('Account number must be 8-20 digits.')
-      return
+  const handleSaveBank = async () => {
+    setIsSaving(true)
+    try {
+      await onUpdate({
+        bankName,
+        accountHolderName,
+        accountNumber,
+        branchName,
+        routingNumber,
+      })
+    } finally {
+      setIsSaving(false)
     }
-    if (newAccount.ifsc && !/^[A-Za-z0-9]{4,15}$/.test(newAccount.ifsc)) {
-      setBankError('Invalid IFSC/Routing format.')
-      return
-    }
-    setAccounts((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        bankName: newAccount.bankName,
-        number: `XXXX${newAccount.number.slice(-4)}`,
-        holder: newAccount.holder,
-        branch: newAccount.branch,
-        ifsc: newAccount.ifsc,
-        verified: false,
-        primary: newAccount.primary,
-      },
-    ])
-    onSuccess('Bank account added')
   }
 
   return (
     <div className="space-y-6">
-      <SectionCard title="Linked Bank Accounts">
-        <div className="space-y-3">
-          {accounts.map((account) => (
-            <div key={account.id} className="rounded-xl border border-slate-200 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-slate-800">{account.bankName}</p>
-                  <p className="text-xs text-slate-500">{account.number}</p>
-                  <p className="text-xs text-slate-400">{account.holder}</p>
-                </div>
-                <span className={`text-xs font-semibold ${account.verified ? 'text-green-600' : 'text-orange-600'}`}>
-                  {account.verified ? 'Verified' : 'Pending'}
-                </span>
-              </div>
-              <div className="mt-2 text-xs text-slate-500">
-                {account.branch} · {account.ifsc}
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
-                {account.primary && <span className="rounded-full bg-green-50 px-2 py-0.5 text-green-600">Primary</span>}
-                <button>Edit</button>
-                <button>Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </SectionCard>
-
-      <SectionCard title="Add Bank Account">
+      <SectionCard title="Bank Account Details">
         <div className="grid md:grid-cols-2 gap-4">
-          <SelectField label="Bank Name" value={newAccount.bankName} onChange={(value) => setNewAccount((prev) => ({ ...prev, bankName: value }))} options={['BRAC Bank', 'DBBL', 'City Bank']} />
-          <Field label="Account Holder Name" value={newAccount.holder} onChange={(value) => setNewAccount((prev) => ({ ...prev, holder: value }))} />
-          <Field label="Account Number" value={newAccount.number} onChange={(value) => setNewAccount((prev) => ({ ...prev, number: value }))} />
-          <Field label="Re-enter Account Number" value={newAccount.confirm} onChange={(value) => setNewAccount((prev) => ({ ...prev, confirm: value }))} />
-          <Field label="Branch Name" value={newAccount.branch} onChange={(value) => setNewAccount((prev) => ({ ...prev, branch: value }))} />
-          <Field label="IFSC/Routing Number" value={newAccount.ifsc} onChange={(value) => setNewAccount((prev) => ({ ...prev, ifsc: value }))} />
-          <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-            <input
-              type="checkbox"
-              checked={newAccount.primary}
-              onChange={(event) => setNewAccount((prev) => ({ ...prev, primary: event.target.checked }))}
-            />
-            Set as Primary
-          </label>
+          <SelectField 
+            label="Bank Name" 
+            value={bankName} 
+            onChange={setBankName} 
+            options={['BRAC Bank', 'Dutch-Bangla Bank', 'Eastern Bank', 'Islami Bank', 'Prime Bank', 'Sonali Bank', 'Standard Chartered']} 
+          />
+          <Field label="Account Holder Name" value={accountHolderName} onChange={setAccountHolderName} />
+          <Field label="Account Number" value={accountNumber} onChange={setAccountNumber} />
+          <Field label="Branch Name" value={branchName} onChange={setBranchName} />
+          <Field label="Routing Number" value={routingNumber} onChange={setRoutingNumber} />
         </div>
-        <div className="mt-4 flex items-center gap-3">
-          <button onClick={addAccount} className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
-            Add Account
+        <div className="mt-4 text-right">
+          <button 
+            onClick={handleSaveBank} 
+            disabled={isSaving}
+            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors disabled:opacity-60"
+          >
+            {isSaving ? 'Saving...' : 'Update Bank Details'}
           </button>
-          <p className="text-xs text-slate-500">Verify via ৳1 penny drop or upload cancelled cheque.</p>
         </div>
-        {bankError && <p className="text-xs text-red-500 mt-2">{bankError}</p>}
       </SectionCard>
     </div>
   )
 }
 
-function KycTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: string) => void }) {
+function KycTab({ seller, onSuccess }: { seller: SellerUser; onSuccess: (msg: string) => void }) {
   return (
     <div className="space-y-6">
       <SectionCard title="Document Status">
@@ -466,6 +434,7 @@ function Field({
   required,
   disabled,
   helper,
+  type = 'text',
 }: {
   label: string
   value: string
@@ -473,6 +442,7 @@ function Field({
   required?: boolean
   disabled?: boolean
   helper?: string
+  type?: string
 }) {
   return (
     <div>
@@ -480,6 +450,7 @@ function Field({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <input
+        type={type}
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}

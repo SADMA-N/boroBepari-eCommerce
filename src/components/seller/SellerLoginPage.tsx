@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { Eye, EyeOff, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
@@ -12,12 +12,15 @@ export function SellerLoginPage() {
   const navigate = useNavigate()
   const { login } = useSellerAuth()
   const { pushToast } = useSellerToast()
+  const search = useSearch({ from: '/seller/login', strict: false })
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const isResetSuccess = (search as any).reset === 'success'
 
   const identifierType = useMemo(() => {
     if (EMAIL_REGEX.test(identifier.trim())) return 'email'
@@ -119,6 +122,12 @@ export function SellerLoginPage() {
               {error && (
                 <div className="mt-6 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
                   {error}
+                </div>
+              )}
+
+              {isResetSuccess && (
+                <div className="mt-6 rounded-lg border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-600">
+                  Password updated successfully! Please sign in with your new password.
                 </div>
               )}
 

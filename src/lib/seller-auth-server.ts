@@ -272,6 +272,156 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
     return { seller: sellerUser, token: authToken }
   })
 
+// Update seller profile
+export const updateSellerProfile = createServerFn({ method: 'POST' })
+  .middleware([sellerAuthMiddleware])
+  .inputValidator(
+    z.object({
+      businessName: z.string().min(2).optional(),
+      businessType: z.string().optional(),
+      tradeLicenseNumber: z.string().optional(),
+      businessCategory: z.string().optional(),
+      yearsInBusiness: z.number().optional(),
+      fullName: z.string().optional(),
+      phone: z.string().optional(),
+      address: z.string().optional(),
+      city: z.string().optional(),
+      postalCode: z.string().optional(),
+      bankName: z.string().optional(),
+      accountHolderName: z.string().optional(),
+      accountNumber: z.string().optional(),
+      branchName: z.string().optional(),
+      routingNumber: z.string().optional(),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    if (!context.seller) {
+      throw new Error('Unauthorized')
+    }
+
+    const [updated] = await db
+      .update(schema.sellers)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.sellers.id, context.seller.id))
+      .returning()
+
+    if (!updated) {
+      throw new Error('Failed to update profile')
+    }
+
+    const sellerUser: SellerUser = {
+      id: updated.id,
+      businessName: updated.businessName,
+      businessType: updated.businessType,
+      tradeLicenseNumber: updated.tradeLicenseNumber,
+      businessCategory: updated.businessCategory,
+      yearsInBusiness: updated.yearsInBusiness,
+      fullName: updated.fullName,
+      email: updated.email,
+      phone: updated.phone,
+      address: updated.address,
+      city: updated.city,
+      postalCode: updated.postalCode,
+      bankName: updated.bankName,
+      accountHolderName: updated.accountHolderName,
+      accountNumber: updated.accountNumber,
+      branchName: updated.branchName,
+      routingNumber: updated.routingNumber,
+      kycStatus: updated.kycStatus,
+      kycSubmittedAt: updated.kycSubmittedAt
+        ? updated.kycSubmittedAt.toISOString()
+        : null,
+      kycRejectionReason: updated.kycRejectionReason,
+      verificationBadge: updated.verificationBadge,
+    }
+
+    return { seller: sellerUser }
+  })
+
+// Request password reset for seller - sends a 6-digit code
+export const requestSellerPasswordReset = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ email: z.string().email() }))
+  .handler(async ({ data }) => {
+    const { email } = data
+
+    // Check if seller exists
+    const seller = await db.query.sellers.findFirst({
+      where: eq(schema.sellers.email, email.toLowerCase()),
+    })
+
+    // Generic message for security
+    const successResult = { success: true, message: 'If this email is registered, a verification code has been sent.' }
+
+    if (!seller) {
+      return successResult
+    }
+
+    // Generate 6-digit OTP
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+
+    // Store in verification table
+    await db.insert(schema.verification).values({
+      id: crypto.randomUUID(),
+      identifier: email.toLowerCase(),
+      value: code,
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+    })
+
+    // Send reset email with code
+    await sendVerificationEmail({
+      email: email.toLowerCase(),
+      name: seller.fullName || 'Seller',
+      code,
+      type: 'reset-password',
+    })
+
+    return successResult
+  })
+
+// Verify the 6-digit code and return a temporary reset token
+export const verifySellerResetCode = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+      code: z.string().length(6),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { email, code } = data
+
+    // Verify code
+    const verification = await db.query.verification.findFirst({
+      where: (v, { and, eq: eqField, gt }) =>
+        and(
+          eqField(v.identifier, email.toLowerCase()),
+          eqField(v.value, code),
+          gt(v.expiresAt, new Date()),
+        ),
+    })
+
+    if (!verification) {
+      throw new Error('Invalid or expired verification code')
+    }
+
+    // Delete the code
+    await db.delete(schema.verification).where(eq(schema.verification.id, verification.id))
+
+    // Generate a long-lived temporary token for the reset page
+    const resetToken = Math.random().toString(36).slice(2, 15) + Math.random().toString(36).slice(2, 15)
+    
+    await db.insert(schema.verification).values({
+      id: crypto.randomUUID(),
+      identifier: email.toLowerCase(),
+      value: resetToken,
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes to complete reset
+    })
+
+    return { token: resetToken }
+  })
+
 // Login seller with Google
 export const sellerGoogleLogin = createServerFn({ method: 'POST' })
   .inputValidator(

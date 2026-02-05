@@ -31,6 +31,7 @@ import { Route as SellerProfileRouteImport } from './routes/seller/profile'
 import { Route as SellerLoginRouteImport } from './routes/seller/login'
 import { Route as SellerKycRouteImport } from './routes/seller/kyc'
 import { Route as SellerHelpRouteImport } from './routes/seller/help'
+import { Route as SellerForgotPasswordRouteImport } from './routes/seller/forgot-password'
 import { Route as SellerFaqRouteImport } from './routes/seller/faq'
 import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
 import { Route as SellerCallbackRouteImport } from './routes/seller/callback'
@@ -210,6 +211,11 @@ const SellerKycRoute = SellerKycRouteImport.update({
 const SellerHelpRoute = SellerHelpRouteImport.update({
   id: '/help',
   path: '/help',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerForgotPasswordRoute = SellerForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => SellerRouteRoute,
 } as any)
 const SellerFaqRoute = SellerFaqRouteImport.update({
@@ -613,6 +619,7 @@ export interface FileRoutesByFullPath {
   '/seller/callback': typeof SellerCallbackRoute
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/faq': typeof SellerFaqRoute
+  '/seller/forgot-password': typeof SellerForgotPasswordRoute
   '/seller/help': typeof SellerHelpRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
@@ -703,6 +710,7 @@ export interface FileRoutesByTo {
   '/seller/callback': typeof SellerCallbackRoute
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/faq': typeof SellerFaqRoute
+  '/seller/forgot-password': typeof SellerForgotPasswordRoute
   '/seller/help': typeof SellerHelpRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
@@ -798,6 +806,7 @@ export interface FileRoutesById {
   '/seller/callback': typeof SellerCallbackRoute
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/faq': typeof SellerFaqRoute
+  '/seller/forgot-password': typeof SellerForgotPasswordRoute
   '/seller/help': typeof SellerHelpRoute
   '/seller/kyc': typeof SellerKycRoute
   '/seller/login': typeof SellerLoginRoute
@@ -894,6 +903,7 @@ export interface FileRouteTypes {
     | '/seller/callback'
     | '/seller/dashboard'
     | '/seller/faq'
+    | '/seller/forgot-password'
     | '/seller/help'
     | '/seller/kyc'
     | '/seller/login'
@@ -984,6 +994,7 @@ export interface FileRouteTypes {
     | '/seller/callback'
     | '/seller/dashboard'
     | '/seller/faq'
+    | '/seller/forgot-password'
     | '/seller/help'
     | '/seller/kyc'
     | '/seller/login'
@@ -1078,6 +1089,7 @@ export interface FileRouteTypes {
     | '/seller/callback'
     | '/seller/dashboard'
     | '/seller/faq'
+    | '/seller/forgot-password'
     | '/seller/help'
     | '/seller/kyc'
     | '/seller/login'
@@ -1340,6 +1352,13 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/seller/help'
       preLoaderRoute: typeof SellerHelpRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/forgot-password': {
+      id: '/seller/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/seller/forgot-password'
+      preLoaderRoute: typeof SellerForgotPasswordRouteImport
       parentRoute: typeof SellerRouteRoute
     }
     '/seller/faq': {
@@ -1887,6 +1906,7 @@ interface SellerRouteRouteChildren {
   SellerCallbackRoute: typeof SellerCallbackRoute
   SellerDashboardRoute: typeof SellerDashboardRoute
   SellerFaqRoute: typeof SellerFaqRoute
+  SellerForgotPasswordRoute: typeof SellerForgotPasswordRoute
   SellerHelpRoute: typeof SellerHelpRoute
   SellerKycRoute: typeof SellerKycRoute
   SellerLoginRoute: typeof SellerLoginRoute
@@ -1905,6 +1925,7 @@ const SellerRouteRouteChildren: SellerRouteRouteChildren = {
   SellerCallbackRoute: SellerCallbackRoute,
   SellerDashboardRoute: SellerDashboardRoute,
   SellerFaqRoute: SellerFaqRoute,
+  SellerForgotPasswordRoute: SellerForgotPasswordRoute,
   SellerHelpRoute: SellerHelpRoute,
   SellerKycRoute: SellerKycRoute,
   SellerLoginRoute: SellerLoginRoute,
