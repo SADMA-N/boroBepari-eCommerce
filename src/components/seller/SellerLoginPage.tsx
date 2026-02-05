@@ -172,18 +172,12 @@ export function SellerLoginPage() {
                 <div className="h-px flex-1 bg-slate-200" />
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="mt-4">
                 <button
                   type="button"
-                  className="rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="w-full rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   Google
-                </button>
-                <button
-                  type="button"
-                  className="rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                >
-                  Facebook
                 </button>
               </div>
 

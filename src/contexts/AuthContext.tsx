@@ -71,7 +71,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const status = await checkUserPasswordStatus()
         if (status.needsPassword) {
-          if (window.location.pathname !== '/auth/set-password') {
+          // Only redirect if NOT on the homepage and NOT already on set-password
+          if (window.location.pathname !== '/' && window.location.pathname !== '/auth/set-password') {
             console.log('[AuthContext] Navigating to /auth/set-password')
             router.navigate({ to: '/auth/set-password' })
           }

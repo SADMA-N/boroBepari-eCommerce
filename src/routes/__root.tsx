@@ -29,6 +29,7 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ location }) => {
     if (
+      location.pathname === '/' ||
       location.pathname.startsWith('/seller') ||
       location.pathname.startsWith('/admin') ||
       location.pathname.startsWith('/auth/set-password') ||
