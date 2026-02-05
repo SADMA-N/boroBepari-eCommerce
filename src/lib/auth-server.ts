@@ -11,7 +11,7 @@ export const authMiddleware = createMiddleware().server(
       const session = await auth.api.getSession({ headers: request.headers })
       return next({ context: { session, headers: request.headers } })
     } catch (error) {
-      console.error('Failed to get session in middleware:', error)
+      console.error('Failed to get session in middleware:', (error as Error).message)
       return next({ context: { session: null, headers: request.headers } })
     }
   },

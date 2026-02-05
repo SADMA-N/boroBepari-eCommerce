@@ -21,8 +21,6 @@ trace.json
 *.trace.json
 dist-check.png
 dev_output.log
-.claude/
-.gemini/
 node_modules/
 
 # Logs
