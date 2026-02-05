@@ -15,14 +15,14 @@ export default function PromoBanners({
         <Link
           key={banner.id}
           to={banner.link}
-          className="relative group overflow-hidden rounded-lg"
+          className="relative group overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all"
         >
           <img
             src={banner.image}
             alt={banner.title}
             className="w-full h-32 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           <div className="absolute bottom-0 left-0 p-4">
             <h3 className="text-white font-bold text-lg">{banner.title}</h3>
           </div>

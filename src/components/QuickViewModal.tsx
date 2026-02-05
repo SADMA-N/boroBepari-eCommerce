@@ -104,7 +104,7 @@ export default function QuickViewModal({
               <img
                 src={selectedImage}
                 alt={product.name}
-                className="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+                className="max-h-full max-w-full object-contain dark:brightness-90 transition-all"
               />
             </div>
 
@@ -119,7 +119,7 @@ export default function QuickViewModal({
                   <img
                     src={img}
                     alt={`Thumb ${idx}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover dark:brightness-90"
                   />
                 </button>
               ))}

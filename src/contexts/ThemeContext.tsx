@@ -26,16 +26,11 @@ export function ThemeProvider({
   storageKey = 'borobepari-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem(storageKey) as Theme) || defaultTheme
-    }
-    return defaultTheme
-  })
+  const [theme, setTheme] = useState<Theme>(
+    () => (localStorage.getItem(storageKey) as Theme | null) || defaultTheme,
+  )
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-
     const root = window.document.documentElement
 
     root.classList.remove('light', 'dark')
@@ -55,9 +50,9 @@ export function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem(storageKey, newTheme)
+      setTheme(newTheme)
     },
   }
 
@@ -69,10 +64,5 @@ export function ThemeProvider({
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
-
-  if (context === undefined)
-    throw new Error('useTheme must be used within a ThemeProvider')
-
-  return context
+  return useContext(ThemeProviderContext)
 }

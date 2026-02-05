@@ -308,10 +308,6 @@ export const updateSellerProfile = createServerFn({ method: 'POST' })
       .where(eq(schema.sellers.id, context.seller.id))
       .returning()
 
-    if (!updated) {
-      throw new Error('Failed to update profile')
-    }
-
     const sellerUser: SellerUser = {
       id: updated.id,
       businessName: updated.businessName,
