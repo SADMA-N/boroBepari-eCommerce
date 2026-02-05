@@ -4,10 +4,10 @@ import {
   ChevronDown,
   UploadCloud,
 } from 'lucide-react'
+import type { SellerUser } from '@/types/seller'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
-import type { SellerUser } from '@/types/seller'
 
 type TabKey =
   | 'business'

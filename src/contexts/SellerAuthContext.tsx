@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import type { SellerLoginData, SellerRegisterData, SellerUser  } from '@/types/seller'
-import { sellerGoogleLogin, sellerLogin, sellerRegister, validateSellerToken, updateSellerProfile } from '@/lib/seller-auth-server'
+import { sellerGoogleLogin, sellerLogin, sellerRegister, updateSellerProfile, validateSellerToken } from '@/lib/seller-auth-server'
 
 const SELLER_TOKEN_KEY = 'seller_token'
 
