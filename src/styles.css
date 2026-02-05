@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@config '../tailwind.config.js';
+
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -35,7 +37,7 @@
 }
 
 @layer base {
-  :root {
+  :root, .light {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
