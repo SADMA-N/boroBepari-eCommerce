@@ -33,6 +33,7 @@ import { Route as SellerKycRouteImport } from './routes/seller/kyc'
 import { Route as SellerHelpRouteImport } from './routes/seller/help'
 import { Route as SellerFaqRouteImport } from './routes/seller/faq'
 import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
+import { Route as SellerCallbackRouteImport } from './routes/seller/callback'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
 import { Route as OrderConfirmationOrderIdRouteImport } from './routes/order-confirmation/$orderId'
 import { Route as MockPaymentBkashRouteImport } from './routes/mock-payment/bkash'
@@ -219,6 +220,11 @@ const SellerFaqRoute = SellerFaqRouteImport.update({
 const SellerDashboardRoute = SellerDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerCallbackRoute = SellerCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
   getParentRoute: () => SellerRouteRoute,
 } as any)
 const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
@@ -604,6 +610,7 @@ export interface FileRoutesByFullPath {
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/seller/callback': typeof SellerCallbackRoute
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/faq': typeof SellerFaqRoute
   '/seller/help': typeof SellerHelpRoute
@@ -693,6 +700,7 @@ export interface FileRoutesByTo {
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/seller/callback': typeof SellerCallbackRoute
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/faq': typeof SellerFaqRoute
   '/seller/help': typeof SellerHelpRoute
@@ -787,6 +795,7 @@ export interface FileRoutesById {
   '/mock-payment/bkash': typeof MockPaymentBkashRoute
   '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
+  '/seller/callback': typeof SellerCallbackRoute
   '/seller/dashboard': typeof SellerDashboardRoute
   '/seller/faq': typeof SellerFaqRoute
   '/seller/help': typeof SellerHelpRoute
@@ -882,6 +891,7 @@ export interface FileRouteTypes {
     | '/mock-payment/bkash'
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
+    | '/seller/callback'
     | '/seller/dashboard'
     | '/seller/faq'
     | '/seller/help'
@@ -971,6 +981,7 @@ export interface FileRouteTypes {
     | '/mock-payment/bkash'
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
+    | '/seller/callback'
     | '/seller/dashboard'
     | '/seller/faq'
     | '/seller/help'
@@ -1064,6 +1075,7 @@ export interface FileRouteTypes {
     | '/mock-payment/bkash'
     | '/order-confirmation/$orderId'
     | '/products/$productSlug'
+    | '/seller/callback'
     | '/seller/dashboard'
     | '/seller/faq'
     | '/seller/help'
@@ -1342,6 +1354,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/seller/dashboard'
       preLoaderRoute: typeof SellerDashboardRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/callback': {
+      id: '/seller/callback'
+      path: '/callback'
+      fullPath: '/seller/callback'
+      preLoaderRoute: typeof SellerCallbackRouteImport
       parentRoute: typeof SellerRouteRoute
     }
     '/products/$productSlug': {
@@ -1865,6 +1884,7 @@ const CheckoutRouteRouteWithChildren = CheckoutRouteRoute._addFileChildren(
 )
 
 interface SellerRouteRouteChildren {
+  SellerCallbackRoute: typeof SellerCallbackRoute
   SellerDashboardRoute: typeof SellerDashboardRoute
   SellerFaqRoute: typeof SellerFaqRoute
   SellerHelpRoute: typeof SellerHelpRoute
@@ -1882,6 +1902,7 @@ interface SellerRouteRouteChildren {
 }
 
 const SellerRouteRouteChildren: SellerRouteRouteChildren = {
+  SellerCallbackRoute: SellerCallbackRoute,
   SellerDashboardRoute: SellerDashboardRoute,
   SellerFaqRoute: SellerFaqRoute,
   SellerHelpRoute: SellerHelpRoute,

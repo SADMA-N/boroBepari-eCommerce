@@ -1,10 +1,10 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { sendVerificationEmail } from './email'
 import type { SellerUser } from '@/types/seller'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
-import { sendVerificationEmail } from './email'
 
 // Simple JWT-like token generation and verification
 // In production, use a proper JWT library like jose
@@ -206,10 +206,10 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
 
     // Verify token
     const verification = await db.query.verification.findFirst({
-      where: (v, { and, eq, gt }) =>
+      where: (v, { and, eq: eqField, gt }) =>
         and(
-          eq(v.identifier, email.toLowerCase()),
-          eq(v.value, token),
+          eqField(v.identifier, email.toLowerCase()),
+          eqField(v.value, token),
           gt(v.expiresAt, new Date()),
         ),
     })
@@ -221,8 +221,7 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
     // Hash new password
     const hashedPassword = await hashPassword(password)
 
-    // Update seller
-    const [updatedSeller] = await db
+    const results = await db
       .update(schema.sellers)
       .set({
         password: hashedPassword,
@@ -232,9 +231,11 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
       .where(eq(schema.sellers.email, email.toLowerCase()))
       .returning()
 
-    if (!updatedSeller) {
+    if (results.length === 0) {
       throw new Error('Seller not found')
     }
+
+    const updatedSeller = results[0]
 
     // Delete verification token
     await db.delete(schema.verification).where(eq(schema.verification.id, verification.id))
@@ -269,6 +270,57 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
     }
 
     return { seller: sellerUser, token: authToken }
+  })
+
+// Login seller with Google
+export const sellerGoogleLogin = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { email } = data
+
+    // Find seller
+    const seller = await db.query.sellers.findFirst({
+      where: eq(schema.sellers.email, email.toLowerCase()),
+    })
+
+    if (!seller) {
+      throw new Error('This email is not registered as a seller account. Please register first.')
+    }
+
+    // Generate token
+    const token = generateToken(seller.id)
+
+    const sellerUser: SellerUser = {
+      id: seller.id,
+      businessName: seller.businessName,
+      businessType: seller.businessType,
+      tradeLicenseNumber: seller.tradeLicenseNumber,
+      businessCategory: seller.businessCategory,
+      yearsInBusiness: seller.yearsInBusiness,
+      fullName: seller.fullName,
+      email: seller.email,
+      phone: seller.phone,
+      address: seller.address,
+      city: seller.city,
+      postalCode: seller.postalCode,
+      bankName: seller.bankName,
+      accountHolderName: seller.accountHolderName,
+      accountNumber: seller.accountNumber,
+      branchName: seller.branchName,
+      routingNumber: seller.routingNumber,
+      kycStatus: seller.kycStatus,
+      kycSubmittedAt: seller.kycSubmittedAt
+        ? seller.kycSubmittedAt.toISOString()
+        : null,
+      kycRejectionReason: seller.kycRejectionReason,
+      verificationBadge: seller.verificationBadge,
+    }
+
+    return { seller: sellerUser, token }
   })
 
 // Login seller

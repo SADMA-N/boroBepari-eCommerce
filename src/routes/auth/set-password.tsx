@@ -9,9 +9,9 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react'
+import { z } from 'zod'
 import { checkUserPasswordStatus, setUserPassword } from '@/lib/auth-server'
 import { setSellerPassword } from '@/lib/seller-auth-server'
-import { z } from 'zod'
 
 const setPasswordSearchSchema = z.object({
   token: z.string().optional(),

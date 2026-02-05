@@ -3,6 +3,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { Eye, EyeOff, ShieldCheck, Sparkles, TrendingUp } from 'lucide-react'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
+import { authClient } from '@/lib/auth-client'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const BD_MOBILE_REGEX = /^01\d{9}$/
@@ -79,6 +80,19 @@ export function SellerLoginPage() {
       pushToast(friendly, 'error')
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: '/seller/callback',
+      })
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Google login failed'
+      setError(message)
+      pushToast(message, 'error')
     }
   }
 
@@ -175,6 +189,7 @@ export function SellerLoginPage() {
               <div className="mt-4">
                 <button
                   type="button"
+                  onClick={handleGoogleLogin}
                   className="w-full rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   Google
