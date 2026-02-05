@@ -39,17 +39,12 @@ const BANK_ACCOUNT_REGEX = /^\d{10,}$/
 
 export function SellerRegistrationPage() {
   const navigate = useNavigate()
-  const { isAuthenticated } = useSellerAuth()
+  const { isAuthenticated, register } = useSellerAuth()
   const [step, setStep] = useState<Step>(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
 
-  const [otpSent, setOtpSent] = useState(false)
-  const [otpValue, setOtpValue] = useState('')
-  const [otpVerified, setOtpVerified] = useState(false)
-  const [otpCooldown, setOtpCooldown] = useState(0)
-
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<SellerRegisterData>({
     businessName: '',
     businessType: '',
     tradeLicenseNumber: '',
@@ -57,7 +52,7 @@ export function SellerRegistrationPage() {
     yearsInBusiness: '',
     fullName: '',
     email: '',
-    mobile: '',
+    phone: '',
     address: '',
     city: '',
     postalCode: '',
@@ -77,19 +72,12 @@ export function SellerRegistrationPage() {
   }, [isAuthenticated, navigate])
 
   useEffect(() => {
-    if (otpCooldown <= 0) return
-    const timer = window.setInterval(() => {
-      setOtpCooldown((prev) => (prev > 0 ? prev - 1 : 0))
-    }, 1000)
-    return () => window.clearInterval(timer)
-  }, [otpCooldown])
-
-  useEffect(() => {
-    if (!success) return
-    const timer = window.setTimeout(() => {
-      navigate({ to: '/seller/kyc' })
-    }, 3000)
-    return () => window.clearTimeout(timer)
+    if (success) {
+      const timer = setTimeout(() => {
+        navigate({ to: '/seller/login' })
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
   }, [success, navigate])
 
   const progress = useMemo(() => {
@@ -98,7 +86,7 @@ export function SellerRegistrationPage() {
     return 100
   }, [step])
 
-  const updateField = (name: string, value: string) => {
+  const updateField = (name: keyof SellerRegisterData, value: string) => {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
@@ -124,15 +112,14 @@ export function SellerRegistrationPage() {
     } else if (!EMAIL_REGEX.test(form.email.trim())) {
       nextErrors.email = 'Enter a valid email address'
     }
-    if (!form.mobile.trim()) {
-      nextErrors.mobile = 'Mobile number is required'
-    } else if (!BD_MOBILE_REGEX.test(form.mobile.trim())) {
-      nextErrors.mobile = 'Use BD format: 01XXXXXXXXX'
+    if (!form.phone.trim()) {
+      nextErrors.phone = 'Mobile number is required'
+    } else if (!BD_MOBILE_REGEX.test(form.phone.trim())) {
+      nextErrors.phone = 'Use BD format: 01XXXXXXXXX'
     }
     if (!form.address.trim()) nextErrors.address = 'Business address is required'
     if (!form.city.trim()) nextErrors.city = 'City is required'
     if (!form.postalCode.trim()) nextErrors.postalCode = 'Postal code is required'
-    if (!otpVerified) nextErrors.otp = 'Verify OTP to continue'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }
@@ -151,30 +138,6 @@ export function SellerRegistrationPage() {
     return Object.keys(nextErrors).length === 0
   }
 
-  const handleSendOtp = () => {
-    if (!BD_MOBILE_REGEX.test(form.mobile.trim())) {
-      setErrors((prev) => ({
-        ...prev,
-        mobile: 'Enter a valid BD number before sending OTP',
-      }))
-      return
-    }
-    setOtpSent(true)
-    setOtpVerified(false)
-    setOtpValue('')
-    setOtpCooldown(60)
-    setErrors((prev) => ({ ...prev, otp: '' }))
-  }
-
-  const handleVerifyOtp = () => {
-    if (!/^\d{6}$/.test(otpValue)) {
-      setErrors((prev) => ({ ...prev, otp: 'Enter a valid 6-digit OTP' }))
-      return
-    }
-    setOtpVerified(true)
-    setErrors((prev) => ({ ...prev, otp: '' }))
-  }
-
   const handleNext = () => {
     if (step === 1 && validateStep1()) setStep(2)
     if (step === 2 && validateStep2()) setStep(3)
@@ -185,13 +148,17 @@ export function SellerRegistrationPage() {
     if (step === 3) setStep(2)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateStep3()) return
     setIsSubmitting(true)
-    setTimeout(() => {
-      setIsSubmitting(false)
+    try {
+      await register(form)
       setSuccess(true)
-    }, 1000)
+    } catch (err: any) {
+      setErrors({ submit: err.message || 'Registration failed' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -323,46 +290,11 @@ export function SellerRegistrationPage() {
                         <Field
                           label="Mobile number"
                           required
-                          value={form.mobile}
-                          onChange={(value) => updateField('mobile', value)}
-                          error={errors.mobile}
+                          value={form.phone}
+                          onChange={(value) => updateField('phone', value)}
+                          error={errors.phone}
                           placeholder="01XXXXXXXXX"
                         />
-                        <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={handleSendOtp}
-                            disabled={otpCooldown > 0}
-                            className="inline-flex items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            {otpSent ? 'Resend OTP' : 'Send OTP'}
-                          </button>
-                          {otpCooldown > 0 && (
-                            <span className="text-xs text-slate-500">
-                              Resend available in {otpCooldown}s
-                            </span>
-                          )}
-                        </div>
-                        {otpSent && (
-                          <div className="mt-3 flex flex-col sm:flex-row gap-3">
-                            <input
-                              value={otpValue}
-                              onChange={(event) => setOtpValue(event.target.value)}
-                              placeholder="Enter 6-digit OTP"
-                              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-                            />
-                            <button
-                              type="button"
-                              onClick={handleVerifyOtp}
-                              className="rounded-lg bg-slate-900 text-white px-4 py-2 text-sm font-medium hover:bg-slate-800"
-                            >
-                              {otpVerified ? 'Verified' : 'Verify OTP'}
-                            </button>
-                          </div>
-                        )}
-                        {errors.otp && (
-                          <p className="mt-2 text-xs text-red-500">{errors.otp}</p>
-                        )}
                       </div>
                       <Field
                         label="Business address"
@@ -443,6 +375,9 @@ export function SellerRegistrationPage() {
                         value={form.routingNumber}
                         onChange={(value) => updateField('routingNumber', value)}
                       />
+                      {errors.submit && (
+                        <p className="text-sm text-red-500 font-medium">{errors.submit}</p>
+                      )}
                       <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <button
                           type="button"
@@ -472,11 +407,8 @@ export function SellerRegistrationPage() {
                 <h2 className="mt-4 text-2xl font-bold text-slate-900">
                   Account Created Successfully!
                 </h2>
-                <p className="mt-2 text-slate-600">
-                  Complete KYC to start selling
-                </p>
-                <p className="mt-6 text-sm text-slate-500">
-                  Redirecting you to KYC in a few seconds...
+                <p className="mt-4 text-slate-600 font-medium">
+                  Check your Gmail for a verification link and confirm your email. You’ll be redirected shortly.
                 </p>
               </div>
             )}

@@ -1,9 +1,16 @@
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
+import { env } from '../env'
 
-// Initialize Resend conditionally or with a placeholder if missing
-// The actual send call will be skipped if we detect it's missing/invalid in dev
-const apiKey = process.env.RESEND_API_KEY || 're_123456789'
-const resend = new Resend(apiKey)
+// Initialize Nodemailer transporter with SMTP settings
+const transporter = nodemailer.createTransport({
+  host: env.SMTP_HOST,
+  port: env.SMTP_PORT,
+  secure: env.SMTP_PORT === 465, // true for 465, false for other ports
+  auth: {
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASS,
+  },
+})
 
 interface EmailParams {
   email: string
@@ -76,27 +83,20 @@ export async function sendVerificationEmail({
 
   const buttonText = isReset ? 'Reset Password' : 'Verify Email Address'
 
-  // LOG FOR DEVELOPMENT: Ensure we can see the code/link even if email fails
-  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+  // LOG FOR DEVELOPMENT
+  if (process.env.NODE_ENV !== 'production') {
     console.log('--- EMAIL DEBUG ---')
     console.log(`To: ${email}`)
     console.log(`Subject: ${subject}`)
     if (code) console.log(`CODE: ${code}`)
     if (url) console.log(`URL: ${url}`)
     console.log('-------------------')
-
-    if (!process.env.RESEND_API_KEY) {
-      console.warn(
-        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
-      )
-      return { success: true, data: { id: 'mock-email-id' } }
-    }
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: 'BoroBepari <onboarding@resend.dev>',
-      to: [email],
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
       subject,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
@@ -128,12 +128,7 @@ export async function sendVerificationEmail({
       `,
     })
 
-    if (error) {
-      console.error(`Failed to send ${type} email:`, error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
+    return { success: true, data: info }
   } catch (err) {
     console.error(`Unexpected error sending ${type} email:`, err)
     return { success: false, error: err }
@@ -150,25 +145,18 @@ export async function sendInvoiceEmail({
   const subject = `Your BoroBepari Invoice ${invoiceNumber}`
   const title = 'Your invoice is ready'
 
-  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+  if (process.env.NODE_ENV !== 'production') {
     console.log('--- EMAIL DEBUG ---')
     console.log(`To: ${email}`)
     console.log(`Subject: ${subject}`)
     console.log(`Invoice URL: ${invoiceUrl}`)
     console.log('-------------------')
-
-    if (!process.env.RESEND_API_KEY) {
-      console.warn(
-        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
-      )
-      return { success: true, data: { id: 'mock-email-id' } }
-    }
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: 'BoroBepari <billing@resend.dev>',
-      to: [email],
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
       subject,
       html: `
         <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
@@ -189,12 +177,7 @@ export async function sendInvoiceEmail({
       `,
     })
 
-    if (error) {
-      console.error('Failed to send invoice email:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
+    return { success: true, data: info }
   } catch (err) {
     console.error('Unexpected error sending invoice email:', err)
     return { success: false, error: err }
@@ -210,25 +193,18 @@ export async function sendCancellationEmail({
   const subject = `Your order ${orderNumber} has been cancelled`
   const title = 'Order cancelled'
 
-  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+  if (process.env.NODE_ENV !== 'production') {
     console.log('--- EMAIL DEBUG ---')
     console.log(`To: ${email}`)
     console.log(`Subject: ${subject}`)
     console.log(`Refund: ${refundSummary}`)
     console.log('-------------------')
-
-    if (!process.env.RESEND_API_KEY) {
-      console.warn(
-        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
-      )
-      return { success: true, data: { id: 'mock-email-id' } }
-    }
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: 'BoroBepari <billing@resend.dev>',
-      to: [email],
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
       subject,
       html: `
         <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
@@ -243,12 +219,7 @@ export async function sendCancellationEmail({
       `,
     })
 
-    if (error) {
-      console.error('Failed to send cancellation email:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
+    return { success: true, data: info }
   } catch (err) {
     console.error('Unexpected error sending cancellation email:', err)
     return { success: false, error: err }
@@ -275,25 +246,18 @@ export async function sendOrderStatusEmail({
     `
     : ''
 
-  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+  if (process.env.NODE_ENV !== 'production') {
     console.log('--- EMAIL DEBUG ---')
     console.log(`To: ${email}`)
     console.log(`Subject: ${subject}`)
     console.log(`Order link: ${orderLink}`)
     console.log('-------------------')
-
-    if (!process.env.RESEND_API_KEY) {
-      console.warn(
-        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
-      )
-      return { success: true, data: { id: 'mock-email-id' } }
-    }
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: 'BoroBepari <updates@resend.dev>',
-      to: [email],
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
       subject,
       html: `
         <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
@@ -317,12 +281,7 @@ export async function sendOrderStatusEmail({
       `,
     })
 
-    if (error) {
-      console.error('Failed to send order status email:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
+    return { success: true, data: info }
   } catch (err) {
     console.error('Unexpected error sending order status email:', err)
     return { success: false, error: err }
@@ -340,19 +299,12 @@ export async function sendStockAlertEmail({
 }: StockAlertEmailParams) {
   const subject = `${productName} is back in stock!`
 
-  if (process.env.NODE_ENV !== 'production' || !process.env.RESEND_API_KEY) {
+  if (process.env.NODE_ENV !== 'production') {
     console.log('--- EMAIL DEBUG ---')
     console.log(`To: ${email}`)
     console.log(`Subject: ${subject}`)
     console.log(`Product link: ${productLink}`)
     console.log('-------------------')
-
-    if (!process.env.RESEND_API_KEY) {
-      console.warn(
-        '⚠️ RESEND_API_KEY is missing. Email sending is skipped (simulated success).',
-      )
-      return { success: true, data: { id: 'mock-email-id' } }
-    }
   }
 
   const imageBlock = productImage
@@ -360,9 +312,9 @@ export async function sendStockAlertEmail({
     : ''
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: 'BoroBepari <updates@resend.dev>',
-      to: [email],
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
       subject,
       html: `
         <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
@@ -387,12 +339,7 @@ export async function sendStockAlertEmail({
       `,
     })
 
-    if (error) {
-      console.error('Failed to send stock alert email:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
+    return { success: true, data: info }
   } catch (err) {
     console.error('Unexpected error sending stock alert email:', err)
     return { success: false, error: err }

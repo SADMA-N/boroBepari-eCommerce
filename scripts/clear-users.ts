@@ -7,6 +7,15 @@ async function main() {
 
   try {
     // Delete in order to respect foreign key constraints
+    console.log('Deleting quotes...')
+    await db.delete(schema.quotes)
+
+    console.log('Deleting RFQs...')
+    await db.delete(schema.rfqs)
+
+    console.log('Deleting stock alerts...')
+    await db.delete(schema.stockAlerts)
+
     console.log('Deleting order items...')
     await db.delete(schema.orderItems)
 
@@ -31,11 +40,15 @@ async function main() {
     console.log('Deleting accounts...')
     await db.delete(schema.account)
 
+    console.log('Deleting sellers...')
+    await db.delete(schema.sellers)
+
     console.log('Deleting users...')
     await db.delete(schema.user)
 
     // Verify
     const userCount = await db.select({ count: count() }).from(schema.user)
+    const sellerCount = await db.select({ count: count() }).from(schema.sellers)
     const otpCount = await db
       .select({ count: count() })
       .from(schema.passwordResetOtps)
@@ -45,6 +58,7 @@ async function main() {
 
     console.log('--- Verification ---')
     console.log(`Users remaining: ${userCount[0].count}`)
+    console.log(`Sellers remaining: ${sellerCount[0].count}`)
     console.log(`OTPs remaining: ${otpCount[0].count}`)
     console.log(`Verifications remaining: ${verCount[0].count}`)
 

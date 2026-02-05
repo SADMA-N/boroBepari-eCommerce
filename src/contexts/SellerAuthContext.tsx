@@ -73,11 +73,9 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
   }, [setToken])
 
   const register = useCallback(async (data: SellerRegisterData) => {
-    const result = await sellerRegister({ data })
-    setToken(result.token)
-    setSeller(result.seller)
-    window.location.href = '/seller/kyc'
-  }, [setToken])
+    await sellerRegister({ data })
+    // No setToken or setSeller here, as account is pending email verification
+  }, [])
 
   const logout = useCallback(() => {
     setToken(null)

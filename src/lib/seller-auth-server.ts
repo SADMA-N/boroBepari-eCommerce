@@ -4,6 +4,7 @@ import { z } from 'zod'
 import type { SellerUser } from '@/types/seller'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
+import { sendVerificationEmail } from './email'
 
 // Simple JWT-like token generation and verification
 // In production, use a proper JWT library like jose
@@ -74,8 +75,21 @@ export const sellerAuthMiddleware = createMiddleware().server(
             sellerUser = {
               id: seller.id,
               businessName: seller.businessName,
+              businessType: seller.businessType,
+              tradeLicenseNumber: seller.tradeLicenseNumber,
+              businessCategory: seller.businessCategory,
+              yearsInBusiness: seller.yearsInBusiness,
+              fullName: seller.fullName,
               email: seller.email,
               phone: seller.phone,
+              address: seller.address,
+              city: seller.city,
+              postalCode: seller.postalCode,
+              bankName: seller.bankName,
+              accountHolderName: seller.accountHolderName,
+              accountNumber: seller.accountNumber,
+              branchName: seller.branchName,
+              routingNumber: seller.routingNumber,
               kycStatus: seller.kycStatus,
               kycSubmittedAt: seller.kycSubmittedAt
                 ? seller.kycSubmittedAt.toISOString()
@@ -99,25 +113,36 @@ export const sellerRegister = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({
       businessName: z.string().min(2, 'Business name must be at least 2 characters'),
+      businessType: z.string().min(1),
+      tradeLicenseNumber: z.string().min(1),
+      businessCategory: z.string().min(1),
+      yearsInBusiness: z.string().optional(),
+      fullName: z.string().min(1),
       email: z.string().email('Invalid email address'),
-      password: z.string().min(8, 'Password must be at least 8 characters'),
-      phone: z.string().optional(),
+      phone: z.string().min(1),
+      address: z.string().min(1),
+      city: z.string().min(1),
+      postalCode: z.string().min(1),
+      bankName: z.string().min(1),
+      accountHolderName: z.string().min(1),
+      accountNumber: z.string().min(1),
+      branchName: z.string().min(1),
+      routingNumber: z.string().optional(),
     }),
   )
   .handler(async ({ data }) => {
-    const { businessName, email, password, phone } = data
-
     // Check if seller already exists
     const existing = await db.query.sellers.findFirst({
-      where: eq(schema.sellers.email, email.toLowerCase()),
+      where: eq(schema.sellers.email, data.email.toLowerCase()),
     })
 
     if (existing) {
       throw new Error('An account with this email already exists')
     }
 
-    // Hash password
-    const hashedPassword = await hashPassword(password)
+    // Generate a temporary random password
+    const tempPassword = Math.random().toString(36).slice(-10)
+    const hashedPassword = await hashPassword(tempPassword)
 
     // Generate unique ID
     const id = crypto.randomUUID()
@@ -125,40 +150,125 @@ export const sellerRegister = createServerFn({ method: 'POST' })
     // Create seller
     await db.insert(schema.sellers).values({
       id,
-      email: email.toLowerCase(),
+      email: data.email.toLowerCase(),
       password: hashedPassword,
-      businessName,
-      phone: phone || null,
+      businessName: data.businessName,
+      businessType: data.businessType,
+      tradeLicenseNumber: data.tradeLicenseNumber,
+      businessCategory: data.businessCategory,
+      yearsInBusiness: data.yearsInBusiness ? parseInt(data.yearsInBusiness) : null,
+      fullName: data.fullName,
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      postalCode: data.postalCode,
+      bankName: data.bankName,
+      accountHolderName: data.accountHolderName,
+      accountNumber: data.accountNumber,
+      branchName: data.branchName,
+      routingNumber: data.routingNumber || null,
       kycStatus: 'pending',
       verificationBadge: 'none',
     })
 
-    // Generate token
-    const token = generateToken(id)
-
-    // Fetch created seller
-    const seller = await db.query.sellers.findFirst({
-      where: eq(schema.sellers.id, id),
+    // Create verification token
+    const token = Math.random().toString(36).slice(2, 15)
+    await db.insert(schema.verification).values({
+      id: crypto.randomUUID(),
+      identifier: data.email.toLowerCase(),
+      value: token,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
     })
 
-    if (!seller) {
-      throw new Error('Failed to create seller account')
+    // Send verification email
+    const verificationUrl = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/auth/set-password?token=${token}&email=${encodeURIComponent(data.email.toLowerCase())}&type=seller`
+    
+    await sendVerificationEmail({
+      email: data.email.toLowerCase(),
+      name: data.fullName,
+      url: verificationUrl,
+    })
+
+    return { success: true }
+  })
+
+// Set seller password after email verification
+export const setSellerPassword = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+      token: z.string(),
+      password: z.string().min(8),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const { email, token, password } = data
+
+    // Verify token
+    const verification = await db.query.verification.findFirst({
+      where: (v, { and, eq, gt }) =>
+        and(
+          eq(v.identifier, email.toLowerCase()),
+          eq(v.value, token),
+          gt(v.expiresAt, new Date()),
+        ),
+    })
+
+    if (!verification) {
+      throw new Error('Invalid or expired verification link')
     }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(password)
+
+    // Update seller
+    const [updatedSeller] = await db
+      .update(schema.sellers)
+      .set({
+        password: hashedPassword,
+        emailVerified: true,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.sellers.email, email.toLowerCase()))
+      .returning()
+
+    if (!updatedSeller) {
+      throw new Error('Seller not found')
+    }
+
+    // Delete verification token
+    await db.delete(schema.verification).where(eq(schema.verification.id, verification.id))
+
+    // Generate session token
+    const authToken = generateToken(updatedSeller.id)
 
     const sellerUser: SellerUser = {
-      id: seller.id,
-      businessName: seller.businessName,
-      email: seller.email,
-      phone: seller.phone,
-      kycStatus: seller.kycStatus,
-      kycSubmittedAt: seller.kycSubmittedAt
-        ? seller.kycSubmittedAt.toISOString()
+      id: updatedSeller.id,
+      businessName: updatedSeller.businessName,
+      businessType: updatedSeller.businessType,
+      tradeLicenseNumber: updatedSeller.tradeLicenseNumber,
+      businessCategory: updatedSeller.businessCategory,
+      yearsInBusiness: updatedSeller.yearsInBusiness,
+      fullName: updatedSeller.fullName,
+      email: updatedSeller.email,
+      phone: updatedSeller.phone,
+      address: updatedSeller.address,
+      city: updatedSeller.city,
+      postalCode: updatedSeller.postalCode,
+      bankName: updatedSeller.bankName,
+      accountHolderName: updatedSeller.accountHolderName,
+      accountNumber: updatedSeller.accountNumber,
+      branchName: updatedSeller.branchName,
+      routingNumber: updatedSeller.routingNumber,
+      kycStatus: updatedSeller.kycStatus,
+      kycSubmittedAt: updatedSeller.kycSubmittedAt
+        ? updatedSeller.kycSubmittedAt.toISOString()
         : null,
-      kycRejectionReason: seller.kycRejectionReason,
-      verificationBadge: seller.verificationBadge,
+      kycRejectionReason: updatedSeller.kycRejectionReason,
+      verificationBadge: updatedSeller.verificationBadge,
     }
 
-    return { seller: sellerUser, token }
+    return { seller: sellerUser, token: authToken }
   })
 
 // Login seller

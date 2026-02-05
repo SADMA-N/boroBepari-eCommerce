@@ -26,6 +26,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
 
 export function SellerProfilePage() {
   const { pushToast } = useSellerToast()
+  const { seller } = useSellerAuth()
   const [activeTab, setActiveTab] = useState<TabKey>('business')
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -36,6 +37,8 @@ export function SellerProfilePage() {
     pushToast(message, 'success')
     window.setTimeout(() => setSuccess(null), 2500)
   }
+
+  if (!seller) return null
 
   return (
     <SellerProtectedRoute requireVerified>
@@ -76,9 +79,9 @@ export function SellerProfilePage() {
           </div>
         )}
 
-        {activeTab === 'business' && <BusinessTab onSuccess={showMessage} />}
-        {activeTab === 'bank' && <BankTab onSuccess={showMessage} />}
-        {activeTab === 'kyc' && <KycTab onSuccess={showMessage} />}
+        {activeTab === 'business' && <BusinessTab seller={seller} onSuccess={showMessage} />}
+        {activeTab === 'bank' && <BankTab seller={seller} onSuccess={showMessage} />}
+        {activeTab === 'kyc' && <KycTab seller={seller} onSuccess={showMessage} />}
         {activeTab === 'notifications' && <NotificationsTab onSuccess={showMessage} />}
         {activeTab === 'security' && <SecurityTab onSuccess={showMessage} />}
         {activeTab === 'store' && <StoreTab onSuccess={showMessage} />}
@@ -87,26 +90,26 @@ export function SellerProfilePage() {
   )
 }
 
-function BusinessTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
-  const [businessName, setBusinessName] = useState('BoroBepari Traders')
-  const [businessType, setBusinessType] = useState('Manufacturer')
-  const [categories, setCategories] = useState<Array<string>>(['Industrial Supplies'])
-  const [tradeLicense, setTradeLicense] = useState('TL-2024-1122')
-  const [years, setYears] = useState('8')
-  const [description, setDescription] = useState('We supply industrial safety products.')
+function BusinessTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: string) => void }) {
+  const [businessName, setBusinessName] = useState(seller.businessName)
+  const [businessType, setBusinessType] = useState(seller.businessType || '')
+  const [categories, setCategories] = useState<Array<string>>(seller.businessCategory ? [seller.businessCategory] : [])
+  const [tradeLicense, setTradeLicense] = useState(seller.tradeLicenseNumber || '')
+  const [years, setYears] = useState(seller.yearsInBusiness?.toString() || '')
+  const [description, setDescription] = useState('')
   const [logo, setLogo] = useState<File | null>(null)
 
-  const [ownerName, setOwnerName] = useState('Rahim Uddin')
-  const [email, setEmail] = useState('owner@borobepari.com')
-  const [phone, setPhone] = useState('+880 1700-112233')
+  const [ownerName, setOwnerName] = useState(seller.fullName || '')
+  const [email, setEmail] = useState(seller.email)
+  const [phone, setPhone] = useState(seller.phone || '')
   const [landline, setLandline] = useState('')
-  const [address, setAddress] = useState('Warehouse 5, Tejgaon Industrial Area')
-  const [city, setCity] = useState('Dhaka')
-  const [postal, setPostal] = useState('1208')
+  const [address, setAddress] = useState(seller.address || '')
+  const [city, setCity] = useState(seller.city || '')
+  const [postal, setPostal] = useState(seller.postalCode || '')
 
-  const [storeName, setStoreName] = useState('BoroBepari Store')
+  const [storeName, setStoreName] = useState(seller.businessName)
   const [banner, setBanner] = useState<File | null>(null)
-  const [storeDesc, setStoreDesc] = useState('Premium industrial supplies across Bangladesh.')
+  const [storeDesc, setStoreDesc] = useState('')
   const [hours, setHours] = useState('Sat-Thu, 9AM-8PM')
   const [returnPolicy, setReturnPolicy] = useState('Returns accepted within 15 days.')
   const [shippingPolicy, setShippingPolicy] = useState('Ships within 48 hours.')
@@ -183,15 +186,15 @@ function BusinessTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
   )
 }
 
-function BankTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
+function BankTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: string) => void }) {
   const [accounts, setAccounts] = useState([
     {
       id: 'bank-1',
-      bankName: 'BRAC Bank',
-      number: 'XXXX1234',
-      holder: 'BoroBepari Traders',
-      branch: 'Gulshan',
-      ifsc: 'BRAC001',
+      bankName: seller.bankName || 'Not Linked',
+      number: seller.accountNumber ? `XXXX${seller.accountNumber.slice(-4)}` : 'N/A',
+      holder: seller.accountHolderName || seller.fullName || 'N/A',
+      branch: seller.branchName || 'N/A',
+      ifsc: seller.routingNumber || 'N/A',
       verified: true,
       primary: true,
     },
@@ -292,23 +295,23 @@ function BankTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
   )
 }
 
-function KycTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
+function KycTab({ seller, onSuccess }: { seller: any; onSuccess: (msg: string) => void }) {
   return (
     <div className="space-y-6">
       <SectionCard title="Document Status">
         <div className="flex items-center gap-3 text-sm text-slate-600">
-          <CheckCircle2 size={18} className="text-green-600" />
-          Overall KYC Status: Verified
-          <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-600">Verified</span>
-          <span className="text-xs text-slate-400">Verified on Jan 20, 2026</span>
+          <CheckCircle2 size={18} className={seller.kycStatus === 'approved' ? "text-green-600" : "text-orange-600"} />
+          Overall KYC Status: {seller.kycStatus.charAt(0).toUpperCase() + seller.kycStatus.slice(1)}
+          {seller.kycStatus === 'approved' && (
+            <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-600">Verified</span>
+          )}
         </div>
       </SectionCard>
 
       <SectionCard title="Uploaded Documents">
-        <DocumentRow label="Trade License" status="Approved" />
-        <DocumentRow label="NID (Front)" status="Approved" />
-        <DocumentRow label="NID (Back)" status="Approved" />
-        <DocumentRow label="Partnership Deed" status="Pending" />
+        <DocumentRow label="Trade License" status={seller.kycStatus === 'approved' ? "Approved" : "Pending Review"} />
+        <DocumentRow label="NID (Front)" status={seller.kycStatus === 'approved' ? "Approved" : "Pending Review"} />
+        <DocumentRow label="NID (Back)" status={seller.kycStatus === 'approved' ? "Approved" : "Pending Review"} />
       </SectionCard>
 
       <SectionCard title="Add Supplementary Documents">
@@ -354,6 +357,7 @@ function NotificationsTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
 }
 
 function SecurityTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
+  const { logout } = useSellerAuth()
   const [password, setPassword] = useState({ current: '', next: '', confirm: '' })
   const [twoFA, setTwoFA] = useState(false)
   return (
@@ -385,17 +389,18 @@ function SecurityTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
           Scan QR code in your authenticator app. Backup codes available.
         </div>
       </SectionCard>
-      <SectionCard title="Active Sessions">
-        <div className="space-y-2 text-sm text-slate-600">
-          <SessionRow device="Chrome · Windows" location="Dhaka" time="Active now" />
-          <SessionRow device="Safari · iPhone" location="Chittagong" time="2 hours ago" />
-        </div>
-        <button className="mt-3 rounded-lg border border-slate-200 px-4 py-2 text-sm">Logout All Devices</button>
-      </SectionCard>
-      <SectionCard title="Login History">
-        <div className="space-y-2 text-sm text-slate-600">
-          <HistoryRow date="Feb 3, 2026" ip="103.12.44.21" device="Chrome" failed={false} />
-          <HistoryRow date="Feb 2, 2026" ip="103.12.44.21" device="Chrome" failed />
+      <SectionCard title="Account Session">
+        <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-100">
+          <div>
+            <p className="text-sm font-bold text-red-800">Danger Zone</p>
+            <p className="text-xs text-red-600">Terminate your current session</p>
+          </div>
+          <button 
+            onClick={() => logout()}
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 transition-colors"
+          >
+            Logout
+          </button>
         </div>
       </SectionCard>
     </div>
