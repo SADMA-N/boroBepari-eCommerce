@@ -1,12 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import {
-  ChevronDown,
-  FileText,
-  Filter,
-  Search,
-  Timer,
-  X,
-} from 'lucide-react'
+import { ChevronDown, FileText, Filter, Search, Timer, X } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
@@ -148,18 +141,22 @@ export function SellerRFQsPage() {
   }, [pushToast])
 
   const counts = useMemo(() => {
-    return STATUS_TABS.reduce((acc, status) => {
-      acc[status] = rfqs.filter((rfq) => rfq.status === status).length
-      return acc
-    }, {} as Record<RFQStatus, number>)
+    return STATUS_TABS.reduce(
+      (acc, status) => {
+        acc[status] = rfqs.filter((rfq) => rfq.status === status).length
+        return acc
+      },
+      {} as Record<RFQStatus, number>,
+    )
   }, [rfqs])
 
   const filtered = useMemo(() => {
     return rfqs
       .filter((rfq) => rfq.status === tab)
-      .filter((rfq) =>
-        rfq.product.toLowerCase().includes(query.toLowerCase()) ||
-        rfq.id.toLowerCase().includes(query.toLowerCase()),
+      .filter(
+        (rfq) =>
+          rfq.product.toLowerCase().includes(query.toLowerCase()) ||
+          rfq.id.toLowerCase().includes(query.toLowerCase()),
       )
       .filter((rfq) => (category ? rfq.category === category : true))
       .sort((a, b) => {
@@ -176,7 +173,9 @@ export function SellerRFQsPage() {
 
   const analytics = useMemo(() => {
     const responded = rfqs.filter((rfq) => rfq.status !== 'New').length
-    const accepted = rfqs.filter((rfq) => rfq.status === 'Accepted' || rfq.status === 'Converted').length
+    const accepted = rfqs.filter(
+      (rfq) => rfq.status === 'Accepted' || rfq.status === 'Converted',
+    ).length
     const responseRate = Math.round((responded / rfqs.length) * 100) || 0
     const acceptanceRate = Math.round((accepted / rfqs.length) * 100) || 0
     return {
@@ -193,7 +192,9 @@ export function SellerRFQsPage() {
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">RFQs</h1>
-            <p className="text-sm text-slate-500 mt-1">Respond quickly to win more orders.</p>
+            <p className="text-sm text-slate-500 mt-1">
+              Respond quickly to win more orders.
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <select
@@ -206,15 +207,29 @@ export function SellerRFQsPage() {
               <option>Last 30 Days</option>
               <option>Custom Range</option>
             </select>
-            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">Export</button>
+            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+              Export
+            </button>
           </div>
         </header>
 
         <section className="grid md:grid-cols-4 gap-4">
-          <StatCard label="Response rate" value={`${analytics.responseRate}%`} />
-          <StatCard label="Acceptance rate" value={`${analytics.acceptanceRate}%`} />
-          <StatCard label="Avg response time" value={analytics.averageResponse} />
-          <StatCard label="Conversion rate" value={`${analytics.conversionRate}%`} />
+          <StatCard
+            label="Response rate"
+            value={`${analytics.responseRate}%`}
+          />
+          <StatCard
+            label="Acceptance rate"
+            value={`${analytics.acceptanceRate}%`}
+          />
+          <StatCard
+            label="Avg response time"
+            value={analytics.averageResponse}
+          />
+          <StatCard
+            label="Conversion rate"
+            value={`${analytics.conversionRate}%`}
+          />
         </section>
 
         <section className="flex flex-wrap gap-2">
@@ -223,7 +238,9 @@ export function SellerRFQsPage() {
               key={status}
               onClick={() => setTab(status)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                tab === status ? 'bg-orange-600 text-white' : 'bg-white border border-slate-200 text-slate-600'
+                tab === status
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-white border border-slate-200 text-slate-600'
               }`}
             >
               {status}
@@ -278,25 +295,42 @@ export function SellerRFQsPage() {
           ) : (
             <div className="grid gap-4">
               {paged.map((rfq) => (
-                <div key={rfq.id} className="rounded-2xl border border-slate-200 p-4">
+                <div
+                  key={rfq.id}
+                  className="rounded-2xl border border-slate-200 p-4"
+                >
                   <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                     <div className="flex items-center gap-3">
-                      <img src={rfq.productImage} alt={rfq.product} className="h-16 w-16 rounded-lg object-cover" />
+                      <img
+                        src={rfq.productImage}
+                        alt={rfq.product}
+                        className="h-16 w-16 rounded-lg object-cover"
+                      />
                       <div>
                         <p className="text-sm text-slate-400">{rfq.id}</p>
-                        <p className="text-base font-semibold text-slate-800">{rfq.product}</p>
+                        <p className="text-base font-semibold text-slate-800">
+                          {rfq.product}
+                        </p>
                         <p className="text-xs text-slate-500">{rfq.buyer}</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-600">
-                      <InfoItem label="Quantity" value={`${rfq.quantity} units`} />
-                      <InfoItem label="Target Price" value={`৳${rfq.targetPrice}`} />
+                      <InfoItem
+                        label="Quantity"
+                        value={`${rfq.quantity} units`}
+                      />
+                      <InfoItem
+                        label="Target Price"
+                        value={`৳${rfq.targetPrice}`}
+                      />
                       <InfoItem label="Location" value={rfq.location} />
                       <InfoItem label="Time left" value={`${rfq.hoursLeft}h`} />
                     </div>
                     <div className="ml-auto flex items-center gap-3">
                       <UrgencyBadge hoursLeft={rfq.hoursLeft} />
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(rfq.status)}`}>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(rfq.status)}`}
+                      >
                         {rfq.status}
                       </span>
                       {rfq.status === 'New' && (
@@ -364,7 +398,11 @@ export function SellerRFQsPage() {
             onClose={() => setQuoteModal(null)}
             onSend={(quote) => {
               setRfqs((prev) =>
-                prev.map((item) => (item.id === quoteModal.id ? { ...item, status: 'Quoted', quote } : item)),
+                prev.map((item) =>
+                  item.id === quoteModal.id
+                    ? { ...item, status: 'Quoted', quote }
+                    : item,
+                ),
               )
               setQuoteModal(null)
               pushToast(`Quote sent for ${quoteModal.id}`, 'success')
@@ -395,17 +433,32 @@ function InfoItem({ label, value }: { label: string; value: string }) {
 }
 
 function UrgencyBadge({ hoursLeft }: { hoursLeft: number }) {
-  if (hoursLeft < 6) return <Badge label="Urgent" className="bg-red-50 text-red-600" />
-  if (hoursLeft < 12) return <Badge label="Respond Soon" className="bg-orange-50 text-orange-600" />
+  if (hoursLeft < 6)
+    return <Badge label="Urgent" className="bg-red-50 text-red-600" />
+  if (hoursLeft < 12)
+    return (
+      <Badge label="Respond Soon" className="bg-orange-50 text-orange-600" />
+    )
   return <Badge label="New" className="bg-green-50 text-green-600" />
 }
 
 function Badge({ label, className }: { label: string; className: string }) {
-  return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${className}`}>{label}</span>
+  return (
+    <span
+      className={`rounded-full px-3 py-1 text-xs font-semibold ${className}`}
+    >
+      {label}
+    </span>
+  )
 }
 
 function SearchIcon() {
-  return <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+  return (
+    <Search
+      size={16}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+    />
+  )
 }
 
 function statusBadge(status: RFQStatus) {
@@ -427,20 +480,35 @@ function RFQDetailPanel({
   onSendQuote: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-black/40"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-xl bg-white p-6 overflow-y-auto">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{rfq.id}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close details" autoFocus>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+            aria-label="Close details"
+            autoFocus
+          >
             <X size={18} />
           </button>
         </div>
         <div className="mt-4 space-y-4">
           <div className="flex items-center gap-3">
-            <img src={rfq.productImage} alt={rfq.product} className="h-16 w-16 rounded-lg object-cover" />
+            <img
+              src={rfq.productImage}
+              alt={rfq.product}
+              className="h-16 w-16 rounded-lg object-cover"
+            />
             <div>
               <p className="text-sm text-slate-400">Product</p>
-              <p className="text-base font-semibold text-slate-800">{rfq.product}</p>
+              <p className="text-base font-semibold text-slate-800">
+                {rfq.product}
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm text-slate-600">
@@ -450,7 +518,9 @@ function RFQDetailPanel({
             <InfoItem label="Time remaining" value={`${rfq.hoursLeft} hours`} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-700">Additional Notes</p>
+            <p className="text-sm font-semibold text-slate-700">
+              Additional Notes
+            </p>
             <p className="mt-1 text-sm text-slate-500">{rfq.notes}</p>
           </div>
           <div>
@@ -460,7 +530,10 @@ function RFQDetailPanel({
             ) : (
               <div className="mt-2 space-y-2">
                 {rfq.attachments.map((file) => (
-                  <div key={file} className="flex items-center gap-2 text-sm text-slate-600">
+                  <div
+                    key={file}
+                    className="flex items-center gap-2 text-sm text-slate-600"
+                  >
                     <FileText size={16} />
                     {file}
                   </div>
@@ -472,15 +545,25 @@ function RFQDetailPanel({
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
               <p className="font-semibold text-slate-700">Buyer history</p>
               <div className="mt-2 grid grid-cols-3 gap-3">
-                <InfoItem label="Past orders" value={`${rfq.buyerStats.pastOrders}`} />
-                <InfoItem label="Response rate" value={`${rfq.buyerStats.responseRate}%`} />
-                <InfoItem label="Acceptance rate" value={`${rfq.buyerStats.acceptanceRate}%`} />
+                <InfoItem
+                  label="Past orders"
+                  value={`${rfq.buyerStats.pastOrders}`}
+                />
+                <InfoItem
+                  label="Response rate"
+                  value={`${rfq.buyerStats.responseRate}%`}
+                />
+                <InfoItem
+                  label="Acceptance rate"
+                  value={`${rfq.buyerStats.acceptanceRate}%`}
+                />
               </div>
             </div>
           )}
           {rfq.counterOffer && (
             <div className="rounded-xl border border-orange-100 bg-orange-50 p-4 text-sm text-orange-700">
-              Buyer countered with ৳{rfq.counterOffer}. Respond with a new offer or accept.
+              Buyer countered with ৳{rfq.counterOffer}. Respond with a new offer
+              or accept.
             </div>
           )}
           <div className="flex flex-wrap gap-2">
@@ -534,17 +617,29 @@ function SendQuoteModal({
             Total: ৳{total.toLocaleString()}
           </div>
         </div>
-        <select value={validity} onChange={(event) => setValidity(event.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2">
+        <select
+          value={validity}
+          onChange={(event) => setValidity(event.target.value)}
+          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+        >
           <option>7 days</option>
           <option>14 days</option>
           <option>30 days</option>
         </select>
-        <select value={paymentTerms} onChange={(event) => setPaymentTerms(event.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2">
+        <select
+          value={paymentTerms}
+          onChange={(event) => setPaymentTerms(event.target.value)}
+          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+        >
           {PAYMENT_TERMS.map((term) => (
             <option key={term}>{term}</option>
           ))}
         </select>
-        <select value={deliveryTime} onChange={(event) => setDeliveryTime(event.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2">
+        <select
+          value={deliveryTime}
+          onChange={(event) => setDeliveryTime(event.target.value)}
+          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+        >
           {DELIVERY_TIMES.map((time) => (
             <option key={time}>{time}</option>
           ))}
@@ -560,8 +655,11 @@ function SendQuoteModal({
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
           Buyer target: ৳{rfq.targetPrice} · Your quote: ৳{unitPrice || '--'}
           {unitPrice && (
-            <span className={`ml-2 font-semibold ${diff > 0 ? 'text-red-500' : 'text-green-600'}`}>
-              {diff > 0 ? '+' : ''}{diffPercent}%
+            <span
+              className={`ml-2 font-semibold ${diff > 0 ? 'text-red-500' : 'text-green-600'}`}
+            >
+              {diff > 0 ? '+' : ''}
+              {diffPercent}%
             </span>
           )}
         </div>
@@ -604,11 +702,20 @@ function Modal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+            aria-label="Close modal"
+            autoFocus
+          >
             <X size={16} />
           </button>
         </div>

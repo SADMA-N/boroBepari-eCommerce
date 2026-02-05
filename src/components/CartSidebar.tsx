@@ -80,7 +80,10 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
             {cart.items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 transition-colors">
-                <ShoppingCart size={48} className="mb-4 text-gray-300 dark:text-gray-700 transition-colors" />
+                <ShoppingCart
+                  size={48}
+                  className="mb-4 text-gray-300 dark:text-gray-700 transition-colors"
+                />
                 <p className="text-lg font-medium">Your cart is empty</p>
                 <button
                   onClick={onClose}
@@ -163,7 +166,9 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             <div className="p-4 border-t dark:border-slate-800 bg-gray-50 dark:bg-slate-900 transition-colors">
               {/* Subtotal */}
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Subtotal
+                </span>
                 <span className="font-medium text-gray-900 dark:text-white transition-colors">
                   {formatCurrency(cart.subtotal)}
                 </span>
@@ -171,7 +176,9 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
               {/* Delivery */}
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 dark:text-gray-400">Delivery</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Delivery
+                </span>
                 <span className="font-medium text-gray-900 dark:text-white transition-colors">
                   {cart.deliveryFee === 0
                     ? 'Free'
@@ -191,7 +198,9 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
               {/* Total */}
               <div className="flex items-center justify-between mb-4 pt-2 border-t dark:border-slate-800">
-                <span className="text-gray-900 dark:text-white font-bold transition-colors">Total</span>
+                <span className="text-gray-900 dark:text-white font-bold transition-colors">
+                  Total
+                </span>
                 <span className="text-xl font-bold text-gray-900 dark:text-white transition-colors">
                   {formatCurrency(cart.total)}
                 </span>

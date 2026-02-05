@@ -38,7 +38,13 @@ type KycStatus = 'pending' | 'verified' | 'rejected'
 type SupplierStatus = 'active' | 'suspended'
 type PerformanceFilter = 'all' | 'top' | 'new' | 'low'
 type SortKey = 'name' | 'gmv' | 'orders' | 'date'
-type DetailTab = 'business' | 'kyc' | 'products' | 'orders' | 'analytics' | 'activity'
+type DetailTab =
+  | 'business'
+  | 'kyc'
+  | 'products'
+  | 'orders'
+  | 'analytics'
+  | 'activity'
 
 type Supplier = {
   id: string
@@ -260,18 +266,20 @@ const KYC_OPTIONS: Array<{ label: string; value: KycStatus | 'all' }> = [
   { label: 'Rejected', value: 'rejected' },
 ]
 
-const STATUS_OPTIONS: Array<{ label: string; value: SupplierStatus | 'all' }> = [
-  { label: 'All', value: 'all' },
-  { label: 'Active', value: 'active' },
-  { label: 'Suspended', value: 'suspended' },
-]
+const STATUS_OPTIONS: Array<{ label: string; value: SupplierStatus | 'all' }> =
+  [
+    { label: 'All', value: 'all' },
+    { label: 'Active', value: 'active' },
+    { label: 'Suspended', value: 'suspended' },
+  ]
 
-const PERFORMANCE_OPTIONS: Array<{ label: string; value: PerformanceFilter }> = [
-  { label: 'All', value: 'all' },
-  { label: 'Top Sellers', value: 'top' },
-  { label: 'New Sellers', value: 'new' },
-  { label: 'Low Performers', value: 'low' },
-]
+const PERFORMANCE_OPTIONS: Array<{ label: string; value: PerformanceFilter }> =
+  [
+    { label: 'All', value: 'all' },
+    { label: 'Top Sellers', value: 'top' },
+    { label: 'New Sellers', value: 'new' },
+    { label: 'Low Performers', value: 'low' },
+  ]
 
 const SORT_OPTIONS: Array<{ label: string; value: SortKey }> = [
   { label: 'Name', value: 'name' },
@@ -288,19 +296,39 @@ function formatCurrency(amount: number) {
 
 function kycBadge(status: KycStatus) {
   if (status === 'verified') {
-    return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Verified</span>
+    return (
+      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+        Verified
+      </span>
+    )
   }
   if (status === 'pending') {
-    return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Pending</span>
+    return (
+      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">
+        Pending
+      </span>
+    )
   }
-  return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Rejected</span>
+  return (
+    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+      Rejected
+    </span>
+  )
 }
 
 function statusBadge(status: SupplierStatus) {
   if (status === 'active') {
-    return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Active</span>
+    return (
+      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+        Active
+      </span>
+    )
   }
-  return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Suspended</span>
+  return (
+    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+      Suspended
+    </span>
+  )
 }
 
 export function AdminSuppliersPage() {
@@ -312,9 +340,14 @@ export function AdminSuppliersPage() {
   const canKycReject = can('kyc.reject')
   const [searchQuery, setSearchQuery] = useState('')
   const [kycFilter, setKycFilter] = useState<KycStatus | 'all'>('all')
-  const [statusFilter, setStatusFilter] = useState<SupplierStatus | 'all'>('all')
-  const [performanceFilter, setPerformanceFilter] = useState<PerformanceFilter>('all')
-  const [selectedCategories, setSelectedCategories] = useState<Array<string>>([])
+  const [statusFilter, setStatusFilter] = useState<SupplierStatus | 'all'>(
+    'all',
+  )
+  const [performanceFilter, setPerformanceFilter] =
+    useState<PerformanceFilter>('all')
+  const [selectedCategories, setSelectedCategories] = useState<Array<string>>(
+    [],
+  )
   const [sortBy, setSortBy] = useState<SortKey>('date')
   const [selectedIds, setSelectedIds] = useState<Array<string>>([])
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
@@ -340,7 +373,14 @@ export function AdminSuppliersPage() {
 
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, kycFilter, statusFilter, performanceFilter, selectedCategories, sortBy])
+  }, [
+    searchQuery,
+    kycFilter,
+    statusFilter,
+    performanceFilter,
+    selectedCategories,
+    sortBy,
+  ])
 
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -351,20 +391,35 @@ export function AdminSuppliersPage() {
         supplier.email.toLowerCase().includes(query) ||
         supplier.phone.toLowerCase().includes(query)
       const matchesKyc = kycFilter === 'all' || supplier.kycStatus === kycFilter
-      const matchesStatus = statusFilter === 'all' || supplier.status === statusFilter
+      const matchesStatus =
+        statusFilter === 'all' || supplier.status === statusFilter
       const matchesCategory =
-        selectedCategories.length === 0 || selectedCategories.includes(supplier.category)
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(supplier.category)
 
       const matchesPerformance = (() => {
         if (performanceFilter === 'all') return true
         if (performanceFilter === 'top') return supplier.gmv >= 1000000
-        if (performanceFilter === 'new') return supplier.registrationDate >= '2025-12-01'
+        if (performanceFilter === 'new')
+          return supplier.registrationDate >= '2025-12-01'
         return supplier.totalOrders === 0
       })()
 
-      return matchesSearch && matchesKyc && matchesStatus && matchesPerformance && matchesCategory
+      return (
+        matchesSearch &&
+        matchesKyc &&
+        matchesStatus &&
+        matchesPerformance &&
+        matchesCategory
+      )
     })
-  }, [searchQuery, kycFilter, statusFilter, performanceFilter, selectedCategories])
+  }, [
+    searchQuery,
+    kycFilter,
+    statusFilter,
+    performanceFilter,
+    selectedCategories,
+  ])
 
   const sortedSuppliers = useMemo(() => {
     const copy = [...filtered]
@@ -372,7 +427,10 @@ export function AdminSuppliersPage() {
       if (sortBy === 'name') return a.businessName.localeCompare(b.businessName)
       if (sortBy === 'gmv') return b.gmv - a.gmv
       if (sortBy === 'orders') return b.totalOrders - a.totalOrders
-      return new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime()
+      return (
+        new Date(b.registrationDate).getTime() -
+        new Date(a.registrationDate).getTime()
+      )
     })
     return copy
   }, [filtered, sortBy])
@@ -385,11 +443,15 @@ export function AdminSuppliersPage() {
   const totalSuppliers = SUPPLIERS.length
   const activeSuppliers = SUPPLIERS.filter((s) => s.status === 'active').length
   const kycPending = SUPPLIERS.filter((s) => s.kycStatus === 'pending').length
-  const suspendedSuppliers = SUPPLIERS.filter((s) => s.status === 'suspended').length
+  const suspendedSuppliers = SUPPLIERS.filter(
+    (s) => s.status === 'suspended',
+  ).length
 
   const topSuppliers = [...SUPPLIERS].sort((a, b) => b.gmv - a.gmv).slice(0, 10)
   const underperformers = SUPPLIERS.filter((s) => s.totalOrders === 0)
-  const newSuppliers = SUPPLIERS.filter((s) => s.registrationDate >= '2025-12-01').length
+  const newSuppliers = SUPPLIERS.filter(
+    (s) => s.registrationDate >= '2025-12-01',
+  ).length
 
   const toggleSelectAll = () => {
     if (pageSuppliers.length === 0) return
@@ -403,10 +465,15 @@ export function AdminSuppliersPage() {
   }
 
   const toggleSelectOne = (id: string) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
   }
 
-  const exportSuppliers = (scope: 'all' | 'filtered', format: 'csv' | 'excel') => {
+  const exportSuppliers = (
+    scope: 'all' | 'filtered',
+    format: 'csv' | 'excel',
+  ) => {
     const exportData = scope === 'all' ? SUPPLIERS : sortedSuppliers
     const header = [
       'Supplier ID',
@@ -455,16 +522,19 @@ export function AdminSuppliersPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Supplier Management</h1>
-            <p className="text-sm text-slate-500">Total: {totalSuppliers} sellers</p>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Supplier Management
+            </h1>
+            <p className="text-sm text-slate-500">
+              Total: {totalSuppliers} sellers
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
               disabled={!canView}
               className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
             >
-              <UserPlus size={16} />
-              + Add Supplier
+              <UserPlus size={16} />+ Add Supplier
             </button>
             <div className="relative">
               <button
@@ -477,9 +547,14 @@ export function AdminSuppliersPage() {
               </button>
               {exportOpen && (
                 <>
-                  <div className="fixed inset-0 z-10" onClick={() => setExportOpen(false)} />
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setExportOpen(false)}
+                  />
                   <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg z-20 overflow-hidden">
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Export Scope</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                      Export Scope
+                    </div>
                     <button
                       onClick={() => exportSuppliers('all', 'csv')}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
@@ -492,7 +567,9 @@ export function AdminSuppliersPage() {
                     >
                       Export All (Excel)
                     </button>
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Filtered</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                      Filtered
+                    </div>
                     <button
                       onClick={() => exportSuppliers('filtered', 'csv')}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
@@ -515,19 +592,27 @@ export function AdminSuppliersPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Total Suppliers</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{totalSuppliers}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {totalSuppliers}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Active Suppliers</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{activeSuppliers}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {activeSuppliers}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">KYC Pending</p>
-            <p className="mt-2 text-2xl font-semibold text-red-600">{kycPending}</p>
+            <p className="mt-2 text-2xl font-semibold text-red-600">
+              {kycPending}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Suspended</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{suspendedSuppliers}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {suspendedSuppliers}
+            </p>
           </div>
         </div>
 
@@ -549,7 +634,9 @@ export function AdminSuppliersPage() {
               </div>
               <select
                 value={kycFilter}
-                onChange={(e) => setKycFilter(e.target.value as KycStatus | 'all')}
+                onChange={(e) =>
+                  setKycFilter(e.target.value as KycStatus | 'all')
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 {KYC_OPTIONS.map((option) => (
@@ -560,7 +647,9 @@ export function AdminSuppliersPage() {
               </select>
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as SupplierStatus | 'all')}
+                onChange={(e) =>
+                  setStatusFilter(e.target.value as SupplierStatus | 'all')
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 {STATUS_OPTIONS.map((option) => (
@@ -571,7 +660,9 @@ export function AdminSuppliersPage() {
               </select>
               <select
                 value={performanceFilter}
-                onChange={(e) => setPerformanceFilter(e.target.value as PerformanceFilter)}
+                onChange={(e) =>
+                  setPerformanceFilter(e.target.value as PerformanceFilter)
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 {PERFORMANCE_OPTIONS.map((option) => (
@@ -608,7 +699,9 @@ export function AdminSuppliersPage() {
                     )
                   }}
                   className={`rounded-full px-3 py-1 text-xs border ${
-                    active ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-200 text-slate-600'
+                    active
+                      ? 'border-orange-500 bg-orange-50 text-orange-700'
+                      : 'border-slate-200 text-slate-600'
                   }`}
                 >
                   {category}
@@ -672,7 +765,10 @@ export function AdminSuppliersPage() {
                   <th className="px-4 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={pageSuppliers.length > 0 && pageSuppliers.every((s) => selectedIds.includes(s.id))}
+                      checked={
+                        pageSuppliers.length > 0 &&
+                        pageSuppliers.every((s) => selectedIds.includes(s.id))
+                      }
                       onChange={toggleSelectAll}
                     />
                   </th>
@@ -701,7 +797,10 @@ export function AdminSuppliersPage() {
                           ? 'bg-green-50'
                           : ''
                   return (
-                    <tr key={supplier.id} className={`${rowTone} hover:bg-slate-50`}>
+                    <tr
+                      key={supplier.id}
+                      className={`${rowTone} hover:bg-slate-50`}
+                    >
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
@@ -709,39 +808,72 @@ export function AdminSuppliersPage() {
                           onChange={() => toggleSelectOne(supplier.id)}
                         />
                       </td>
-                      <td className="px-4 py-3 font-medium text-slate-900">{supplier.id}</td>
+                      <td className="px-4 py-3 font-medium text-slate-900">
+                        {supplier.id}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Building2 size={16} className="text-slate-400" />
-                          <span className="font-medium text-slate-900">{supplier.businessName}</span>
+                          <span className="font-medium text-slate-900">
+                            {supplier.businessName}
+                          </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">{supplier.ownerName}</td>
-                      <td className="px-4 py-3 text-slate-600">{supplier.email}</td>
-                      <td className="px-4 py-3">{kycBadge(supplier.kycStatus)}</td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {supplier.ownerName}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {supplier.email}
+                      </td>
+                      <td className="px-4 py-3">
+                        {kycBadge(supplier.kycStatus)}
+                      </td>
                       <td className="px-4 py-3 text-center">
                         {supplier.verificationBadge !== 'none' ? (
-                          <CheckCircle size={16} className="inline-block text-green-600" />
+                          <CheckCircle
+                            size={16}
+                            className="inline-block text-green-600"
+                          />
                         ) : (
-                          <XCircle size={16} className="inline-block text-slate-400" />
+                          <XCircle
+                            size={16}
+                            className="inline-block text-slate-400"
+                          />
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">{supplier.totalProducts}</td>
-                      <td className="px-4 py-3 text-right text-slate-600">{supplier.totalOrders}</td>
-                      <td className="px-4 py-3 text-right text-slate-600">{formatCurrency(supplier.gmv)}</td>
-                      <td className="px-4 py-3 text-slate-600">{supplier.registrationDate}</td>
-                      <td className="px-4 py-3">{statusBadge(supplier.status)}</td>
+                      <td className="px-4 py-3 text-right text-slate-600">
+                        {supplier.totalProducts}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-600">
+                        {supplier.totalOrders}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-600">
+                        {formatCurrency(supplier.gmv)}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {supplier.registrationDate}
+                      </td>
+                      <td className="px-4 py-3">
+                        {statusBadge(supplier.status)}
+                      </td>
                       <td className="px-4 py-3 text-right">
                         <div className="relative inline-block text-left">
                           <button
-                            onClick={() => setOpenMenuId(openMenuId === supplier.id ? null : supplier.id)}
+                            onClick={() =>
+                              setOpenMenuId(
+                                openMenuId === supplier.id ? null : supplier.id,
+                              )
+                            }
                             className="rounded-lg p-2 hover:bg-slate-100"
                           >
                             <MoreVertical size={16} />
                           </button>
                           {openMenuId === supplier.id && (
                             <>
-                              <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setOpenMenuId(null)}
+                              />
                               <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg">
                                 <button
                                   onClick={() => {
@@ -855,7 +987,10 @@ export function AdminSuppliersPage() {
                 })}
                 {pageSuppliers.length === 0 && (
                   <tr>
-                    <td colSpan={13} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={13}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       No suppliers found.
                     </td>
                   </tr>
@@ -865,7 +1000,8 @@ export function AdminSuppliersPage() {
           </div>
           <div className="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
             <p>
-              Showing {pageSuppliers.length} of {sortedSuppliers.length} suppliers
+              Showing {pageSuppliers.length} of {sortedSuppliers.length}{' '}
+              suppliers
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -879,7 +1015,9 @@ export function AdminSuppliersPage() {
                 Page {currentPage} of {totalPages}
               </span>
               <button
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-50"
               >
@@ -893,8 +1031,12 @@ export function AdminSuppliersPage() {
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-slate-200 bg-white p-4 lg:col-span-2">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-900">Top 10 Suppliers (GMV)</h3>
-              <span className="text-xs text-slate-500">{newSuppliers} new this month</span>
+              <h3 className="text-sm font-semibold text-slate-900">
+                Top 10 Suppliers (GMV)
+              </h3>
+              <span className="text-xs text-slate-500">
+                {newSuppliers} new this month
+              </span>
             </div>
             <div className="mt-3 overflow-hidden rounded-lg border border-slate-200">
               <table className="min-w-full text-sm">
@@ -908,9 +1050,15 @@ export function AdminSuppliersPage() {
                 <tbody className="divide-y divide-slate-200">
                   {topSuppliers.map((supplier) => (
                     <tr key={supplier.id}>
-                      <td className="px-4 py-2 text-slate-700">{supplier.businessName}</td>
-                      <td className="px-4 py-2 text-right text-slate-600">{formatCurrency(supplier.gmv)}</td>
-                      <td className="px-4 py-2 text-right text-slate-600">{supplier.totalOrders}</td>
+                      <td className="px-4 py-2 text-slate-700">
+                        {supplier.businessName}
+                      </td>
+                      <td className="px-4 py-2 text-right text-slate-600">
+                        {formatCurrency(supplier.gmv)}
+                      </td>
+                      <td className="px-4 py-2 text-right text-slate-600">
+                        {supplier.totalOrders}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -918,16 +1066,25 @@ export function AdminSuppliersPage() {
             </div>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Underperformers (0 orders / 30d)</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Underperformers (0 orders / 30d)
+            </h3>
             <div className="mt-3 space-y-2">
               {underperformers.map((supplier) => (
-                <div key={supplier.id} className="rounded-lg border border-slate-200 px-3 py-2">
-                  <p className="text-sm font-medium text-slate-900">{supplier.businessName}</p>
+                <div
+                  key={supplier.id}
+                  className="rounded-lg border border-slate-200 px-3 py-2"
+                >
+                  <p className="text-sm font-medium text-slate-900">
+                    {supplier.businessName}
+                  </p>
                   <p className="text-xs text-slate-500">{supplier.ownerName}</p>
                 </div>
               ))}
               {underperformers.length === 0 && (
-                <p className="text-sm text-slate-500">No underperformers found.</p>
+                <p className="text-sm text-slate-500">
+                  No underperformers found.
+                </p>
               )}
             </div>
           </div>
@@ -939,21 +1096,39 @@ export function AdminSuppliersPage() {
           <div className="w-full max-w-4xl rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">{detailSupplier.businessName}</h2>
-                <p className="text-sm text-slate-500">{detailSupplier.ownerName}</p>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  {detailSupplier.businessName}
+                </h2>
+                <p className="text-sm text-slate-500">
+                  {detailSupplier.ownerName}
+                </p>
               </div>
-              <button onClick={() => setDetailSupplier(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setDetailSupplier(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="border-b border-slate-200 px-6">
               <div className="flex flex-wrap gap-6 text-sm">
-                {(['business', 'kyc', 'products', 'orders', 'analytics', 'activity'] as Array<DetailTab>).map((tab) => (
+                {(
+                  [
+                    'business',
+                    'kyc',
+                    'products',
+                    'orders',
+                    'analytics',
+                    'activity',
+                  ] as Array<DetailTab>
+                ).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}
                     className={`py-3 border-b-2 ${
-                      detailTab === tab ? 'border-orange-600 text-orange-600' : 'border-transparent text-slate-500'
+                      detailTab === tab
+                        ? 'border-orange-600 text-orange-600'
+                        : 'border-transparent text-slate-500'
                     }`}
                   >
                     {tab === 'business'
@@ -976,51 +1151,92 @@ export function AdminSuppliersPage() {
                 <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Business Name</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.businessName}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Business Name
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.businessName}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Business Type</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.businessType}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Business Type
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.businessType}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Category</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.category}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Category
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.category}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Trade License</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.tradeLicense}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Trade License
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.tradeLicense}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Owner Name</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.ownerName}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Owner Name
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.ownerName}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-slate-400">Email</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.email}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.email}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-slate-400">Phone</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.phone}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase text-slate-400">Business Address</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.address}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase text-slate-400">Bank Details</p>
                       <p className="text-sm font-medium text-slate-900">
-                        {detailSupplier.bank.name} • {detailSupplier.bank.accountNumberMasked}
+                        {detailSupplier.phone}
                       </p>
-                      <p className="text-xs text-slate-500">{detailSupplier.bank.branch}</p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Registration Date</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.registrationDate}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Business Address
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.address}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Last Active</p>
-                      <p className="text-sm font-medium text-slate-900">{detailSupplier.lastActive}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Bank Details
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.bank.name} •{' '}
+                        {detailSupplier.bank.accountNumberMasked}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {detailSupplier.bank.branch}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase text-slate-400">
+                        Registration Date
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.registrationDate}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase text-slate-400">
+                        Last Active
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailSupplier.lastActive}
+                      </p>
                     </div>
                   </div>
                   <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
@@ -1034,23 +1250,46 @@ export function AdminSuppliersPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     {kycBadge(detailSupplier.kycStatus)}
                     {detailSupplier.kycDecision?.date && (
-                      <span className="text-xs text-slate-500">Updated: {detailSupplier.kycDecision.date}</span>
+                      <span className="text-xs text-slate-500">
+                        Updated: {detailSupplier.kycDecision.date}
+                      </span>
                     )}
                     {detailSupplier.kycDecision?.reason && (
-                      <span className="text-xs text-red-600">Reason: {detailSupplier.kycDecision.reason}</span>
+                      <span className="text-xs text-red-600">
+                        Reason: {detailSupplier.kycDecision.reason}
+                      </span>
                     )}
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     {[
-                      { label: 'Trade License', src: detailSupplier.kycDocs.tradeLicense },
-                      { label: 'NID Front', src: detailSupplier.kycDocs.nidFront },
-                      { label: 'NID Back', src: detailSupplier.kycDocs.nidBack },
-                      { label: 'Bank Proof', src: detailSupplier.kycDocs.bankProof },
+                      {
+                        label: 'Trade License',
+                        src: detailSupplier.kycDocs.tradeLicense,
+                      },
+                      {
+                        label: 'NID Front',
+                        src: detailSupplier.kycDocs.nidFront,
+                      },
+                      {
+                        label: 'NID Back',
+                        src: detailSupplier.kycDocs.nidBack,
+                      },
+                      {
+                        label: 'Bank Proof',
+                        src: detailSupplier.kycDocs.bankProof,
+                      },
                     ].map((doc) => (
-                      <div key={doc.label} className="rounded-lg border border-slate-200 p-3">
+                      <div
+                        key={doc.label}
+                        className="rounded-lg border border-slate-200 p-3"
+                      >
                         <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-slate-900">{doc.label}</p>
-                          <button className="text-xs text-orange-600">Zoom</button>
+                          <p className="text-sm font-medium text-slate-900">
+                            {doc.label}
+                          </p>
+                          <button className="text-xs text-orange-600">
+                            Zoom
+                          </button>
                         </div>
                         <div className="mt-2 flex h-32 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
                           <Image size={24} />
@@ -1059,16 +1298,30 @@ export function AdminSuppliersPage() {
                     ))}
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-medium text-slate-900">Document Checklist</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      Document Checklist
+                    </p>
                     <div className="mt-3 space-y-2 text-sm text-slate-600">
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-slate-300" /> Trade License
+                        <input
+                          type="checkbox"
+                          className="rounded border-slate-300"
+                        />{' '}
+                        Trade License
                       </label>
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-slate-300" /> NID Front
+                        <input
+                          type="checkbox"
+                          className="rounded border-slate-300"
+                        />{' '}
+                        NID Front
                       </label>
                       <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded border-slate-300" /> NID Back
+                        <input
+                          type="checkbox"
+                          className="rounded border-slate-300"
+                        />{' '}
+                        NID Back
                       </label>
                     </div>
                   </div>
@@ -1098,11 +1351,15 @@ export function AdminSuppliersPage() {
                   <div className="grid gap-3 sm:grid-cols-4">
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Total Products</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailSupplier.totalProducts}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailSupplier.totalProducts}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Active</p>
-                      <p className="text-lg font-semibold text-slate-900">120</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        120
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Draft</p>
@@ -1124,11 +1381,15 @@ export function AdminSuppliersPage() {
                   <div className="grid gap-3 sm:grid-cols-4">
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Total Orders</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailSupplier.totalOrders}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailSupplier.totalOrders}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Completed</p>
-                      <p className="text-lg font-semibold text-slate-900">1,120</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        1,120
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Cancelled</p>
@@ -1136,7 +1397,9 @@ export function AdminSuppliersPage() {
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">GMV</p>
-                      <p className="text-lg font-semibold text-slate-900">{formatCurrency(detailSupplier.gmv)}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {formatCurrency(detailSupplier.gmv)}
+                      </p>
                     </div>
                   </div>
                   <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
@@ -1150,15 +1413,21 @@ export function AdminSuppliersPage() {
                   <div className="grid gap-3 sm:grid-cols-4">
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Fulfillment Rate</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailSupplier.analytics.fulfillmentRate}%</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailSupplier.analytics.fulfillmentRate}%
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Average Rating</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailSupplier.analytics.averageRating}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailSupplier.analytics.averageRating}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">RFQ Response</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailSupplier.analytics.rfqResponseRate}%</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailSupplier.analytics.rfqResponseRate}%
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Top Product</p>
@@ -1168,7 +1437,9 @@ export function AdminSuppliersPage() {
                     </div>
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-semibold text-slate-900">GMV Over Time</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      GMV Over Time
+                    </p>
                     <div className="mt-3 h-48">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={detailSupplier.analytics.gmvSeries}>
@@ -1176,7 +1447,12 @@ export function AdminSuppliersPage() {
                           <XAxis dataKey="date" />
                           <YAxis />
                           <Tooltip />
-                          <Line type="monotone" dataKey="gmv" stroke="#f97316" strokeWidth={2} />
+                          <Line
+                            type="monotone"
+                            dataKey="gmv"
+                            stroke="#f97316"
+                            strokeWidth={2}
+                          />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
@@ -1191,12 +1467,18 @@ export function AdminSuppliersPage() {
                       key={activity.id}
                       className="flex items-start justify-between rounded-lg border border-slate-200 px-4 py-3"
                     >
-                      <p className="text-sm text-slate-700">{activity.message}</p>
-                      <span className="text-xs text-slate-400">{activity.time}</span>
+                      <p className="text-sm text-slate-700">
+                        {activity.message}
+                      </p>
+                      <span className="text-xs text-slate-400">
+                        {activity.time}
+                      </span>
                     </div>
                   ))}
                   {detailSupplier.activityLog.length === 0 && (
-                    <p className="text-sm text-slate-500">No activity logged.</p>
+                    <p className="text-sm text-slate-500">
+                      No activity logged.
+                    </p>
                   )}
                 </div>
               )}
@@ -1211,9 +1493,14 @@ export function AdminSuppliersPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="text-green-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Approve KYC</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Approve KYC
+                </h2>
               </div>
-              <button onClick={() => setApproveOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setApproveOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1253,9 +1540,14 @@ export function AdminSuppliersPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Reject KYC</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Reject KYC
+                </h2>
               </div>
-              <button onClick={() => setRejectOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setRejectOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1274,7 +1566,9 @@ export function AdminSuppliersPage() {
                       checked={rejectReasons.includes(reason)}
                       onChange={(e) => {
                         setRejectReasons((prev) =>
-                          e.target.checked ? [...prev, reason] : prev.filter((item) => item !== reason),
+                          e.target.checked
+                            ? [...prev, reason]
+                            : prev.filter((item) => item !== reason),
                         )
                       }}
                     />
@@ -1322,9 +1616,14 @@ export function AdminSuppliersPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <Ban className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Suspend {detailSupplier.businessName}?</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Suspend {detailSupplier.businessName}?
+                </h2>
               </div>
-              <button onClick={() => setSuspendOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setSuspendOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1381,14 +1680,21 @@ export function AdminSuppliersPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Delete {detailSupplier.businessName}?</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Delete {detailSupplier.businessName}?
+                </h2>
               </div>
-              <button onClick={() => setDeleteOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setDeleteOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-red-600 font-medium">This action cannot be undone.</p>
+              <p className="text-sm text-red-600 font-medium">
+                This action cannot be undone.
+              </p>
               <label className="flex items-center gap-2 text-sm text-slate-600">
                 <input
                   type="checkbox"
@@ -1442,12 +1748,16 @@ export function AdminSuppliersPage() {
                   Approve KYC for {selectedCount} suppliers?
                 </h2>
               </div>
-              <button onClick={() => setBulkApproveOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkApproveOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 text-sm text-slate-600">
-              Selected suppliers will receive notification and verification badge.
+              Selected suppliers will receive notification and verification
+              badge.
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
@@ -1477,7 +1787,10 @@ export function AdminSuppliersPage() {
                   Verify {selectedCount} suppliers?
                 </h2>
               </div>
-              <button onClick={() => setBulkVerifyOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkVerifyOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1512,12 +1825,16 @@ export function AdminSuppliersPage() {
                   Suspend {selectedCount} suppliers?
                 </h2>
               </div>
-              <button onClick={() => setBulkSuspendOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkSuspendOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 text-sm text-slate-600">
-              All selected suppliers will be suspended and products hidden from marketplace.
+              All selected suppliers will be suspended and products hidden from
+              marketplace.
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button

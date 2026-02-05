@@ -100,21 +100,26 @@ export function SellerLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors">
       <div className="grid lg:grid-cols-[2fr_3fr] min-h-screen">
         <div className="flex items-center justify-center px-6 py-12 lg:py-0">
           <div className="w-full max-w-md">
             <div className="mb-8">
-              <Link to="/" className="text-2xl font-bold text-orange-600">
+              <Link
+                to="/"
+                className="text-2xl font-bold text-orange-600 dark:text-orange-500"
+              >
                 BoroBepari
               </Link>
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
                 Seller Central Login
               </p>
             </div>
 
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-8 transition-colors">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Welcome back</h1>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+                Welcome back
+              </h1>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Sign in to manage your store and orders.
               </p>
@@ -127,7 +132,8 @@ export function SellerLoginPage() {
 
               {isResetSuccess && (
                 <div className="mt-6 rounded-lg border border-green-100 dark:border-green-900/30 bg-green-50 dark:bg-green-900/20 px-4 py-3 text-sm text-green-600 dark:text-green-400">
-                  Password updated successfully! Please sign in with your new password.
+                  Password updated successfully! Please sign in with your new
+                  password.
                 </div>
               )}
 
@@ -174,7 +180,11 @@ export function SellerLoginPage() {
                     />
                     Remember me
                   </label>
-                  <Link to="/seller/forgot-password" name="forgot-password" className="text-orange-600 hover:text-orange-700 font-medium">
+                  <Link
+                    to="/seller/forgot-password"
+                    name="forgot-password"
+                    className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium transition-colors"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -205,14 +215,20 @@ export function SellerLoginPage() {
                 </button>
               </div>
 
-              <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+              <div className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400 transition-colors">
                 Don&apos;t have a seller account?{' '}
-                <Link to="/seller/register" className="font-semibold text-orange-600 hover:text-orange-700">
+                <Link
+                  to="/seller/register"
+                  className="font-semibold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
+                >
                   Register Now
                 </Link>
               </div>
               <div className="mt-2 text-center text-sm">
-                <Link to="/" className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300">
+                <Link
+                  to="/"
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                >
                   Continue as Buyer
                 </Link>
               </div>
@@ -220,12 +236,14 @@ export function SellerLoginPage() {
           </div>
         </div>
 
-        <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 px-10 py-16">
+        <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 px-10 py-16 transition-colors">
           <div className="max-w-xl w-full space-y-8">
             <div className="rounded-3xl border border-orange-100 dark:border-orange-900/20 bg-white/80 dark:bg-slate-900/80 p-8 shadow-sm backdrop-blur-sm transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-orange-500 font-bold">Seller Success</p>
+                  <p className="text-xs uppercase tracking-wide text-orange-500 font-bold">
+                    Seller Success
+                  </p>
                   <h2 className="mt-2 text-3xl font-bold text-slate-900 dark:text-white">
                     Grow your wholesale business with confidence.
                   </h2>
@@ -255,9 +273,12 @@ export function SellerLoginPage() {
             </div>
 
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
-              <p className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wide font-bold">Seller spotlight</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wide font-bold">
+                Seller spotlight
+              </p>
               <p className="mt-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                “BoroBepari doubled our monthly wholesale revenue within 90 days.”
+                “BoroBepari doubled our monthly wholesale revenue within 90
+                days.”
               </p>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 — Rahim Textiles, Dhaka
@@ -273,7 +294,9 @@ export function SellerLoginPage() {
 function StatCard({ value, label }: { value: string; label: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 px-4 py-3 text-center transition-colors">
-      <p className="text-lg font-semibold text-slate-900 dark:text-white">{value}</p>
+      <p className="text-lg font-semibold text-slate-900 dark:text-white">
+        {value}
+      </p>
       <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   )
@@ -293,8 +316,12 @@ function BenefitTile({
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600">
         <Icon size={18} />
       </div>
-      <h3 className="mt-4 text-sm font-semibold text-slate-900 dark:text-white">{title}</h3>
-      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{description}</p>
+      <h3 className="mt-4 text-sm font-semibold text-slate-900 dark:text-white">
+        {title}
+      </h3>
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        {description}
+      </p>
     </div>
   )
 }

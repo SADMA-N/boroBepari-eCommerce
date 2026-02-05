@@ -37,7 +37,8 @@ const PRODUCTS: Array<Product> = [
     lowStockThreshold: 20,
     status: 'Published',
     orders: 38,
-    image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=500&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=500&auto=format&fit=crop',
   },
   {
     id: 'p2',
@@ -49,7 +50,8 @@ const PRODUCTS: Array<Product> = [
     lowStockThreshold: 80,
     status: 'Published',
     orders: 22,
-    image: 'https://images.unsplash.com/photo-1531498860502-7c67cf02f657?q=80&w=500&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1531498860502-7c67cf02f657?q=80&w=500&auto=format&fit=crop',
   },
   {
     id: 'p3',
@@ -61,7 +63,8 @@ const PRODUCTS: Array<Product> = [
     lowStockThreshold: 30,
     status: 'Draft',
     orders: 0,
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500&auto=format&fit=crop',
   },
   {
     id: 'p4',
@@ -73,12 +76,18 @@ const PRODUCTS: Array<Product> = [
     lowStockThreshold: 15,
     status: 'Published',
     orders: 12,
-    image: 'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?q=80&w=500&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?q=80&w=500&auto=format&fit=crop',
   },
 ]
 
 type FilterTab = 'All' | 'Published' | 'Draft' | 'Out of Stock' | 'Low Stock'
-type SortOption = 'Newest First' | 'Oldest First' | 'Price: Low to High' | 'Price: High to Low' | 'Most Orders'
+type SortOption =
+  | 'Newest First'
+  | 'Oldest First'
+  | 'Price: Low to High'
+  | 'Price: High to Low'
+  | 'Most Orders'
 
 export function SellerProductsPage() {
   const navigate = useNavigate()
@@ -86,7 +95,10 @@ export function SellerProductsPage() {
   const [filter, setFilter] = useState<FilterTab>('All')
   const [sort, setSort] = useState<SortOption>('Newest First')
   const [selected, setSelected] = useState<Array<string>>([])
-  const [editing, setEditing] = useState<{ id: string; field: 'price' | 'stock' } | null>(null)
+  const [editing, setEditing] = useState<{
+    id: string
+    field: 'price' | 'stock'
+  } | null>(null)
   const [loadingEdit, setLoadingEdit] = useState<string | null>(null)
   const [products, setProducts] = useState<Array<Product>>(PRODUCTS)
   const [loading, setLoading] = useState(true)
@@ -107,7 +119,8 @@ export function SellerProductsPage() {
       if (filter === 'Published') return product.status === 'Published'
       if (filter === 'Draft') return product.status === 'Draft'
       if (filter === 'Out of Stock') return product.stock === 0
-      if (filter === 'Low Stock') return product.stock > 0 && product.stock < product.lowStockThreshold
+      if (filter === 'Low Stock')
+        return product.stock > 0 && product.stock < product.lowStockThreshold
       return true
     })
     const result = filteredByTab.filter(matchesQuery)
@@ -138,7 +151,9 @@ export function SellerProductsPage() {
   }
 
   const toggleSelection = (id: string) => {
-    setSelected((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
   }
 
   const toggleSelectAll = () => {
@@ -149,7 +164,11 @@ export function SellerProductsPage() {
     }
   }
 
-  const updateInline = (id: string, field: 'price' | 'stock', value: string) => {
+  const updateInline = (
+    id: string,
+    field: 'price' | 'stock',
+    value: string,
+  ) => {
     setLoadingEdit(id)
     window.setTimeout(() => {
       setProducts((prev) =>
@@ -165,7 +184,9 @@ export function SellerProductsPage() {
   const handleBulkAction = (action: 'publish' | 'unpublish' | 'delete') => {
     if (action === 'delete') {
       if (!window.confirm('Delete selected products?')) return
-      setProducts((prev) => prev.filter((product) => !selected.includes(product.id)))
+      setProducts((prev) =>
+        prev.filter((product) => !selected.includes(product.id)),
+      )
       setSelected([])
       return
     }
@@ -199,7 +220,10 @@ export function SellerProductsPage() {
       setProducts((prev) =>
         prev.map((product) =>
           product.id === id
-            ? { ...product, status: product.status === 'Published' ? 'Draft' : 'Published' }
+            ? {
+                ...product,
+                status: product.status === 'Published' ? 'Draft' : 'Published',
+              }
             : product,
         ),
       )
@@ -207,7 +231,9 @@ export function SellerProductsPage() {
   }
 
   const handleExport = (type: 'csv' | 'excel') => {
-    alert(`Exporting ${type.toUpperCase()} for ${filter === 'All' ? 'all products' : filter}.`)
+    alert(
+      `Exporting ${type.toUpperCase()} for ${filter === 'All' ? 'all products' : filter}.`,
+    )
   }
 
   return (
@@ -255,12 +281,22 @@ export function SellerProductsPage() {
           />
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              {(['All', 'Published', 'Draft', 'Out of Stock', 'Low Stock'] as Array<FilterTab>).map((tab) => (
+              {(
+                [
+                  'All',
+                  'Published',
+                  'Draft',
+                  'Out of Stock',
+                  'Low Stock',
+                ] as Array<FilterTab>
+              ).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setFilter(tab)}
                   className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    filter === tab ? 'bg-orange-50 text-orange-700' : 'bg-white text-slate-500 border border-slate-200'
+                    filter === tab
+                      ? 'bg-orange-50 text-orange-700'
+                      : 'bg-white text-slate-500 border border-slate-200'
                   }`}
                 >
                   {tab}
@@ -273,19 +309,24 @@ export function SellerProductsPage() {
                 onChange={(event) => setSort(event.target.value as SortOption)}
                 className="appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2 pr-8 text-sm text-slate-700"
               >
-                {([
-                  'Newest First',
-                  'Oldest First',
-                  'Price: Low to High',
-                  'Price: High to Low',
-                  'Most Orders',
-                ] as Array<SortOption>).map((option) => (
+                {(
+                  [
+                    'Newest First',
+                    'Oldest First',
+                    'Price: Low to High',
+                    'Price: High to Low',
+                    'Most Orders',
+                  ] as Array<SortOption>
+                ).map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
                 ))}
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <ChevronDown
+                size={16}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
             </div>
             <ExportMenu onExport={handleExport} />
           </div>
@@ -310,7 +351,10 @@ export function SellerProductsPage() {
                     <th className="p-4">
                       <input
                         type="checkbox"
-                        checked={selected.length === showing.length && showing.length > 0}
+                        checked={
+                          selected.length === showing.length &&
+                          showing.length > 0
+                        }
                         onChange={toggleSelectAll}
                       />
                     </th>
@@ -335,61 +379,93 @@ export function SellerProductsPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <img src={product.image} alt={product.title} className="h-12 w-12 rounded-lg object-cover" />
+                          <img
+                            src={product.image}
+                            alt={product.title}
+                            className="h-12 w-12 rounded-lg object-cover"
+                          />
                           <div>
-                            <p className="font-semibold text-slate-800">{product.title}</p>
-                            <p className="text-xs text-slate-400">ID: {product.id}</p>
+                            <p className="font-semibold text-slate-800">
+                              {product.title}
+                            </p>
+                            <p className="text-xs text-slate-400">
+                              ID: {product.id}
+                            </p>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">{product.sku}</td>
                       <td className="p-4">
-                      {editing?.id === product.id && editing.field === 'price' ? (
-                        <input
-                          autoFocus
-                          defaultValue={product.price}
-                          onBlur={(event) => updateInline(product.id, 'price', event.target.value)}
-                          className="w-24 rounded border border-slate-200 px-2 py-1 text-sm"
-                        />
-                      ) : (
-                        <button
-                          onClick={() => setEditing({ id: product.id, field: 'price' })}
-                          className="text-slate-700 hover:text-orange-600"
-                        >
-                          ৳{product.price} / Min: {product.moq}
-                          {loadingEdit === product.id && (
-                            <span className="ml-2 text-xs text-slate-400">Saving...</span>
-                          )}
-                        </button>
-                      )}
+                        {editing?.id === product.id &&
+                        editing.field === 'price' ? (
+                          <input
+                            autoFocus
+                            defaultValue={product.price}
+                            onBlur={(event) =>
+                              updateInline(
+                                product.id,
+                                'price',
+                                event.target.value,
+                              )
+                            }
+                            className="w-24 rounded border border-slate-200 px-2 py-1 text-sm"
+                          />
+                        ) : (
+                          <button
+                            onClick={() =>
+                              setEditing({ id: product.id, field: 'price' })
+                            }
+                            className="text-slate-700 hover:text-orange-600"
+                          >
+                            ৳{product.price} / Min: {product.moq}
+                            {loadingEdit === product.id && (
+                              <span className="ml-2 text-xs text-slate-400">
+                                Saving...
+                              </span>
+                            )}
+                          </button>
+                        )}
                       </td>
                       <td className="p-4">
-                      {editing?.id === product.id && editing.field === 'stock' ? (
-                        <input
-                          autoFocus
-                          defaultValue={product.stock}
-                          onBlur={(event) => updateInline(product.id, 'stock', event.target.value)}
-                          className="w-20 rounded border border-slate-200 px-2 py-1 text-sm"
-                        />
-                      ) : (
-                        <button
-                          onClick={() => setEditing({ id: product.id, field: 'stock' })}
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${stockBadge(product)}`}
-                          title={`${product.stock} units`}
-                        >
-                          {stockStatus(product)}
-                        </button>
-                      )}
+                        {editing?.id === product.id &&
+                        editing.field === 'stock' ? (
+                          <input
+                            autoFocus
+                            defaultValue={product.stock}
+                            onBlur={(event) =>
+                              updateInline(
+                                product.id,
+                                'stock',
+                                event.target.value,
+                              )
+                            }
+                            className="w-20 rounded border border-slate-200 px-2 py-1 text-sm"
+                          />
+                        ) : (
+                          <button
+                            onClick={() =>
+                              setEditing({ id: product.id, field: 'stock' })
+                            }
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${stockBadge(product)}`}
+                            title={`${product.stock} units`}
+                          >
+                            {stockStatus(product)}
+                          </button>
+                        )}
                       </td>
                       <td className="p-4">
-                        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(product.status)}`}>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(product.status)}`}
+                        >
                           {product.status}
                         </span>
                       </td>
                       <td className="p-4">{product.orders}</td>
                       <td className="p-4">
                         <RowActions
-                          onAction={(action) => handleAction(product.id, action)}
+                          onAction={(action) =>
+                            handleAction(product.id, action)
+                          }
                           isPublished={product.status === 'Published'}
                         />
                       </td>
@@ -401,23 +477,38 @@ export function SellerProductsPage() {
 
             <div className="grid gap-4 lg:hidden">
               {showing.map((product) => (
-                <div key={product.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div
+                  key={product.id}
+                  className="rounded-2xl border border-slate-200 bg-white p-4"
+                >
                   <div className="flex gap-4">
-                    <img src={product.image} alt={product.title} className="h-20 w-20 rounded-lg object-cover" />
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="h-20 w-20 rounded-lg object-cover"
+                    />
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-800">{product.title}</p>
+                      <p className="font-semibold text-slate-800">
+                        {product.title}
+                      </p>
                       <p className="text-xs text-slate-400">{product.sku}</p>
                       <p className="mt-2 text-sm text-slate-700">
                         ৳{product.price} · MOQ {product.moq}
                       </p>
-                      <span className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${stockBadge(product)}`}>
+                      <span
+                        className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${stockBadge(product)}`}
+                      >
                         {stockStatus(product)}
                       </span>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                    <button className="rounded-lg border border-slate-200 py-2">Edit</button>
-                    <button className="rounded-lg border border-orange-200 bg-orange-50 py-2 text-orange-600">View</button>
+                    <button className="rounded-lg border border-slate-200 py-2">
+                      Edit
+                    </button>
+                    <button className="rounded-lg border border-orange-200 bg-orange-50 py-2 text-orange-600">
+                      View
+                    </button>
                   </div>
                 </div>
               ))}
@@ -462,24 +553,37 @@ export function SellerProductsPage() {
   )
 }
 
-function BulkActions({ onAction }: { onAction: (action: 'publish' | 'unpublish' | 'delete') => void }) {
+function BulkActions({
+  onAction,
+}: {
+  onAction: (action: 'publish' | 'unpublish' | 'delete') => void
+}) {
   return (
     <div className="relative">
       <select
         className="appearance-none rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600"
-        onChange={(event) => onAction(event.target.value as 'publish' | 'unpublish' | 'delete')}
+        onChange={(event) =>
+          onAction(event.target.value as 'publish' | 'unpublish' | 'delete')
+        }
       >
         <option value="">Bulk actions</option>
         <option value="publish">Publish selected</option>
         <option value="unpublish">Unpublish selected</option>
         <option value="delete">Delete selected</option>
       </select>
-      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" />
+      <ChevronDown
+        size={12}
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400"
+      />
     </div>
   )
 }
 
-function ExportMenu({ onExport }: { onExport: (type: 'csv' | 'excel') => void }) {
+function ExportMenu({
+  onExport,
+}: {
+  onExport: (type: 'csv' | 'excel') => void
+}) {
   return (
     <div className="relative">
       <select
@@ -490,15 +594,26 @@ function ExportMenu({ onExport }: { onExport: (type: 'csv' | 'excel') => void })
         <option value="csv">CSV</option>
         <option value="excel">Excel</option>
       </select>
-      <Download size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+      <Download
+        size={16}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+      />
     </div>
   )
 }
 
-function RowActions({ onAction, isPublished }: { onAction: (action: string) => void; isPublished: boolean }) {
+function RowActions({
+  onAction,
+  isPublished,
+}: {
+  onAction: (action: string) => void
+  isPublished: boolean
+}) {
   return (
     <div className="flex items-center gap-2 text-xs text-slate-600">
-      <button className="rounded-lg border border-slate-200 px-2 py-1">View</button>
+      <button className="rounded-lg border border-slate-200 px-2 py-1">
+        View
+      </button>
       <div className="relative">
         <select
           className="appearance-none rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-600"
@@ -508,10 +623,15 @@ function RowActions({ onAction, isPublished }: { onAction: (action: string) => v
           <option value="view">View on marketplace</option>
           <option value="edit">Edit product</option>
           <option value="duplicate">Duplicate product</option>
-          <option value="toggle">{isPublished ? 'Unpublish' : 'Publish'}</option>
+          <option value="toggle">
+            {isPublished ? 'Unpublish' : 'Publish'}
+          </option>
           <option value="delete">Delete product</option>
         </select>
-        <MoreVertical size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400" />
+        <MoreVertical
+          size={12}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400"
+        />
       </div>
     </div>
   )
@@ -525,11 +645,18 @@ function statusBadge(status: ProductStatus) {
 
 function stockBadge(product: Product) {
   if (product.stock === 0) return 'bg-red-50 text-red-600'
-  if (product.stock < product.lowStockThreshold) return 'bg-orange-50 text-orange-600'
+  if (product.stock < product.lowStockThreshold)
+    return 'bg-orange-50 text-orange-600'
   return 'bg-green-50 text-green-600'
 }
 
-function EmptyState({ query, onClear }: { query: string; onClear: () => void }) {
+function EmptyState({
+  query,
+  onClear,
+}: {
+  query: string
+  onClear: () => void
+}) {
   return (
     <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">

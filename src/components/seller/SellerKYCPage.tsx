@@ -16,11 +16,7 @@ import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { submitSellerKyc } from '@/lib/seller-kyc-server'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
-type UploadKey =
-  | 'tradeLicense'
-  | 'nidFront'
-  | 'nidBack'
-  | 'bankProof'
+type UploadKey = 'tradeLicense' | 'nidFront' | 'nidBack' | 'bankProof'
 
 type UploadItem = {
   file: File
@@ -60,14 +56,18 @@ export function SellerKYCPage() {
     nidBack: null,
     bankProof: null,
   })
-  const [uploadErrors, setUploadErrors] = useState<Record<UploadKey, string | null>>({
+  const [uploadErrors, setUploadErrors] = useState<
+    Record<UploadKey, string | null>
+  >({
     tradeLicense: null,
     nidFront: null,
     nidBack: null,
     bankProof: null,
   })
   const [description, setDescription] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<Array<string>>([])
+  const [selectedCategories, setSelectedCategories] = useState<Array<string>>(
+    [],
+  )
   const [inventoryRange, setInventoryRange] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -111,7 +111,10 @@ export function SellerKYCPage() {
     const previewUrl = processedFile.type.startsWith('image/')
       ? URL.createObjectURL(processedFile)
       : undefined
-    setUploads((prev) => ({ ...prev, [key]: { file: processedFile, previewUrl, progress: 0 } }))
+    setUploads((prev) => ({
+      ...prev,
+      [key]: { file: processedFile, previewUrl, progress: 0 },
+    }))
     setUploadErrors((prev) => ({ ...prev, [key]: null }))
     simulateProgress(key)
   }
@@ -141,7 +144,10 @@ export function SellerKYCPage() {
     return null
   }
 
-  const handleDrop = (key: UploadKey, event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (
+    key: UploadKey,
+    event: React.DragEvent<HTMLDivElement>,
+  ) => {
     event.preventDefault()
     const file = event.dataTransfer.files.item(0)
     if (file) void updateUpload(key, file)
@@ -191,7 +197,13 @@ export function SellerKYCPage() {
       const token = localStorage.getItem('seller_token')
       if (!token) throw new Error('Unauthorized')
 
-      const payload = await buildSubmissionPayload(token, uploads, description, selectedCategories, inventoryRange)
+      const payload = await buildSubmissionPayload(
+        token,
+        uploads,
+        description,
+        selectedCategories,
+        inventoryRange,
+      )
       const result = await submitSellerKyc({ data: payload })
       setSubmittedAt(new Date(result.submittedAt))
       setLocalStatus('submitted')
@@ -199,7 +211,9 @@ export function SellerKYCPage() {
       pushToast('Documents submitted successfully', 'success')
       await refreshSeller()
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Failed to submit documents')
+      setSubmitError(
+        error instanceof Error ? error.message : 'Failed to submit documents',
+      )
       pushToast('Submission failed. Please retry.', 'error')
     } finally {
       setIsSubmitting(false)
@@ -234,9 +248,7 @@ export function SellerKYCPage() {
                 <XCircle className="mt-0.5" size={18} />
                 <div>
                   <p className="font-semibold">Verification Rejected</p>
-                  <p className="mt-1">
-                    Reason: {rejectionReason}
-                  </p>
+                  <p className="mt-1">Reason: {rejectionReason}</p>
                   <button
                     type="button"
                     onClick={() => {
@@ -259,7 +271,10 @@ export function SellerKYCPage() {
                 <CheckCircle2 className="mt-0.5" size={18} />
                 <div>
                   <p className="font-semibold">Verified</p>
-                  <p className="mt-1">Your business is verified. You can access all seller features.</p>
+                  <p className="mt-1">
+                    Your business is verified. You can access all seller
+                    features.
+                  </p>
                   <Link
                     to="/seller/dashboard"
                     className="mt-3 inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-white text-sm font-semibold hover:bg-green-700 transition-colors"
@@ -276,7 +291,9 @@ export function SellerKYCPage() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="mt-0.5" size={18} />
                 <div>
-                  <p className="font-semibold">Your documents are under review</p>
+                  <p className="font-semibold">
+                    Your documents are under review
+                  </p>
                   <p className="mt-1">
                     Submitted on {submittedAt.toLocaleString()}
                   </p>
@@ -295,8 +312,12 @@ export function SellerKYCPage() {
 
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 transition-colors">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">Required Documents</h2>
-            <p className="text-sm text-slate-500 dark:text-gray-400 transition-colors">JPEG, PNG, PDF · Max 5MB</p>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+              Required Documents
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-gray-400 transition-colors">
+              JPEG, PNG, PDF · Max 5MB
+            </p>
           </div>
 
           <DocumentUploader
@@ -345,7 +366,9 @@ export function SellerKYCPage() {
         </section>
 
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 transition-colors">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">Additional Information</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+            Additional Information
+          </h2>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2 transition-colors">
@@ -366,7 +389,8 @@ export function SellerKYCPage() {
 
           <div>
             <p className="text-sm font-medium text-slate-700 dark:text-gray-300 mb-3 transition-colors">
-              Product categories you&apos;ll sell <span className="text-red-500">*</span>
+              Product categories you&apos;ll sell{' '}
+              <span className="text-red-500">*</span>
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
               {CATEGORIES.map((category) => (
@@ -392,16 +416,19 @@ export function SellerKYCPage() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2 transition-colors">
-              Estimated monthly inventory value <span className="text-red-500">*</span>
+              Estimated monthly inventory value{' '}
+              <span className="text-red-500">*</span>
             </label>
             <select
               value={inventoryRange}
               onChange={(event) => setInventoryRange(event.target.value)}
               className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all"
             >
-              <option value="">Select range</option>
+              <option value="" className="dark:bg-slate-950">
+                Select range
+              </option>
               {INVENTORY_RANGES.map((range) => (
-                <option key={range} value={range}>
+                <option key={range} value={range} className="dark:bg-slate-950">
                   {range}
                 </option>
               ))}
@@ -439,8 +466,13 @@ export function SellerKYCPage() {
             <div className="flex items-start gap-3">
               <BadgeCheck className="mt-0.5" size={18} />
               <div>
-                <p className="font-semibold">Documents submitted successfully!</p>
-                <p className="mt-1">We&apos;ll review within 24-48 hours. You&apos;ll receive email/SMS notification.</p>
+                <p className="font-semibold">
+                  Documents submitted successfully!
+                </p>
+                <p className="mt-1">
+                  We&apos;ll review within 24-48 hours. You&apos;ll receive
+                  email/SMS notification.
+                </p>
               </div>
             </div>
           </div>
@@ -522,7 +554,9 @@ function DocumentUploader({
         {item ? (
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-700 dark:text-gray-200 transition-colors">{item.file.name}</p>
+              <p className="text-sm font-medium text-slate-700 dark:text-gray-200 transition-colors">
+                {item.file.name}
+              </p>
               <p className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
                 {(item.file.size / 1024 / 1024).toFixed(2)} MB
               </p>
@@ -568,7 +602,9 @@ function DocumentUploader({
                   browse
                 </button>
               </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 transition-colors">JPEG, PNG, PDF · Max 5MB</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
+                JPEG, PNG, PDF · Max 5MB
+              </p>
             </div>
           </div>
         )}
@@ -580,7 +616,11 @@ function DocumentUploader({
           onChange={(event) => onBrowse(event.target.files)}
         />
       </div>
-      {error && <p className="mt-2 text-xs text-red-500 dark:text-red-400 transition-colors">{error}</p>}
+      {error && (
+        <p className="mt-2 text-xs text-red-500 dark:text-red-400 transition-colors">
+          {error}
+        </p>
+      )}
     </div>
   )
 }
@@ -595,19 +635,31 @@ function ConfirmationModal({
   onConfirm: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/80 px-4 backdrop-blur-sm transition-all" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/80 px-4 backdrop-blur-sm transition-all"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl border border-gray-200 dark:border-slate-800 transition-all">
         <div className="flex items-center justify-between border-b dark:border-slate-800 pb-4">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
             Review your documents
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors" aria-label="Close modal" autoFocus>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
+            aria-label="Close modal"
+            autoFocus
+          >
             ✕
           </button>
         </div>
         <div className="mt-4 space-y-3 text-sm text-slate-600 dark:text-gray-400 transition-colors">
           {Object.entries(uploads).map(([key, item]) => (
-            <div key={key} className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 bg-gray-50 dark:bg-slate-950/50 transition-colors">
+            <div
+              key={key}
+              className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 bg-gray-50 dark:bg-slate-950/50 transition-colors"
+            >
               <span className="font-medium text-slate-700 dark:text-gray-300 capitalize transition-colors">
                 {key.replace(/([A-Z])/g, ' $1')}
               </span>
@@ -657,7 +709,9 @@ async function compressImageIfNeeded(file: File) {
   })
 
   if (!blob) return file
-  return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })
+  return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
+    type: 'image/jpeg',
+  })
 }
 
 async function fileToBase64(file: File) {

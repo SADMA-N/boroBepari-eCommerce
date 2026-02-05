@@ -51,7 +51,13 @@ async function saveDocument(
 
   const ext = getExtension(doc.mimeType)
   const safeName = `${key}-${Date.now()}.${ext}`
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'kyc', sellerId)
+  const uploadDir = path.join(
+    process.cwd(),
+    'public',
+    'uploads',
+    'kyc',
+    sellerId,
+  )
   await fs.mkdir(uploadDir, { recursive: true })
   const filePath = path.join(uploadDir, safeName)
   await fs.writeFile(filePath, buffer)
@@ -72,7 +78,11 @@ export const submitSellerKyc = createServerFn({ method: 'POST' })
     const sellerId = decoded.sellerId
 
     const savedDocuments: Record<string, string | null> = {
-      tradeLicense: await saveDocument(sellerId, 'trade-license', documents.tradeLicense),
+      tradeLicense: await saveDocument(
+        sellerId,
+        'trade-license',
+        documents.tradeLicense,
+      ),
       nidFront: await saveDocument(sellerId, 'nid-front', documents.nidFront),
       nidBack: await saveDocument(sellerId, 'nid-back', documents.nidBack),
       bankProof: documents.bankProof

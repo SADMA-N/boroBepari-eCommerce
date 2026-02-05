@@ -10,7 +10,13 @@
  * - Multi-supplier cart support
  */
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { getProductById } from '../data/mock-products'
 import { useAuth } from './AuthContext'
 import type {
@@ -44,7 +50,10 @@ interface CartContextType {
   /** Remove an item from the cart by its ID */
   removeItem: (itemId: string) => void
   /** Update the quantity of a cart item */
-  updateQuantity: (itemId: string, quantity: number) => { success: boolean; error?: string }
+  updateQuantity: (
+    itemId: string,
+    quantity: number,
+  ) => { success: boolean; error?: string }
   /** Clear all items from the cart */
   clearCart: () => void
   /** Apply a coupon code to the cart */
@@ -204,7 +213,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       return { success: true }
     },
-    []
+    [],
   )
 
   // --------------------------------------------------------------------------
@@ -226,7 +235,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Update item quantity
   // --------------------------------------------------------------------------
   const updateQuantity = useCallback(
-    (itemId: string, quantity: number): { success: boolean; error?: string } => {
+    (
+      itemId: string,
+      quantity: number,
+    ): { success: boolean; error?: string } => {
       if (quantity <= 0) {
         removeItem(itemId)
         return { success: true }
@@ -267,7 +279,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       return { success: true }
     },
-    [cart.items, removeItem]
+    [cart.items, removeItem],
   )
 
   // --------------------------------------------------------------------------
@@ -300,7 +312,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       return { success: true }
     },
-    [cart.subtotal, cart.items]
+    [cart.subtotal, cart.items],
   )
 
   // --------------------------------------------------------------------------

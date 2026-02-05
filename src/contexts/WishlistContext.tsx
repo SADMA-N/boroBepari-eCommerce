@@ -48,7 +48,9 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
           userId: user.id,
           source: 'wishlist',
         }),
-      }).catch((error) => console.error('Failed to create wishlist stock alert', error))
+      }).catch((error) =>
+        console.error('Failed to create wishlist stock alert', error),
+      )
     }
   }
 
@@ -77,7 +79,9 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
             userId: user.id,
             source: 'wishlist',
           }),
-        }).catch((error) => console.error('Failed to create wishlist stock alert', error))
+        }).catch((error) =>
+          console.error('Failed to create wishlist stock alert', error),
+        )
       }
     }
   }

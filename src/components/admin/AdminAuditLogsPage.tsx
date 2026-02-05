@@ -20,7 +20,13 @@ import { AdminProtectedRoute } from './AdminProtectedRoute'
 
 type Severity = 'critical' | 'high' | 'medium' | 'low'
 type Status = 'success' | 'failed'
-type TargetType = 'user' | 'supplier' | 'product' | 'order' | 'dispute' | 'settings'
+type TargetType =
+  | 'user'
+  | 'supplier'
+  | 'product'
+  | 'order'
+  | 'dispute'
+  | 'settings'
 
 type AuditLog = {
   id: string
@@ -172,32 +178,87 @@ const ACTION_TYPES = [
 ]
 
 const ACTION_TYPE_MAP: Record<string, Array<string>> = {
-  'User actions': ['User suspended', 'User unsuspended', 'User deleted', 'User details edited', 'Password reset'],
-  'Supplier actions': ['Supplier verified', 'Supplier unverified', 'Supplier suspended', 'Supplier deleted'],
+  'User actions': [
+    'User suspended',
+    'User unsuspended',
+    'User deleted',
+    'User details edited',
+    'Password reset',
+  ],
+  'Supplier actions': [
+    'Supplier verified',
+    'Supplier unverified',
+    'Supplier suspended',
+    'Supplier deleted',
+  ],
   'KYC actions': ['KYC approved', 'KYC rejected'],
-  'Product actions': ['Product suspended', 'Product activated', 'Product deleted', 'Product edited', 'Flag dismissed'],
-  'Dispute actions': ['Dispute resolved', 'Refund issued', 'Dispute rejected', 'Escrow released'],
-  'Settings changes': ['Settings changed', 'Payment settings updated', 'Shipping settings updated', 'Email templates modified'],
-  'Login/Logout': ['Admin login', 'Admin logout', 'Failed login attempt', '2FA enabled', '2FA disabled'],
+  'Product actions': [
+    'Product suspended',
+    'Product activated',
+    'Product deleted',
+    'Product edited',
+    'Flag dismissed',
+  ],
+  'Dispute actions': [
+    'Dispute resolved',
+    'Refund issued',
+    'Dispute rejected',
+    'Escrow released',
+  ],
+  'Settings changes': [
+    'Settings changed',
+    'Payment settings updated',
+    'Shipping settings updated',
+    'Email templates modified',
+  ],
+  'Login/Logout': [
+    'Admin login',
+    'Admin logout',
+    'Failed login attempt',
+    '2FA enabled',
+    '2FA disabled',
+  ],
 }
 
 function severityBadge(severity: Severity) {
   switch (severity) {
     case 'critical':
-      return <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">Critical</span>
+      return (
+        <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
+          Critical
+        </span>
+      )
     case 'high':
-      return <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-700">High</span>
+      return (
+        <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-700">
+          High
+        </span>
+      )
     case 'medium':
-      return <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">Medium</span>
+      return (
+        <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
+          Medium
+        </span>
+      )
     case 'low':
-      return <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">Low</span>
+      return (
+        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+          Low
+        </span>
+      )
   }
 }
 
 function statusBadge(status: Status) {
-  return status === 'success'
-    ? <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">Success</span>
-    : <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">Failed</span>
+  return status === 'success' ? (
+    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
+      Success
+    </span>
+  ) : (
+    <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
+      Failed
+    </span>
+  )
 }
 
 export function AdminAuditLogsPage() {
@@ -228,8 +289,10 @@ export function AdminAuditLogsPage() {
       actionFilter === 'All' ? null : ACTION_TYPE_MAP[actionFilter]
     return LOGS.filter((log) => {
       const matchesAdmin = adminFilter === 'all' || log.adminId === adminFilter
-      const matchesAction = !allowedActions || allowedActions.includes(log.actionType)
-      const matchesSeverity = severityFilter === 'all' || log.severity === severityFilter
+      const matchesAction =
+        !allowedActions || allowedActions.includes(log.actionType)
+      const matchesSeverity =
+        severityFilter === 'all' || log.severity === severityFilter
       const matchesSearch =
         !query ||
         log.adminName.toLowerCase().includes(query) ||
@@ -239,8 +302,18 @@ export function AdminAuditLogsPage() {
       const timestampDate = new Date(log.timestamp)
       const withinFrom = dateFrom ? timestampDate >= new Date(dateFrom) : true
       const withinTo = dateTo ? timestampDate <= new Date(dateTo) : true
-      return matchesAdmin && matchesAction && matchesSeverity && matchesSearch && withinFrom && withinTo
-    }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      return (
+        matchesAdmin &&
+        matchesAction &&
+        matchesSeverity &&
+        matchesSearch &&
+        withinFrom &&
+        withinTo
+      )
+    }).sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )
   }, [adminFilter, actionFilter, severityFilter, dateFrom, dateTo, searchQuery])
 
   const exportCsv = () => {
@@ -317,7 +390,9 @@ export function AdminAuditLogsPage() {
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Audit Logs</h1>
-            <p className="text-sm text-slate-500">Complete record of all admin actions</p>
+            <p className="text-sm text-slate-500">
+              Complete record of all admin actions
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -396,7 +471,9 @@ export function AdminAuditLogsPage() {
               </select>
               <select
                 value={severityFilter}
-                onChange={(e) => setSeverityFilter(e.target.value as 'all' | Severity)}
+                onChange={(e) =>
+                  setSeverityFilter(e.target.value as 'all' | Severity)
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 <option value="all">Severity: All</option>
@@ -412,11 +489,15 @@ export function AdminAuditLogsPage() {
         <div className="grid gap-4 lg:grid-cols-4">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Total actions today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{totalToday}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {totalToday}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Critical actions</p>
-            <p className="mt-2 text-xl font-semibold text-red-600">{criticalCount}</p>
+            <p className="mt-2 text-xl font-semibold text-red-600">
+              {criticalCount}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4 lg:col-span-2">
             <p className="text-xs text-slate-500">Actions per admin</p>
@@ -434,11 +515,17 @@ export function AdminAuditLogsPage() {
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-sm font-semibold text-slate-900">Most common actions</p>
+          <p className="text-sm font-semibold text-slate-900">
+            Most common actions
+          </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-4">
             {commonActions.map((item) => (
-              <div key={item.label} className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600">
-                <span className="font-medium text-slate-900">{item.value}</span> {item.label}
+              <div
+                key={item.label}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600"
+              >
+                <span className="font-medium text-slate-900">{item.value}</span>{' '}
+                {item.label}
               </div>
             ))}
           </div>
@@ -463,15 +550,25 @@ export function AdminAuditLogsPage() {
               <tbody className="divide-y divide-slate-200">
                 {filtered.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-slate-600">{log.timestamp}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {log.timestamp}
+                    </td>
                     <td className="px-4 py-3 text-slate-600">
                       {log.adminName}
-                      <span className="ml-2 text-xs text-slate-400">{log.adminRole}</span>
+                      <span className="ml-2 text-xs text-slate-400">
+                        {log.adminRole}
+                      </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{log.actionType}</td>
-                    <td className="px-4 py-3 text-slate-600">{log.actionDescription}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {log.actionType}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {log.actionDescription}
+                    </td>
                     <td className="px-4 py-3 text-slate-600">{log.targetId}</td>
-                    <td className="px-4 py-3 text-slate-600">{log.ipAddress}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {log.ipAddress}
+                    </td>
                     <td className="px-4 py-3">{statusBadge(log.status)}</td>
                     <td className="px-4 py-3">{severityBadge(log.severity)}</td>
                     <td className="px-4 py-3 text-right">
@@ -487,7 +584,10 @@ export function AdminAuditLogsPage() {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={9} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={9}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       No audit logs found.
                     </td>
                   </tr>
@@ -500,7 +600,8 @@ export function AdminAuditLogsPage() {
         <div className="rounded-xl border border-slate-200 bg-white p-4">
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <ShieldAlert size={16} className="text-orange-600" />
-            Logs are immutable and retained per compliance policy. Critical actions trigger super admin alerts.
+            Logs are immutable and retained per compliance policy. Critical
+            actions trigger super admin alerts.
           </div>
         </div>
       </div>
@@ -510,34 +611,57 @@ export function AdminAuditLogsPage() {
           <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Audit Log Details</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Audit Log Details
+                </h2>
                 <p className="text-sm text-slate-500">{detailsLog.id}</p>
               </div>
-              <button onClick={() => setDetailsLog(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setDetailsLog(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4 text-sm text-slate-600">
-              <p><strong>Admin:</strong> {detailsLog.adminName} ({detailsLog.adminRole})</p>
-              <p><strong>Timestamp:</strong> {detailsLog.timestamp}</p>
-              <p><strong>Action:</strong> {detailsLog.actionType}</p>
-              <p><strong>Target:</strong> {detailsLog.targetType} {detailsLog.targetId}</p>
-              <p><strong>Reason:</strong> {detailsLog.reason || 'N/A'}</p>
-              <p><strong>IP Address:</strong> {detailsLog.ipAddress}</p>
-              <p><strong>User Agent:</strong> {detailsLog.userAgent}</p>
+              <p>
+                <strong>Admin:</strong> {detailsLog.adminName} (
+                {detailsLog.adminRole})
+              </p>
+              <p>
+                <strong>Timestamp:</strong> {detailsLog.timestamp}
+              </p>
+              <p>
+                <strong>Action:</strong> {detailsLog.actionType}
+              </p>
+              <p>
+                <strong>Target:</strong> {detailsLog.targetType}{' '}
+                {detailsLog.targetId}
+              </p>
+              <p>
+                <strong>Reason:</strong> {detailsLog.reason || 'N/A'}
+              </p>
+              <p>
+                <strong>IP Address:</strong> {detailsLog.ipAddress}
+              </p>
+              <p>
+                <strong>User Agent:</strong> {detailsLog.userAgent}
+              </p>
               {detailsLog.errorMessage && (
-                <p className="text-red-600"><strong>Error:</strong> {detailsLog.errorMessage}</p>
+                <p className="text-red-600">
+                  <strong>Error:</strong> {detailsLog.errorMessage}
+                </p>
               )}
               <div>
                 <p className="font-medium text-slate-900">Before State</p>
                 <pre className="mt-2 rounded-lg bg-slate-900 p-3 text-xs text-slate-100 overflow-auto">
-{JSON.stringify(detailsLog.beforeState, null, 2)}
+                  {JSON.stringify(detailsLog.beforeState, null, 2)}
                 </pre>
               </div>
               <div>
                 <p className="font-medium text-slate-900">After State</p>
                 <pre className="mt-2 rounded-lg bg-slate-900 p-3 text-xs text-slate-100 overflow-auto">
-{JSON.stringify(detailsLog.afterState, null, 2)}
+                  {JSON.stringify(detailsLog.afterState, null, 2)}
                 </pre>
               </div>
             </div>

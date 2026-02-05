@@ -85,10 +85,13 @@ export const Route = createFileRoute('/api/orders/$orderId/invoice')({
         if (action === 'store') {
           const invoiceUrl = payload?.invoiceUrl
           if (!invoiceUrl) {
-            return new Response(JSON.stringify({ error: 'invoiceUrl is required' }), {
-              status: 400,
-              headers: { 'Content-Type': 'application/json' },
-            })
+            return new Response(
+              JSON.stringify({ error: 'invoiceUrl is required' }),
+              {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+              },
+            )
           }
 
           const [updatedOrder] = await db
@@ -112,10 +115,13 @@ export const Route = createFileRoute('/api/orders/$orderId/invoice')({
         if (action === 'email') {
           const invoiceUrl = payload?.invoiceUrl ?? order.invoiceUrl
           if (!invoiceUrl) {
-            return new Response(JSON.stringify({ error: 'Invoice URL not available' }), {
-              status: 400,
-              headers: { 'Content-Type': 'application/json' },
-            })
+            return new Response(
+              JSON.stringify({ error: 'Invoice URL not available' }),
+              {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+              },
+            )
           }
 
           const buyer = await db.query.user.findFirst({
@@ -143,10 +149,9 @@ export const Route = createFileRoute('/api/orders/$orderId/invoice')({
             orderNumber,
           })
 
-          return new Response(
-            JSON.stringify({ success: result.success }),
-            { headers: { 'Content-Type': 'application/json' } },
-          )
+          return new Response(JSON.stringify({ success: result.success }), {
+            headers: { 'Content-Type': 'application/json' },
+          })
         }
 
         return new Response(JSON.stringify({ error: 'Unknown action' }), {

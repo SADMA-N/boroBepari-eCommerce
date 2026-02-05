@@ -5,7 +5,9 @@ export const Route = createFileRoute('/api/orders/buyer/$buyerId')({
     handlers: {
       GET: ({ request, params }) => {
         return new Response(
-          JSON.stringify({ message: `Fetching orders for buyer ${params.buyerId}` }),
+          JSON.stringify({
+            message: `Fetching orders for buyer ${params.buyerId}`,
+          }),
           { headers: { 'Content-Type': 'application/json' } },
         )
       },

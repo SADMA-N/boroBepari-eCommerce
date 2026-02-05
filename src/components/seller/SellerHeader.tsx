@@ -16,7 +16,10 @@ export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false)
       }
     }
@@ -40,7 +43,9 @@ export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
             to="/seller/dashboard"
             className="flex items-center gap-2 lg:hidden"
           >
-            <span className="font-bold text-lg text-orange-600">BoroBepari</span>
+            <span className="font-bold text-lg text-orange-600">
+              BoroBepari
+            </span>
           </Link>
         </div>
 

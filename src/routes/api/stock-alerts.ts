@@ -23,13 +23,20 @@ export const Route = createFileRoute('/api/stock-alerts')({
         const expired = await db
           .select()
           .from(stockAlerts)
-          .where(and(eq(stockAlerts.userId, userId), lt(stockAlerts.expiresAt, now)))
+          .where(
+            and(eq(stockAlerts.userId, userId), lt(stockAlerts.expiresAt, now)),
+          )
 
         if (expired.length) {
           await db
             .update(stockAlerts)
             .set({ isActive: false })
-            .where(inArray(stockAlerts.id, expired.map((e) => e.id)))
+            .where(
+              inArray(
+                stockAlerts.id,
+                expired.map((e) => e.id),
+              ),
+            )
         }
 
         const userAlerts = await db.query.stockAlerts.findMany({
@@ -41,7 +48,9 @@ export const Route = createFileRoute('/api/stock-alerts')({
         })
 
         const notified = includeNotified
-          ? userAlerts.filter((alert) => alert.notifiedAt && !alert.acknowledgedAt)
+          ? userAlerts.filter(
+              (alert) => alert.notifiedAt && !alert.acknowledgedAt,
+            )
           : []
 
         return new Response(
@@ -61,10 +70,13 @@ export const Route = createFileRoute('/api/stock-alerts')({
         const userId = payload?.userId ?? null
 
         if (!productId || !email) {
-          return new Response(JSON.stringify({ error: 'productId and email are required' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
+          return new Response(
+            JSON.stringify({ error: 'productId and email are required' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
         }
 
         const existing = await db.query.stockAlerts.findFirst({
@@ -76,9 +88,12 @@ export const Route = createFileRoute('/api/stock-alerts')({
         })
 
         if (existing) {
-          return new Response(JSON.stringify({ alert: existing, alreadySubscribed: true }), {
-            headers: { 'Content-Type': 'application/json' },
-          })
+          return new Response(
+            JSON.stringify({ alert: existing, alreadySubscribed: true }),
+            {
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
         }
 
         const [alert] = await db
@@ -130,10 +145,13 @@ export const Route = createFileRoute('/api/stock-alerts')({
         const payload = await request.json().catch(() => ({}))
         const alertId = Number(payload?.alertId)
         if (!alertId) {
-          return new Response(JSON.stringify({ error: 'alertId is required' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
+          return new Response(
+            JSON.stringify({ error: 'alertId is required' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
         }
 
         await db

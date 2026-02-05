@@ -145,7 +145,7 @@ export function useCouponValidation(): UseCouponValidationReturn {
         return false
       }
     },
-    [cart.subtotal, cart.appliedCoupon, applyCoupon, user?.id]
+    [cart.subtotal, cart.appliedCoupon, applyCoupon, user?.id],
   )
 
   const removeCoupon = useCallback(() => {

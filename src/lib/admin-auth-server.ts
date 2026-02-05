@@ -5,7 +5,8 @@ import type { AdminUser } from '@/types/admin'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
 
-const SECRET = process.env.ADMIN_AUTH_SECRET || 'admin-secret-key-change-in-production'
+const SECRET =
+  process.env.ADMIN_AUTH_SECRET || 'admin-secret-key-change-in-production'
 const ADMIN_2FA_CODE = process.env.ADMIN_2FA_CODE || '123456'
 const MAX_LOGIN_ATTEMPTS = 5
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
@@ -17,14 +18,18 @@ function generateToken(adminId: string): string {
     exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
   }
   const encoded = Buffer.from(JSON.stringify(payload)).toString('base64')
-  const signature = Buffer.from(SECRET + encoded).toString('base64').slice(0, 32)
+  const signature = Buffer.from(SECRET + encoded)
+    .toString('base64')
+    .slice(0, 32)
   return `${encoded}.${signature}`
 }
 
 export function verifyAdminToken(token: string): { adminId: string } | null {
   try {
     const [encoded, signature] = token.split('.')
-    const expectedSignature = Buffer.from(SECRET + encoded).toString('base64').slice(0, 32)
+    const expectedSignature = Buffer.from(SECRET + encoded)
+      .toString('base64')
+      .slice(0, 32)
 
     if (signature !== expectedSignature) {
       return null
@@ -47,10 +52,13 @@ async function hashPassword(password: string): Promise<string> {
   const data = encoder.encode(password + SECRET)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-async function verifyPassword(password: string, hash: string): Promise<boolean> {
+async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   const passwordHash = await hashPassword(password)
   return passwordHash === hash
 }
@@ -106,7 +114,11 @@ export const adminLogin = createServerFn({ method: 'POST' })
     const now = Date.now()
     const key = email.toLowerCase()
     const attempt = loginAttempts.get(key)
-    if (attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS && attempt.count >= MAX_LOGIN_ATTEMPTS) {
+    if (
+      attempt &&
+      now - attempt.firstAttempt < LOGIN_WINDOW_MS &&
+      attempt.count >= MAX_LOGIN_ATTEMPTS
+    ) {
       throw new Error('Too many login attempts. Please try again later.')
     }
 
@@ -123,18 +135,20 @@ export const adminLogin = createServerFn({ method: 'POST' })
     }
 
     if (otp !== ADMIN_2FA_CODE) {
-      const next = attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS
-        ? { count: attempt.count + 1, firstAttempt: attempt.firstAttempt }
-        : { count: 1, firstAttempt: now }
+      const next =
+        attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS
+          ? { count: attempt.count + 1, firstAttempt: attempt.firstAttempt }
+          : { count: 1, firstAttempt: now }
       loginAttempts.set(key, next)
       throw new Error('Invalid 2FA code')
     }
 
     const isValid = await verifyPassword(password, admin.password)
     if (!isValid) {
-      const next = attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS
-        ? { count: attempt.count + 1, firstAttempt: attempt.firstAttempt }
-        : { count: 1, firstAttempt: now }
+      const next =
+        attempt && now - attempt.firstAttempt < LOGIN_WINDOW_MS
+          ? { count: attempt.count + 1, firstAttempt: attempt.firstAttempt }
+          : { count: 1, firstAttempt: now }
       loginAttempts.set(key, next)
       throw new Error('Invalid email or password')
     }

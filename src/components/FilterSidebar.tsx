@@ -109,12 +109,19 @@ export default function FilterSidebar({
   }
 
   const sidebarContent = (
-    <div className={`bg-white dark:bg-slate-900 transition-colors ${className}`}>
+    <div
+      className={`bg-white dark:bg-slate-900 transition-colors ${className}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={20} className="text-gray-600 dark:text-gray-400" />
-          <span className="font-semibold text-gray-800 dark:text-gray-100">Filters</span>
+          <SlidersHorizontal
+            size={20}
+            className="text-gray-600 dark:text-gray-400"
+          />
+          <span className="font-semibold text-gray-800 dark:text-gray-100">
+            Filters
+          </span>
         </div>
         <div className="flex items-center gap-2">
           {hasActiveFilters() && (
@@ -163,7 +170,9 @@ export default function FilterSidebar({
                   onChange={() => handleSortChange(option.value)}
                   className="text-orange-500 focus:ring-orange-500 dark:bg-slate-800 dark:border-slate-700 transition-colors"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{option.label}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  {option.label}
+                </span>
               </label>
             ))}
           </div>
@@ -249,7 +258,9 @@ export default function FilterSidebar({
                   onChange={() => handleLocationChange(location)}
                   className="rounded text-orange-500 focus:ring-orange-500 dark:bg-slate-800 dark:border-slate-700 transition-colors"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{location}</span>
+                <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  {location}
+                </span>
               </label>
             ))}
           </div>
@@ -264,7 +275,9 @@ export default function FilterSidebar({
           <label className="flex items-center gap-3 cursor-pointer group">
             <div
               className={`relative w-10 h-6 rounded-full transition-colors ${
-                filters.verifiedOnly ? 'bg-orange-500' : 'bg-gray-300 dark:bg-slate-700'
+                filters.verifiedOnly
+                  ? 'bg-orange-500'
+                  : 'bg-gray-300 dark:bg-slate-700'
               }`}
               onClick={handleVerifiedToggle}
             >
@@ -333,14 +346,20 @@ function FilterSection({
         onClick={onToggle}
         className="flex items-center justify-between w-full text-left mb-2 group"
       >
-        <span className="font-medium text-gray-800 dark:text-gray-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{title}</span>
+        <span className="font-medium text-gray-800 dark:text-gray-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+          {title}
+        </span>
         {isExpanded ? (
           <ChevronUp size={18} className="text-gray-500 dark:text-gray-400" />
         ) : (
           <ChevronDown size={18} className="text-gray-500 dark:text-gray-400" />
         )}
       </button>
-      {isExpanded && <div className="pt-2 animate-in fade-in slide-in-from-top-1 duration-200">{children}</div>}
+      {isExpanded && (
+        <div className="pt-2 animate-in fade-in slide-in-from-top-1 duration-200">
+          {children}
+        </div>
+      )}
     </div>
   )
 }

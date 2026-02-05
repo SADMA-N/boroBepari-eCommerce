@@ -1,6 +1,13 @@
 import { useForm } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
-import { AlertCircle, CheckCircle, Loader2, MapPin, Paperclip, X } from 'lucide-react'
+import {
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  MapPin,
+  Paperclip,
+  X,
+} from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'
 
@@ -349,9 +356,11 @@ export default function RFQFormModal({
                     </span>
                   </label>
 
-                  <div 
+                  <div
                     className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer relative ${
-                      fileError ? 'border-red-300 bg-red-50 dark:bg-red-900/10' : 'border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800'
+                      fileError
+                        ? 'border-red-300 bg-red-50 dark:bg-red-900/10'
+                        : 'border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800'
                     }`}
                   >
                     <input
@@ -363,21 +372,27 @@ export default function RFQFormModal({
                       accept="image/*,.pdf,.doc,.docx"
                       aria-label="Upload files"
                       aria-invalid={!!fileError}
-                      aria-describedby={fileError ? "file-error" : undefined}
+                      aria-describedby={fileError ? 'file-error' : undefined}
                     />
                     <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 transition-colors">
                       <Paperclip size={20} className="mb-2" />
-                      <span className="text-xs font-medium">Click or drag files here</span>
-                      <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">PDF, DOC, Images (Max 5MB)</span>
+                      <span className="text-xs font-medium">
+                        Click or drag files here
+                      </span>
+                      <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
+                        PDF, DOC, Images (Max 5MB)
+                      </span>
                     </div>
                   </div>
 
                   {fileError && (
-                    <p id="file-error" className="text-red-500 dark:text-red-400 text-xs mt-1 flex items-center gap-1 transition-colors">
+                    <p
+                      id="file-error"
+                      className="text-red-500 dark:text-red-400 text-xs mt-1 flex items-center gap-1 transition-colors"
+                    >
                       <AlertCircle size={12} /> {fileError}
                     </p>
                   )}
-
 
                   {/* File List */}
                   {files.length > 0 && (

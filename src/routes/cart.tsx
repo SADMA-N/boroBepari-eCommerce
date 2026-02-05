@@ -40,7 +40,11 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useCart } from '../contexts/CartContext'
 import { getSupplierById } from '../data/mock-products'
-import type { CartItem as CartItemType, CartValidation, SupplierBreakdown } from '@/types/cart'
+import type {
+  CartItem as CartItemType,
+  CartValidation,
+  SupplierBreakdown,
+} from '@/types/cart'
 import { formatCurrency } from '@/lib/cart-utils'
 import { useCouponValidation } from '@/hooks/useCouponValidation'
 import { validateCartServer } from '@/lib/cart-actions'
@@ -52,21 +56,31 @@ export const Route = createFileRoute('/cart')({
 
 const REORDER_HIGHLIGHT_STORAGE_KEY = 'bb_reorder_highlight'
 
-// ============================================================================ 
+// ============================================================================
 // Server Validation Banner
-// ============================================================================ 
+// ============================================================================
 
 interface ServerValidationBannerProps {
-  changes: Array<{ itemId: string; type: 'price' | 'stock' | 'removed'; message: string }>
+  changes: Array<{
+    itemId: string
+    type: 'price' | 'stock' | 'removed'
+    message: string
+  }>
   onDismiss: () => void
 }
 
-function ServerValidationBanner({ changes, onDismiss }: ServerValidationBannerProps) {
+function ServerValidationBanner({
+  changes,
+  onDismiss,
+}: ServerValidationBannerProps) {
   if (changes.length === 0) return null
 
   return (
     <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
-      <AlertTriangle className="text-yellow-600 mt-0.5 flex-shrink-0" size={20} />
+      <AlertTriangle
+        className="text-yellow-600 mt-0.5 flex-shrink-0"
+        size={20}
+      />
       <div className="flex-1">
         <h3 className="font-bold text-yellow-800 text-sm">Cart Updated</h3>
         <ul className="mt-1 space-y-1">
@@ -80,7 +94,7 @@ function ServerValidationBanner({ changes, onDismiss }: ServerValidationBannerPr
           Please review your cart items before proceeding.
         </p>
       </div>
-      <button 
+      <button
         onClick={onDismiss}
         className="text-yellow-500 hover:text-yellow-700"
         aria-label="Dismiss warning"
@@ -91,9 +105,9 @@ function ServerValidationBanner({ changes, onDismiss }: ServerValidationBannerPr
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // MOQ Warning Banner Component
-// ============================================================================ 
+// ============================================================================
 
 interface MoqWarningBannerProps {
   validation: CartValidation
@@ -102,7 +116,12 @@ interface MoqWarningBannerProps {
   onRemoveItem: (itemId: string) => void
 }
 
-function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarningBannerProps) {
+function MoqWarningBanner({
+  validation,
+  items,
+  onFixAll,
+  onRemoveItem,
+}: MoqWarningBannerProps) {
   const [isExpanded, setIsExpanded] = useState(true)
 
   // Get items that violate MOQ
@@ -113,12 +132,24 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
         const item = items.find((i) => i.id === v.itemId)
         return item ? { ...v, item } : null
       })
-      .filter(Boolean) as Array<{ itemId: string; errors: { moqError?: string }; item: CartItemType }>
+      .filter(Boolean) as Array<{
+      itemId: string
+      errors: { moqError?: string }
+      item: CartItemType
+    }>
   }, [validation.itemValidations, items])
 
   // Group by supplier
   const groupedBySupplier = useMemo(() => {
-    const groups: Partial<Record<number, { supplier: ReturnType<typeof getSupplierById>; items: typeof violatingItems }>> = {}
+    const groups: Partial<
+      Record<
+        number,
+        {
+          supplier: ReturnType<typeof getSupplierById>
+          items: typeof violatingItems
+        }
+      >
+    > = {}
 
     violatingItems.forEach((v) => {
       const supplierId = v.item.supplierId
@@ -154,7 +185,9 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
               Cannot Proceed to Checkout
             </h3>
             <p className="text-sm text-red-600">
-              {violatingItems.length} {violatingItems.length === 1 ? 'item doesn\'t' : 'items don\'t'} meet minimum order quantity
+              {violatingItems.length}{' '}
+              {violatingItems.length === 1 ? "item doesn't" : "items don't"}{' '}
+              meet minimum order quantity
             </p>
           </div>
         </div>
@@ -179,7 +212,7 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
       </button>
 
       {/* Expandable Content */}
-      <div 
+      <div
         id="moq-warning-content"
         className={`
           transition-all duration-300 ease-in-out overflow-hidden
@@ -198,7 +231,10 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
 
           {/* Grouped Items */}
           {groupedBySupplier.map(({ supplier, items: supplierItems }) => (
-            <div key={supplier?.id || 'unknown'} className="bg-white rounded-lg border border-red-100 overflow-hidden">
+            <div
+              key={supplier?.id || 'unknown'}
+              className="bg-white rounded-lg border border-red-100 overflow-hidden"
+            >
               {/* Supplier Header */}
               <div className="px-3 py-2 bg-red-50 border-b border-red-100 flex items-center gap-2">
                 <Store size={14} className="text-red-500" />
@@ -229,10 +265,14 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
                         className="text-sm font-medium text-gray-900 hover:text-orange-600 line-clamp-1 flex items-center gap-1"
                       >
                         {item.productName}
-                        <ExternalLink size={12} className="flex-shrink-0 opacity-50" />
+                        <ExternalLink
+                          size={12}
+                          className="flex-shrink-0 opacity-50"
+                        />
                       </Link>
                       <p className="text-xs text-red-600 mt-0.5">
-                        Need <strong>{item.moq - item.quantity}</strong> more (have {item.quantity}, need {item.moq})
+                        Need <strong>{item.moq - item.quantity}</strong> more
+                        (have {item.quantity}, need {item.moq})
                       </p>
                     </div>
 
@@ -255,7 +295,8 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
 
           {/* Help Text */}
           <p className="text-xs text-red-600 text-center pt-2">
-            Increase quantities to meet MOQ or remove items to proceed with checkout
+            Increase quantities to meet MOQ or remove items to proceed with
+            checkout
           </p>
         </div>
       </div>
@@ -263,9 +304,9 @@ function MoqWarningBanner({ validation, items, onFixAll, onRemoveItem }: MoqWarn
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // Cart Item Row Component
-// ============================================================================ 
+// ============================================================================
 
 interface CartItemRowProps {
   item: CartItemType
@@ -274,7 +315,12 @@ interface CartItemRowProps {
   isHighlighted?: boolean
 }
 
-function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighted }: CartItemRowProps) {
+function CartItemRow({
+  item,
+  showSupplier = false,
+  onIncreaseToMoq,
+  isHighlighted,
+}: CartItemRowProps) {
   const { removeItem, updateQuantity } = useCart()
   const [inputValue, setInputValue] = useState(item.quantity.toString())
   const [isRemoving, setIsRemoving] = useState(false)
@@ -404,7 +450,10 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighte
             {showSupplier && supplier && (
               <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
                 {supplier.verified && (
-                  <BadgeCheck size={14} className="text-blue-500 flex-shrink-0" />
+                  <BadgeCheck
+                    size={14}
+                    className="text-blue-500 flex-shrink-0"
+                  />
                 )}
                 <span className="truncate">{supplier.name}</span>
               </div>
@@ -440,10 +489,12 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighte
             </span>
           )}
 
-          <span className={`
+          <span
+            className={`
             inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium
             ${isBelowMoq ? 'text-amber-800 bg-amber-200' : 'text-gray-600 bg-gray-100'}
-          `}>
+          `}
+          >
             <Package size={12} />
             MOQ: {item.moq}
           </span>
@@ -460,13 +511,18 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighte
         {isBelowMoq && (
           <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
             <div className="flex items-start gap-2 mb-2">
-              <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle
+                size={18}
+                className="text-amber-600 flex-shrink-0 mt-0.5"
+              />
               <div className="flex-1">
                 <p className="text-sm font-medium text-amber-800">
                   Below Minimum Order Quantity
                 </p>
                 <p className="text-xs text-amber-700 mt-0.5">
-                  You need <strong>{moqShortfall}</strong> more {moqShortfall === 1 ? 'unit' : 'units'} to meet the minimum of <strong>{item.moq}</strong>
+                  You need <strong>{moqShortfall}</strong> more{' '}
+                  {moqShortfall === 1 ? 'unit' : 'units'} to meet the minimum of{' '}
+                  <strong>{item.moq}</strong>
                 </p>
               </div>
             </div>
@@ -480,9 +536,11 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighte
                   className={`
                     flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2
                     text-sm font-medium rounded-lg transition-all
-                    ${isLocked
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow'}
+                    ${
+                      isLocked
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow'
+                    }
                   `}
                 >
                   <ArrowUp size={14} />
@@ -508,11 +566,13 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighte
 
       {/* Quantity Controls */}
       <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-0">
-        <div className={`
+        <div
+          className={`
           flex items-center border-2 rounded-lg overflow-hidden transition-colors
           ${isLocked ? 'bg-gray-100 border-gray-200' : 'bg-white'}
           ${isBelowMoq ? 'border-amber-400' : 'border-gray-200'}
-        `}>
+        `}
+        >
           <button
             onClick={handleDecrement}
             className="p-2.5 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
@@ -567,9 +627,9 @@ function CartItemRow({ item, showSupplier = false, onIncreaseToMoq, isHighlighte
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // Supplier Group Component
-// ============================================================================ 
+// ============================================================================
 
 interface SupplierGroupProps {
   breakdown: SupplierBreakdown
@@ -589,13 +649,17 @@ function SupplierGroup({
   const supplier = getSupplierById(breakdown.supplierId)
 
   // Count MOQ violations
-  const moqViolationCount = breakdown.items.filter((item) => item.quantity < item.moq).length
+  const moqViolationCount = breakdown.items.filter(
+    (item) => item.quantity < item.moq,
+  ).length
 
   return (
-    <div className={`
+    <div
+      className={`
       border rounded-xl bg-white overflow-hidden shadow-sm transition-all
       ${moqViolations > 0 ? 'border-amber-200' : 'border-gray-200'}
-    `}>
+    `}
+    >
       {/* Supplier Header */}
       <button
         onClick={onToggle}
@@ -606,8 +670,13 @@ function SupplierGroup({
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg shadow-sm ${moqViolations > 0 ? 'bg-amber-100' : 'bg-white'}`}>
-            <Store size={20} className={moqViolations > 0 ? 'text-amber-600' : 'text-gray-600'} />
+          <div
+            className={`p-2 rounded-lg shadow-sm ${moqViolations > 0 ? 'bg-amber-100' : 'bg-white'}`}
+          >
+            <Store
+              size={20}
+              className={moqViolations > 0 ? 'text-amber-600' : 'text-gray-600'}
+            />
           </div>
           <div className="text-left">
             <div className="flex items-center gap-2">
@@ -650,10 +719,12 @@ function SupplierGroup({
       </button>
 
       {/* Items */}
-      <div className={`
+      <div
+        className={`
         transition-all duration-300 ease-in-out overflow-hidden
         ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}
-      `}>
+      `}
+      >
         <div className="p-4 space-y-3 border-t bg-gray-50/50">
           {breakdown.items.map((item) => (
             <CartItemRow
@@ -684,9 +755,9 @@ function SupplierGroup({
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // Empty Cart Component
-// ============================================================================ 
+// ============================================================================
 
 function EmptyCart() {
   return (
@@ -698,7 +769,8 @@ function EmptyCart() {
         Your cart is empty
       </h2>
       <p className="text-gray-500 mb-8 max-w-md mx-auto">
-        Looks like you haven\'t added any products yet. Start exploring our catalog to find the best deals for your business.
+        Looks like you haven\'t added any products yet. Start exploring our
+        catalog to find the best deals for your business.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
@@ -719,9 +791,9 @@ function EmptyCart() {
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // Coupon Input Component
-// ============================================================================ 
+// ============================================================================
 
 function CouponSection() {
   const [couponInput, setCouponInput] = useState('')
@@ -800,9 +872,11 @@ function CouponSection() {
               className={`
                 px-5 py-2.5 text-sm font-medium rounded-lg transition-all
                 flex items-center gap-2 min-w-[90px] justify-center
-                ${isValidating || !couponInput.trim()
-                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-900 hover:bg-gray-800 text-white'}
+                ${
+                  isValidating || !couponInput.trim()
+                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-900 hover:bg-gray-800 text-white'
+                }
               `}
             >
               {isValidating ? (
@@ -814,14 +888,22 @@ function CouponSection() {
           </div>
 
           {error && (
-            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2" role="alert">
-              <AlertTriangle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+            <div
+              className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2"
+              role="alert"
+            >
+              <AlertTriangle
+                size={16}
+                className="text-red-500 flex-shrink-0 mt-0.5"
+              />
               <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
 
           <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-500 mb-2 font-medium">Available coupons:</p>
+            <p className="text-xs text-gray-500 mb-2 font-medium">
+              Available coupons:
+            </p>
             <div className="flex flex-wrap gap-2">
               {['WELCOME10', 'FLAT200', 'FREESHIP', 'BULK15'].map((code) => (
                 <button
@@ -838,7 +920,10 @@ function CouponSection() {
       )}
 
       {successMessage && !appliedCoupon && (
-        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2" role="status">
+        <div
+          className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2"
+          role="status"
+        >
           <Check size={16} className="text-green-600" />
           <p className="text-sm text-green-700 font-medium">{successMessage}</p>
         </div>
@@ -859,11 +944,10 @@ function CouponSection() {
                   <Check size={18} className="text-green-600" />
                 </div>
                 <p className="text-sm text-green-700 mt-0.5">
-                  {couponDescription || (
-                    appliedCoupon.discountType === 'percentage'
+                  {couponDescription ||
+                    (appliedCoupon.discountType === 'percentage'
                       ? `${appliedCoupon.value}% off your order`
-                      : `${formatCurrency(appliedCoupon.value)} off your order`
-                  )}
+                      : `${formatCurrency(appliedCoupon.value)} off your order`)}
                 </p>
                 <span className="inline-block mt-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full font-medium">
                   You save {formatCurrency(calculatedDiscount)}
@@ -884,9 +968,9 @@ function CouponSection() {
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // Order Summary Component
-// ============================================================================ 
+// ============================================================================
 
 interface OrderSummaryProps {
   cart: ReturnType<typeof useCart>['cart']
@@ -895,7 +979,12 @@ interface OrderSummaryProps {
   onCheckout: () => void
 }
 
-function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout }: OrderSummaryProps) {
+function OrderSummary({
+  cart,
+  hasValidationErrors,
+  moqViolationCount,
+  onCheckout,
+}: OrderSummaryProps) {
   const originalTotal = cart.subtotal + cart.deliveryFee
   const hasDiscount = cart.discount > 0
 
@@ -917,7 +1006,9 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout
               <Truck size={14} />
               Delivery
               {cart.supplierBreakdown.length > 1 && (
-                <span className="text-xs">({cart.supplierBreakdown.length} suppliers)</span>
+                <span className="text-xs">
+                  ({cart.supplierBreakdown.length} suppliers)
+                </span>
               )}
             </span>
             <span className="font-medium">
@@ -935,7 +1026,9 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout
                 <Percent size={14} />
                 Coupon Discount
               </span>
-              <span className="font-bold">-{formatCurrency(cart.discount)}</span>
+              <span className="font-bold">
+                -{formatCurrency(cart.discount)}
+              </span>
             </div>
           )}
         </div>
@@ -945,7 +1038,9 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout
             <span className="text-base font-bold text-gray-900">Total</span>
             {hasDiscount && (
               <p className="text-xs text-gray-500">
-                <span className="line-through">{formatCurrency(originalTotal)}</span>
+                <span className="line-through">
+                  {formatCurrency(originalTotal)}
+                </span>
               </p>
             )}
           </div>
@@ -965,13 +1060,18 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout
         {hasValidationErrors && moqViolationCount > 0 && (
           <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <div className="flex items-start gap-2">
-              <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle
+                size={18}
+                className="text-amber-600 flex-shrink-0 mt-0.5"
+              />
               <div>
                 <p className="text-sm font-medium text-amber-800">
                   MOQ Requirements Not Met
                 </p>
                 <p className="text-xs text-amber-700 mt-0.5">
-                  {moqViolationCount} {moqViolationCount === 1 ? 'item needs' : 'items need'} quantity adjustment before checkout
+                  {moqViolationCount}{' '}
+                  {moqViolationCount === 1 ? 'item needs' : 'items need'}{' '}
+                  quantity adjustment before checkout
                 </p>
               </div>
             </div>
@@ -986,9 +1086,11 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout
             w-full mt-6 py-3.5 rounded-lg font-bold text-white
             flex items-center justify-center gap-2
             transition-all duration-200
-            ${hasValidationErrors
-              ? 'bg-gray-300 cursor-not-allowed'
-              : 'bg-orange-500 hover:bg-orange-600 shadow-md hover:shadow-lg active:scale-[0.98]'}
+            ${
+              hasValidationErrors
+                ? 'bg-gray-300 cursor-not-allowed'
+                : 'bg-orange-500 hover:bg-orange-600 shadow-md hover:shadow-lg active:scale-[0.98]'
+            }
           `}
         >
           {hasValidationErrors ? (
@@ -1039,15 +1141,33 @@ function OrderSummary({ cart, hasValidationErrors, moqViolationCount, onCheckout
   )
 }
 
-// ============================================================================ 
+// ============================================================================
 // Main Cart Page Component
-// ============================================================================ 
+// ============================================================================
 
 function CartPage() {
-  const { cart, cartCount, clearCart, validateCartItems, updateQuantity, removeItem } = useCart()
-  const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(new Set())
-  const [serverValidationChanges, setServerValidationChanges] = useState<Array<{ itemId: string; type: 'price' | 'stock' | 'removed'; message: string }>>([])
-  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
+  const {
+    cart,
+    cartCount,
+    clearCart,
+    validateCartItems,
+    updateQuantity,
+    removeItem,
+  } = useCart()
+  const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(
+    new Set(),
+  )
+  const [serverValidationChanges, setServerValidationChanges] = useState<
+    Array<{
+      itemId: string
+      type: 'price' | 'stock' | 'removed'
+      message: string
+    }>
+  >([])
+  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
+    message: '',
+    isVisible: false,
+  })
   const [reorderHighlight, setReorderHighlight] = useState<{
     orderLabel: string
     productIds: Array<number>
@@ -1060,18 +1180,18 @@ function CartPage() {
   // but cart context updates are typically "committed" changes.
   useEffect(() => {
     let isMounted = true
-    
+
     async function validate() {
       if (cart.items.length === 0) return
 
       try {
         const result = await validateCartServer({
-          data: cart.items.map(i => ({
+          data: cart.items.map((i) => ({
             productId: i.productId,
             quantity: i.quantity,
             unitPrice: i.unitPrice,
-            id: i.id
-          }))
+            id: i.id,
+          })),
         })
 
         if (isMounted && !result.valid) {
@@ -1093,7 +1213,9 @@ function CartPage() {
   }, [cart.items]) // Re-validate when cart items change
 
   useEffect(() => {
-    const allSupplierIds = new Set(cart.supplierBreakdown.map((s) => s.supplierId))
+    const allSupplierIds = new Set(
+      cart.supplierBreakdown.map((s) => s.supplierId),
+    )
     setExpandedSuppliers(allSupplierIds)
   }, [cart.supplierBreakdown.length])
 
@@ -1115,7 +1237,11 @@ function CartPage() {
   )
 
   const validation = validateCartItems()
-  const hasValidationErrors = !validation.isValid || serverValidationChanges.some(c => c.type === 'stock' || c.type === 'removed')
+  const hasValidationErrors =
+    !validation.isValid ||
+    serverValidationChanges.some(
+      (c) => c.type === 'stock' || c.type === 'removed',
+    )
 
   // Count MOQ violations
   const moqViolationCount = useMemo(() => {
@@ -1137,7 +1263,11 @@ function CartPage() {
   // Fix all MOQ issues at once
   const handleFixAllMoq = () => {
     cart.items.forEach((item) => {
-      if (item.quantity < item.moq && item.moq <= item.stock && !item.isPriceLocked) {
+      if (
+        item.quantity < item.moq &&
+        item.moq <= item.stock &&
+        !item.isPriceLocked
+      ) {
         updateQuantity(item.id, item.moq)
       }
     })
@@ -1155,10 +1285,10 @@ function CartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Toast 
-        message={toast.message} 
-        isVisible={toast.isVisible} 
-        onClose={() => setToast(prev => ({...prev, isVisible: false}))} 
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
 
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
@@ -1176,7 +1306,8 @@ function CartPage() {
                 {cartCount} {cartCount === 1 ? 'item' : 'items'}
                 {moqViolationCount > 0 && (
                   <span className="text-amber-600 ml-2">
-                    · {moqViolationCount} MOQ {moqViolationCount === 1 ? 'issue' : 'issues'}
+                    · {moqViolationCount} MOQ{' '}
+                    {moqViolationCount === 1 ? 'issue' : 'issues'}
                   </span>
                 )}
               </p>
@@ -1201,10 +1332,13 @@ function CartPage() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-green-900">
-                {reorderHighlight.addedCount} item{reorderHighlight.addedCount === 1 ? '' : 's'} added from Order #{reorderHighlight.orderLabel}
+                {reorderHighlight.addedCount} item
+                {reorderHighlight.addedCount === 1 ? '' : 's'} added from Order
+                #{reorderHighlight.orderLabel}
               </p>
               <p className="text-xs text-green-700 mt-1">
-                These items are highlighted below so you can review them quickly.
+                These items are highlighted below so you can review them
+                quickly.
               </p>
             </div>
           </div>
@@ -1216,10 +1350,9 @@ function CartPage() {
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Cart Items */}
             <div className="flex-1 space-y-4">
-              
-              <ServerValidationBanner 
-                changes={serverValidationChanges} 
-                onDismiss={() => setServerValidationChanges([])} 
+              <ServerValidationBanner
+                changes={serverValidationChanges}
+                onDismiss={() => setServerValidationChanges([])}
               />
 
               {/* MOQ Warning Banner */}
@@ -1235,14 +1368,18 @@ function CartPage() {
               {/* Multi-Supplier Notice */}
               {!isSingleSupplier && moqViolationCount === 0 && (
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
-                  <Store size={20} className="text-blue-600 flex-shrink-0 mt-0.5" />
+                  <Store
+                    size={20}
+                    className="text-blue-600 flex-shrink-0 mt-0.5"
+                  />
                   <div>
                     <p className="font-medium text-blue-900">
                       Multi-Supplier Order
                     </p>
                     <p className="text-sm text-blue-700 mt-0.5">
-                      Your cart contains items from {cart.supplierBreakdown.length} different suppliers.
-                      Each supplier will ship separately.
+                      Your cart contains items from{' '}
+                      {cart.supplierBreakdown.length} different suppliers. Each
+                      supplier will ship separately.
                     </p>
                   </div>
                 </div>
@@ -1294,10 +1431,12 @@ function CartPage() {
 
       {/* Mobile Sticky Checkout Bar */}
       {cart.items.length > 0 && (
-        <div className={`
+        <div
+          className={`
           lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-40
           ${moqViolationCount > 0 ? 'pb-safe' : ''}
-        `}>
+        `}
+        >
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm text-gray-500">Total</p>
@@ -1317,9 +1456,11 @@ function CartPage() {
                 flex-1 max-w-[200px] py-3 rounded-lg font-bold text-white
                 flex items-center justify-center gap-2
                 transition-all duration-200
-                ${hasValidationErrors
-                  ? 'bg-gray-300 cursor-not-allowed'
-                  : 'bg-orange-500 hover:bg-orange-600 active:scale-[0.98]'}
+                ${
+                  hasValidationErrors
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-orange-500 hover:bg-orange-600 active:scale-[0.98]'
+                }
               `}
             >
               {hasValidationErrors ? (
@@ -1339,7 +1480,8 @@ function CartPage() {
             <div className="flex items-center justify-between mt-2 pt-2 border-t">
               <p className="text-xs text-amber-600 flex items-center gap-1">
                 <AlertTriangle size={12} />
-                {moqViolationCount} MOQ {moqViolationCount === 1 ? 'issue' : 'issues'}
+                {moqViolationCount} MOQ{' '}
+                {moqViolationCount === 1 ? 'issue' : 'issues'}
               </p>
               <button
                 onClick={handleFixAllMoq}

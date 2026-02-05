@@ -12,7 +12,11 @@ import {
 import { relations } from 'drizzle-orm'
 
 export const genderEnum = pgEnum('gender', ['male', 'female'])
-export const adminRoleEnum = pgEnum('admin_role', ['super_admin', 'admin', 'moderator'])
+export const adminRoleEnum = pgEnum('admin_role', [
+  'super_admin',
+  'admin',
+  'moderator',
+])
 export const kycStatusEnum = pgEnum('kyc_status', [
   'pending',
   'submitted',
@@ -219,9 +223,11 @@ export const orders = pgTable('orders', {
   paymentStatus: text('payment_status').default('pending').notNull(),
   transactionId: text('transaction_id'),
   paymentMethod: text('payment_method'),
-  
+
   // Escrow & Deposit Fields
-  depositAmount: decimal('deposit_amount', { precision: 12, scale: 2 }).default('0'),
+  depositAmount: decimal('deposit_amount', { precision: 12, scale: 2 }).default(
+    '0',
+  ),
   balanceDue: decimal('balance_due', { precision: 12, scale: 2 }).default('0'),
   depositPaidAt: timestamp('deposit_paid_at'),
   fullPaymentPaidAt: timestamp('full_payment_paid_at'),
@@ -239,29 +245,23 @@ export const orders = pgTable('orders', {
 })
 
 export const orderItems = pgTable('order_items', {
-
   id: serial().primaryKey(),
 
   productId: integer('product_id')
-
     .notNull()
 
     .references(() => products.id),
 
-  supplierId: integer('supplier_id')
-
-    .references(() => suppliers.id),
+  supplierId: integer('supplier_id').references(() => suppliers.id),
 
   quantity: integer('quantity').notNull(),
 
   price: decimal('price', { precision: 12, scale: 2 }).notNull(),
 
   orderId: integer('order_id')
-
     .notNull()
 
     .references(() => orders.id),
-
 })
 
 export const stockAlerts = pgTable('stock_alerts', {
@@ -292,42 +292,28 @@ export const stockAlertsRelations = relations(stockAlerts, ({ one }) => ({
   }),
 }))
 
-
-
 export const ordersRelations = relations(orders, ({ one, many }) => ({
-
   user: one(user, {
-
     fields: [orders.userId],
 
     references: [user.id],
-
   }),
 
   items: many(orderItems),
-
 }))
 
-
-
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
-
   order: one(orders, {
-
     fields: [orderItems.orderId],
 
     references: [orders.id],
-
   }),
 
   product: one(products, {
-
     fields: [orderItems.productId],
 
     references: [products.id],
-
   }),
-
 }))
 
 export const session = pgTable('session', {

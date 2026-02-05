@@ -9,6 +9,7 @@ The RFQ feature allows Buyers to request custom quotes for products (especially 
 ## Workflows
 
 ### 1. Buyer: Submit RFQ
+
 - **EntryPoint**: "Request Quote" button on Product Detail Page (PDP) or Quick View.
 - **Pre-requisites**: User must be logged in (Auth check implemented).
 - **Form**:
@@ -21,6 +22,7 @@ The RFQ feature allows Buyers to request custom quotes for products (especially 
 - **Outcome**: RFQ created with status `pending`.
 
 ### 2. Supplier: Manage RFQs
+
 - **Route**: `/supplier/rfqs`
 - **Inbox**: View RFQs targeting their products.
 - **Filtering**: New, Quoted, Accepted, Expired.
@@ -29,6 +31,7 @@ The RFQ feature allows Buyers to request custom quotes for products (especially 
 - **Outcome**: Quote created with status `pending`.
 
 ### 3. Buyer: Manage Quotes
+
 - **Route**: `/buyer/rfqs` (Inbox) -> `/buyer/rfqs/$rfqId` (Detail).
 - **Inbox**: List of submitted RFQs with status badges and expiry countdowns.
 - **Detail View**:
@@ -41,6 +44,7 @@ The RFQ feature allows Buyers to request custom quotes for products (especially 
   - **Counter**: Submit a counter-offer (updates status to `countered`).
 
 ### 4. Conversion to Order
+
 - **Trigger**: "Proceed to Checkout" button on an `accepted` quote.
 - **Mechanism**: Adds item to Cart with:
   - `customPrice` (Locked from quote)
@@ -50,10 +54,12 @@ The RFQ feature allows Buyers to request custom quotes for products (especially 
 ## Error Handling & Edge Cases
 
 ### Network & API
+
 - **Retries**: UI shows loading states during API calls. In real integration, `react-query`'s auto-retry would be used.
 - **Session**: Auth check before actions. Redirects to login if session expired.
 
 ### Logic Edge Cases
+
 - **Expiry**:
   - RFQs and Quotes have expiry dates.
   - Actions (Accept/Reject/Quote) are disabled if `expired`.
@@ -65,17 +71,20 @@ The RFQ feature allows Buyers to request custom quotes for products (especially 
   - Price/Quantity validation on client-side.
 
 ## Accessibility (a11y)
+
 - **Modals**: Focus management and keyboard navigation support.
 - **ARIA**: Labels on icon-only buttons.
 - **Feedback**: Toast notifications for all significant actions (success/error).
 
 ## Mobile Optimization
-- **Responsive Layouts**: 
+
+- **Responsive Layouts**:
   - Grids collapse to single columns on mobile.
   - Tables convert to Card views or have scrollable containers.
 - **Touch Targets**: Buttons sized for touch (min 44px height usually).
 
 ## Future Improvements
+
 - Real-time WebSocket integration for instant notifications.
 - Chat system for negotiation notes.
 - Multi-product RFQs.

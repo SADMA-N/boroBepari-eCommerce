@@ -89,7 +89,9 @@ function WishlistItem({ product }: { product: MockProduct }) {
             <span className="text-xl font-bold text-orange-600 dark:text-orange-500">
               {formatBDT(product.price)}
             </span>
-            <span className="text-sm text-gray-500 dark:text-gray-400">/ {product.unit}</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              / {product.unit}
+            </span>
             {product.originalPrice && (
               <span className="text-sm text-gray-400 dark:text-gray-500 line-through">
                 {formatBDT(product.originalPrice)}
@@ -167,7 +169,9 @@ function WishlistPage() {
 
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 transition-colors">My Wishlist</h1>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 transition-colors">
+              My Wishlist
+            </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1 transition-colors">
               {wishlistItems.length} items saved
             </p>
@@ -187,7 +191,10 @@ function WishlistPage() {
         {wishlistItems.length === 0 ? (
           <div className="text-center py-20 bg-gray-50 dark:bg-slate-900/50 rounded-lg border border-gray-100 dark:border-slate-800 transition-all">
             <div className="bg-white dark:bg-slate-800 p-4 rounded-full inline-block shadow-sm mb-4 transition-colors">
-              <HeartIcon size={48} className="text-gray-300 dark:text-gray-600" />
+              <HeartIcon
+                size={48}
+                className="text-gray-300 dark:text-gray-600"
+              />
             </div>
             <h2 className="text-xl font-medium text-gray-800 dark:text-gray-200 mb-2 transition-colors">
               Your wishlist is empty

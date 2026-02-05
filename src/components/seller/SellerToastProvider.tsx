@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 
 type Toast = {
   id: string
@@ -16,16 +22,23 @@ const ToastContext = createContext<ToastContextValue | undefined>(undefined)
 /**
  * Provides a toast queue for seller pages.
  */
-export function SellerToastProvider({ children }: { children: React.ReactNode }) {
+export function SellerToastProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [toasts, setToasts] = useState<Array<Toast>>([])
 
-  const pushToast = useCallback((message: string, tone: Toast['tone'] = 'info') => {
-    const id = crypto.randomUUID()
-    setToasts((prev) => [...prev, { id, message, tone }])
-    window.setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id))
-    }, 3000)
-  }, [])
+  const pushToast = useCallback(
+    (message: string, tone: Toast['tone'] = 'info') => {
+      const id = crypto.randomUUID()
+      setToasts((prev) => [...prev, { id, message, tone }])
+      window.setTimeout(() => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id))
+      }, 3000)
+    },
+    [],
+  )
 
   const value = useMemo(() => ({ pushToast }), [pushToast])
 
@@ -54,6 +67,7 @@ export function SellerToastProvider({ children }: { children: React.ReactNode })
 
 export function useSellerToast() {
   const context = useContext(ToastContext)
-  if (!context) throw new Error('useSellerToast must be used within SellerToastProvider')
+  if (!context)
+    throw new Error('useSellerToast must be used within SellerToastProvider')
   return context
 }

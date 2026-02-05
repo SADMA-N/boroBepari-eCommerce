@@ -44,7 +44,13 @@ type KycSubmission = {
   priority: Priority
   documents: Array<{ id: string; label: string; src: string }>
   previousRejectionReason?: string
-  auditTrail: Array<{ id: string; actor: string; action: string; time: string; notes?: string }>
+  auditTrail: Array<{
+    id: string
+    actor: string
+    action: string
+    time: string
+    notes?: string
+  }>
 }
 
 const MOCK_KYC: Array<KycSubmission> = [
@@ -62,13 +68,22 @@ const MOCK_KYC: Array<KycSubmission> = [
     status: 'pending',
     priority: 'normal',
     documents: [
-      { id: 'doc-1', label: 'Trade License', src: '/img/kyc/trade-license.png' },
+      {
+        id: 'doc-1',
+        label: 'Trade License',
+        src: '/img/kyc/trade-license.png',
+      },
       { id: 'doc-2', label: 'NID Front', src: '/img/kyc/nid-front.png' },
       { id: 'doc-3', label: 'NID Back', src: '/img/kyc/nid-back.png' },
       { id: 'doc-4', label: 'Bank Proof', src: '/img/kyc/bank-proof.png' },
     ],
     auditTrail: [
-      { id: 'aud-1', actor: 'System', action: 'Submitted', time: '2026-02-02 09:12' },
+      {
+        id: 'aud-1',
+        actor: 'System',
+        action: 'Submitted',
+        time: '2026-02-02 09:12',
+      },
     ],
   },
   {
@@ -86,13 +101,27 @@ const MOCK_KYC: Array<KycSubmission> = [
     priority: 'urgent',
     assignedTo: 'Admin Rifat',
     documents: [
-      { id: 'doc-1', label: 'Trade License', src: '/img/kyc/trade-license.png' },
+      {
+        id: 'doc-1',
+        label: 'Trade License',
+        src: '/img/kyc/trade-license.png',
+      },
       { id: 'doc-2', label: 'NID Front', src: '/img/kyc/nid-front.png' },
       { id: 'doc-3', label: 'NID Back', src: '/img/kyc/nid-back.png' },
     ],
     auditTrail: [
-      { id: 'aud-2', actor: 'System', action: 'Submitted', time: '2026-01-31 08:32' },
-      { id: 'aud-3', actor: 'Admin Rifat', action: 'Assigned', time: '2026-02-01 10:05' },
+      {
+        id: 'aud-2',
+        actor: 'System',
+        action: 'Submitted',
+        time: '2026-01-31 08:32',
+      },
+      {
+        id: 'aud-3',
+        actor: 'Admin Rifat',
+        action: 'Assigned',
+        time: '2026-02-01 10:05',
+      },
     ],
   },
   {
@@ -109,15 +138,29 @@ const MOCK_KYC: Array<KycSubmission> = [
     status: 'resubmitted',
     priority: 'urgent',
     documents: [
-      { id: 'doc-1', label: 'Trade License', src: '/img/kyc/trade-license.png' },
+      {
+        id: 'doc-1',
+        label: 'Trade License',
+        src: '/img/kyc/trade-license.png',
+      },
       { id: 'doc-2', label: 'NID Front', src: '/img/kyc/nid-front.png' },
       { id: 'doc-3', label: 'NID Back', src: '/img/kyc/nid-back.png' },
       { id: 'doc-4', label: 'Bank Proof', src: '/img/kyc/bank-proof.png' },
     ],
     previousRejectionReason: 'Document not clear/readable',
     auditTrail: [
-      { id: 'aud-4', actor: 'Admin Sumi', action: 'Rejected', time: '2026-01-20 13:45' },
-      { id: 'aud-5', actor: 'Supplier', action: 'Resubmitted documents', time: '2026-01-28 16:10' },
+      {
+        id: 'aud-4',
+        actor: 'Admin Sumi',
+        action: 'Rejected',
+        time: '2026-01-20 13:45',
+      },
+      {
+        id: 'aud-5',
+        actor: 'Supplier',
+        action: 'Resubmitted documents',
+        time: '2026-01-28 16:10',
+      },
     ],
   },
   {
@@ -134,11 +177,20 @@ const MOCK_KYC: Array<KycSubmission> = [
     status: 'approved',
     priority: 'normal',
     documents: [
-      { id: 'doc-1', label: 'Trade License', src: '/img/kyc/trade-license.png' },
+      {
+        id: 'doc-1',
+        label: 'Trade License',
+        src: '/img/kyc/trade-license.png',
+      },
       { id: 'doc-2', label: 'NID Front', src: '/img/kyc/nid-front.png' },
     ],
     auditTrail: [
-      { id: 'aud-6', actor: 'Admin Nayeem', action: 'Approved', time: '2026-01-16 09:22' },
+      {
+        id: 'aud-6',
+        actor: 'Admin Nayeem',
+        action: 'Approved',
+        time: '2026-01-16 09:22',
+      },
     ],
   },
   {
@@ -155,11 +207,21 @@ const MOCK_KYC: Array<KycSubmission> = [
     status: 'rejected',
     priority: 'normal',
     documents: [
-      { id: 'doc-1', label: 'Trade License', src: '/img/kyc/trade-license.png' },
+      {
+        id: 'doc-1',
+        label: 'Trade License',
+        src: '/img/kyc/trade-license.png',
+      },
       { id: 'doc-2', label: 'NID Front', src: '/img/kyc/nid-front.png' },
     ],
     auditTrail: [
-      { id: 'aud-7', actor: 'Admin Mitu', action: 'Rejected', time: '2026-01-12 15:05', notes: 'Document expired' },
+      {
+        id: 'aud-7',
+        actor: 'Admin Mitu',
+        action: 'Rejected',
+        time: '2026-01-12 15:05',
+        notes: 'Document expired',
+      },
     ],
   },
 ]
@@ -221,7 +283,9 @@ export function AdminKYCPage() {
     if (!reviewItem) return
     const handler = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') {
-        setDocIndex((prev) => Math.min(prev + 1, reviewItem.documents.length - 1))
+        setDocIndex((prev) =>
+          Math.min(prev + 1, reviewItem.documents.length - 1),
+        )
       }
       if (event.key === 'ArrowLeft') {
         setDocIndex((prev) => Math.max(prev - 1, 0))
@@ -245,11 +309,18 @@ export function AdminKYCPage() {
         !query ||
         item.businessName.toLowerCase().includes(query) ||
         item.ownerName.toLowerCase().includes(query)
-      const matchesPriority = priorityFilter === 'all' || item.priority === priorityFilter
+      const matchesPriority =
+        priorityFilter === 'all' || item.priority === priorityFilter
       const submittedDate = new Date(item.submittedAt)
       const withinFrom = dateFrom ? submittedDate >= new Date(dateFrom) : true
       const withinTo = dateTo ? submittedDate <= new Date(dateTo) : true
-      return matchesStatus && matchesSearch && matchesPriority && withinFrom && withinTo
+      return (
+        matchesStatus &&
+        matchesSearch &&
+        matchesPriority &&
+        withinFrom &&
+        withinTo
+      )
     })
   }, [activeTab, searchQuery, priorityFilter, dateFrom, dateTo])
 
@@ -257,11 +328,24 @@ export function AdminKYCPage() {
     .filter((item) => item.status === 'pending')
     .sort((a, b) => a.waitHours - b.waitHours)
 
-  const filteredCount = [searchQuery, priorityFilter !== 'all', dateFrom, dateTo].filter(Boolean).length
-  const pendingCount = MOCK_KYC.filter((item) => item.status === 'pending').length
-  const approvedCount = MOCK_KYC.filter((item) => item.status === 'approved').length
-  const rejectedCount = MOCK_KYC.filter((item) => item.status === 'rejected').length
-  const resubmittedCount = MOCK_KYC.filter((item) => item.status === 'resubmitted').length
+  const filteredCount = [
+    searchQuery,
+    priorityFilter !== 'all',
+    dateFrom,
+    dateTo,
+  ].filter(Boolean).length
+  const pendingCount = MOCK_KYC.filter(
+    (item) => item.status === 'pending',
+  ).length
+  const approvedCount = MOCK_KYC.filter(
+    (item) => item.status === 'approved',
+  ).length
+  const rejectedCount = MOCK_KYC.filter(
+    (item) => item.status === 'rejected',
+  ).length
+  const resubmittedCount = MOCK_KYC.filter(
+    (item) => item.status === 'resubmitted',
+  ).length
 
   const todayReviewed = 18
   const averageReview = 18
@@ -271,7 +355,8 @@ export function AdminKYCPage() {
 
   const toggleSelectAll = () => {
     const queueIds = pendingQueue.map((item) => item.id)
-    const allSelected = queueIds.length > 0 && queueIds.every((id) => selectedIds.includes(id))
+    const allSelected =
+      queueIds.length > 0 && queueIds.every((id) => selectedIds.includes(id))
     if (allSelected) {
       setSelectedIds((prev) => prev.filter((id) => !queueIds.includes(id)))
     } else {
@@ -280,30 +365,42 @@ export function AdminKYCPage() {
   }
 
   const toggleSelectOne = (id: string) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
   }
 
   const activeDocs = reviewItem ? reviewItem.documents : []
   const currentDoc =
-    activeDocs.length > 0 ? activeDocs[Math.min(docIndex, activeDocs.length - 1)] : null
+    activeDocs.length > 0
+      ? activeDocs[Math.min(docIndex, activeDocs.length - 1)]
+      : null
 
   return (
     <AdminProtectedRoute requiredPermissions={['kyc.review']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">KYC Review Queue</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              KYC Review Queue
+            </h1>
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600">
-              <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
-                pendingCount > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
-              }`}>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
+                  pendingCount > 0
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
                 {pendingCount} pending reviews
               </span>
               <span className="inline-flex items-center gap-2">
                 <Clock size={14} />
                 Avg review time: {averageReview} hours (target &lt;24h)
               </span>
-              <span className="text-xs text-slate-400">{filteredCount} filters applied</span>
+              <span className="text-xs text-slate-400">
+                {filteredCount} filters applied
+              </span>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -342,7 +439,9 @@ export function AdminKYCPage() {
             </div>
             <select
               value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value as Priority | 'all')}
+              onChange={(e) =>
+                setPriorityFilter(e.target.value as Priority | 'all')
+              }
               className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
             >
               <option value="all">Priority: All</option>
@@ -389,7 +488,9 @@ export function AdminKYCPage() {
                 }`}
               >
                 <span>{tab.label}</span>
-                <span className={`rounded-full px-2 py-0.5 text-xs ${tab.color} bg-slate-100`}>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs ${tab.color} bg-slate-100`}
+                >
                   {count}
                 </span>
               </button>
@@ -400,23 +501,33 @@ export function AdminKYCPage() {
         <div className="grid gap-4 lg:grid-cols-5">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">KYCs reviewed today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{todayReviewed}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {todayReviewed}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Average review time</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{averageReview}h</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {averageReview}h
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Approval rate</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{approvalRate}%</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {approvalRate}%
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Oldest pending</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{oldestPending}h</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {oldestPending}h
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">My reviews today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{myReviews}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {myReviews}
+            </p>
           </div>
         </div>
 
@@ -429,7 +540,12 @@ export function AdminKYCPage() {
                     <th className="px-4 py-3 text-left">
                       <input
                         type="checkbox"
-                        checked={pendingQueue.length > 0 && pendingQueue.every((item) => selectedIds.includes(item.id))}
+                        checked={
+                          pendingQueue.length > 0 &&
+                          pendingQueue.every((item) =>
+                            selectedIds.includes(item.id),
+                          )
+                        }
                         onChange={toggleSelectAll}
                       />
                     </th>
@@ -446,9 +562,16 @@ export function AdminKYCPage() {
                 <tbody className="divide-y divide-slate-200">
                   {pendingQueue.map((item) => {
                     const rowTone =
-                      item.waitHours > 48 ? 'bg-red-50' : item.waitHours > 24 ? 'bg-orange-50' : ''
+                      item.waitHours > 48
+                        ? 'bg-red-50'
+                        : item.waitHours > 24
+                          ? 'bg-orange-50'
+                          : ''
                     return (
-                      <tr key={item.id} className={`${rowTone} hover:bg-slate-50`}>
+                      <tr
+                        key={item.id}
+                        className={`${rowTone} hover:bg-slate-50`}
+                      >
                         <td className="px-4 py-3">
                           <input
                             type="checkbox"
@@ -456,11 +579,21 @@ export function AdminKYCPage() {
                             onChange={() => toggleSelectOne(item.id)}
                           />
                         </td>
-                        <td className="px-4 py-3 font-medium text-slate-900">{item.id}</td>
-                        <td className="px-4 py-3 text-slate-700">{item.businessName}</td>
-                        <td className="px-4 py-3 text-slate-600">{item.ownerName}</td>
-                        <td className="px-4 py-3 text-slate-600">{item.submittedAt}</td>
-                        <td className="px-4 py-3 text-slate-600">{item.waitHours} hours ago</td>
+                        <td className="px-4 py-3 font-medium text-slate-900">
+                          {item.id}
+                        </td>
+                        <td className="px-4 py-3 text-slate-700">
+                          {item.businessName}
+                        </td>
+                        <td className="px-4 py-3 text-slate-600">
+                          {item.ownerName}
+                        </td>
+                        <td className="px-4 py-3 text-slate-600">
+                          {item.submittedAt}
+                        </td>
+                        <td className="px-4 py-3 text-slate-600">
+                          {item.waitHours} hours ago
+                        </td>
                         <td className="px-4 py-3">
                           {item.waitHours > 24 ? (
                             <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs text-red-700">
@@ -468,11 +601,15 @@ export function AdminKYCPage() {
                               Urgent
                             </span>
                           ) : (
-                            <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">Normal</span>
+                            <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
+                              Normal
+                            </span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
-                          {item.assignedTo ? `Assigned to ${item.assignedTo}` : 'Unassigned'}
+                          {item.assignedTo
+                            ? `Assigned to ${item.assignedTo}`
+                            : 'Unassigned'}
                         </td>
                         <td className="px-4 py-3 text-right">
                           <button
@@ -493,7 +630,10 @@ export function AdminKYCPage() {
                   })}
                   {pendingQueue.length === 0 && (
                     <tr>
-                      <td colSpan={9} className="px-4 py-10 text-center text-slate-500">
+                      <td
+                        colSpan={9}
+                        className="px-4 py-10 text-center text-slate-500"
+                      >
                         No pending KYC submissions.
                       </td>
                     </tr>
@@ -510,8 +650,12 @@ export function AdminKYCPage() {
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-6 py-4 text-white">
               <div>
-                <h2 className="text-lg font-semibold">Review KYC - {reviewItem.businessName}</h2>
-                <p className="text-xs text-slate-400">Submission {reviewItem.id}</p>
+                <h2 className="text-lg font-semibold">
+                  Review KYC - {reviewItem.businessName}
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Submission {reviewItem.id}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -536,7 +680,9 @@ export function AdminKYCPage() {
                       key={doc.id}
                       onClick={() => setDocIndex(index)}
                       className={`rounded-lg border px-3 py-1 text-xs ${
-                        docIndex === index ? 'border-orange-500 text-orange-300' : 'border-slate-700 text-slate-300'
+                        docIndex === index
+                          ? 'border-orange-500 text-orange-300'
+                          : 'border-slate-700 text-slate-300'
                       }`}
                     >
                       {doc.label}
@@ -545,16 +691,22 @@ export function AdminKYCPage() {
                 </div>
                 <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900 p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{currentDoc ? currentDoc.label : 'Document'}</p>
+                    <p className="text-sm font-medium">
+                      {currentDoc ? currentDoc.label : 'Document'}
+                    </p>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => setZoom((prev) => Math.min(prev + 0.1, 2))}
+                        onClick={() =>
+                          setZoom((prev) => Math.min(prev + 0.1, 2))
+                        }
                         className="rounded-lg border border-slate-700 p-2"
                       >
                         <ZoomIn size={14} />
                       </button>
                       <button
-                        onClick={() => setZoom((prev) => Math.max(prev - 0.1, 0.5))}
+                        onClick={() =>
+                          setZoom((prev) => Math.max(prev - 0.1, 0.5))
+                        }
                         className="rounded-lg border border-slate-700 p-2"
                       >
                         <ZoomOut size={14} />
@@ -565,13 +717,17 @@ export function AdminKYCPage() {
                       >
                         <RotateCw size={14} />
                       </button>
-                      <button className="rounded-lg border border-slate-700 px-3 py-1 text-xs">Download</button>
+                      <button className="rounded-lg border border-slate-700 px-3 py-1 text-xs">
+                        Download
+                      </button>
                     </div>
                   </div>
                   <div className="mt-4 flex h-96 items-center justify-center rounded-lg bg-slate-800">
                     <div
                       className="flex items-center justify-center text-slate-400"
-                      style={{ transform: `scale(${zoom}) rotate(${rotation}deg)` }}
+                      style={{
+                        transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                      }}
                     >
                       <Image size={48} />
                     </div>
@@ -581,13 +737,19 @@ export function AdminKYCPage() {
                   <span>Keyboard: ← → to navigate</span>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => setDocIndex((prev) => Math.max(prev - 1, 0))}
+                      onClick={() =>
+                        setDocIndex((prev) => Math.max(prev - 1, 0))
+                      }
                       className="rounded-lg border border-slate-700 p-2"
                     >
                       <ArrowLeft size={14} />
                     </button>
                     <button
-                      onClick={() => setDocIndex((prev) => Math.min(prev + 1, activeDocs.length - 1))}
+                      onClick={() =>
+                        setDocIndex((prev) =>
+                          Math.min(prev + 1, activeDocs.length - 1),
+                        )
+                      }
                       className="rounded-lg border border-slate-700 p-2"
                     >
                       <ArrowRight size={14} />
@@ -596,7 +758,8 @@ export function AdminKYCPage() {
                 </div>
                 {reviewItem.status === 'resubmitted' && (
                   <div className="mt-4 rounded-lg border border-orange-500/40 bg-orange-500/10 px-4 py-3 text-sm">
-                    Previous rejection reason: {reviewItem.previousRejectionReason}
+                    Previous rejection reason:{' '}
+                    {reviewItem.previousRejectionReason}
                   </div>
                 )}
                 {reviewItem.status === 'resubmitted' && (
@@ -608,19 +771,40 @@ export function AdminKYCPage() {
               <div className="w-full lg:w-2/5 bg-white p-6 overflow-y-auto">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Supplier Information</h3>
+                    <h3 className="text-sm font-semibold text-slate-900">
+                      Supplier Information
+                    </h3>
                     <div className="mt-3 grid gap-2 text-sm text-slate-600">
-                      <p><strong>Business:</strong> {reviewItem.businessName}</p>
-                      <p><strong>Owner:</strong> {reviewItem.ownerName}</p>
-                      <p><strong>Email:</strong> {reviewItem.email}</p>
-                      <p><strong>Phone:</strong> {reviewItem.phone}</p>
-                      <p><strong>Business Type:</strong> {reviewItem.businessType}</p>
-                      <p><strong>Trade License:</strong> {reviewItem.tradeLicenseNumber}</p>
-                      <p><strong>Registration:</strong> {reviewItem.registrationDate}</p>
+                      <p>
+                        <strong>Business:</strong> {reviewItem.businessName}
+                      </p>
+                      <p>
+                        <strong>Owner:</strong> {reviewItem.ownerName}
+                      </p>
+                      <p>
+                        <strong>Email:</strong> {reviewItem.email}
+                      </p>
+                      <p>
+                        <strong>Phone:</strong> {reviewItem.phone}
+                      </p>
+                      <p>
+                        <strong>Business Type:</strong>{' '}
+                        {reviewItem.businessType}
+                      </p>
+                      <p>
+                        <strong>Trade License:</strong>{' '}
+                        {reviewItem.tradeLicenseNumber}
+                      </p>
+                      <p>
+                        <strong>Registration:</strong>{' '}
+                        {reviewItem.registrationDate}
+                      </p>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Checklist</h3>
+                    <h3 className="text-sm font-semibold text-slate-900">
+                      Checklist
+                    </h3>
                     <div className="mt-3 space-y-2 text-sm text-slate-600">
                       {DOC_CHECKLIST.map((item) => (
                         <label key={item} className="flex items-center gap-2">
@@ -629,7 +813,9 @@ export function AdminKYCPage() {
                             checked={checklist.includes(item)}
                             onChange={(e) => {
                               setChecklist((prev) =>
-                                e.target.checked ? [...prev, item] : prev.filter((entry) => entry !== item),
+                                e.target.checked
+                                  ? [...prev, item]
+                                  : prev.filter((entry) => entry !== item),
                               )
                             }}
                           />
@@ -662,7 +848,9 @@ export function AdminKYCPage() {
                     </button>
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-900">Internal Notes</label>
+                    <label className="text-sm font-semibold text-slate-900">
+                      Internal Notes
+                    </label>
                     <textarea
                       value={internalNotes}
                       onChange={(e) => setInternalNotes(e.target.value)}
@@ -672,15 +860,26 @@ export function AdminKYCPage() {
                     />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Audit Trail</h3>
+                    <h3 className="text-sm font-semibold text-slate-900">
+                      Audit Trail
+                    </h3>
                     <div className="mt-3 space-y-2 text-sm text-slate-600">
                       {reviewItem.auditTrail.map((entry) => (
-                        <div key={entry.id} className="rounded-lg border border-slate-200 px-3 py-2">
-                          <p className="font-medium text-slate-900">{entry.action}</p>
+                        <div
+                          key={entry.id}
+                          className="rounded-lg border border-slate-200 px-3 py-2"
+                        >
+                          <p className="font-medium text-slate-900">
+                            {entry.action}
+                          </p>
                           <p className="text-xs text-slate-500">
                             {entry.actor} • {entry.time}
                           </p>
-                          {entry.notes && <p className="text-xs text-slate-500">Notes: {entry.notes}</p>}
+                          {entry.notes && (
+                            <p className="text-xs text-slate-500">
+                              Notes: {entry.notes}
+                            </p>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -702,7 +901,10 @@ export function AdminKYCPage() {
                   Approve KYC for {reviewItem.businessName}?
                 </h2>
               </div>
-              <button onClick={() => setApproveOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setApproveOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -742,7 +944,10 @@ export function AdminKYCPage() {
                   Reject KYC for {reviewItem.businessName}
                 </h2>
               </div>
-              <button onClick={() => setRejectOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setRejectOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -754,7 +959,9 @@ export function AdminKYCPage() {
                     checked={rejectReasons.includes(reason)}
                     onChange={(e) => {
                       setRejectReasons((prev) =>
-                        e.target.checked ? [...prev, reason] : prev.filter((item) => item !== reason),
+                        e.target.checked
+                          ? [...prev, reason]
+                          : prev.filter((item) => item !== reason),
                       )
                     }}
                   />
@@ -805,7 +1012,10 @@ export function AdminKYCPage() {
                   Request More Info
                 </h2>
               </div>
-              <button onClick={() => setRequestInfoOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setRequestInfoOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -842,14 +1052,20 @@ export function AdminKYCPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <User className="text-slate-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Assignment</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Assignment
+                </h2>
               </div>
-              <button onClick={() => setAssignOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setAssignOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 text-sm text-slate-600">
-              This action will assign the review to you and prevent others from editing.
+              This action will assign the review to you and prevent others from
+              editing.
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
@@ -879,7 +1095,10 @@ export function AdminKYCPage() {
                   Bulk Approve Selected KYCs?
                 </h2>
               </div>
-              <button onClick={() => setBulkApproveOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkApproveOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>

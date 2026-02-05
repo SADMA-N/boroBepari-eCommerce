@@ -49,7 +49,10 @@ const FREE_DELIVERY_THRESHOLD = 5000
  *   console.error(result.message);
  * }
  */
-export function validateMoq(item: CartItem): { valid: boolean; message?: string } {
+export function validateMoq(item: CartItem): {
+  valid: boolean
+  message?: string
+} {
   if (item.quantity < item.moq) {
     return {
       valid: false,
@@ -71,7 +74,10 @@ export function validateMoq(item: CartItem): { valid: boolean; message?: string 
  *   showStockWarning(result.message);
  * }
  */
-export function validateStock(item: CartItem): { valid: boolean; message?: string } {
+export function validateStock(item: CartItem): {
+  valid: boolean
+  message?: string
+} {
   if (item.quantity > item.stock) {
     return {
       valid: false,
@@ -138,7 +144,7 @@ export function validateCart(cart: Cart): CartValidation {
     // Check minimum order value
     if (cart.subtotal < cart.appliedCoupon.minOrderValue) {
       cartErrors.push(
-        `Minimum order of ৳${cart.appliedCoupon.minOrderValue.toLocaleString()} required for coupon "${cart.appliedCoupon.code}".`
+        `Minimum order of ৳${cart.appliedCoupon.minOrderValue.toLocaleString()} required for coupon "${cart.appliedCoupon.code}".`,
       )
     }
   }
@@ -174,7 +180,9 @@ export function validateCart(cart: Cart): CartValidation {
  *   console.log(`${b.supplierName}: ৳${b.subtotal} (${b.itemCount} items)`);
  * });
  */
-export function calculateSupplierBreakdown(items: Array<CartItem>): Array<SupplierBreakdown> {
+export function calculateSupplierBreakdown(
+  items: Array<CartItem>,
+): Array<SupplierBreakdown> {
   const breakdown: Partial<Record<number, SupplierBreakdown>> = {}
 
   items.forEach((item) => {
@@ -223,7 +231,7 @@ export function calculateSupplierBreakdown(items: Array<CartItem>): Array<Suppli
 export function validateCoupon(
   coupon: CouponCode,
   subtotal: number,
-  items?: Array<CartItem>
+  items?: Array<CartItem>,
 ): { valid: boolean; error?: string } {
   const now = new Date()
   const expiry = new Date(coupon.expiryDate)
@@ -242,9 +250,13 @@ export function validateCoupon(
   }
 
   // Check product-specific coupon
-  if (coupon.applicableProductIds && coupon.applicableProductIds.length > 0 && items) {
+  if (
+    coupon.applicableProductIds &&
+    coupon.applicableProductIds.length > 0 &&
+    items
+  ) {
     const hasApplicableProduct = items.some((item) =>
-      coupon.applicableProductIds!.includes(item.productId)
+      coupon.applicableProductIds!.includes(item.productId),
     )
     if (!hasApplicableProduct) {
       return {
@@ -255,9 +267,13 @@ export function validateCoupon(
   }
 
   // Check supplier-specific coupon
-  if (coupon.applicableSupplierIds && coupon.applicableSupplierIds.length > 0 && items) {
+  if (
+    coupon.applicableSupplierIds &&
+    coupon.applicableSupplierIds.length > 0 &&
+    items
+  ) {
     const hasApplicableSupplier = items.some((item) =>
-      coupon.applicableSupplierIds!.includes(item.supplierId)
+      coupon.applicableSupplierIds!.includes(item.supplierId),
     )
     if (!hasApplicableSupplier) {
       return {
@@ -285,7 +301,7 @@ export function validateCoupon(
 export function calculateDiscount(
   coupon: CouponCode,
   subtotal: number,
-  items?: Array<CartItem>
+  items?: Array<CartItem>,
 ): number {
   // First validate the coupon
   const validation = validateCoupon(coupon, subtotal, items)
@@ -301,9 +317,14 @@ export function calculateDiscount(
       applicableAmount = items
         .filter((item) => coupon.applicableProductIds!.includes(item.productId))
         .reduce((sum, item) => sum + item.lineTotal, 0)
-    } else if (coupon.applicableSupplierIds && coupon.applicableSupplierIds.length > 0) {
+    } else if (
+      coupon.applicableSupplierIds &&
+      coupon.applicableSupplierIds.length > 0
+    ) {
       applicableAmount = items
-        .filter((item) => coupon.applicableSupplierIds!.includes(item.supplierId))
+        .filter((item) =>
+          coupon.applicableSupplierIds!.includes(item.supplierId),
+        )
         .reduce((sum, item) => sum + item.lineTotal, 0)
     }
   }
@@ -344,7 +365,7 @@ export function calculateDiscount(
  */
 export function calculateCartTotals(
   items: Array<CartItem>,
-  coupon?: CouponCode
+  coupon?: CouponCode,
 ): Omit<Cart, 'items' | 'appliedCoupon'> {
   // Calculate subtotal from all items
   const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0)
@@ -353,7 +374,10 @@ export function calculateCartTotals(
   const supplierBreakdown = calculateSupplierBreakdown(items)
 
   // Calculate total delivery fee from all suppliers
-  const deliveryFee = supplierBreakdown.reduce((sum, s) => sum + s.deliveryFee, 0)
+  const deliveryFee = supplierBreakdown.reduce(
+    (sum, s) => sum + s.deliveryFee,
+    0,
+  )
 
   // Calculate discount if coupon is applied
   const discount = coupon ? calculateDiscount(coupon, subtotal, items) : 0
@@ -460,7 +484,7 @@ export function clearCartFromStorage(): void {
  */
 export function mergeGuestCartWithUserCart(
   guestItems: Array<CartItem>,
-  userItems: Array<CartItem>
+  userItems: Array<CartItem>,
 ): Array<CartItem> {
   const mergedItems = [...userItems]
 
@@ -468,7 +492,8 @@ export function mergeGuestCartWithUserCart(
     // Check if user already has this item (same product + same rfqId)
     const existingIndex = mergedItems.findIndex(
       (userItem) =>
-        userItem.productId === guestItem.productId && userItem.rfqId === guestItem.rfqId
+        userItem.productId === guestItem.productId &&
+        userItem.rfqId === guestItem.rfqId,
     )
 
     if (existingIndex === -1) {
@@ -477,7 +502,10 @@ export function mergeGuestCartWithUserCart(
     } else {
       // Item exists, merge quantities (up to stock limit)
       const existing = mergedItems[existingIndex]
-      const newQuantity = Math.min(existing.quantity + guestItem.quantity, existing.stock)
+      const newQuantity = Math.min(
+        existing.quantity + guestItem.quantity,
+        existing.stock,
+      )
       mergedItems[existingIndex] = {
         ...existing,
         quantity: newQuantity,
@@ -526,7 +554,7 @@ export function formatCurrency(amount: number): string {
  */
 export function calculateSavings(
   items: Array<CartItem>,
-  originalPrices: Record<number, number>
+  originalPrices: Record<number, number>,
 ): number {
   return items.reduce((savings, item) => {
     const originalPrice = originalPrices[item.productId] || item.unitPrice

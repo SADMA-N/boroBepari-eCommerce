@@ -1,4 +1,4 @@
-import type {Order, OrderItem} from '@/db/schema';
+import type { Order, OrderItem } from '@/db/schema'
 
 export enum OrderStatus {
   PLACED = 'placed',
@@ -13,11 +13,13 @@ export enum OrderStatus {
 
 // Extend Drizzle types with computed/joined fields if necessary
 export type OrderDetail = Order & {
-  items: Array<OrderItem & {
-    productName: string
-    image: string
-    supplierName: string
-  }>
+  items: Array<
+    OrderItem & {
+      productName: string
+      image: string
+      supplierName: string
+    }
+  >
   deliveryAddressStr: string
 }
 

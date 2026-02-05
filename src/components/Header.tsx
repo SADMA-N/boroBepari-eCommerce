@@ -133,7 +133,10 @@ export default function Header() {
                       params={{ categorySlug: category.slug }}
                       className="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-orange-950/20 text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
                     >
-                      <Package size={18} className="text-gray-400 dark:text-gray-500" />
+                      <Package
+                        size={18}
+                        className="text-gray-400 dark:text-gray-500"
+                      />
                       {category.name}
                     </Link>
                   ))}

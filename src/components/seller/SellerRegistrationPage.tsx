@@ -92,14 +92,17 @@ export function SellerRegistrationPage() {
 
   const validateStep1 = () => {
     const nextErrors: Record<string, string> = {}
-    if (!form.businessName.trim()) nextErrors.businessName = 'Business name is required'
+    if (!form.businessName.trim())
+      nextErrors.businessName = 'Business name is required'
     if (!form.businessType) nextErrors.businessType = 'Select a business type'
     if (!form.tradeLicenseNumber.trim()) {
       nextErrors.tradeLicenseNumber = 'Trade license number is required'
     } else if (!TRADE_LICENSE_REGEX.test(form.tradeLicenseNumber.trim())) {
-      nextErrors.tradeLicenseNumber = 'Use at least 6 characters (letters, numbers, dashes)'
+      nextErrors.tradeLicenseNumber =
+        'Use at least 6 characters (letters, numbers, dashes)'
     }
-    if (!form.businessCategory) nextErrors.businessCategory = 'Select a business category'
+    if (!form.businessCategory)
+      nextErrors.businessCategory = 'Select a business category'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }
@@ -117,9 +120,11 @@ export function SellerRegistrationPage() {
     } else if (!BD_MOBILE_REGEX.test(form.phone.trim())) {
       nextErrors.phone = 'Use BD format: 01XXXXXXXXX'
     }
-    if (!form.address.trim()) nextErrors.address = 'Business address is required'
+    if (!form.address.trim())
+      nextErrors.address = 'Business address is required'
     if (!form.city.trim()) nextErrors.city = 'City is required'
-    if (!form.postalCode.trim()) nextErrors.postalCode = 'Postal code is required'
+    if (!form.postalCode.trim())
+      nextErrors.postalCode = 'Postal code is required'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }
@@ -127,13 +132,15 @@ export function SellerRegistrationPage() {
   const validateStep3 = () => {
     const nextErrors: Record<string, string> = {}
     if (!form.bankName) nextErrors.bankName = 'Select a bank'
-    if (!form.accountHolderName.trim()) nextErrors.accountHolderName = 'Account holder name is required'
+    if (!form.accountHolderName.trim())
+      nextErrors.accountHolderName = 'Account holder name is required'
     if (!form.accountNumber.trim()) {
       nextErrors.accountNumber = 'Account number is required'
     } else if (!BANK_ACCOUNT_REGEX.test(form.accountNumber.trim())) {
       nextErrors.accountNumber = 'Account number must be at least 10 digits'
     }
-    if (!form.branchName.trim()) nextErrors.branchName = 'Branch name is required'
+    if (!form.branchName.trim())
+      nextErrors.branchName = 'Branch name is required'
     setErrors(nextErrors)
     return Object.keys(nextErrors).length === 0
   }
@@ -162,35 +169,39 @@ export function SellerRegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 lg:py-14">
         <div className="grid lg:grid-cols-[1.05fr_1fr] gap-10 items-start">
           <section className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-orange-100 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-orange-100 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/20 px-4 py-2 text-sm font-medium text-orange-700 dark:text-orange-400">
               <BadgeCheck size={16} />
               Seller Central
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
                 Start Selling on BoroBepari
               </h1>
-              <p className="mt-3 text-base sm:text-lg text-slate-600">
+              <p className="mt-3 text-base sm:text-lg text-slate-600 dark:text-gray-400">
                 Reach thousands of wholesale buyers across Bangladesh
               </p>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <BenefitCard icon={ShieldCheck} title="Zero listing fees" />
-              <BenefitCard icon={CreditCard} title="Instant payment settlements" />
+              <BenefitCard
+                icon={CreditCard}
+                title="Instant payment settlements"
+              />
               <BenefitCard icon={Headset} title="24/7 seller support" />
               <BenefitCard icon={LineChart} title="Analytics dashboard" />
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6">
-              <p className="text-sm text-slate-500">
-                Need help? Our onboarding specialists can guide you through verification and first listings.
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
+              <p className="text-sm text-slate-500 dark:text-gray-400">
+                Need help? Our onboarding specialists can guide you through
+                verification and first listings.
               </p>
               <button
                 type="button"
-                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <Smartphone size={16} />
                 Schedule a call
@@ -198,15 +209,15 @@ export function SellerRegistrationPage() {
             </div>
           </section>
 
-          <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+          <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-6 sm:p-8 transition-colors">
             {!success ? (
               <>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between text-sm text-slate-500">
+                  <div className="flex items-center justify-between text-sm text-slate-500 dark:text-gray-400">
                     <span>Step {step}/3</span>
                     <span>Registration Progress</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full">
+                  <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full">
                     <div
                       className="h-2 bg-orange-500 rounded-full transition-all"
                       style={{ width: `${progress}%` }}
@@ -241,14 +252,18 @@ export function SellerRegistrationPage() {
                         label="Trade license number"
                         required
                         value={form.tradeLicenseNumber}
-                        onChange={(value) => updateField('tradeLicenseNumber', value)}
+                        onChange={(value) =>
+                          updateField('tradeLicenseNumber', value)
+                        }
                         error={errors.tradeLicenseNumber}
                       />
                       <SelectField
                         label="Business category"
                         required
                         value={form.businessCategory}
-                        onChange={(value) => updateField('businessCategory', value)}
+                        onChange={(value) =>
+                          updateField('businessCategory', value)
+                        }
                         options={BUSINESS_CATEGORIES}
                         error={errors.businessCategory}
                       />
@@ -256,7 +271,9 @@ export function SellerRegistrationPage() {
                         label="Years in business"
                         type="number"
                         value={form.yearsInBusiness}
-                        onChange={(value) => updateField('yearsInBusiness', value)}
+                        onChange={(value) =>
+                          updateField('yearsInBusiness', value)
+                        }
                       />
                       <div className="pt-2">
                         <button
@@ -324,7 +341,7 @@ export function SellerRegistrationPage() {
                         <button
                           type="button"
                           onClick={handleBack}
-                          className="w-full rounded-lg border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 py-3 text-sm font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                         >
                           Back
                         </button>
@@ -353,14 +370,18 @@ export function SellerRegistrationPage() {
                         label="Account holder name"
                         required
                         value={form.accountHolderName}
-                        onChange={(value) => updateField('accountHolderName', value)}
+                        onChange={(value) =>
+                          updateField('accountHolderName', value)
+                        }
                         error={errors.accountHolderName}
                       />
                       <Field
                         label="Account number"
                         required
                         value={form.accountNumber}
-                        onChange={(value) => updateField('accountNumber', value)}
+                        onChange={(value) =>
+                          updateField('accountNumber', value)
+                        }
                         error={errors.accountNumber}
                       />
                       <Field
@@ -373,16 +394,20 @@ export function SellerRegistrationPage() {
                       <Field
                         label="Routing number (optional)"
                         value={form.routingNumber}
-                        onChange={(value) => updateField('routingNumber', value)}
+                        onChange={(value) =>
+                          updateField('routingNumber', value)
+                        }
                       />
                       {errors.submit && (
-                        <p className="text-sm text-red-500 font-medium">{errors.submit}</p>
+                        <p className="text-sm text-red-500 font-medium">
+                          {errors.submit}
+                        </p>
                       )}
                       <div className="flex flex-col sm:flex-row gap-3 pt-2">
                         <button
                           type="button"
                           onClick={handleBack}
-                          className="w-full rounded-lg border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 py-3 text-sm font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                         >
                           Back
                         </button>
@@ -392,7 +417,9 @@ export function SellerRegistrationPage() {
                           disabled={isSubmitting}
                           className="w-full rounded-lg bg-orange-600 text-white py-3 text-sm font-semibold hover:bg-orange-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                          {isSubmitting ? 'Creating Account...' : 'Create Account'}
+                          {isSubmitting
+                            ? 'Creating Account...'
+                            : 'Create Account'}
                         </button>
                       </div>
                     </div>
@@ -401,22 +428,29 @@ export function SellerRegistrationPage() {
               </>
             ) : (
               <div className="text-center py-10">
-                <div className="mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                  <BadgeCheck className="text-green-600" size={28} />
+                <div className="mx-auto w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <BadgeCheck
+                    className="text-green-600 dark:text-green-400"
+                    size={28}
+                  />
                 </div>
-                <h2 className="mt-4 text-2xl font-bold text-slate-900">
+                <h2 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">
                   Account Created Successfully!
                 </h2>
-                <p className="mt-4 text-slate-600 font-medium">
-                  Check your Gmail for a verification link and confirm your email. You’ll be redirected shortly.
+                <p className="mt-4 text-slate-600 dark:text-gray-400 font-medium">
+                  Check your Gmail for a verification link and confirm your
+                  email. You’ll be redirected shortly.
                 </p>
               </div>
             )}
 
             {!success && (
-              <div className="mt-8 text-center text-sm text-slate-500">
+              <div className="mt-8 text-center text-sm text-slate-500 dark:text-gray-400">
                 Already have an account?{' '}
-                <Link to="/seller/login" className="font-semibold text-orange-600 hover:text-orange-700">
+                <Link
+                  to="/seller/login"
+                  className="font-semibold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
+                >
                   Sign in
                 </Link>
               </div>
@@ -428,13 +462,21 @@ export function SellerRegistrationPage() {
   )
 }
 
-function BenefitCard({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
+function BenefitCard({
+  icon: Icon,
+  title,
+}: {
+  icon: React.ElementType
+  title: string
+}) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 transition-colors">
         <Icon size={18} />
       </div>
-      <p className="text-sm font-medium text-slate-700">{title}</p>
+      <p className="text-sm font-medium text-slate-700 dark:text-gray-200">
+        {title}
+      </p>
     </div>
   )
 }
@@ -442,12 +484,14 @@ function BenefitCard({ icon: Icon, title }: { icon: React.ElementType; title: st
 function StepBadge({ active, label }: { active: boolean; label: string }) {
   return (
     <span
-      className={`inline-flex items-center gap-2 text-xs uppercase tracking-wide ${
-        active ? 'text-orange-600' : 'text-slate-400'
+      className={`inline-flex items-center gap-2 text-xs uppercase tracking-wide transition-colors ${
+        active
+          ? 'text-orange-600 dark:text-orange-400'
+          : 'text-slate-400 dark:text-gray-500'
       }`}
     >
       <span
-        className={`h-2.5 w-2.5 rounded-full ${active ? 'bg-orange-500' : 'bg-slate-300'}`}
+        className={`h-2.5 w-2.5 rounded-full transition-colors ${active ? 'bg-orange-500' : 'bg-slate-300 dark:bg-slate-700'}`}
       />
       {label}
     </span>
@@ -475,7 +519,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 mb-2">
+      <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2 transition-colors">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {textarea ? (
@@ -484,7 +528,7 @@ function Field({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
         />
       ) : (
         <input
@@ -492,7 +536,7 @@ function Field({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
         />
       )}
       {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
@@ -517,17 +561,19 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 mb-2">
+      <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2 transition-colors">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 bg-white"
+        className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all"
       >
-        <option value="">Select</option>
+        <option value="" className="dark:bg-slate-900">
+          Select
+        </option>
         {options.map((option) => (
-          <option key={option} value={option}>
+          <option key={option} value={option} className="dark:bg-slate-900">
             {option}
           </option>
         ))}

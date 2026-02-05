@@ -5,13 +5,16 @@ export const Route = createFileRoute('/api/cart/$userId')({
     handlers: {
       GET: ({ params }) => {
         // Placeholder: Fetch user cart from DB
-        return new Response(JSON.stringify({ 
-          items: [], 
-          userId: params.userId,
-          message: 'Cart fetched' 
-        }), {
-          headers: { 'Content-Type': 'application/json' },
-        })
+        return new Response(
+          JSON.stringify({
+            items: [],
+            userId: params.userId,
+            message: 'Cart fetched',
+          }),
+          {
+            headers: { 'Content-Type': 'application/json' },
+          },
+        )
       },
     },
   },

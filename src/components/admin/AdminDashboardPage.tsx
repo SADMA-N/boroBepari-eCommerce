@@ -53,7 +53,10 @@ const generateGMVData = (days: number) => {
     const date = new Date(now)
     date.setDate(date.getDate() - i)
     data.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      }),
       gmv: Math.floor(Math.random() * 500000) + 200000,
       orders: Math.floor(Math.random() * 200) + 100,
     })
@@ -72,7 +75,10 @@ const generateUserGrowthData = (days: number) => {
     buyers += Math.floor(Math.random() * 50) + 10
     sellers += Math.floor(Math.random() * 5) + 1
     data.push({
-      date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      date: date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      }),
       buyers,
       sellers,
     })
@@ -88,38 +94,178 @@ const ORDER_STATUS_DATA = [
 ]
 
 const RECENT_ACTIVITIES = [
-  { id: 1, type: 'user', message: 'New user registered', detail: 'karim@example.com', time: '2 min ago' },
-  { id: 2, type: 'order', message: 'New order placed', detail: 'Order #ORD-46012', time: '5 min ago' },
-  { id: 3, type: 'kyc', message: 'KYC submitted', detail: 'Chittagong Electronics', time: '8 min ago' },
-  { id: 4, type: 'dispute', message: 'Dispute opened', detail: 'Order #ORD-45998', time: '12 min ago' },
-  { id: 5, type: 'flag', message: 'Product flagged', detail: 'SKU: PRD-2847', time: '15 min ago' },
-  { id: 6, type: 'payout', message: 'Payout completed', detail: 'Rahim Textiles - ৳125,000', time: '20 min ago' },
-  { id: 7, type: 'user', message: 'New seller registered', detail: 'Sylhet Trading Co.', time: '25 min ago' },
-  { id: 8, type: 'order', message: 'Order delivered', detail: 'Order #ORD-45876', time: '30 min ago' },
-  { id: 9, type: 'kyc', message: 'KYC approved', detail: 'Dhaka Wholesale Hub', time: '35 min ago' },
-  { id: 10, type: 'order', message: 'New bulk order', detail: 'Order #ORD-46011 (৳450,000)', time: '40 min ago' },
+  {
+    id: 1,
+    type: 'user',
+    message: 'New user registered',
+    detail: 'karim@example.com',
+    time: '2 min ago',
+  },
+  {
+    id: 2,
+    type: 'order',
+    message: 'New order placed',
+    detail: 'Order #ORD-46012',
+    time: '5 min ago',
+  },
+  {
+    id: 3,
+    type: 'kyc',
+    message: 'KYC submitted',
+    detail: 'Chittagong Electronics',
+    time: '8 min ago',
+  },
+  {
+    id: 4,
+    type: 'dispute',
+    message: 'Dispute opened',
+    detail: 'Order #ORD-45998',
+    time: '12 min ago',
+  },
+  {
+    id: 5,
+    type: 'flag',
+    message: 'Product flagged',
+    detail: 'SKU: PRD-2847',
+    time: '15 min ago',
+  },
+  {
+    id: 6,
+    type: 'payout',
+    message: 'Payout completed',
+    detail: 'Rahim Textiles - ৳125,000',
+    time: '20 min ago',
+  },
+  {
+    id: 7,
+    type: 'user',
+    message: 'New seller registered',
+    detail: 'Sylhet Trading Co.',
+    time: '25 min ago',
+  },
+  {
+    id: 8,
+    type: 'order',
+    message: 'Order delivered',
+    detail: 'Order #ORD-45876',
+    time: '30 min ago',
+  },
+  {
+    id: 9,
+    type: 'kyc',
+    message: 'KYC approved',
+    detail: 'Dhaka Wholesale Hub',
+    time: '35 min ago',
+  },
+  {
+    id: 10,
+    type: 'order',
+    message: 'New bulk order',
+    detail: 'Order #ORD-46011 (৳450,000)',
+    time: '40 min ago',
+  },
 ]
 
 const TOP_SELLERS = [
-  { id: 1, name: 'Rahim Textiles Ltd.', gmv: 2450000, orders: 342, commission: 73500, status: 'premium' },
-  { id: 2, name: 'Rajshahi Exports', gmv: 1890000, orders: 278, commission: 56700, status: 'verified' },
-  { id: 3, name: 'Dhaka Wholesale Hub', gmv: 1650000, orders: 245, commission: 49500, status: 'verified' },
-  { id: 4, name: 'Chittagong Trading', gmv: 1420000, orders: 198, commission: 42600, status: 'basic' },
-  { id: 5, name: 'Sylhet Garments', gmv: 1180000, orders: 167, commission: 35400, status: 'verified' },
+  {
+    id: 1,
+    name: 'Rahim Textiles Ltd.',
+    gmv: 2450000,
+    orders: 342,
+    commission: 73500,
+    status: 'premium',
+  },
+  {
+    id: 2,
+    name: 'Rajshahi Exports',
+    gmv: 1890000,
+    orders: 278,
+    commission: 56700,
+    status: 'verified',
+  },
+  {
+    id: 3,
+    name: 'Dhaka Wholesale Hub',
+    gmv: 1650000,
+    orders: 245,
+    commission: 49500,
+    status: 'verified',
+  },
+  {
+    id: 4,
+    name: 'Chittagong Trading',
+    gmv: 1420000,
+    orders: 198,
+    commission: 42600,
+    status: 'basic',
+  },
+  {
+    id: 5,
+    name: 'Sylhet Garments',
+    gmv: 1180000,
+    orders: 167,
+    commission: 35400,
+    status: 'verified',
+  },
 ]
 
 const TOP_BUYERS = [
-  { id: 1, name: 'Karim Enterprises', orders: 89, spent: 1250000, lastOrder: '2024-04-22' },
-  { id: 2, name: 'Fatima Trading Co.', orders: 76, spent: 980000, lastOrder: '2024-04-21' },
-  { id: 3, name: 'Abdul & Sons', orders: 68, spent: 870000, lastOrder: '2024-04-22' },
-  { id: 4, name: 'Nasreen Wholesale', orders: 54, spent: 720000, lastOrder: '2024-04-20' },
-  { id: 5, name: 'Rafiq Industries', orders: 48, spent: 650000, lastOrder: '2024-04-22' },
+  {
+    id: 1,
+    name: 'Karim Enterprises',
+    orders: 89,
+    spent: 1250000,
+    lastOrder: '2024-04-22',
+  },
+  {
+    id: 2,
+    name: 'Fatima Trading Co.',
+    orders: 76,
+    spent: 980000,
+    lastOrder: '2024-04-21',
+  },
+  {
+    id: 3,
+    name: 'Abdul & Sons',
+    orders: 68,
+    spent: 870000,
+    lastOrder: '2024-04-22',
+  },
+  {
+    id: 4,
+    name: 'Nasreen Wholesale',
+    orders: 54,
+    spent: 720000,
+    lastOrder: '2024-04-20',
+  },
+  {
+    id: 5,
+    name: 'Rafiq Industries',
+    orders: 48,
+    spent: 650000,
+    lastOrder: '2024-04-22',
+  },
 ]
 
 const ALERTS = [
-  { id: 1, type: 'critical', message: 'High payment failure rate detected (8.2%)', time: '10 min ago' },
-  { id: 2, type: 'warning', message: 'Dispute rate increased by 15% this week', time: '1 hour ago' },
-  { id: 3, type: 'info', message: 'Scheduled maintenance on April 25, 2:00 AM', time: '2 hours ago' },
+  {
+    id: 1,
+    type: 'critical',
+    message: 'High payment failure rate detected (8.2%)',
+    time: '10 min ago',
+  },
+  {
+    id: 2,
+    type: 'warning',
+    message: 'Dispute rate increased by 15% this week',
+    time: '1 hour ago',
+  },
+  {
+    id: 3,
+    type: 'info',
+    message: 'Scheduled maintenance on April 25, 2:00 AM',
+    time: '2 hours ago',
+  },
 ]
 
 const DATE_RANGES = [
@@ -159,11 +305,23 @@ function getActivityIcon(type: string) {
 function getStatusBadge(status: string) {
   switch (status) {
     case 'premium':
-      return <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">Premium</span>
+      return (
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+          Premium
+        </span>
+      )
     case 'verified':
-      return <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Verified</span>
+      return (
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+          Verified
+        </span>
+      )
     case 'basic':
-      return <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-700">Basic</span>
+      return (
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
+          Basic
+        </span>
+      )
     default:
       return null
   }
@@ -178,7 +336,9 @@ export function AdminDashboardPage() {
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false)
   const [dismissedAlerts, setDismissedAlerts] = useState<Array<number>>([])
   const [gmvData, setGmvData] = useState(() => generateGMVData(30))
-  const [userGrowthData, setUserGrowthData] = useState(() => generateUserGrowthData(30))
+  const [userGrowthData, setUserGrowthData] = useState(() =>
+    generateUserGrowthData(30),
+  )
 
   const refreshData = useCallback(() => {
     setIsRefreshing(true)
@@ -211,7 +371,9 @@ export function AdminDashboardPage() {
   // Calculate metrics
   const todayGMV = gmvData[gmvData.length - 1]?.gmv || 0
   const yesterdayGMV = gmvData[gmvData.length - 2]?.gmv || 0
-  const gmvChange = yesterdayGMV ? ((todayGMV - yesterdayGMV) / yesterdayGMV) * 100 : 0
+  const gmvChange = yesterdayGMV
+    ? ((todayGMV - yesterdayGMV) / yesterdayGMV) * 100
+    : 0
   const totalGMV = gmvData.reduce((sum, d) => sum + d.gmv, 0)
 
   const todayOrders = gmvData[gmvData.length - 1]?.orders || 0
@@ -245,7 +407,10 @@ export function AdminDashboardPage() {
               </button>
               {dateDropdownOpen && (
                 <>
-                  <div className="fixed inset-0 z-10" onClick={() => setDateDropdownOpen(false)} />
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setDateDropdownOpen(false)}
+                  />
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-20">
                     {DATE_RANGES.map((range) => (
                       <button
@@ -285,7 +450,10 @@ export function AdminDashboardPage() {
               disabled={isRefreshing}
               className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-medium hover:bg-orange-700 disabled:opacity-60"
             >
-              <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
+              <RefreshCw
+                size={16}
+                className={isRefreshing ? 'animate-spin' : ''}
+              />
               Refresh
             </button>
           </div>
@@ -358,22 +526,37 @@ export function AdminDashboardPage() {
                   gmvChange >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}
               >
-                {gmvChange >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                {gmvChange >= 0 ? (
+                  <TrendingUp size={14} />
+                ) : (
+                  <TrendingDown size={14} />
+                )}
                 {Math.abs(gmvChange).toFixed(1)}%
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">৳{totalGMV.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-slate-900">
+              ৳{totalGMV.toLocaleString()}
+            </p>
             <p className="text-sm text-slate-500">Gross Merchandise Value</p>
             <div className="mt-3 pt-3 border-t border-slate-100">
               <p className="text-xs text-slate-500">
-                Today: <span className="font-medium text-slate-700">৳{todayGMV.toLocaleString()}</span>
+                Today:{' '}
+                <span className="font-medium text-slate-700">
+                  ৳{todayGMV.toLocaleString()}
+                </span>
               </p>
             </div>
             {/* Sparkline */}
             <div className="mt-2 h-12">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={gmvData.slice(-7)}>
-                  <Line type="monotone" dataKey="gmv" stroke="#22c55e" strokeWidth={2} dot={false} />
+                  <Line
+                    type="monotone"
+                    dataKey="gmv"
+                    stroke="#22c55e"
+                    strokeWidth={2}
+                    dot={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -415,16 +598,22 @@ export function AdminDashboardPage() {
                 +18.7%
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">{totalOrders.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-slate-900">
+              {totalOrders.toLocaleString()}
+            </p>
             <p className="text-sm text-slate-500">Total Orders</p>
             <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
               <div>
                 <p className="text-xs text-slate-500">Today</p>
-                <p className="text-sm font-medium text-slate-700">{todayOrders}</p>
+                <p className="text-sm font-medium text-slate-700">
+                  {todayOrders}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-slate-500">Avg Value</p>
-                <p className="text-sm font-medium text-slate-700">৳{avgOrderValue.toLocaleString()}</p>
+                <p className="text-sm font-medium text-slate-700">
+                  ৳{avgOrderValue.toLocaleString()}
+                </p>
               </div>
             </div>
           </div>
@@ -435,13 +624,20 @@ export function AdminDashboardPage() {
               <div className="p-2 rounded-lg bg-orange-100">
                 <DollarSign className="h-5 w-5 text-orange-600" />
               </div>
-              <span className="text-xs font-medium text-slate-500">3% of GMV</span>
+              <span className="text-xs font-medium text-slate-500">
+                3% of GMV
+              </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">৳{monthlyCommission.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-slate-900">
+              ৳{monthlyCommission.toLocaleString()}
+            </p>
             <p className="text-sm text-slate-500">Platform Commission</p>
             <div className="mt-3 pt-3 border-t border-slate-100">
               <p className="text-xs text-slate-500">
-                Today: <span className="font-medium text-slate-700">৳{todayCommission.toLocaleString()}</span>
+                Today:{' '}
+                <span className="font-medium text-slate-700">
+                  ৳{todayCommission.toLocaleString()}
+                </span>
               </p>
             </div>
           </div>
@@ -458,11 +654,15 @@ export function AdminDashboardPage() {
                 <FileCheck className="h-5 w-5 text-yellow-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">KYC Pending</p>
+                <p className="text-sm font-medium text-slate-900">
+                  KYC Pending
+                </p>
                 <p className="text-xs text-slate-500">Awaiting review</p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 text-red-700">47</span>
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 text-red-700">
+              47
+            </span>
           </Link>
 
           <Link
@@ -474,11 +674,15 @@ export function AdminDashboardPage() {
                 <AlertTriangle className="h-5 w-5 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">Open Disputes</p>
+                <p className="text-sm font-medium text-slate-900">
+                  Open Disputes
+                </p>
                 <p className="text-xs text-slate-500">Need resolution</p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-orange-100 text-orange-700">23</span>
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-orange-100 text-orange-700">
+              23
+            </span>
           </Link>
 
           <Link
@@ -490,11 +694,15 @@ export function AdminDashboardPage() {
                 <Flag className="h-5 w-5 text-red-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">Flagged Products</p>
+                <p className="text-sm font-medium text-slate-900">
+                  Flagged Products
+                </p>
                 <p className="text-xs text-slate-500">Needs review</p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 text-red-700">12</span>
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 text-red-700">
+              12
+            </span>
           </Link>
 
           <Link
@@ -506,11 +714,15 @@ export function AdminDashboardPage() {
                 <Building2 className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">Seller Verification</p>
+                <p className="text-sm font-medium text-slate-900">
+                  Seller Verification
+                </p>
                 <p className="text-xs text-slate-500">Badge requests</p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-blue-100 text-blue-700">8</span>
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-blue-100 text-blue-700">
+              8
+            </span>
           </Link>
         </div>
 
@@ -520,8 +732,12 @@ export function AdminDashboardPage() {
           <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="font-semibold text-slate-900">GMV & Orders Over Time</h2>
-                <p className="text-sm text-slate-500">Revenue and order trends</p>
+                <h2 className="font-semibold text-slate-900">
+                  GMV & Orders Over Time
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Revenue and order trends
+                </p>
               </div>
               <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
                 {CHART_RANGES.map((range) => (
@@ -543,18 +759,32 @@ export function AdminDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={gmvData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#94a3b8" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 12 }}
+                    stroke="#94a3b8"
+                  />
                   <YAxis
                     yAxisId="left"
                     tick={{ fontSize: 12 }}
                     stroke="#94a3b8"
                     tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}k`}
                   />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12 }} stroke="#94a3b8" />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    tick={{ fontSize: 12 }}
+                    stroke="#94a3b8"
+                  />
                   <Tooltip
-                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                    contentStyle={{
+                      borderRadius: '8px',
+                      border: '1px solid #e2e8f0',
+                    }}
                     formatter={(value: number, name: string) =>
-                      name === 'gmv' ? [`৳${value.toLocaleString()}`, 'GMV'] : [value, 'Orders']
+                      name === 'gmv'
+                        ? [`৳${value.toLocaleString()}`, 'GMV']
+                        : [value, 'Orders']
                     }
                   />
                   <Line
@@ -610,14 +840,22 @@ export function AdminDashboardPage() {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Orders']} />
+                  <Tooltip
+                    formatter={(value: number) => [
+                      value.toLocaleString(),
+                      'Orders',
+                    ]}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-4">
               {ORDER_STATUS_DATA.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
                   <span className="text-xs text-slate-600">{item.name}</span>
                   <span className="text-xs font-medium text-slate-900 ml-auto">
                     {item.value.toLocaleString()}
@@ -632,15 +870,26 @@ export function AdminDashboardPage() {
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="mb-6">
             <h2 className="font-semibold text-slate-900">User Growth</h2>
-            <p className="text-sm text-slate-500">Cumulative user registrations</p>
+            <p className="text-sm text-slate-500">
+              Cumulative user registrations
+            </p>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={userGrowthData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="#94a3b8" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 12 }}
+                  stroke="#94a3b8"
+                />
                 <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                  }}
+                />
                 <Area
                   type="monotone"
                   dataKey="buyers"
@@ -678,23 +927,37 @@ export function AdminDashboardPage() {
           <div className="bg-white rounded-xl border border-slate-200">
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
               <h2 className="font-semibold text-slate-900">Top Sellers</h2>
-              <Link to="/admin/suppliers" className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1">
+              <Link
+                to="/admin/suppliers"
+                className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1"
+              >
                 View All <ExternalLink size={12} />
               </Link>
             </div>
             <div className="divide-y divide-slate-100">
               {TOP_SELLERS.map((seller, index) => (
-                <div key={seller.id} className="px-6 py-3 flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-400 w-5">{index + 1}</span>
+                <div
+                  key={seller.id}
+                  className="px-6 py-3 flex items-center gap-3"
+                >
+                  <span className="text-sm font-medium text-slate-400 w-5">
+                    {index + 1}
+                  </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">{seller.name}</p>
+                    <p className="text-sm font-medium text-slate-900 truncate">
+                      {seller.name}
+                    </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-slate-500">৳{seller.gmv.toLocaleString()}</span>
+                      <span className="text-xs text-slate-500">
+                        ৳{seller.gmv.toLocaleString()}
+                      </span>
                       {getStatusBadge(seller.status)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">{seller.orders}</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      {seller.orders}
+                    </p>
                     <p className="text-xs text-slate-500">orders</p>
                   </div>
                 </div>
@@ -706,20 +969,34 @@ export function AdminDashboardPage() {
           <div className="bg-white rounded-xl border border-slate-200">
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
               <h2 className="font-semibold text-slate-900">Top Buyers</h2>
-              <Link to="/admin/users" className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1">
+              <Link
+                to="/admin/users"
+                className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1"
+              >
                 View All <ExternalLink size={12} />
               </Link>
             </div>
             <div className="divide-y divide-slate-100">
               {TOP_BUYERS.map((buyer, index) => (
-                <div key={buyer.id} className="px-6 py-3 flex items-center gap-3">
-                  <span className="text-sm font-medium text-slate-400 w-5">{index + 1}</span>
+                <div
+                  key={buyer.id}
+                  className="px-6 py-3 flex items-center gap-3"
+                >
+                  <span className="text-sm font-medium text-slate-400 w-5">
+                    {index + 1}
+                  </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">{buyer.name}</p>
-                    <p className="text-xs text-slate-500">৳{buyer.spent.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-slate-900 truncate">
+                      {buyer.name}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      ৳{buyer.spent.toLocaleString()}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">{buyer.orders}</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      {buyer.orders}
+                    </p>
                     <p className="text-xs text-slate-500">orders</p>
                   </div>
                 </div>
@@ -731,20 +1008,31 @@ export function AdminDashboardPage() {
           <div className="bg-white rounded-xl border border-slate-200">
             <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <h2 className="font-semibold text-slate-900">Recent Activity</h2>
+                <h2 className="font-semibold text-slate-900">
+                  Recent Activity
+                </h2>
                 <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
               </div>
-              <button className="text-sm text-orange-600 hover:text-orange-700">View All</button>
+              <button className="text-sm text-orange-600 hover:text-orange-700">
+                View All
+              </button>
             </div>
             <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
               {RECENT_ACTIVITIES.map((activity) => (
-                <div key={activity.id} className="px-6 py-3 flex items-start gap-3">
+                <div
+                  key={activity.id}
+                  className="px-6 py-3 flex items-start gap-3"
+                >
                   <div className="mt-0.5">{getActivityIcon(activity.type)}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-slate-900">{activity.message}</p>
-                    <p className="text-xs text-slate-500 truncate">{activity.detail}</p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {activity.detail}
+                    </p>
                   </div>
-                  <span className="text-xs text-slate-400 whitespace-nowrap">{activity.time}</span>
+                  <span className="text-xs text-slate-400 whitespace-nowrap">
+                    {activity.time}
+                  </span>
                 </div>
               ))}
             </div>
@@ -760,9 +1048,13 @@ export function AdminDashboardPage() {
                 <Server className="h-5 w-5 text-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">API Response</p>
+                <p className="text-sm font-medium text-slate-900">
+                  API Response
+                </p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">124ms</span>
+                  <span className="text-lg font-bold text-green-600">
+                    124ms
+                  </span>
                   <CheckCircle size={14} className="text-green-500" />
                 </div>
               </div>
@@ -775,7 +1067,9 @@ export function AdminDashboardPage() {
               <div>
                 <p className="text-sm font-medium text-slate-900">Database</p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">Healthy</span>
+                  <span className="text-lg font-bold text-green-600">
+                    Healthy
+                  </span>
                   <CheckCircle size={14} className="text-green-500" />
                 </div>
               </div>
@@ -801,7 +1095,9 @@ export function AdminDashboardPage() {
               <div>
                 <p className="text-sm font-medium text-slate-900">Uptime</p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">99.98%</span>
+                  <span className="text-lg font-bold text-green-600">
+                    99.98%
+                  </span>
                   <CheckCircle size={14} className="text-green-500" />
                 </div>
               </div>

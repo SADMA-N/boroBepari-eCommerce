@@ -1,7 +1,10 @@
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowLeft, KeyRound, Mail, Sparkles } from 'lucide-react'
-import { requestSellerPasswordReset, verifySellerResetCode } from '@/lib/seller-auth-server'
+import {
+  requestSellerPasswordReset,
+  verifySellerResetCode,
+} from '@/lib/seller-auth-server'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 export const Route = createFileRoute('/seller/forgot-password')({
@@ -43,7 +46,7 @@ function SellerForgotPasswordPage() {
     try {
       const result = await verifySellerResetCode({ data: { email, code } })
       pushToast('Code verified successfully!', 'success')
-      
+
       // Redirect to set-password page with temporary token
       navigate({
         to: '/auth/set-password',
@@ -51,8 +54,8 @@ function SellerForgotPasswordPage() {
           token: result.token,
           email: email,
           type: 'seller',
-          mode: 'reset'
-        }
+          mode: 'reset',
+        },
       })
     } catch (err: any) {
       pushToast(err.message || 'Verification failed.', 'error')
@@ -68,17 +71,18 @@ function SellerForgotPasswordPage() {
           <Link to="/" className="text-2xl font-bold text-orange-600">
             BoroBepari
           </Link>
-          <p className="mt-2 text-sm text-slate-500">
-            Seller Central
-          </p>
+          <p className="mt-2 text-sm text-slate-500">Seller Central</p>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
           {step === 'email' ? (
             <>
-              <h1 className="text-2xl font-bold text-slate-900">Forgot Password?</h1>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Forgot Password?
+              </h1>
               <p className="mt-2 text-sm text-slate-500">
-                Enter your registered email address and we'll send you a 6-digit code to reset your password.
+                Enter your registered email address and we'll send you a 6-digit
+                code to reset your password.
               </p>
 
               <form onSubmit={handleSubmitEmail} className="mt-6 space-y-5">
@@ -87,7 +91,10 @@ function SellerForgotPasswordPage() {
                     Email address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Mail
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      size={18}
+                    />
                     <input
                       type="email"
                       required
@@ -113,9 +120,12 @@ function SellerForgotPasswordPage() {
               <div className="mx-auto w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4">
                 <KeyRound className="text-orange-600" size={28} />
               </div>
-              <h1 className="text-2xl font-bold text-slate-900">Enter Verification Code</h1>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Enter Verification Code
+              </h1>
               <p className="mt-2 text-sm text-slate-600">
-                A 6-digit code has been sent to <span className="font-semibold">{email}</span>.
+                A 6-digit code has been sent to{' '}
+                <span className="font-semibold">{email}</span>.
               </p>
 
               <form onSubmit={handleVerifyCode} className="mt-6 space-y-5">
@@ -127,7 +137,9 @@ function SellerForgotPasswordPage() {
                       required
                       autoFocus
                       value={code}
-                      onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                      onChange={(e) =>
+                        setCode(e.target.value.replace(/\D/g, ''))
+                      }
                       className="w-full text-center tracking-[1em] font-bold text-2xl rounded-lg border border-slate-200 py-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                       placeholder="000000"
                     />
@@ -145,7 +157,7 @@ function SellerForgotPasswordPage() {
 
               <p className="mt-6 text-sm text-slate-500">
                 Didn't receive the email? Check your spam folder or{' '}
-                <button 
+                <button
                   type="button"
                   onClick={() => setStep('email')}
                   className="text-orange-600 font-semibold hover:underline"
@@ -157,8 +169,8 @@ function SellerForgotPasswordPage() {
           )}
 
           <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-            <Link 
-              to="/seller/login" 
+            <Link
+              to="/seller/login"
               className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-orange-600"
             >
               <ArrowLeft size={16} />

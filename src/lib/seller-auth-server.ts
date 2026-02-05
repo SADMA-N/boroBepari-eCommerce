@@ -8,7 +8,8 @@ import * as schema from '@/db/schema'
 
 // Simple JWT-like token generation and verification
 // In production, use a proper JWT library like jose
-const SECRET = process.env.SELLER_AUTH_SECRET || 'seller-secret-key-change-in-production'
+const SECRET =
+  process.env.SELLER_AUTH_SECRET || 'seller-secret-key-change-in-production'
 
 function generateToken(sellerId: string): string {
   const payload = {
@@ -16,14 +17,18 @@ function generateToken(sellerId: string): string {
     exp: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days
   }
   const encoded = Buffer.from(JSON.stringify(payload)).toString('base64')
-  const signature = Buffer.from(SECRET + encoded).toString('base64').slice(0, 32)
+  const signature = Buffer.from(SECRET + encoded)
+    .toString('base64')
+    .slice(0, 32)
   return `${encoded}.${signature}`
 }
 
 export function verifySellerToken(token: string): { sellerId: string } | null {
   try {
     const [encoded, signature] = token.split('.')
-    const expectedSignature = Buffer.from(SECRET + encoded).toString('base64').slice(0, 32)
+    const expectedSignature = Buffer.from(SECRET + encoded)
+      .toString('base64')
+      .slice(0, 32)
 
     if (signature !== expectedSignature) {
       return null
@@ -47,10 +52,13 @@ async function hashPassword(password: string): Promise<string> {
   const data = encoder.encode(password + SECRET)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-async function verifyPassword(password: string, hash: string): Promise<boolean> {
+async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   const passwordHash = await hashPassword(password)
   return passwordHash === hash
 }
@@ -112,7 +120,9 @@ export const sellerAuthMiddleware = createMiddleware().server(
 export const sellerRegister = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({
-      businessName: z.string().min(2, 'Business name must be at least 2 characters'),
+      businessName: z
+        .string()
+        .min(2, 'Business name must be at least 2 characters'),
       businessType: z.string().min(1),
       tradeLicenseNumber: z.string().min(1),
       businessCategory: z.string().min(1),
@@ -156,7 +166,9 @@ export const sellerRegister = createServerFn({ method: 'POST' })
       businessType: data.businessType,
       tradeLicenseNumber: data.tradeLicenseNumber,
       businessCategory: data.businessCategory,
-      yearsInBusiness: data.yearsInBusiness ? parseInt(data.yearsInBusiness) : null,
+      yearsInBusiness: data.yearsInBusiness
+        ? parseInt(data.yearsInBusiness)
+        : null,
       fullName: data.fullName,
       phone: data.phone,
       address: data.address,
@@ -182,7 +194,7 @@ export const sellerRegister = createServerFn({ method: 'POST' })
 
     // Send verification email
     const verificationUrl = `${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/auth/set-password?token=${token}&email=${encodeURIComponent(data.email.toLowerCase())}&type=seller`
-    
+
     await sendVerificationEmail({
       email: data.email.toLowerCase(),
       name: data.fullName,
@@ -238,7 +250,9 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
     const updatedSeller = results[0]
 
     // Delete verification token
-    await db.delete(schema.verification).where(eq(schema.verification.id, verification.id))
+    await db
+      .delete(schema.verification)
+      .where(eq(schema.verification.id, verification.id))
 
     // Generate session token
     const authToken = generateToken(updatedSeller.id)
@@ -349,7 +363,11 @@ export const requestSellerPasswordReset = createServerFn({ method: 'POST' })
     })
 
     // Generic message for security
-    const successResult = { success: true, message: 'If this email is registered, a verification code has been sent.' }
+    const successResult = {
+      success: true,
+      message:
+        'If this email is registered, a verification code has been sent.',
+    }
 
     if (!seller) {
       return successResult
@@ -403,11 +421,15 @@ export const verifySellerResetCode = createServerFn({ method: 'POST' })
     }
 
     // Delete the code
-    await db.delete(schema.verification).where(eq(schema.verification.id, verification.id))
+    await db
+      .delete(schema.verification)
+      .where(eq(schema.verification.id, verification.id))
 
     // Generate a long-lived temporary token for the reset page
-    const resetToken = Math.random().toString(36).slice(2, 15) + Math.random().toString(36).slice(2, 15)
-    
+    const resetToken =
+      Math.random().toString(36).slice(2, 15) +
+      Math.random().toString(36).slice(2, 15)
+
     await db.insert(schema.verification).values({
       id: crypto.randomUUID(),
       identifier: email.toLowerCase(),
@@ -434,7 +456,9 @@ export const sellerGoogleLogin = createServerFn({ method: 'POST' })
     })
 
     if (!seller) {
-      throw new Error('This email is not registered as a seller account. Please register first.')
+      throw new Error(
+        'This email is not registered as a seller account. Please register first.',
+      )
     }
 
     // Generate token

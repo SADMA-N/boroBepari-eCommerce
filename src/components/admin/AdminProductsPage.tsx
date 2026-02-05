@@ -30,7 +30,12 @@ import {
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
-type ProductStatus = 'published' | 'draft' | 'flagged' | 'out_of_stock' | 'suspended'
+type ProductStatus =
+  | 'published'
+  | 'draft'
+  | 'flagged'
+  | 'out_of_stock'
+  | 'suspended'
 type StockFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
 type SortKey = 'name' | 'price' | 'date' | 'orders' | 'flags'
 type DetailTab = 'info' | 'pricing' | 'reports' | 'analytics'
@@ -309,15 +314,35 @@ function formatCurrency(amount: number) {
 function statusBadge(status: ProductStatus) {
   switch (status) {
     case 'published':
-      return <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-700">Published</span>
+      return (
+        <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-700">
+          Published
+        </span>
+      )
     case 'draft':
-      return <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">Draft</span>
+      return (
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+          Draft
+        </span>
+      )
     case 'flagged':
-      return <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-xs text-yellow-700">Flagged</span>
+      return (
+        <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-xs text-yellow-700">
+          Flagged
+        </span>
+      )
     case 'out_of_stock':
-      return <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs text-orange-700">Out of Stock</span>
+      return (
+        <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs text-orange-700">
+          Out of Stock
+        </span>
+      )
     case 'suspended':
-      return <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-700">Suspended</span>
+      return (
+        <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-700">
+          Suspended
+        </span>
+      )
   }
 }
 
@@ -346,7 +371,9 @@ export function AdminProductsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [suspendReason, setSuspendReason] = useState('Policy violation')
   const [suspendOtherReason, setSuspendOtherReason] = useState('')
-  const [flagReviewProduct, setFlagReviewProduct] = useState<Product | null>(null)
+  const [flagReviewProduct, setFlagReviewProduct] = useState<Product | null>(
+    null,
+  )
   const [flagReviewNotes, setFlagReviewNotes] = useState('')
   const [exportOpen, setExportOpen] = useState(false)
   const [bulkCategoryOpen, setBulkCategoryOpen] = useState(false)
@@ -366,13 +393,16 @@ export function AdminProductsPage() {
         product.name.toLowerCase().includes(query) ||
         product.sku.toLowerCase().includes(query) ||
         product.supplier.toLowerCase().includes(query)
-      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter
+      const matchesCategory =
+        categoryFilter === 'all' || product.category === categoryFilter
       const matchesSupplier =
-        !supplierFilter.trim() || product.supplier.toLowerCase().includes(supplierFilter.toLowerCase())
+        !supplierFilter.trim() ||
+        product.supplier.toLowerCase().includes(supplierFilter.toLowerCase())
       const matchesStock = (() => {
         if (stockFilter === 'all') return true
         if (stockFilter === 'out_of_stock') return product.stock === 0
-        if (stockFilter === 'low_stock') return product.stock > 0 && product.stock <= 20
+        if (stockFilter === 'low_stock')
+          return product.stock > 0 && product.stock <= 20
         return product.stock > 20
       })()
       const minOk = priceMin ? product.price >= Number(priceMin) : true
@@ -392,7 +422,17 @@ export function AdminProductsPage() {
         withinTo
       )
     })
-  }, [activeTab, searchQuery, categoryFilter, supplierFilter, stockFilter, priceMin, priceMax, dateFrom, dateTo])
+  }, [
+    activeTab,
+    searchQuery,
+    categoryFilter,
+    supplierFilter,
+    stockFilter,
+    priceMin,
+    priceMax,
+    dateFrom,
+    dateTo,
+  ])
 
   const sortedProducts = useMemo(() => {
     const copy = [...filtered]
@@ -417,12 +457,17 @@ export function AdminProductsPage() {
     count: PRODUCTS.filter((p) => p.category === category).length,
   }))
 
-  const popularCategories = [...categoryBreakdown].sort((a, b) => b.count - a.count).slice(0, 3)
-  const underrepresentedCategories = [...categoryBreakdown].sort((a, b) => a.count - b.count).slice(0, 3)
+  const popularCategories = [...categoryBreakdown]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3)
+  const underrepresentedCategories = [...categoryBreakdown]
+    .sort((a, b) => a.count - b.count)
+    .slice(0, 3)
 
   const toggleSelectAll = () => {
     const ids = sortedProducts.map((p) => p.id)
-    const allSelected = ids.length > 0 && ids.every((id) => selectedIds.includes(id))
+    const allSelected =
+      ids.length > 0 && ids.every((id) => selectedIds.includes(id))
     if (allSelected) {
       setSelectedIds([])
     } else {
@@ -431,12 +476,26 @@ export function AdminProductsPage() {
   }
 
   const toggleSelectOne = (id: string) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
   }
 
-  const exportProducts = (scope: 'all' | 'filtered', format: 'csv' | 'excel') => {
+  const exportProducts = (
+    scope: 'all' | 'filtered',
+    format: 'csv' | 'excel',
+  ) => {
     const exportData = scope === 'all' ? PRODUCTS : sortedProducts
-    const header = ['Product ID', 'Name', 'SKU', 'Supplier', 'Category', 'Price', 'Stock', 'Status']
+    const header = [
+      'Product ID',
+      'Name',
+      'SKU',
+      'Supplier',
+      'Category',
+      'Price',
+      'Stock',
+      'Status',
+    ]
     const rows = exportData.map((p) => [
       p.id,
       p.name,
@@ -468,7 +527,9 @@ export function AdminProductsPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Product Moderation</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Product Moderation
+            </h1>
             <div className="mt-2 flex items-center gap-3 text-sm text-slate-600">
               <span>Total: {totalProducts} products</span>
               <span className="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-xs text-red-700">
@@ -489,9 +550,14 @@ export function AdminProductsPage() {
               </button>
               {exportOpen && (
                 <>
-                  <div className="fixed inset-0 z-10" onClick={() => setExportOpen(false)} />
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setExportOpen(false)}
+                  />
                   <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg z-20 overflow-hidden">
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Export Scope</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                      Export Scope
+                    </div>
                     <button
                       onClick={() => exportProducts('all', 'csv')}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
@@ -504,7 +570,9 @@ export function AdminProductsPage() {
                     >
                       Export All (Excel)
                     </button>
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Filtered</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                      Filtered
+                    </div>
                     <button
                       onClick={() => exportProducts('filtered', 'csv')}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
@@ -527,23 +595,33 @@ export function AdminProductsPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Total Products</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{totalProducts}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {totalProducts}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Published</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{publishedCount}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {publishedCount}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Flagged</p>
-            <p className="mt-2 text-2xl font-semibold text-red-600">{flaggedCount}</p>
+            <p className="mt-2 text-2xl font-semibold text-red-600">
+              {flaggedCount}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Suspended</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{suspendedCount}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {suspendedCount}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Out of Stock</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{outOfStockCount}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {outOfStockCount}
+            </p>
           </div>
         </div>
 
@@ -663,7 +741,9 @@ export function AdminProductsPage() {
 
         {selectedIds.length > 0 && (
           <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-orange-800">{selectedIds.length} selected</span>
+            <span className="text-sm text-orange-800">
+              {selectedIds.length} selected
+            </span>
             <button
               disabled={!canModerate}
               className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
@@ -690,7 +770,9 @@ export function AdminProductsPage() {
             >
               Bulk Category
             </button>
-            <button className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">Bulk Export</button>
+            <button className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+              Bulk Export
+            </button>
           </div>
         )}
 
@@ -702,7 +784,10 @@ export function AdminProductsPage() {
                   <th className="px-4 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={sortedProducts.length > 0 && sortedProducts.every((p) => selectedIds.includes(p.id))}
+                      checked={
+                        sortedProducts.length > 0 &&
+                        sortedProducts.every((p) => selectedIds.includes(p.id))
+                      }
                       onChange={toggleSelectAll}
                     />
                   </th>
@@ -727,7 +812,10 @@ export function AdminProductsPage() {
                         ? 'bg-yellow-50'
                         : ''
                   return (
-                    <tr key={product.id} className={`${rowTone} hover:bg-slate-50`}>
+                    <tr
+                      key={product.id}
+                      className={`${rowTone} hover:bg-slate-50`}
+                    >
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
@@ -748,20 +836,36 @@ export function AdminProductsPage() {
                             <Image size={16} />
                           </div>
                           <div>
-                            <p className="font-medium text-slate-900">{product.name}</p>
-                            <p className="text-xs text-slate-500">{product.id}</p>
+                            <p className="font-medium text-slate-900">
+                              {product.name}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {product.id}
+                            </p>
                           </div>
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">{product.sku}</td>
-                      <td className="px-4 py-3 text-slate-600">{product.supplier}</td>
-                      <td className="px-4 py-3 text-slate-600">{product.category}</td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {product.sku}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {product.supplier}
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {product.category}
+                      </td>
                       <td className="px-4 py-3 text-slate-600">
                         {formatCurrency(product.price)} / MOQ {product.moq}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">{product.stock}</td>
-                      <td className="px-4 py-3">{statusBadge(product.status)}</td>
-                      <td className="px-4 py-3 text-right text-slate-600">{product.orders}</td>
+                      <td className="px-4 py-3 text-right text-slate-600">
+                        {product.stock}
+                      </td>
+                      <td className="px-4 py-3">
+                        {statusBadge(product.status)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-600">
+                        {product.orders}
+                      </td>
                       <td className="px-4 py-3 text-right">
                         {product.flags > 0 ? (
                           <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
@@ -775,14 +879,21 @@ export function AdminProductsPage() {
                       <td className="px-4 py-3 text-right">
                         <div className="relative inline-block text-left">
                           <button
-                            onClick={() => setOpenMenuId(openMenuId === product.id ? null : product.id)}
+                            onClick={() =>
+                              setOpenMenuId(
+                                openMenuId === product.id ? null : product.id,
+                              )
+                            }
                             className="rounded-lg p-2 hover:bg-slate-100"
                           >
                             <MoreVertical size={16} />
                           </button>
                           {openMenuId === product.id && (
                             <>
-                              <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
+                              <div
+                                className="fixed inset-0 z-10"
+                                onClick={() => setOpenMenuId(null)}
+                              />
                               <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg">
                                 <a
                                   href={`/products/${product.id}`}
@@ -863,7 +974,10 @@ export function AdminProductsPage() {
                 })}
                 {sortedProducts.length === 0 && (
                   <tr>
-                    <td colSpan={11} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={11}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       No products found.
                     </td>
                   </tr>
@@ -875,21 +989,33 @@ export function AdminProductsPage() {
 
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Category Breakdown</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Category Breakdown
+            </h3>
             <div className="mt-3 space-y-2">
               {categoryBreakdown.map((item) => (
-                <div key={item.category} className="flex items-center justify-between text-sm">
+                <div
+                  key={item.category}
+                  className="flex items-center justify-between text-sm"
+                >
                   <span className="text-slate-600">{item.category}</span>
-                  <span className="text-slate-900 font-medium">{item.count}</span>
+                  <span className="text-slate-900 font-medium">
+                    {item.count}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Most Popular Categories</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Most Popular Categories
+            </h3>
             <div className="mt-3 space-y-2">
               {popularCategories.map((item) => (
-                <div key={item.category} className="flex items-center gap-2 text-sm text-slate-600">
+                <div
+                  key={item.category}
+                  className="flex items-center gap-2 text-sm text-slate-600"
+                >
                   <Tag size={14} />
                   {item.category} ({item.count})
                 </div>
@@ -897,10 +1023,15 @@ export function AdminProductsPage() {
             </div>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Underrepresented</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Underrepresented
+            </h3>
             <div className="mt-3 space-y-2">
               {underrepresentedCategories.map((item) => (
-                <div key={item.category} className="flex items-center gap-2 text-sm text-slate-600">
+                <div
+                  key={item.category}
+                  className="flex items-center gap-2 text-sm text-slate-600"
+                >
                   <Layers size={14} />
                   {item.category} ({item.count})
                 </div>
@@ -915,21 +1046,35 @@ export function AdminProductsPage() {
           <div className="w-full max-w-4xl rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">{detailProduct.name}</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  {detailProduct.name}
+                </h2>
                 <p className="text-sm text-slate-500">{detailProduct.sku}</p>
               </div>
-              <button onClick={() => setDetailProduct(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setDetailProduct(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="border-b border-slate-200 px-6">
               <div className="flex flex-wrap gap-6 text-sm">
-                {(['info', 'pricing', 'reports', 'analytics'] as Array<DetailTab>).map((tab) => (
+                {(
+                  [
+                    'info',
+                    'pricing',
+                    'reports',
+                    'analytics',
+                  ] as Array<DetailTab>
+                ).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}
                     className={`py-3 border-b-2 ${
-                      detailTab === tab ? 'border-orange-600 text-orange-600' : 'border-transparent text-slate-500'
+                      detailTab === tab
+                        ? 'border-orange-600 text-orange-600'
+                        : 'border-transparent text-slate-500'
                     }`}
                   >
                     {tab === 'info'
@@ -958,20 +1103,34 @@ export function AdminProductsPage() {
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-xs uppercase text-slate-400">Supplier</p>
-                      <p className="text-sm font-medium text-slate-900">{detailProduct.supplier}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Supplier
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailProduct.supplier}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-xs uppercase text-slate-400">Category</p>
-                      <p className="text-sm font-medium text-slate-900">{detailProduct.category}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Category
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailProduct.category}
+                      </p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">Description</p>
-                    <p className="mt-2 text-sm text-slate-700">{detailProduct.description}</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      Description
+                    </p>
+                    <p className="mt-2 text-sm text-slate-700">
+                      {detailProduct.description}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">Specifications</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      Specifications
+                    </p>
                     <ul className="mt-2 space-y-1 text-sm text-slate-700">
                       {detailProduct.specs.map((spec) => (
                         <li key={spec}>• {spec}</li>
@@ -982,7 +1141,10 @@ export function AdminProductsPage() {
                     <p className="text-xs uppercase text-slate-400">Images</p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-3">
                       {detailProduct.images.map((image) => (
-                        <div key={image} className="flex h-24 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+                        <div
+                          key={image}
+                          className="flex h-24 items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+                        >
                           <Image size={20} />
                         </div>
                       ))}
@@ -1004,8 +1166,12 @@ export function AdminProductsPage() {
                       <tbody className="divide-y divide-slate-200">
                         {detailProduct.tieredPricing.map((tier) => (
                           <tr key={tier.min}>
-                            <td className="px-4 py-2 text-slate-700">{tier.min}</td>
-                            <td className="px-4 py-2 text-right text-slate-700">{formatCurrency(tier.price)}</td>
+                            <td className="px-4 py-2 text-slate-700">
+                              {tier.min}
+                            </td>
+                            <td className="px-4 py-2 text-right text-slate-700">
+                              {formatCurrency(tier.price)}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -1014,16 +1180,22 @@ export function AdminProductsPage() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="rounded-lg border border-slate-200 p-4">
                       <p className="text-xs text-slate-400">Current Stock</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailProduct.stock}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailProduct.stock}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-4">
                       <p className="text-xs text-slate-400">MOQ</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailProduct.moq}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailProduct.moq}
+                      </p>
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-sm font-semibold text-slate-900">Stock History</p>
+                      <p className="text-sm font-semibold text-slate-900">
+                        Stock History
+                      </p>
                       <div className="mt-2 h-32">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={detailProduct.stockHistory}>
@@ -1031,13 +1203,20 @@ export function AdminProductsPage() {
                             <XAxis dataKey="date" />
                             <YAxis />
                             <Tooltip />
-                            <Line type="monotone" dataKey="stock" stroke="#10b981" strokeWidth={2} />
+                            <Line
+                              type="monotone"
+                              dataKey="stock"
+                              stroke="#10b981"
+                              strokeWidth={2}
+                            />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-sm font-semibold text-slate-900">Price History</p>
+                      <p className="text-sm font-semibold text-slate-900">
+                        Price History
+                      </p>
                       <div className="mt-2 h-32">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={detailProduct.priceHistory}>
@@ -1045,7 +1224,12 @@ export function AdminProductsPage() {
                             <XAxis dataKey="date" />
                             <YAxis />
                             <Tooltip />
-                            <Line type="monotone" dataKey="price" stroke="#f97316" strokeWidth={2} />
+                            <Line
+                              type="monotone"
+                              dataKey="price"
+                              stroke="#f97316"
+                              strokeWidth={2}
+                            />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
@@ -1057,20 +1241,41 @@ export function AdminProductsPage() {
               {detailTab === 'reports' && (
                 <div className="space-y-4">
                   {detailProduct.reports.length === 0 && (
-                    <p className="text-sm text-slate-500">No reports for this product.</p>
+                    <p className="text-sm text-slate-500">
+                      No reports for this product.
+                    </p>
                   )}
                   {detailProduct.reports.map((report) => (
-                    <div key={report.id} className="rounded-lg border border-slate-200 p-4">
+                    <div
+                      key={report.id}
+                      className="rounded-lg border border-slate-200 p-4"
+                    >
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-slate-900">{report.reason}</p>
-                        <span className="text-xs text-slate-400">{report.date}</span>
+                        <p className="text-sm font-medium text-slate-900">
+                          {report.reason}
+                        </p>
+                        <span className="text-xs text-slate-400">
+                          {report.date}
+                        </span>
                       </div>
-                      <p className="mt-2 text-sm text-slate-600">{report.details}</p>
-                      <p className="mt-2 text-xs text-slate-500">Reporter: {report.reporter}</p>
-                      {report.action && <p className="mt-1 text-xs text-slate-500">Action: {report.action}</p>}
+                      <p className="mt-2 text-sm text-slate-600">
+                        {report.details}
+                      </p>
+                      <p className="mt-2 text-xs text-slate-500">
+                        Reporter: {report.reporter}
+                      </p>
+                      {report.action && (
+                        <p className="mt-1 text-xs text-slate-500">
+                          Action: {report.action}
+                        </p>
+                      )}
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Dismiss</button>
-                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Warn Supplier</button>
+                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                          Dismiss
+                        </button>
+                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                          Warn Supplier
+                        </button>
                         <button className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs text-orange-700">
                           Suspend Product
                         </button>
@@ -1087,15 +1292,32 @@ export function AdminProductsPage() {
                 <div className="grid gap-4 sm:grid-cols-3">
                   {[
                     { label: 'Views', value: detailProduct.analytics.views },
-                    { label: 'Wishlist', value: detailProduct.analytics.wishlists },
-                    { label: 'Cart Adds', value: detailProduct.analytics.carts },
+                    {
+                      label: 'Wishlist',
+                      value: detailProduct.analytics.wishlists,
+                    },
+                    {
+                      label: 'Cart Adds',
+                      value: detailProduct.analytics.carts,
+                    },
                     { label: 'Orders', value: detailProduct.analytics.orders },
-                    { label: 'Conversion', value: `${detailProduct.analytics.conversionRate}%` },
-                    { label: 'Revenue', value: formatCurrency(detailProduct.analytics.revenue) },
+                    {
+                      label: 'Conversion',
+                      value: `${detailProduct.analytics.conversionRate}%`,
+                    },
+                    {
+                      label: 'Revenue',
+                      value: formatCurrency(detailProduct.analytics.revenue),
+                    },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-lg border border-slate-200 p-4">
+                    <div
+                      key={item.label}
+                      className="rounded-lg border border-slate-200 p-4"
+                    >
                       <p className="text-xs text-slate-400">{item.label}</p>
-                      <p className="text-lg font-semibold text-slate-900">{item.value}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {item.value}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -1110,16 +1332,25 @@ export function AdminProductsPage() {
           <div className="w-full max-w-3xl rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Flag Review</h2>
-                <p className="text-sm text-slate-500">{flagReviewProduct.name}</p>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Flag Review
+                </h2>
+                <p className="text-sm text-slate-500">
+                  {flagReviewProduct.name}
+                </p>
               </div>
-              <button onClick={() => setFlagReviewProduct(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setFlagReviewProduct(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               <div className="rounded-lg border border-slate-200 p-4 text-sm text-slate-600">
-                <p className="font-medium text-slate-900">{flagReviewProduct.name}</p>
+                <p className="font-medium text-slate-900">
+                  {flagReviewProduct.name}
+                </p>
                 <p>Supplier: {flagReviewProduct.supplier}</p>
                 <p>Category: {flagReviewProduct.category}</p>
               </div>
@@ -1127,7 +1358,10 @@ export function AdminProductsPage() {
                 <p className="text-sm font-medium text-slate-900">Reports</p>
                 <div className="mt-2 space-y-2 text-sm text-slate-600">
                   {flagReviewProduct.reports.map((report) => (
-                    <div key={report.id} className="rounded-lg border border-slate-200 px-3 py-2">
+                    <div
+                      key={report.id}
+                      className="rounded-lg border border-slate-200 px-3 py-2"
+                    >
                       <p className="font-medium">{report.reason}</p>
                       <p>{report.details}</p>
                     </div>
@@ -1135,7 +1369,9 @@ export function AdminProductsPage() {
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-900">Admin Notes</label>
+                <label className="text-sm font-medium text-slate-900">
+                  Admin Notes
+                </label>
                 <textarea
                   value={flagReviewNotes}
                   onChange={(e) => setFlagReviewNotes(e.target.value)}
@@ -1145,12 +1381,18 @@ export function AdminProductsPage() {
                 />
               </div>
               <div className="flex flex-wrap gap-2">
-                <button className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white">Approve</button>
-                <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">Suspend</button>
+                <button className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white">
+                  Approve
+                </button>
+                <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
+                  Suspend
+                </button>
                 <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">
                   Request Edit
                 </button>
-                <button className="rounded-lg bg-red-600 px-4 py-2 text-sm text-white">Delete</button>
+                <button className="rounded-lg bg-red-600 px-4 py-2 text-sm text-white">
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -1167,7 +1409,10 @@ export function AdminProductsPage() {
                   Suspend {suspendProduct.name}?
                 </h2>
               </div>
-              <button onClick={() => setSuspendProduct(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setSuspendProduct(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1192,7 +1437,8 @@ export function AdminProductsPage() {
                 />
               )}
               <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
-                Suspension details will be sent to the supplier. Supplier can appeal or edit.
+                Suspension details will be sent to the supplier. Supplier can
+                appeal or edit.
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
@@ -1223,12 +1469,17 @@ export function AdminProductsPage() {
                   Delete {deleteProduct.name}?
                 </h2>
               </div>
-              <button onClick={() => setDeleteProduct(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setDeleteProduct(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-red-600 font-medium">This action cannot be undone.</p>
+              <p className="text-sm text-red-600 font-medium">
+                This action cannot be undone.
+              </p>
               <label className="flex items-center gap-2 text-sm text-slate-600">
                 <input
                   type="checkbox"
@@ -1278,9 +1529,14 @@ export function AdminProductsPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <Tag className="text-slate-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Bulk Category Change</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Bulk Category Change
+                </h2>
               </div>
-              <button onClick={() => setBulkCategoryOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkCategoryOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1315,9 +1571,14 @@ export function AdminProductsPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <Trash2 className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Bulk Delete Products</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Bulk Delete Products
+                </h2>
               </div>
-              <button onClick={() => setBulkDeleteOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkDeleteOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>

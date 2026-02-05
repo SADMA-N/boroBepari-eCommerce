@@ -129,17 +129,20 @@ function RegisterPage() {
 
   if (isSuccess) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-xl text-center border border-gray-100">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
-            <Check className="h-8 w-8 text-green-600" />
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 py-12 sm:px-6 lg:px-8 transition-colors">
+        <div className="w-full max-w-md space-y-8 rounded-xl bg-white dark:bg-slate-900 p-10 shadow-xl text-center border border-gray-100 dark:border-slate-800 transition-colors">
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30">
+            <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
             Check your email
           </h2>
-          <p className="mt-2 text-base text-gray-600">
+          <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
             We sent a verification link to{' '}
-            <span className="font-semibold text-gray-900">{email}</span>.
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {email}
+            </span>
+            .
             <br />
             Please check your inbox to verify your account.
           </p>
@@ -157,22 +160,22 @@ function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white p-8 md:p-10 shadow-2xl border border-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 py-12 sm:px-6 lg:px-8 transition-colors">
+      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white dark:bg-slate-900 p-8 md:p-10 shadow-2xl border border-gray-100 dark:border-slate-800 transition-colors">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-            <Sparkles className="h-6 w-6 text-orange-600" />
+          <div className="mx-auto h-12 w-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mb-4 transition-colors">
+            <Sparkles className="h-6 w-6 text-orange-600 dark:text-orange-400" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Create an Account
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Join BoroBepari wholesale marketplace
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-lg text-sm text-center font-medium animate-in fade-in slide-in-from-top-1">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-lg text-sm text-center font-medium animate-in fade-in slide-in-from-top-1 transition-colors">
             {error}
           </div>
         )}
@@ -180,14 +183,14 @@ function RegisterPage() {
         <form className="mt-8 space-y-5" onSubmit={handleEmailSignUp}>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 ml-1">
                 Full Name
               </label>
               <input
                 type="text"
                 required
                 autoComplete="name"
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -195,14 +198,14 @@ function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 ml-1">
                 Email Address
               </label>
               <input
                 type="email"
                 required
                 autoComplete="email"
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
                 placeholder="you@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value.toLowerCase())}
@@ -211,13 +214,13 @@ function RegisterPage() {
 
             <div>
               <div className="flex justify-between items-center mb-1 ml-1">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Create a Strong Password
                 </label>
                 <button
                   type="button"
                   onClick={generateStrongPassword}
-                  className="text-[10px] font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 uppercase tracking-tight transition-colors"
+                  className="text-[10px] font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 flex items-center gap-1 uppercase tracking-tight transition-colors"
                   title="System will generate a strong password for you"
                 >
                   {isGenerating ? (
@@ -233,7 +236,7 @@ function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   required
                   autoComplete="new-password"
-                  className={`appearance-none block w-full px-4 py-3 border ${isPasswordValid ? 'border-gray-300' : 'border-gray-300'} placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm pr-12`}
+                  className={`appearance-none block w-full px-4 py-3 border ${isPasswordValid ? 'border-gray-300 dark:border-slate-700' : 'border-gray-300 dark:border-slate-700'} placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm pr-12`}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => {
@@ -243,7 +246,7 @@ function RegisterPage() {
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-600 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -251,7 +254,7 @@ function RegisterPage() {
               </div>
 
               {showGenerationMessage && (
-                <div className="mt-2 text-[11px] font-bold text-orange-600 bg-orange-50 border border-orange-100 px-3 py-2 rounded-lg animate-in fade-in zoom-in-95 duration-300">
+                <div className="mt-2 text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/30 px-3 py-2 rounded-lg animate-in fade-in zoom-in-95 duration-300 transition-colors">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-3 w-3" />
                     <span>
@@ -262,42 +265,42 @@ function RegisterPage() {
               )}
 
               {/* Password Requirements UI */}
-              <div className="mt-3 p-3 bg-gray-50 rounded-lg space-y-2 border border-gray-100">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+              <div className="mt-3 p-3 bg-gray-50 dark:bg-slate-800/50 rounded-lg space-y-2 border border-gray-100 dark:border-slate-800 transition-colors">
+                <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">
                   Security Requirements
                 </p>
                 <div className="flex items-center gap-2">
                   {valLength ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 font-bold" />
+                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400 font-bold" />
                   ) : (
-                    <div className="h-3.5 w-3.5 rounded-full border border-gray-300" />
+                    <div className="h-3.5 w-3.5 rounded-full border border-gray-300 dark:border-slate-700" />
                   )}
                   <span
-                    className={`text-xs ${valLength ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
+                    className={`text-xs ${valLength ? 'text-gray-900 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-500'}`}
                   >
                     Minimum 8 characters
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {valAlpha ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 font-bold" />
+                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400 font-bold" />
                   ) : (
-                    <div className="h-3.5 w-3.5 rounded-full border border-gray-300" />
+                    <div className="h-3.5 w-3.5 rounded-full border border-gray-300 dark:border-slate-700" />
                   )}
                   <span
-                    className={`text-xs ${valAlpha ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
+                    className={`text-xs ${valAlpha ? 'text-gray-900 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-500'}`}
                   >
                     Include at least one letter
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {valNum ? (
-                    <Check className="h-3.5 w-3.5 text-green-500 font-bold" />
+                    <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400 font-bold" />
                   ) : (
-                    <div className="h-3.5 w-3.5 rounded-full border border-gray-300" />
+                    <div className="h-3.5 w-3.5 rounded-full border border-gray-300 dark:border-slate-700" />
                   )}
                   <span
-                    className={`text-xs ${valNum ? 'text-gray-900 font-medium' : 'text-gray-400'}`}
+                    className={`text-xs ${valNum ? 'text-gray-900 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-500'}`}
                   >
                     Include at least one number
                   </span>
@@ -313,7 +316,7 @@ function RegisterPage() {
               className={`group relative w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white shadow-lg transition-all transform active:scale-[0.98] ${
                 isPasswordValid && name && email
                   ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer'
-                  : 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-gray-300 dark:bg-slate-800 dark:text-gray-500 cursor-not-allowed'
               }`}
             >
               Create Wholesale Account
@@ -322,10 +325,10 @@ function RegisterPage() {
 
           <div className="relative py-2">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-gray-200 dark:border-slate-800"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="px-2 bg-white text-gray-500 font-medium">
+              <span className="px-2 bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400 font-medium transition-colors">
                 Or join with
               </span>
             </div>
@@ -334,7 +337,7 @@ function RegisterPage() {
           <button
             type="button"
             onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm font-bold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-400 transition-all"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -357,12 +360,12 @@ function RegisterPage() {
             Google Account
           </button>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 transition-colors">
             Already have an account?{' '}
             <button
               type="button"
               onClick={() => router.navigate({ to: '/login' })}
-              className="font-bold text-orange-600 hover:text-orange-700 transition-colors underline underline-offset-4"
+              className="font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors underline underline-offset-4"
             >
               Sign in here
             </button>

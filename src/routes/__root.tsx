@@ -87,7 +87,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
   const isSellerRoute = pathname.startsWith('/seller')
   const isAdminRoute = pathname.startsWith('/admin')
   const showBuyerShell = !isSellerRoute && !isAdminRoute
@@ -98,7 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        <ThemeProvider defaultTheme="system" storageKey="borobepari-theme">
+        <ThemeProvider defaultTheme="light" storageKey="borobepari-theme">
           {showBuyerShell ? (
             <AuthProvider>
               <NotificationProvider>

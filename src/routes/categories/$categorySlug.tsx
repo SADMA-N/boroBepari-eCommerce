@@ -158,10 +158,16 @@ function CategoryPage() {
       <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors">
+            <Link
+              to="/"
+              className="text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors"
+            >
               Home
             </Link>
-            <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
+            <ChevronRight
+              size={14}
+              className="text-gray-400 dark:text-gray-600"
+            />
             <Link
               to="/categories/$categorySlug"
               params={{ categorySlug }}
@@ -176,7 +182,9 @@ function CategoryPage() {
       {/* Category Header */}
       <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-6">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white transition-colors">{category.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white transition-colors">
+            {category.name}
+          </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors">
             Discover wholesale {category.name.toLowerCase()} products from
             verified suppliers
@@ -220,7 +228,9 @@ function CategoryPage() {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 {/* Results count */}
                 <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{products.length}</span>{' '}
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {products.length}
+                  </span>{' '}
                   products found
                 </p>
 
@@ -455,7 +465,10 @@ function FilterTag({
   return (
     <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-sm rounded-full transition-colors">
       {label}
-      <button onClick={onRemove} className="hover:text-orange-900 dark:hover:text-orange-200 transition-colors">
+      <button
+        onClick={onRemove}
+        className="hover:text-orange-900 dark:hover:text-orange-200 transition-colors"
+      >
         <X size={14} />
       </button>
     </span>

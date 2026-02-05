@@ -29,15 +29,50 @@ const NAV_ITEMS: Array<{
   permission?: AdminPermission
 }> = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/users', label: 'Users Management', icon: Users, permission: 'users.view' },
-  { to: '/admin/suppliers', label: 'Suppliers Management', icon: Building2, permission: 'suppliers.view' },
-  { to: '/admin/kyc', label: 'KYC Review Queue', icon: FileCheck, permission: 'kyc.review' },
+  {
+    to: '/admin/users',
+    label: 'Users Management',
+    icon: Users,
+    permission: 'users.view',
+  },
+  {
+    to: '/admin/suppliers',
+    label: 'Suppliers Management',
+    icon: Building2,
+    permission: 'suppliers.view',
+  },
+  {
+    to: '/admin/kyc',
+    label: 'KYC Review Queue',
+    icon: FileCheck,
+    permission: 'kyc.review',
+  },
   { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
-  { to: '/admin/disputes', label: 'Disputes', icon: AlertTriangle, permission: 'disputes.view' },
-  { to: '/admin/products', label: 'Products', icon: Package, permission: 'products.view' },
+  {
+    to: '/admin/disputes',
+    label: 'Disputes',
+    icon: AlertTriangle,
+    permission: 'disputes.view',
+  },
+  {
+    to: '/admin/products',
+    label: 'Products',
+    icon: Package,
+    permission: 'products.view',
+  },
   { to: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
-  { to: '/admin/settings', label: 'Settings', icon: Settings, permission: 'settings.view' },
-  { to: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText, permission: 'logs.view' },
+  {
+    to: '/admin/settings',
+    label: 'Settings',
+    icon: Settings,
+    permission: 'settings.view',
+  },
+  {
+    to: '/admin/audit-logs',
+    label: 'Audit Logs',
+    icon: ScrollText,
+    permission: 'logs.view',
+  },
 ]
 
 function getRoleBadgeColor(role: AdminRole): string {
@@ -91,7 +126,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <span className="text-lg font-bold text-white">BoroBepari</span>
-                <span className="block text-xs text-slate-400">Admin Console</span>
+                <span className="block text-xs text-slate-400">
+                  Admin Console
+                </span>
               </div>
             </Link>
             <button
@@ -105,7 +142,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             <ul className="space-y-1">
-              {NAV_ITEMS.filter((item) => !item.permission || can(item.permission)).map((item) => {
+              {NAV_ITEMS.filter(
+                (item) => !item.permission || can(item.permission),
+              ).map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.to)
                 return (
@@ -136,7 +175,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                   {admin.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{admin.name}</p>
+                  <p className="text-sm font-medium text-white truncate">
+                    {admin.name}
+                  </p>
                   <span
                     className={`inline-block px-2 py-0.5 rounded text-xs border ${getRoleBadgeColor(admin.role)}`}
                   >
@@ -165,7 +206,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              
+
               {/* Notifications */}
               <button className="relative p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                 <Bell size={20} />
@@ -185,7 +226,10 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                     <span className="hidden sm:block text-sm font-medium text-slate-700 dark:text-slate-300">
                       {admin.name}
                     </span>
-                    <ChevronDown size={16} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      size={16}
+                      className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`}
+                    />
                   </button>
 
                   {profileOpen && (
@@ -196,8 +240,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                       />
                       <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-20 transition-colors animate-in fade-in slide-in-from-top-2">
                         <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
-                          <p className="text-sm font-medium text-slate-900 dark:text-white">{admin.name}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{admin.email}</p>
+                          <p className="text-sm font-medium text-slate-900 dark:text-white">
+                            {admin.name}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {admin.email}
+                          </p>
                         </div>
                         <button
                           onClick={() => {
@@ -219,7 +267,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-6 text-slate-900 dark:text-slate-100">{children}</main>
+        <main className="p-4 lg:p-6 text-slate-900 dark:text-slate-100">
+          {children}
+        </main>
       </div>
     </div>
   )

@@ -112,7 +112,9 @@ export default function OrderStatusTimeline({
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [lastUpdated, setLastUpdated] = useState(new Date())
   const [copiedTracking, setCopiedTracking] = useState(false)
-  const [statusNotification, setStatusNotification] = useState<string | null>(null)
+  const [statusNotification, setStatusNotification] = useState<string | null>(
+    null,
+  )
   const previousStatus = useRef<string | null>(null)
   const lastRefreshRef = useRef<number>(0)
 
@@ -231,9 +233,14 @@ export default function OrderStatusTimeline({
       {/* Status Notification */}
       {statusNotification && (
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/30 rounded-lg p-4 flex items-center gap-3 animate-in slide-in-from-top duration-300 transition-colors">
-          <AlertCircle size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0" />
+          <AlertCircle
+            size={20}
+            className="text-blue-600 dark:text-blue-400 flex-shrink-0"
+          />
           <div className="flex-1">
-            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">{statusNotification}</p>
+            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+              {statusNotification}
+            </p>
           </div>
           {trackingInfo?.trackingUrl && (
             <a
@@ -266,26 +273,35 @@ export default function OrderStatusTimeline({
         >
           <div
             className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
-              isCancelled ? 'bg-red-100 dark:bg-red-900/30' : 'bg-orange-100 dark:bg-orange-950/30'
+              isCancelled
+                ? 'bg-red-100 dark:bg-red-900/30'
+                : 'bg-orange-100 dark:bg-orange-950/30'
             }`}
           >
             {isCancelled ? (
               <XCircle className="text-red-600 dark:text-red-500" size={28} />
             ) : (
-              <RotateCcw className="text-orange-600 dark:text-orange-500" size={28} />
+              <RotateCcw
+                className="text-orange-600 dark:text-orange-500"
+                size={28}
+              />
             )}
           </div>
           <div>
             <h3
               className={`text-lg font-bold transition-colors ${
-                isCancelled ? 'text-red-800 dark:text-red-400' : 'text-orange-800 dark:text-orange-400'
+                isCancelled
+                  ? 'text-red-800 dark:text-red-400'
+                  : 'text-orange-800 dark:text-orange-400'
               }`}
             >
               Order {isCancelled ? 'Cancelled' : 'Returned'}
             </h3>
             <p
               className={`text-sm transition-colors ${
-                isCancelled ? 'text-red-600 dark:text-red-300' : 'text-orange-600 dark:text-orange-300'
+                isCancelled
+                  ? 'text-red-600 dark:text-red-300'
+                  : 'text-orange-600 dark:text-orange-300'
               }`}
             >
               {isCancelled
@@ -295,7 +311,9 @@ export default function OrderStatusTimeline({
             {updatedAt && (
               <p
                 className={`text-xs mt-1 transition-colors ${
-                  isCancelled ? 'text-red-500 dark:text-red-500' : 'text-orange-500 dark:text-orange-500'
+                  isCancelled
+                    ? 'text-red-500 dark:text-red-500'
+                    : 'text-orange-500 dark:text-orange-500'
                 }`}
               >
                 {format(new Date(updatedAt), 'MMM d, yyyy at h:mm a')}
@@ -341,8 +359,8 @@ export default function OrderStatusTimeline({
                           completed
                             ? 'bg-green-500 border-green-500 text-white'
                             : current
-                            ? 'bg-orange-500 border-orange-500 text-white animate-pulse'
-                            : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700 text-gray-400 dark:text-gray-600'
+                              ? 'bg-orange-500 border-orange-500 text-white animate-pulse'
+                              : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700 text-gray-400 dark:text-gray-600'
                         }`}
                       >
                         {completed ? (
@@ -355,7 +373,9 @@ export default function OrderStatusTimeline({
                       {/* Label */}
                       <h4
                         className={`mt-3 text-sm font-medium transition-colors ${
-                          completed || current ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-600'
+                          completed || current
+                            ? 'text-gray-900 dark:text-gray-100'
+                            : 'text-gray-400 dark:text-gray-600'
                         }`}
                       >
                         {stage.label}
@@ -403,8 +423,8 @@ export default function OrderStatusTimeline({
                           completed
                             ? 'bg-green-500 border-green-500 text-white'
                             : current
-                            ? 'bg-orange-500 border-orange-500 text-white'
-                            : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700 text-gray-400 dark:text-gray-600'
+                              ? 'bg-orange-500 border-orange-500 text-white'
+                              : 'bg-white dark:bg-slate-900 border-gray-300 dark:border-slate-700 text-gray-400 dark:text-gray-600'
                         }`}
                       >
                         {completed ? (
@@ -419,7 +439,9 @@ export default function OrderStatusTimeline({
                         <div className="flex items-center justify-between">
                           <h4
                             className={`font-medium transition-colors ${
-                              completed || current ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-600'
+                              completed || current
+                                ? 'text-gray-900 dark:text-gray-100'
+                                : 'text-gray-400 dark:text-gray-600'
                             }`}
                           >
                             {stage.label}
@@ -432,7 +454,9 @@ export default function OrderStatusTimeline({
                         </div>
                         <p
                           className={`text-sm transition-colors ${
-                            completed || current ? 'text-gray-500 dark:text-gray-400' : 'text-gray-400 dark:text-gray-600'
+                            completed || current
+                              ? 'text-gray-500 dark:text-gray-400'
+                              : 'text-gray-400 dark:text-gray-600'
                           }`}
                         >
                           {stage.description}
@@ -471,14 +495,20 @@ export default function OrderStatusTimeline({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {trackingInfo.courierName && (
               <div>
-                <p className="text-xs text-blue-600 dark:text-blue-500 uppercase font-semibold transition-colors">Courier</p>
-                <p className="font-medium text-blue-900 dark:text-blue-200 transition-colors">{trackingInfo.courierName}</p>
+                <p className="text-xs text-blue-600 dark:text-blue-500 uppercase font-semibold transition-colors">
+                  Courier
+                </p>
+                <p className="font-medium text-blue-900 dark:text-blue-200 transition-colors">
+                  {trackingInfo.courierName}
+                </p>
               </div>
             )}
 
             {trackingInfo.trackingNumber && (
               <div>
-                <p className="text-xs text-blue-600 dark:text-blue-500 uppercase font-semibold transition-colors">Tracking Number</p>
+                <p className="text-xs text-blue-600 dark:text-blue-500 uppercase font-semibold transition-colors">
+                  Tracking Number
+                </p>
                 <div className="flex items-center gap-2">
                   <p className="font-mono font-medium text-blue-900 dark:text-blue-200 transition-colors">
                     {trackingInfo.trackingNumber}
@@ -490,7 +520,10 @@ export default function OrderStatusTimeline({
                     aria-live="polite"
                   >
                     {copiedTracking ? (
-                      <CheckCircle size={16} className="text-green-600 dark:text-green-400" />
+                      <CheckCircle
+                        size={16}
+                        className="text-green-600 dark:text-green-400"
+                      />
                     ) : (
                       <Copy size={16} />
                     )}
@@ -501,9 +534,14 @@ export default function OrderStatusTimeline({
 
             {trackingInfo.expectedDelivery && (
               <div className="sm:col-span-2">
-                <p className="text-xs text-blue-600 dark:text-blue-500 uppercase font-semibold transition-colors">Expected Delivery</p>
+                <p className="text-xs text-blue-600 dark:text-blue-500 uppercase font-semibold transition-colors">
+                  Expected Delivery
+                </p>
                 <p className="font-medium text-blue-900 dark:text-blue-200 transition-colors">
-                  {format(new Date(trackingInfo.expectedDelivery), 'EEEE, MMMM d, yyyy')}
+                  {format(
+                    new Date(trackingInfo.expectedDelivery),
+                    'EEEE, MMMM d, yyyy',
+                  )}
                 </p>
               </div>
             )}
@@ -513,9 +551,7 @@ export default function OrderStatusTimeline({
 
       {/* Last Updated & Refresh */}
       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-slate-800 transition-colors">
-        <span>
-          Last updated: {format(lastUpdated, 'MMM d, h:mm a')}
-        </span>
+        <span>Last updated: {format(lastUpdated, 'MMM d, h:mm a')}</span>
         {onRefresh && (
           <button
             onClick={handleRefresh}
@@ -537,22 +573,59 @@ export default function OrderStatusTimeline({
 
 // Compact version for order cards
 export function OrderStatusBadge({ status }: { status: string }) {
-  const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-    pending: { label: 'Pending', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
+  const statusConfig: Record<
+    string,
+    { label: string; color: string; bgColor: string }
+  > = {
+    pending: {
+      label: 'Pending',
+      color: 'text-yellow-700',
+      bgColor: 'bg-yellow-100',
+    },
     placed: { label: 'Placed', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    confirmed: { label: 'Confirmed', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    processing: { label: 'Processing', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    shipped: { label: 'Shipped', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
-    out_for_delivery: { label: 'Out for Delivery', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
-    delivered: { label: 'Delivered', color: 'text-green-700', bgColor: 'bg-green-100' },
-    cancelled: { label: 'Cancelled', color: 'text-red-700', bgColor: 'bg-red-100' },
-    returned: { label: 'Returned', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+    confirmed: {
+      label: 'Confirmed',
+      color: 'text-blue-700',
+      bgColor: 'bg-blue-100',
+    },
+    processing: {
+      label: 'Processing',
+      color: 'text-purple-700',
+      bgColor: 'bg-purple-100',
+    },
+    shipped: {
+      label: 'Shipped',
+      color: 'text-indigo-700',
+      bgColor: 'bg-indigo-100',
+    },
+    out_for_delivery: {
+      label: 'Out for Delivery',
+      color: 'text-cyan-700',
+      bgColor: 'bg-cyan-100',
+    },
+    delivered: {
+      label: 'Delivered',
+      color: 'text-green-700',
+      bgColor: 'bg-green-100',
+    },
+    cancelled: {
+      label: 'Cancelled',
+      color: 'text-red-700',
+      bgColor: 'bg-red-100',
+    },
+    returned: {
+      label: 'Returned',
+      color: 'text-orange-700',
+      bgColor: 'bg-orange-100',
+    },
   }
 
   const config = statusConfig[status]
 
   return (
-    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${config.bgColor} ${config.color}`}>
+    <span
+      className={`px-2.5 py-1 rounded-full text-xs font-semibold ${config.bgColor} ${config.color}`}
+    >
       {config.label}
     </span>
   )

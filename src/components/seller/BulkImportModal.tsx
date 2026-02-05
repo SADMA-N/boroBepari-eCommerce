@@ -28,7 +28,14 @@ type ImportState = 'idle' | 'parsing' | 'ready' | 'importing' | 'complete'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 const MAX_ROWS = 500
-const REQUIRED_FIELDS = ['title', 'category', 'description', 'price', 'moq', 'stock']
+const REQUIRED_FIELDS = [
+  'title',
+  'category',
+  'description',
+  'price',
+  'moq',
+  'stock',
+]
 
 const CATEGORIES = [
   'Electronics',
@@ -144,13 +151,17 @@ export function BulkImportModal({
     }
     setState('parsing')
     try {
-      const parsedRows = ext === 'csv' ? await parseCsv(file) : await parseExcel(file)
+      const parsedRows =
+        ext === 'csv' ? await parseCsv(file) : await parseExcel(file)
       if (parsedRows.length > MAX_ROWS) {
         setFileError('Maximum 500 products per upload.')
         setState('idle')
         return
       }
-      const { formattedRows, rowErrors } = validateRows(parsedRows, uploadImagesSeparately)
+      const { formattedRows, rowErrors } = validateRows(
+        parsedRows,
+        uploadImagesSeparately,
+      )
       setRows(formattedRows)
       setErrors(rowErrors)
       setState('ready')
@@ -171,25 +182,39 @@ export function BulkImportModal({
     const csv = [
       'Row,Title,Error,Fix Suggestion',
       ...errors.map(
-        (err) => `${err.rowNumber},"${err.title}","${err.message}","${err.suggestion}"`,
+        (err) =>
+          `${err.rowNumber},"${err.title}","${err.message}","${err.suggestion}"`,
       ),
     ].join('\n')
     downloadFile(csv, 'import-errors.csv', 'text/csv')
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-5xl rounded-2xl bg-white shadow-xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-slate-900">Import Products in Bulk</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Import Products in Bulk
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+            aria-label="Close modal"
+            autoFocus
+          >
             <X size={18} />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-sm font-semibold text-slate-700">Step 1: Download Template</h3>
+            <h3 className="text-sm font-semibold text-slate-700">
+              Step 1: Download Template
+            </h3>
             <ul className="mt-2 text-sm text-slate-500 list-disc pl-5">
               <li>Download our template</li>
               <li>Fill in product details</li>
@@ -217,12 +242,16 @@ export function BulkImportModal({
 
           <section className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-700">Step 2: Upload File</h3>
+              <h3 className="text-sm font-semibold text-slate-700">
+                Step 2: Upload File
+              </h3>
               <label className="flex items-center gap-2 text-xs text-slate-500">
                 <input
                   type="checkbox"
                   checked={uploadImagesSeparately}
-                  onChange={(event) => setUploadImagesSeparately(event.target.checked)}
+                  onChange={(event) =>
+                    setUploadImagesSeparately(event.target.checked)
+                  }
                 />
                 Upload images separately
               </label>
@@ -244,12 +273,18 @@ export function BulkImportModal({
                     type="file"
                     className="hidden"
                     accept=".csv,.xlsx,.xls"
-                    onChange={(event) => void handleFile(event.target.files?.item(0) || null)}
+                    onChange={(event) =>
+                      void handleFile(event.target.files?.item(0) || null)
+                    }
                   />
                 </label>
               </p>
-              <p className="text-xs text-slate-400 mt-1">Max 10MB · Up to 500 products</p>
-              {fileError && <p className="mt-2 text-xs text-red-500">{fileError}</p>}
+              <p className="text-xs text-slate-400 mt-1">
+                Max 10MB · Up to 500 products
+              </p>
+              {fileError && (
+                <p className="mt-2 text-xs text-red-500">{fileError}</p>
+              )}
             </div>
           </section>
 
@@ -257,14 +292,24 @@ export function BulkImportModal({
             <section className="space-y-5">
               <div className="grid sm:grid-cols-3 gap-4">
                 <SummaryCard label="Total rows" value={rows.length} />
-                <SummaryCard label="Valid rows" value={validRows.length} tone="success" />
-                <SummaryCard label="Rows with errors" value={errors.length} tone="danger" />
+                <SummaryCard
+                  label="Valid rows"
+                  value={validRows.length}
+                  tone="success"
+                />
+                <SummaryCard
+                  label="Rows with errors"
+                  value={errors.length}
+                  tone="danger"
+                />
               </div>
 
               {errors.length > 0 && (
                 <div className="rounded-xl border border-red-100 bg-red-50 p-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-red-700">Validation Errors</h4>
+                    <h4 className="text-sm font-semibold text-red-700">
+                      Validation Errors
+                    </h4>
                     <button
                       type="button"
                       onClick={downloadErrorReport}
@@ -300,7 +345,9 @@ export function BulkImportModal({
 
               <div className="rounded-xl border border-slate-200 bg-white p-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold text-slate-700">Preview Valid Products</h4>
+                  <h4 className="text-sm font-semibold text-slate-700">
+                    Preview Valid Products
+                  </h4>
                   {validRows.length > 10 && (
                     <button
                       type="button"
@@ -354,13 +401,20 @@ export function BulkImportModal({
 
           {state === 'importing' && (
             <section className="rounded-xl border border-slate-200 bg-white p-5">
-              <h4 className="text-sm font-semibold text-slate-700">Importing products...</h4>
+              <h4 className="text-sm font-semibold text-slate-700">
+                Importing products...
+              </h4>
               <div className="mt-3 h-2 rounded-full bg-slate-100">
-                <div className="h-2 rounded-full bg-orange-500" style={{ width: `${importProgress}%` }} />
+                <div
+                  className="h-2 rounded-full bg-orange-500"
+                  style={{ width: `${importProgress}%` }}
+                />
               </div>
               <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
                 <span>{importProgress}% completed</span>
-                <span>Estimated time remaining: {Math.ceil(timeRemaining)}s</span>
+                <span>
+                  Estimated time remaining: {Math.ceil(timeRemaining)}s
+                </span>
               </div>
               <button
                 type="button"
@@ -377,9 +431,12 @@ export function BulkImportModal({
 
           {state === 'complete' && (
             <section className="rounded-xl border border-green-100 bg-green-50 p-5 space-y-3">
-              <h4 className="text-sm font-semibold text-green-700">Import Complete!</h4>
+              <h4 className="text-sm font-semibold text-green-700">
+                Import Complete!
+              </h4>
               <p className="text-xs text-green-700">
-                {importStats.success} products imported successfully · {importStats.failed} failed
+                {importStats.success} products imported successfully ·{' '}
+                {importStats.failed} failed
               </p>
               <button
                 type="button"
@@ -416,7 +473,15 @@ export function BulkImportModal({
   )
 }
 
-function SummaryCard({ label, value, tone }: { label: string; value: number; tone?: 'success' | 'danger' }) {
+function SummaryCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string
+  value: number
+  tone?: 'success' | 'danger'
+}) {
   const toneClass =
     tone === 'success'
       ? 'bg-green-50 text-green-700'
@@ -509,7 +574,10 @@ function normalizeHeader(header: string) {
     .replace(/[^a-z0-9]/g, '')
 }
 
-function toImportRow(record: Record<string, string>, rowNumber: number): ImportRow {
+function toImportRow(
+  record: Record<string, string>,
+  rowNumber: number,
+): ImportRow {
   return {
     rowNumber,
     title: record.producttitle || record.title || '',

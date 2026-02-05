@@ -58,7 +58,11 @@ const EXISTING_SKUS = ['GLV-204', 'PKG-810', 'TSH-532', 'CKW-119']
 
 const DELIVERY_OPTIONS = ['2-3 days', '3-5 days', '5-7 days']
 const RETURN_POLICIES = ['7 days', '15 days', '30 days', 'No returns']
-const SHIP_FROM = ['Dhaka Warehouse', 'Chittagong Warehouse', 'Khulna Warehouse']
+const SHIP_FROM = [
+  'Dhaka Warehouse',
+  'Chittagong Warehouse',
+  'Khulna Warehouse',
+]
 const SECTION_IDS = [
   { id: 'basic', label: 'Basic Information' },
   { id: 'images', label: 'Images' },
@@ -110,7 +114,11 @@ export function AddProductPage() {
   ])
 
   const [weight, setWeight] = useState('')
-  const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' })
+  const [dimensions, setDimensions] = useState({
+    length: '',
+    width: '',
+    height: '',
+  })
   const [shipFrom, setShipFrom] = useState('')
   const [deliveryTime, setDeliveryTime] = useState('')
   const [returnPolicy, setReturnPolicy] = useState('')
@@ -145,7 +153,9 @@ export function AddProductPage() {
         setLowStockThreshold(parsed.lowStockThreshold ?? '10')
         setSpecs(parsed.specs ?? specs)
         setWeight(parsed.weight ?? '')
-        setDimensions(parsed.dimensions ?? { length: '', width: '', height: '' })
+        setDimensions(
+          parsed.dimensions ?? { length: '', width: '', height: '' },
+        )
         setShipFrom(parsed.shipFrom ?? '')
         setDeliveryTime(parsed.deliveryTime ?? '')
         setReturnPolicy(parsed.returnPolicy ?? '')
@@ -300,9 +310,14 @@ export function AddProductPage() {
       min: Number(tier.minQty),
       max: Number(tier.maxQty),
     }))
-    const invalidRange = ranges.some((range) => !range.min || !range.max || range.min > range.max)
+    const invalidRange = ranges.some(
+      (range) => !range.min || !range.max || range.min > range.max,
+    )
     const overlaps = ranges.some((range, idx) =>
-      ranges.some((other, j) => j !== idx && range.min <= other.max && other.min <= range.max),
+      ranges.some(
+        (other, j) =>
+          j !== idx && range.min <= other.max && other.min <= range.max,
+      ),
     )
     setErrors((prev) => ({
       ...prev,
@@ -369,7 +384,10 @@ export function AddProductPage() {
 
   const handleTagInput = (value: string) => {
     if (value.includes(',')) {
-      const parts = value.split(',').map((item) => item.trim()).filter(Boolean)
+      const parts = value
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)
       setTags((prev) => Array.from(new Set([...prev, ...parts])))
       setTagInput('')
       return
@@ -382,11 +400,16 @@ export function AddProductPage() {
   }
 
   const addTier = () => {
-    setPricingTiers((prev) => [...prev, { id: crypto.randomUUID(), minQty: '', maxQty: '', price: '' }])
+    setPricingTiers((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), minQty: '', maxQty: '', price: '' },
+    ])
   }
 
   const updateTier = (id: string, field: keyof PricingTier, value: string) => {
-    setPricingTiers((prev) => prev.map((tier) => (tier.id === id ? { ...tier, [field]: value } : tier)))
+    setPricingTiers((prev) =>
+      prev.map((tier) => (tier.id === id ? { ...tier, [field]: value } : tier)),
+    )
   }
 
   const removeTier = (id: string) => {
@@ -395,11 +418,16 @@ export function AddProductPage() {
   }
 
   const addSpecRow = () => {
-    setSpecs((prev) => [...prev, { id: crypto.randomUUID(), key: '', value: '' }])
+    setSpecs((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), key: '', value: '' },
+    ])
   }
 
   const updateSpec = (id: string, field: keyof SpecRow, value: string) => {
-    setSpecs((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)))
+    setSpecs((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
+    )
   }
 
   const removeSpec = (id: string) => {
@@ -433,7 +461,8 @@ export function AddProductPage() {
   }
 
   const validateImage = (file: File) => {
-    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) return 'Only JPEG or PNG images are allowed.'
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type))
+      return 'Only JPEG or PNG images are allowed.'
     if (file.size > MAX_IMAGE_SIZE) return 'Image must be under 5MB.'
     return ''
   }
@@ -443,7 +472,9 @@ export function AddProductPage() {
     const interval = window.setInterval(() => {
       progress += 15
       setImages((prev) =>
-        prev.map((img) => (img.id === id ? { ...img, progress: Math.min(progress, 100) } : img)),
+        prev.map((img) =>
+          img.id === id ? { ...img, progress: Math.min(progress, 100) } : img,
+        ),
       )
       if (progress >= 100) window.clearInterval(interval)
     }, 120)
@@ -460,14 +491,19 @@ export function AddProductPage() {
   }
 
   const setPrimaryImage = (id: string) => {
-    setImages((prev) => prev.map((img) => ({ ...img, isPrimary: img.id === id })))
+    setImages((prev) =>
+      prev.map((img) => ({ ...img, isPrimary: img.id === id })),
+    )
   }
 
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, id: string) => {
     event.dataTransfer.setData('text/plain', id)
   }
 
-  const onDropImage = (event: React.DragEvent<HTMLDivElement>, targetId: string) => {
+  const onDropImage = (
+    event: React.DragEvent<HTMLDivElement>,
+    targetId: string,
+  ) => {
     event.preventDefault()
     const sourceId = event.dataTransfer.getData('text/plain')
     if (!sourceId || sourceId === targetId) return
@@ -486,25 +522,36 @@ export function AddProductPage() {
     const nextErrors: Record<string, string> = {}
     if (!title.trim()) nextErrors.title = 'Product title is required.'
     if (title.length > 200) nextErrors.title = 'Max 200 characters allowed.'
-    if (!mainCategory || !MAIN_CATEGORIES.some((cat) => cat.name === mainCategory)) {
+    if (
+      !mainCategory ||
+      !MAIN_CATEGORIES.some((cat) => cat.name === mainCategory)
+    ) {
       nextErrors.mainCategory = 'Select a valid main category.'
     }
     if (!subCategory || !subCategories.includes(subCategory)) {
       nextErrors.subCategory = 'Select a valid subcategory.'
     }
-    if (!descriptionText.trim()) nextErrors.description = 'Product description is required.'
-    if (descriptionText.length > 2000) nextErrors.description = 'Max 2000 characters allowed.'
+    if (!descriptionText.trim())
+      nextErrors.description = 'Product description is required.'
+    if (descriptionText.length > 2000)
+      nextErrors.description = 'Max 2000 characters allowed.'
     if (images.length === 0) nextErrors.images = 'Primary image is required.'
     if (tieredPricing) {
-      if (pricingTiers.length < 2) nextErrors.pricingTiers = 'Minimum 2 tiers required.'
+      if (pricingTiers.length < 2)
+        nextErrors.pricingTiers = 'Minimum 2 tiers required.'
       const ranges = pricingTiers.map((tier) => ({
         min: Number(tier.minQty),
         max: Number(tier.maxQty),
       }))
-      const invalidRange = ranges.some((range) => !range.min || !range.max || range.min > range.max)
+      const invalidRange = ranges.some(
+        (range) => !range.min || !range.max || range.min > range.max,
+      )
       if (invalidRange) nextErrors.pricingTiers = 'Tier ranges must be valid.'
       const overlaps = ranges.some((range, idx) =>
-        ranges.some((other, j) => j !== idx && range.min <= other.max && other.min <= range.max),
+        ranges.some(
+          (other, j) =>
+            j !== idx && range.min <= other.max && other.min <= range.max,
+        ),
       )
       if (overlaps) nextErrors.pricingTiers = 'Tier ranges should not overlap.'
     } else {
@@ -512,14 +559,16 @@ export function AddProductPage() {
     }
     if (!moq) nextErrors.moq = 'MOQ is required.'
     if (!stock) nextErrors.stock = 'Stock is required.'
-    if (sku && EXISTING_SKUS.includes(sku)) nextErrors.sku = 'SKU already exists.'
+    if (sku && EXISTING_SKUS.includes(sku))
+      nextErrors.sku = 'SKU already exists.'
     if (!weight) nextErrors.weight = 'Product weight is required.'
     if (!shipFrom) nextErrors.shipFrom = 'Select ship-from location.'
     if (!deliveryTime) nextErrors.deliveryTime = 'Select delivery time.'
     if (!returnPolicy) nextErrors.returnPolicy = 'Select return policy.'
     if (sampleEnabled) {
       if (!samplePrice) nextErrors.samplePrice = 'Sample price is required.'
-      if (!sampleDelivery) nextErrors.sampleDelivery = 'Sample delivery time is required.'
+      if (!sampleDelivery)
+        nextErrors.sampleDelivery = 'Sample delivery time is required.'
     }
     setErrors(nextErrors)
     setErrorSummary(Object.values(nextErrors).filter(Boolean))
@@ -533,7 +582,10 @@ export function AddProductPage() {
     void submitProduct(mode)
       .then(() => {
         setShowSuccess(true)
-        pushToast(mode === 'publish' ? 'Product published' : 'Draft saved', 'success')
+        pushToast(
+          mode === 'publish' ? 'Product published' : 'Draft saved',
+          'success',
+        )
       })
       .catch(() => {
         setSubmitError('Failed to save product. Please retry.')
@@ -555,7 +607,9 @@ export function AddProductPage() {
           <aside className="lg:w-64 shrink-0">
             <div className="sticky top-20 space-y-4">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">Form Sections</p>
+                <p className="text-xs uppercase tracking-wide text-slate-400">
+                  Form Sections
+                </p>
                 <nav className="mt-3 space-y-2">
                   {SECTION_IDS.map((section) => (
                     <a
@@ -573,9 +627,13 @@ export function AddProductPage() {
                 </nav>
               </div>
               <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-sm font-semibold text-slate-700">Auto-save</p>
+                <p className="text-sm font-semibold text-slate-700">
+                  Auto-save
+                </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  {savingStatus === 'saving' ? 'Saving...' : 'All changes saved'}
+                  {savingStatus === 'saving'
+                    ? 'Saving...'
+                    : 'All changes saved'}
                 </p>
                 {lastSavedAt && (
                   <p className="mt-1 text-xs text-slate-400">
@@ -589,7 +647,9 @@ export function AddProductPage() {
           <main className="flex-1 space-y-8">
             <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Add New Product</h1>
+                <h1 className="text-2xl font-bold text-slate-900">
+                  Add New Product
+                </h1>
                 <p className="text-slate-500 mt-1">
                   Provide complete details to increase buyer confidence.
                 </p>
@@ -625,7 +685,11 @@ export function AddProductPage() {
             {submitError && (
               <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
                 {submitError}{' '}
-                <button type="button" onClick={() => handleSubmit(submitMode)} className="underline">
+                <button
+                  type="button"
+                  onClick={() => handleSubmit(submitMode)}
+                  className="underline"
+                >
                   Retry
                 </button>
               </div>
@@ -633,7 +697,9 @@ export function AddProductPage() {
 
             {errorSummary.length > 0 && (
               <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
-                <p className="font-semibold">Please fix the following errors:</p>
+                <p className="font-semibold">
+                  Please fix the following errors:
+                </p>
                 <ul className="mt-2 list-disc pl-5">
                   {errorSummary.map((item, idx) => (
                     <li key={`${item}-${idx}`}>{item}</li>
@@ -642,9 +708,14 @@ export function AddProductPage() {
               </div>
             )}
 
-            <section id="basic" className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+            <section
+              id="basic"
+              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Basic Information</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Basic Information
+                </h2>
                 <span className="text-xs text-slate-400">Section 1</span>
               </div>
               <Field
@@ -677,22 +748,37 @@ export function AddProductPage() {
                   error={errors.subCategory}
                 />
               </div>
-              <Field label="Brand" value={brand} onChange={(value) => setBrand(value)} />
+              <Field
+                label="Brand"
+                value={brand}
+                onChange={(value) => setBrand(value)}
+              />
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Product Description <span className="text-red-500">*</span>
                 </label>
                 <div className="flex items-center gap-2 rounded-t-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                  <ToolbarButton label="B" onClick={() => document.execCommand('bold')} />
-                  <ToolbarButton label="I" onClick={() => document.execCommand('italic')} />
-                  <ToolbarButton label="•" onClick={() => document.execCommand('insertUnorderedList')} />
+                  <ToolbarButton
+                    label="B"
+                    onClick={() => document.execCommand('bold')}
+                  />
+                  <ToolbarButton
+                    label="I"
+                    onClick={() => document.execCommand('italic')}
+                  />
+                  <ToolbarButton
+                    label="•"
+                    onClick={() => document.execCommand('insertUnorderedList')}
+                  />
                 </div>
                 <div
                   ref={contentRef}
                   contentEditable
                   className="min-h-[140px] rounded-b-lg border border-t-0 border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none"
                   onInput={(event) => {
-                    const html = sanitizeHtml((event.target as HTMLDivElement).innerHTML)
+                    const html = sanitizeHtml(
+                      (event.target as HTMLDivElement).innerHTML,
+                    )
                     const text = (event.target as HTMLDivElement).innerText
                     if (text.length <= 2000) {
                       setDescriptionHtml(html)
@@ -724,7 +810,10 @@ export function AddProductPage() {
                 />
                 <div className="mt-2 flex flex-wrap gap-2">
                   {tags.map((tag) => (
-                    <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                    <span
+                      key={tag}
+                      className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
+                    >
                       {tag}
                       <button type="button" onClick={() => removeTag(tag)}>
                         <X size={12} />
@@ -735,7 +824,10 @@ export function AddProductPage() {
               </div>
             </section>
 
-            <section id="images" className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+            <section
+              id="images"
+              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+            >
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-slate-900">Images</h2>
                 <span className="text-xs text-slate-400">Section 2</span>
@@ -765,7 +857,8 @@ export function AddProductPage() {
                       to upload
                     </p>
                     <p className="text-xs text-slate-400">
-                      JPEG/PNG, max 5MB each · Minimum 800x800px recommended · White background preferred
+                      JPEG/PNG, max 5MB each · Minimum 800x800px recommended ·
+                      White background preferred
                     </p>
                   </div>
                 </div>
@@ -777,7 +870,9 @@ export function AddProductPage() {
                   className="hidden"
                   onChange={(event) => handleImageFiles(event.target.files)}
                 />
-                {errors.images && <p className="mt-2 text-xs text-red-500">{errors.images}</p>}
+                {errors.images && (
+                  <p className="mt-2 text-xs text-red-500">{errors.images}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -790,21 +885,34 @@ export function AddProductPage() {
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={(event) => onDropImage(event, image.id)}
                   >
-                    <img src={image.thumbUrl} alt="preview" className="h-28 w-full rounded-lg object-cover" />
+                    <img
+                      src={image.thumbUrl}
+                      alt="preview"
+                      className="h-28 w-full rounded-lg object-cover"
+                    />
                     <div className="mt-2 h-1 rounded-full bg-slate-100">
-                      <div className="h-1 rounded-full bg-orange-500" style={{ width: `${image.progress}%` }} />
+                      <div
+                        className="h-1 rounded-full bg-orange-500"
+                        style={{ width: `${image.progress}%` }}
+                      />
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <button
                         type="button"
                         onClick={() => setPrimaryImage(image.id)}
                         className={`text-xs font-semibold ${
-                          image.isPrimary ? 'text-green-600' : 'text-slate-500 hover:text-slate-700'
+                          image.isPrimary
+                            ? 'text-green-600'
+                            : 'text-slate-500 hover:text-slate-700'
                         }`}
                       >
                         {image.isPrimary ? 'Primary' : 'Set as primary'}
                       </button>
-                      <button type="button" onClick={() => removeImage(image.id)} className="text-xs text-red-500">
+                      <button
+                        type="button"
+                        onClick={() => removeImage(image.id)}
+                        className="text-xs text-red-500"
+                      >
                         Delete
                       </button>
                     </div>
@@ -813,15 +921,24 @@ export function AddProductPage() {
               </div>
             </section>
 
-            <section id="pricing" className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+            <section
+              id="pricing"
+              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Pricing & Inventory</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Pricing & Inventory
+                </h2>
                 <span className="text-xs text-slate-400">Section 3</span>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Enable Tiered Pricing</p>
-                  <p className="text-xs text-slate-400">Offer volume discounts with pricing tiers</p>
+                  <p className="text-sm font-medium text-slate-700">
+                    Enable Tiered Pricing
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    Offer volume discounts with pricing tiers
+                  </p>
                 </div>
                 <label className="inline-flex items-center cursor-pointer">
                   <input
@@ -830,8 +947,12 @@ export function AddProductPage() {
                     checked={tieredPricing}
                     onChange={(event) => setTieredPricing(event.target.checked)}
                   />
-                  <div className={`h-6 w-11 rounded-full ${tieredPricing ? 'bg-orange-600' : 'bg-slate-200'} relative`}>
-                    <div className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${tieredPricing ? 'translate-x-5' : 'translate-x-1'}`} />
+                  <div
+                    className={`h-6 w-11 rounded-full ${tieredPricing ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                  >
+                    <div
+                      className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${tieredPricing ? 'translate-x-5' : 'translate-x-1'}`}
+                    />
                   </div>
                 </label>
               </div>
@@ -839,24 +960,33 @@ export function AddProductPage() {
               {tieredPricing ? (
                 <div className="space-y-3">
                   {pricingTiers.map((tier, index) => (
-                    <div key={tier.id} className="grid md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-center">
+                    <div
+                      key={tier.id}
+                      className="grid md:grid-cols-[1fr_1fr_1fr_auto] gap-3 items-center"
+                    >
                       <Field
                         label={index === 0 ? 'Min Quantity' : undefined}
                         required
                         value={tier.minQty}
-                        onChange={(value) => updateTier(tier.id, 'minQty', value)}
+                        onChange={(value) =>
+                          updateTier(tier.id, 'minQty', value)
+                        }
                       />
                       <Field
                         label={index === 0 ? 'Max Quantity' : undefined}
                         required
                         value={tier.maxQty}
-                        onChange={(value) => updateTier(tier.id, 'maxQty', value)}
+                        onChange={(value) =>
+                          updateTier(tier.id, 'maxQty', value)
+                        }
                       />
                       <Field
                         label={index === 0 ? 'Price per Unit' : undefined}
                         required
                         value={tier.price}
-                        onChange={(value) => updateTier(tier.id, 'price', value)}
+                        onChange={(value) =>
+                          updateTier(tier.id, 'price', value)
+                        }
                       />
                       <button
                         type="button"
@@ -868,7 +998,11 @@ export function AddProductPage() {
                       </button>
                     </div>
                   ))}
-                  {errors.pricingTiers && <p className="text-xs text-red-500">{errors.pricingTiers}</p>}
+                  {errors.pricingTiers && (
+                    <p className="text-xs text-red-500">
+                      {errors.pricingTiers}
+                    </p>
+                  )}
                   <button
                     type="button"
                     onClick={addTier}
@@ -887,14 +1021,35 @@ export function AddProductPage() {
                     onChange={(value) => setPrice(value)}
                     error={errors.price}
                   />
-                  <Field label="Discount (%)" value={discount} onChange={(value) => setDiscount(value)} />
+                  <Field
+                    label="Discount (%)"
+                    value={discount}
+                    onChange={(value) => setDiscount(value)}
+                  />
                 </div>
               )}
 
               <div className="grid md:grid-cols-2 gap-4">
-                <Field label="Minimum Order Quantity (MOQ)" required value={moq} onChange={setMoq} error={errors.moq} />
-                <Field label="Available Stock" required value={stock} onChange={setStock} error={errors.stock} />
-                <Field label="SKU" value={sku} onChange={setSku} error={errors.sku} />
+                <Field
+                  label="Minimum Order Quantity (MOQ)"
+                  required
+                  value={moq}
+                  onChange={setMoq}
+                  error={errors.moq}
+                />
+                <Field
+                  label="Available Stock"
+                  required
+                  value={stock}
+                  onChange={setStock}
+                  error={errors.stock}
+                />
+                <Field
+                  label="SKU"
+                  value={sku}
+                  onChange={setSku}
+                  error={errors.sku}
+                />
                 <Field
                   label="Low Stock Threshold"
                   value={lowStockThreshold}
@@ -903,9 +1058,14 @@ export function AddProductPage() {
               </div>
             </section>
 
-            <section id="specs" className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+            <section
+              id="specs"
+              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Specifications</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Specifications
+                </h2>
                 <span className="text-xs text-slate-400">Section 4</span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -913,7 +1073,12 @@ export function AddProductPage() {
                   <button
                     key={spec}
                     type="button"
-                    onClick={() => setSpecs((prev) => [...prev, { id: crypto.randomUUID(), key: spec, value: '' }])}
+                    onClick={() =>
+                      setSpecs((prev) => [
+                        ...prev,
+                        { id: crypto.randomUUID(), key: spec, value: '' },
+                      ])
+                    }
                     className="text-xs font-semibold text-orange-600 hover:text-orange-700"
                   >
                     + {spec}
@@ -922,10 +1087,25 @@ export function AddProductPage() {
               </div>
               <div className="space-y-3">
                 {specs.map((row) => (
-                  <div key={row.id} className="grid md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
-                    <Field label="Specification" value={row.key} onChange={(value) => updateSpec(row.id, 'key', value)} />
-                    <Field label="Value" value={row.value} onChange={(value) => updateSpec(row.id, 'value', value)} />
-                    <button type="button" onClick={() => removeSpec(row.id)} className="text-xs text-red-500">
+                  <div
+                    key={row.id}
+                    className="grid md:grid-cols-[1fr_1fr_auto] gap-3 items-center"
+                  >
+                    <Field
+                      label="Specification"
+                      value={row.key}
+                      onChange={(value) => updateSpec(row.id, 'key', value)}
+                    />
+                    <Field
+                      label="Value"
+                      value={row.value}
+                      onChange={(value) => updateSpec(row.id, 'value', value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeSpec(row.id)}
+                      className="text-xs text-red-500"
+                    >
                       Remove
                     </button>
                   </div>
@@ -941,13 +1121,24 @@ export function AddProductPage() {
               </div>
             </section>
 
-            <section id="shipping" className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+            <section
+              id="shipping"
+              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Shipping & Delivery</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Shipping & Delivery
+                </h2>
                 <span className="text-xs text-slate-400">Section 5</span>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
-                <Field label="Product Weight (kg)" required value={weight} onChange={setWeight} error={errors.weight} />
+                <Field
+                  label="Product Weight (kg)"
+                  required
+                  value={weight}
+                  onChange={setWeight}
+                  error={errors.weight}
+                />
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-2">
                     Package Dimensions (cm)
@@ -955,19 +1146,34 @@ export function AddProductPage() {
                   <div className="grid grid-cols-3 gap-2">
                     <input
                       value={dimensions.length}
-                      onChange={(event) => setDimensions((prev) => ({ ...prev, length: event.target.value }))}
+                      onChange={(event) =>
+                        setDimensions((prev) => ({
+                          ...prev,
+                          length: event.target.value,
+                        }))
+                      }
                       placeholder="L"
                       className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
                     />
                     <input
                       value={dimensions.width}
-                      onChange={(event) => setDimensions((prev) => ({ ...prev, width: event.target.value }))}
+                      onChange={(event) =>
+                        setDimensions((prev) => ({
+                          ...prev,
+                          width: event.target.value,
+                        }))
+                      }
                       placeholder="W"
                       className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
                     />
                     <input
                       value={dimensions.height}
-                      onChange={(event) => setDimensions((prev) => ({ ...prev, height: event.target.value }))}
+                      onChange={(event) =>
+                        setDimensions((prev) => ({
+                          ...prev,
+                          height: event.target.value,
+                        }))
+                      }
                       placeholder="H"
                       className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
                     />
@@ -1000,15 +1206,24 @@ export function AddProductPage() {
               </div>
             </section>
 
-            <section id="samples" className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5">
+            <section
+              id="samples"
+              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+            >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Sample Orders</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Sample Orders
+                </h2>
                 <span className="text-xs text-slate-400">Section 6</span>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">Enable Sample Orders</p>
-                  <p className="text-xs text-slate-400">Offer samples to build buyer trust</p>
+                  <p className="text-sm font-medium text-slate-700">
+                    Enable Sample Orders
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    Offer samples to build buyer trust
+                  </p>
                 </div>
                 <label className="inline-flex items-center cursor-pointer">
                   <input
@@ -1017,15 +1232,29 @@ export function AddProductPage() {
                     checked={sampleEnabled}
                     onChange={(event) => setSampleEnabled(event.target.checked)}
                   />
-                  <div className={`h-6 w-11 rounded-full ${sampleEnabled ? 'bg-orange-600' : 'bg-slate-200'} relative`}>
-                    <div className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${sampleEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
+                  <div
+                    className={`h-6 w-11 rounded-full ${sampleEnabled ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                  >
+                    <div
+                      className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${sampleEnabled ? 'translate-x-5' : 'translate-x-1'}`}
+                    />
                   </div>
                 </label>
               </div>
               {sampleEnabled && (
                 <div className="grid md:grid-cols-3 gap-4">
-                  <Field label="Sample Price per Unit" required value={samplePrice} onChange={setSamplePrice} error={errors.samplePrice} />
-                  <Field label="Max Sample Quantity" value={sampleMaxQty} onChange={setSampleMaxQty} />
+                  <Field
+                    label="Sample Price per Unit"
+                    required
+                    value={samplePrice}
+                    onChange={setSamplePrice}
+                    error={errors.samplePrice}
+                  />
+                  <Field
+                    label="Max Sample Quantity"
+                    value={sampleMaxQty}
+                    onChange={setSampleMaxQty}
+                  />
                   <SelectField
                     label="Sample Delivery Time"
                     required
@@ -1074,18 +1303,31 @@ export function AddProductPage() {
       {showPreview && (
         <Modal onClose={() => setShowPreview(false)} title="Product Preview">
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-slate-900">{title || 'Untitled Product'}</h3>
-            <p className="text-sm text-slate-500">{mainCategory} · {subCategory}</p>
+            <h3 className="text-xl font-semibold text-slate-900">
+              {title || 'Untitled Product'}
+            </h3>
+            <p className="text-sm text-slate-500">
+              {mainCategory} · {subCategory}
+            </p>
             {images[0] && (
-              <img src={images[0].previewUrl} alt="preview" className="w-full max-h-64 object-cover rounded-lg" />
+              <img
+                src={images[0].previewUrl}
+                alt="preview"
+                className="w-full max-h-64 object-cover rounded-lg"
+              />
             )}
             <div
               className="prose prose-sm max-w-none text-slate-700"
-              dangerouslySetInnerHTML={{ __html: descriptionHtml || '<p>No description yet.</p>' }}
+              dangerouslySetInnerHTML={{
+                __html: descriptionHtml || '<p>No description yet.</p>',
+              }}
             />
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
+                <span
+                  key={tag}
+                  className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
+                >
                   {tag}
                 </span>
               ))}
@@ -1095,13 +1337,17 @@ export function AddProductPage() {
       )}
 
       {showSuccess && (
-        <Modal onClose={() => setShowSuccess(false)} title="Product Added Successfully!">
+        <Modal
+          onClose={() => setShowSuccess(false)}
+          title="Product Added Successfully!"
+        >
           <div className="space-y-4 text-center">
             <div className="mx-auto h-14 w-14 rounded-full bg-green-100 flex items-center justify-center text-green-600">
               <CheckCircle2 size={28} />
             </div>
             <p className="text-slate-600">
-              Your product has been {submitMode === 'publish' ? 'published' : 'saved as draft'}.
+              Your product has been{' '}
+              {submitMode === 'publish' ? 'published' : 'saved as draft'}.
             </p>
             <div className="grid sm:grid-cols-3 gap-3">
               <button
@@ -1204,14 +1450,23 @@ function SelectField({
             </option>
           ))}
         </select>
-        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <ChevronDown
+          size={16}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+        />
       </div>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   )
 }
 
-function ToolbarButton({ label, onClick }: { label: string; onClick: () => void }) {
+function ToolbarButton({
+  label,
+  onClick,
+}: {
+  label: string
+  onClick: () => void
+}) {
   return (
     <button
       type="button"
@@ -1233,11 +1488,20 @@ function Modal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+            aria-label="Close modal"
+            autoFocus
+          >
             <X size={18} />
           </button>
         </div>
@@ -1280,9 +1544,13 @@ async function compressImage(file: File) {
   const ctx = canvas.getContext('2d')
   if (!ctx) return file
   ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82))
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, 'image/jpeg', 0.82),
+  )
   if (!blob) return file
-  return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })
+  return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
+    type: 'image/jpeg',
+  })
 }
 
 async function generateThumbnail(file: File) {
@@ -1299,7 +1567,9 @@ async function generateThumbnail(file: File) {
   const dx = (size - width) / 2
   const dy = (size - height) / 2
   ctx.drawImage(bitmap, dx, dy, width, height)
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.8))
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, 'image/jpeg', 0.8),
+  )
   if (!blob) return URL.createObjectURL(file)
   return URL.createObjectURL(blob)
 }

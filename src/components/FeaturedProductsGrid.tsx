@@ -33,10 +33,14 @@ export default function FeaturedProductsGrid({
         <div className="flex items-center justify-between mb-4">
           <div>
             {title && (
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors">{title}</h2>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors">
+                {title}
+              </h2>
             )}
             {subtitle && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors">{subtitle}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors">
+                {subtitle}
+              </p>
             )}
           </div>
           {showViewAll && (

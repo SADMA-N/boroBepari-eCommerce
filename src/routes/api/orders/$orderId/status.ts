@@ -3,7 +3,11 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { orders, user } from '@/db/schema'
 import { sendCancellationEmail } from '@/lib/email'
-import { sendOrderStatusEmail, sendPushNotification, sendSmsNotification } from '@/lib/notifications'
+import {
+  sendOrderStatusEmail,
+  sendPushNotification,
+  sendSmsNotification,
+} from '@/lib/notifications'
 import { auth } from '@/lib/auth'
 
 export const Route = createFileRoute('/api/orders/$orderId/status')({
@@ -102,16 +106,21 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
         if (action === 'cancel') {
           if (!['placed', 'confirmed'].includes(order.status)) {
             return new Response(
-              JSON.stringify({ error: 'Order cannot be cancelled at this stage.' }),
+              JSON.stringify({
+                error: 'Order cannot be cancelled at this stage.',
+              }),
               { status: 400, headers: { 'Content-Type': 'application/json' } },
             )
           }
 
           if (order.status === 'cancelled') {
-            return new Response(JSON.stringify({ error: 'Order already cancelled.' }), {
-              status: 409,
-              headers: { 'Content-Type': 'application/json' },
-            })
+            return new Response(
+              JSON.stringify({ error: 'Order already cancelled.' }),
+              {
+                status: 409,
+                headers: { 'Content-Type': 'application/json' },
+              },
+            )
           }
 
           const cancellationReason = payload?.reason ?? 'No reason provided'
@@ -176,11 +185,22 @@ export const Route = createFileRoute('/api/orders/$orderId/status')({
             email: buyer.email,
             name: buyer.name,
             orderId: orderId,
-            status: nextStatus as 'placed' | 'confirmed' | 'processing' | 'shipped' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'refund_processed',
+            status: nextStatus as
+              | 'placed'
+              | 'confirmed'
+              | 'processing'
+              | 'shipped'
+              | 'out_for_delivery'
+              | 'delivered'
+              | 'cancelled'
+              | 'refund_processed',
             tracking: payload?.tracking,
           })
 
-          if (['shipped', 'delivered'].includes(nextStatus) && buyer.phoneNumber) {
+          if (
+            ['shipped', 'delivered'].includes(nextStatus) &&
+            buyer.phoneNumber
+          ) {
             sendSmsNotification({
               phone: buyer.phoneNumber,
               message: `Order ${buildOrderNumber(order)} is ${nextStatus.replace(/_/g, ' ')}`,
@@ -227,6 +247,8 @@ function buildRefundSummary(order: typeof orders.$inferSelect) {
 }
 
 function buildOrderNumber(order: typeof orders.$inferSelect) {
-  const year = order.createdAt ? new Date(order.createdAt).getFullYear() : new Date().getFullYear()
+  const year = order.createdAt
+    ? new Date(order.createdAt).getFullYear()
+    : new Date().getFullYear()
   return `BO-${year}-${order.id.toString().padStart(4, '0')}`
 }

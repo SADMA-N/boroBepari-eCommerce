@@ -1,4 +1,9 @@
-import { createFileRoute, redirect, useRouter, useSearch } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useRouter,
+  useSearch,
+} from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import {
   ArrowRight,
@@ -46,12 +51,12 @@ function ValidationItem({ isValid, text }: { isValid: boolean; text: string }) {
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`rounded-full p-0.5 transition-colors ${isValid ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-400'}`}
+        className={`rounded-full p-0.5 transition-colors ${isValid ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-slate-700 text-gray-400 dark:text-gray-500'}`}
       >
         {isValid ? <Check size={10} /> : <X size={10} />}
       </div>
       <span
-        className={`text-[12px] transition-colors ${isValid ? 'text-green-700 font-medium' : 'text-gray-500'}`}
+        className={`text-[12px] transition-colors ${isValid ? 'text-green-700 dark:text-green-400 font-medium' : 'text-gray-500 dark:text-gray-400'}`}
       >
         {text}
       </span>
@@ -110,11 +115,11 @@ function SetPasswordPage() {
             password,
           },
         })
-        
+
         // On success, set the seller token and redirect to dashboard
         if (typeof window !== 'undefined') {
           if (isReset) {
-            // If it's a reset, we don't necessarily want to log them in automatically 
+            // If it's a reset, we don't necessarily want to log them in automatically
             // but the prompt says "Update the user's password... Show a success message and redirect the user to the Login page."
             localStorage.removeItem('seller_token') // Clear old token if any
             window.location.href = '/seller/login?reset=success'
@@ -172,18 +177,20 @@ function SetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-slate-950 transition-colors">
       <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden transition-colors">
           {/* Header Card */}
-            <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-white text-center">
+          <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-white text-center">
             <div className="inline-flex p-3 bg-white/20 rounded-full mb-4">
               <ShieldCheck size={40} />
             </div>
-            <h2 className="text-2xl font-bold">{isReset ? 'Reset Your Password' : 'Create a Strong Password'}</h2>
+            <h2 className="text-2xl font-bold">
+              {isReset ? 'Reset Your Password' : 'Create a Strong Password'}
+            </h2>
             <p className="text-orange-50 mt-2 text-sm opacity-90 leading-relaxed">
               {isSeller
-                ? isReset 
+                ? isReset
                   ? 'Enter a new secure password for your seller account.'
                   : 'Complete your seller registration by setting a secure password for your account.'
                 : "Since you signed up with Google, let's add a password so you can also login with your email directly."}
@@ -193,26 +200,26 @@ function SetPasswordPage() {
           <div className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest mb-2">
                   Email Address
                 </label>
                 <input
                   type="text"
                   disabled
-                  className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-xl text-gray-500 font-medium"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800/50 border-2 border-gray-100 dark:border-slate-800 rounded-xl text-gray-500 dark:text-gray-400 font-medium transition-colors"
                   value={search.email || ''}
                 />
               </div>
 
               <div>
                 <div className="flex justify-between items-end mb-2">
-                  <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest">
+                  <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest">
                     New Password
                   </label>
                   <button
                     type="button"
                     onClick={generatePassword}
-                    className="text-xs text-orange-600 hover:text-orange-700 font-bold flex items-center gap-1 transition-colors"
+                    className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-bold flex items-center gap-1 transition-colors"
                   >
                     <RefreshCw size={12} />
                     Auto-generate
@@ -223,7 +230,7 @@ function SetPasswordPage() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     autoFocus
-                    className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900 font-medium"
+                    className="w-full px-4 py-3.5 bg-gray-50 dark:bg-slate-800 border-2 border-gray-100 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white font-medium"
                     placeholder="Enter your new password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -231,27 +238,27 @@ function SetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
 
                 {generatedMessage && (
-                  <p className="mt-2 text-xs text-blue-600 font-medium animate-pulse">
+                  <p className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium animate-pulse">
                     {generatedMessage}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase tracking-widest mb-2">
+                <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest mb-2">
                   Confirm Password
                 </label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
-                    className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900 font-medium"
+                    className="w-full px-4 py-3.5 bg-gray-50 dark:bg-slate-800 border-2 border-gray-100 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all text-gray-900 dark:text-white font-medium"
                     placeholder="Re-enter your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -259,16 +266,20 @@ function SetPasswordPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1"
                   >
-                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} />
+                    ) : (
+                      <Eye size={20} />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Validation Checklist */}
-              <div className="bg-gray-50 rounded-xl p-5 space-y-3 border border-gray-100">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              <div className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-5 space-y-3 border border-gray-100 dark:border-slate-800 transition-colors">
+                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                   Requirements
                 </p>
 
@@ -289,7 +300,7 @@ function SetPasswordPage() {
               </div>
 
               {error && (
-                <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl text-center font-semibold">
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-xl text-center font-semibold transition-colors">
                   {error}
                 </div>
               )}
@@ -314,7 +325,7 @@ function SetPasswordPage() {
                   <button
                     type="button"
                     onClick={handleSkip}
-                    className="w-full text-gray-500 hover:text-gray-700 text-sm font-semibold transition-colors"
+                    className="w-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm font-semibold transition-colors"
                   >
                     Skip for now
                   </button>

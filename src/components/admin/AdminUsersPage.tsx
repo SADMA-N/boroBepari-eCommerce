@@ -75,13 +75,38 @@ const USERS: Array<User> = [
     addresses: ['Banani, Dhaka', 'Gulshan-2, Dhaka'],
     businessInfo: { company: 'Karim Enterprises', type: 'Wholesale Buyer' },
     orderHistory: [
-      { id: 'ORD-46012', date: '2026-02-01', total: 12500, status: 'Delivered' },
-      { id: 'ORD-45876', date: '2026-01-21', total: 42000, status: 'Delivered' },
+      {
+        id: 'ORD-46012',
+        date: '2026-02-01',
+        total: 12500,
+        status: 'Delivered',
+      },
+      {
+        id: 'ORD-45876',
+        date: '2026-01-21',
+        total: 42000,
+        status: 'Delivered',
+      },
     ],
     activityLog: [
-      { id: 'act-1', type: 'login', message: 'Logged in from Dhaka', time: '2 hours ago' },
-      { id: 'act-2', type: 'order', message: 'Placed order ORD-46012', time: '3 days ago' },
-      { id: 'act-3', type: 'rfq', message: 'Created RFQ for LED panels', time: '6 days ago' },
+      {
+        id: 'act-1',
+        type: 'login',
+        message: 'Logged in from Dhaka',
+        time: '2 hours ago',
+      },
+      {
+        id: 'act-2',
+        type: 'order',
+        message: 'Placed order ORD-46012',
+        time: '3 days ago',
+      },
+      {
+        id: 'act-3',
+        type: 'rfq',
+        message: 'Created RFQ for LED panels',
+        time: '6 days ago',
+      },
     ],
   },
   {
@@ -97,11 +122,26 @@ const USERS: Array<User> = [
     lastLogin: '2026-02-02 18:09',
     addresses: ['Dhanmondi, Dhaka'],
     orderHistory: [
-      { id: 'ORD-46011', date: '2026-01-30', total: 23000, status: 'In Progress' },
+      {
+        id: 'ORD-46011',
+        date: '2026-01-30',
+        total: 23000,
+        status: 'In Progress',
+      },
     ],
     activityLog: [
-      { id: 'act-4', type: 'login', message: 'Logged in from Dhaka', time: '1 day ago' },
-      { id: 'act-5', type: 'review', message: 'Submitted a review', time: '4 days ago' },
+      {
+        id: 'act-4',
+        type: 'login',
+        message: 'Logged in from Dhaka',
+        time: '1 day ago',
+      },
+      {
+        id: 'act-5',
+        type: 'review',
+        message: 'Submitted a review',
+        time: '4 days ago',
+      },
     ],
   },
   {
@@ -121,8 +161,18 @@ const USERS: Array<User> = [
       { id: 'ORD-45221', date: '2025-12-09', total: 6200, status: 'Delivered' },
     ],
     activityLog: [
-      { id: 'act-6', type: 'support', message: 'Opened ticket #SUP-1022', time: '3 weeks ago' },
-      { id: 'act-7', type: 'login', message: 'Failed login attempts', time: '3 weeks ago' },
+      {
+        id: 'act-6',
+        type: 'support',
+        message: 'Opened ticket #SUP-1022',
+        time: '3 weeks ago',
+      },
+      {
+        id: 'act-7',
+        type: 'login',
+        message: 'Failed login attempts',
+        time: '3 weeks ago',
+      },
     ],
   },
   {
@@ -138,12 +188,32 @@ const USERS: Array<User> = [
     lastLogin: '2026-02-03 21:40',
     addresses: ['Rajshahi, Bangladesh'],
     orderHistory: [
-      { id: 'ORD-45998', date: '2026-01-29', total: 54000, status: 'Delivered' },
-      { id: 'ORD-45976', date: '2026-01-20', total: 31000, status: 'Delivered' },
+      {
+        id: 'ORD-45998',
+        date: '2026-01-29',
+        total: 54000,
+        status: 'Delivered',
+      },
+      {
+        id: 'ORD-45976',
+        date: '2026-01-20',
+        total: 31000,
+        status: 'Delivered',
+      },
     ],
     activityLog: [
-      { id: 'act-8', type: 'order', message: 'Placed order ORD-45998', time: '5 days ago' },
-      { id: 'act-9', type: 'review', message: 'Submitted a review', time: '1 week ago' },
+      {
+        id: 'act-8',
+        type: 'order',
+        message: 'Placed order ORD-45998',
+        time: '5 days ago',
+      },
+      {
+        id: 'act-9',
+        type: 'review',
+        message: 'Submitted a review',
+        time: '1 week ago',
+      },
     ],
   },
   {
@@ -160,7 +230,12 @@ const USERS: Array<User> = [
     addresses: ['Sylhet, Bangladesh'],
     orderHistory: [],
     activityLog: [
-      { id: 'act-10', type: 'support', message: 'Requested account deletion', time: '2 months ago' },
+      {
+        id: 'act-10',
+        type: 'support',
+        message: 'Requested account deletion',
+        time: '2 months ago',
+      },
     ],
   },
 ]
@@ -209,12 +284,24 @@ function matchesOrderCount(orders: number, filter: OrderCountFilter) {
 
 function statusBadge(status: UserStatus) {
   if (status === 'active') {
-    return <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Active</span>
+    return (
+      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+        Active
+      </span>
+    )
   }
   if (status === 'suspended') {
-    return <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Suspended</span>
+    return (
+      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+        Suspended
+      </span>
+    )
   }
-  return <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-200 text-slate-600">Deleted</span>
+  return (
+    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-200 text-slate-600">
+      Deleted
+    </span>
+  )
 }
 
 export function AdminUsersPage() {
@@ -224,8 +311,11 @@ export function AdminUsersPage() {
   const canDelete = can('users.delete')
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all')
-  const [verificationFilter, setVerificationFilter] = useState<'all' | 'verified' | 'unverified'>('all')
-  const [orderCountFilter, setOrderCountFilter] = useState<OrderCountFilter>('all')
+  const [verificationFilter, setVerificationFilter] = useState<
+    'all' | 'verified' | 'unverified'
+  >('all')
+  const [orderCountFilter, setOrderCountFilter] =
+    useState<OrderCountFilter>('all')
   const [sortBy, setSortBy] = useState<SortKey>('date')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -255,7 +345,8 @@ export function AdminUsersPage() {
         user.name.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query) ||
         user.phone.toLowerCase().includes(query)
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter
+      const matchesStatus =
+        statusFilter === 'all' || user.status === statusFilter
       const matchesVerification =
         verificationFilter === 'all' ||
         (verificationFilter === 'verified' && user.verified) ||
@@ -266,9 +357,23 @@ export function AdminUsersPage() {
       const withinFrom = dateFrom ? joinedDate >= new Date(dateFrom) : true
       const withinTo = dateTo ? joinedDate <= new Date(dateTo) : true
 
-      return matchesSearch && matchesStatus && matchesVerification && matchesOrder && withinFrom && withinTo
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesVerification &&
+        matchesOrder &&
+        withinFrom &&
+        withinTo
+      )
     })
-  }, [searchQuery, statusFilter, verificationFilter, orderCountFilter, dateFrom, dateTo])
+  }, [
+    searchQuery,
+    statusFilter,
+    verificationFilter,
+    orderCountFilter,
+    dateFrom,
+    dateTo,
+  ])
 
   const sortedUsers = useMemo(() => {
     const copy = [...filtered]
@@ -303,12 +408,23 @@ export function AdminUsersPage() {
   }
 
   const toggleSelectOne = (id: string) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
   }
 
   const exportUsers = (scope: 'all' | 'filtered', format: 'csv' | 'excel') => {
     const exportData = scope === 'all' ? USERS : sortedUsers
-    const header = ['User ID', 'Name', 'Email', 'Phone', 'Registration Date', 'Orders', 'Spent', 'Status']
+    const header = [
+      'User ID',
+      'Name',
+      'Email',
+      'Phone',
+      'Registration Date',
+      'Orders',
+      'Spent',
+      'Status',
+    ]
     const rows = exportData.map((u) => [
       u.id,
       u.name,
@@ -339,7 +455,15 @@ export function AdminUsersPage() {
 
   useEffect(() => {
     setPage(1)
-  }, [searchQuery, statusFilter, verificationFilter, orderCountFilter, sortBy, dateFrom, dateTo])
+  }, [
+    searchQuery,
+    statusFilter,
+    verificationFilter,
+    orderCountFilter,
+    sortBy,
+    dateFrom,
+    dateTo,
+  ])
 
   return (
     <AdminProtectedRoute requiredPermissions={['users.view']}>
@@ -347,7 +471,9 @@ export function AdminUsersPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              User Management
+            </h1>
             <p className="text-sm text-slate-500">Total: {totalUsers} buyers</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -355,8 +481,7 @@ export function AdminUsersPage() {
               disabled={!canEdit}
               className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
             >
-              <UserPlus size={16} />
-              + Add User
+              <UserPlus size={16} />+ Add User
             </button>
             <div className="relative">
               <button
@@ -369,9 +494,14 @@ export function AdminUsersPage() {
               </button>
               {exportOpen && (
                 <>
-                  <div className="fixed inset-0 z-10" onClick={() => setExportOpen(false)} />
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setExportOpen(false)}
+                  />
                   <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg z-20 overflow-hidden">
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Export Scope</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                      Export Scope
+                    </div>
                     <button
                       onClick={() => exportUsers('all', 'csv')}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
@@ -384,7 +514,9 @@ export function AdminUsersPage() {
                     >
                       Export All (Excel)
                     </button>
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">Filtered</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                      Filtered
+                    </div>
                     <button
                       onClick={() => exportUsers('filtered', 'csv')}
                       className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
@@ -408,19 +540,27 @@ export function AdminUsersPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Total Users</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{totalUsers.toLocaleString()}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {totalUsers.toLocaleString()}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Active Today</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{activeToday.toLocaleString()}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {activeToday.toLocaleString()}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">New Users This Month</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{newThisMonth.toLocaleString()}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {newThisMonth.toLocaleString()}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-500">Suspended Accounts</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">{suspendedCount.toLocaleString()}</p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900">
+              {suspendedCount.toLocaleString()}
+            </p>
           </div>
         </div>
 
@@ -443,7 +583,9 @@ export function AdminUsersPage() {
               </div>
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as UserStatus | 'all')}
+                onChange={(e) =>
+                  setStatusFilter(e.target.value as UserStatus | 'all')
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 {STATUS_OPTIONS.map((option) => (
@@ -454,7 +596,11 @@ export function AdminUsersPage() {
               </select>
               <select
                 value={verificationFilter}
-                onChange={(e) => setVerificationFilter(e.target.value as 'all' | 'verified' | 'unverified')}
+                onChange={(e) =>
+                  setVerificationFilter(
+                    e.target.value as 'all' | 'verified' | 'unverified',
+                  )
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 {VERIFICATION_OPTIONS.map((option) => (
@@ -465,7 +611,9 @@ export function AdminUsersPage() {
               </select>
               <select
                 value={orderCountFilter}
-                onChange={(e) => setOrderCountFilter(e.target.value as OrderCountFilter)}
+                onChange={(e) =>
+                  setOrderCountFilter(e.target.value as OrderCountFilter)
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 {ORDER_COUNT_OPTIONS.map((option) => (
@@ -554,7 +702,10 @@ export function AdminUsersPage() {
                   <th className="px-4 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={pageUsers.length > 0 && pageUsers.every((u) => selectedIds.includes(u.id))}
+                      checked={
+                        pageUsers.length > 0 &&
+                        pageUsers.every((u) => selectedIds.includes(u.id))
+                      }
                       onChange={toggleSelectAll}
                     />
                   </th>
@@ -579,10 +730,14 @@ export function AdminUsersPage() {
                         onChange={() => toggleSelectOne(user.id)}
                       />
                     </td>
-                    <td className="px-4 py-3 font-medium text-slate-900">{user.id}</td>
+                    <td className="px-4 py-3 font-medium text-slate-900">
+                      {user.id}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-slate-900">{user.name}</span>
+                        <span className="font-medium text-slate-900">
+                          {user.name}
+                        </span>
                         {user.verified && (
                           <CheckCircle size={14} className="text-green-500" />
                         )}
@@ -590,21 +745,34 @@ export function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3 text-slate-600">{user.email}</td>
                     <td className="px-4 py-3 text-slate-600">{user.phone}</td>
-                    <td className="px-4 py-3 text-slate-600">{user.joinedAt}</td>
-                    <td className="px-4 py-3 text-right text-slate-600">{user.orders}</td>
-                    <td className="px-4 py-3 text-right text-slate-600">{formatCurrency(user.totalSpent)}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {user.joinedAt}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-600">
+                      {user.orders}
+                    </td>
+                    <td className="px-4 py-3 text-right text-slate-600">
+                      {formatCurrency(user.totalSpent)}
+                    </td>
                     <td className="px-4 py-3">{statusBadge(user.status)}</td>
                     <td className="px-4 py-3 text-right">
                       <div className="relative inline-block text-left">
                         <button
-                          onClick={() => setOpenMenuId(openMenuId === user.id ? null : user.id)}
+                          onClick={() =>
+                            setOpenMenuId(
+                              openMenuId === user.id ? null : user.id,
+                            )
+                          }
                           className="rounded-lg p-2 hover:bg-slate-100"
                         >
                           <MoreVertical size={16} />
                         </button>
                         {openMenuId === user.id && (
                           <>
-                            <div className="fixed inset-0 z-10" onClick={() => setOpenMenuId(null)} />
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setOpenMenuId(null)}
+                            />
                             <div className="absolute right-0 z-20 mt-2 w-52 rounded-lg border border-slate-200 bg-white shadow-lg">
                               <button
                                 onClick={() => {
@@ -680,7 +848,10 @@ export function AdminUsersPage() {
                 ))}
                 {pageUsers.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={10}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       No users found.
                     </td>
                   </tr>
@@ -704,7 +875,9 @@ export function AdminUsersPage() {
                 Page {currentPage} of {totalPages}
               </span>
               <button
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setPage((prev) => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages}
                 className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-50"
               >
@@ -722,26 +895,39 @@ export function AdminUsersPage() {
           <div className="w-full max-w-3xl rounded-2xl bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">{detailUser.name}</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  {detailUser.name}
+                </h2>
                 <p className="text-sm text-slate-500">{detailUser.email}</p>
               </div>
-              <button onClick={() => setDetailUser(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setDetailUser(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="border-b border-slate-200 px-6">
               <div className="flex gap-6 text-sm">
-                {(['profile', 'orders', 'activity'] as Array<DetailTab>).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setDetailTab(tab)}
-                    className={`py-3 border-b-2 ${
-                      detailTab === tab ? 'border-orange-600 text-orange-600' : 'border-transparent text-slate-500'
-                    }`}
-                  >
-                    {tab === 'profile' ? 'Profile Info' : tab === 'orders' ? 'Order History' : 'Activity Log'}
-                  </button>
-                ))}
+                {(['profile', 'orders', 'activity'] as Array<DetailTab>).map(
+                  (tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setDetailTab(tab)}
+                      className={`py-3 border-b-2 ${
+                        detailTab === tab
+                          ? 'border-orange-600 text-orange-600'
+                          : 'border-transparent text-slate-500'
+                      }`}
+                    >
+                      {tab === 'profile'
+                        ? 'Profile Info'
+                        : tab === 'orders'
+                          ? 'Order History'
+                          : 'Activity Log'}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
             <div className="px-6 py-5 space-y-5">
@@ -749,35 +935,60 @@ export function AdminUsersPage() {
                 <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Full Name</p>
-                      <p className="text-sm font-medium text-slate-900">{detailUser.name}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Full Name
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailUser.name}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-slate-400">Email</p>
-                      <p className="text-sm font-medium text-slate-900">{detailUser.email}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailUser.email}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-slate-400">Phone</p>
-                      <p className="text-sm font-medium text-slate-900">{detailUser.phone}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailUser.phone}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Registration Date</p>
-                      <p className="text-sm font-medium text-slate-900">{detailUser.joinedAt}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Registration Date
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailUser.joinedAt}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Last Login</p>
-                      <p className="text-sm font-medium text-slate-900">{detailUser.lastLogin}</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Last Login
+                      </p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {detailUser.lastLogin}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Account Status</p>
-                      <div className="mt-1">{statusBadge(detailUser.status)}</div>
+                      <p className="text-xs uppercase text-slate-400">
+                        Account Status
+                      </p>
+                      <div className="mt-1">
+                        {statusBadge(detailUser.status)}
+                      </div>
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">Saved Addresses</p>
+                    <p className="text-xs uppercase text-slate-400">
+                      Saved Addresses
+                    </p>
                     <ul className="mt-2 space-y-1 text-sm text-slate-700">
                       {detailUser.addresses.map((address) => (
-                        <li key={address} className="rounded-lg border border-slate-200 px-3 py-2">
+                        <li
+                          key={address}
+                          className="rounded-lg border border-slate-200 px-3 py-2"
+                        >
                           {address}
                         </li>
                       ))}
@@ -785,10 +996,16 @@ export function AdminUsersPage() {
                   </div>
                   {detailUser.businessInfo && (
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Business Information</p>
+                      <p className="text-xs uppercase text-slate-400">
+                        Business Information
+                      </p>
                       <div className="mt-2 rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-700">
-                        <p className="font-medium text-slate-900">{detailUser.businessInfo.company}</p>
-                        <p className="text-slate-500">{detailUser.businessInfo.type}</p>
+                        <p className="font-medium text-slate-900">
+                          {detailUser.businessInfo.company}
+                        </p>
+                        <p className="text-slate-500">
+                          {detailUser.businessInfo.type}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -804,16 +1021,26 @@ export function AdminUsersPage() {
                   <div className="grid gap-3 sm:grid-cols-3">
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Total Orders</p>
-                      <p className="text-lg font-semibold text-slate-900">{detailUser.orders}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {detailUser.orders}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Total Spent</p>
-                      <p className="text-lg font-semibold text-slate-900">{formatCurrency(detailUser.totalSpent)}</p>
+                      <p className="text-lg font-semibold text-slate-900">
+                        {formatCurrency(detailUser.totalSpent)}
+                      </p>
                     </div>
                     <div className="rounded-lg border border-slate-200 px-4 py-3">
                       <p className="text-xs text-slate-400">Avg Order Value</p>
                       <p className="text-lg font-semibold text-slate-900">
-                        {formatCurrency(detailUser.orders ? Math.round(detailUser.totalSpent / detailUser.orders) : 0)}
+                        {formatCurrency(
+                          detailUser.orders
+                            ? Math.round(
+                                detailUser.totalSpent / detailUser.orders,
+                              )
+                            : 0,
+                        )}
                       </p>
                     </div>
                   </div>
@@ -830,15 +1057,26 @@ export function AdminUsersPage() {
                       <tbody className="divide-y divide-slate-200">
                         {detailUser.orderHistory.map((order) => (
                           <tr key={order.id} className="hover:bg-slate-50">
-                            <td className="px-4 py-2 font-medium text-slate-900">{order.id}</td>
-                            <td className="px-4 py-2 text-slate-600">{order.date}</td>
-                            <td className="px-4 py-2 text-slate-600">{order.status}</td>
-                            <td className="px-4 py-2 text-right text-slate-600">{formatCurrency(order.total)}</td>
+                            <td className="px-4 py-2 font-medium text-slate-900">
+                              {order.id}
+                            </td>
+                            <td className="px-4 py-2 text-slate-600">
+                              {order.date}
+                            </td>
+                            <td className="px-4 py-2 text-slate-600">
+                              {order.status}
+                            </td>
+                            <td className="px-4 py-2 text-right text-slate-600">
+                              {formatCurrency(order.total)}
+                            </td>
                           </tr>
                         ))}
                         {detailUser.orderHistory.length === 0 && (
                           <tr>
-                            <td colSpan={4} className="px-4 py-6 text-center text-slate-500">
+                            <td
+                              colSpan={4}
+                              className="px-4 py-6 text-center text-slate-500"
+                            >
                               No orders yet.
                             </td>
                           </tr>
@@ -857,14 +1095,22 @@ export function AdminUsersPage() {
                       className="flex items-start justify-between rounded-lg border border-slate-200 px-4 py-3"
                     >
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{activity.message}</p>
-                        <p className="text-xs text-slate-500">{activity.type}</p>
+                        <p className="text-sm font-medium text-slate-900">
+                          {activity.message}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {activity.type}
+                        </p>
                       </div>
-                      <span className="text-xs text-slate-400">{activity.time}</span>
+                      <span className="text-xs text-slate-400">
+                        {activity.time}
+                      </span>
                     </div>
                   ))}
                   {detailUser.activityLog.length === 0 && (
-                    <p className="text-sm text-slate-500">No activity logged.</p>
+                    <p className="text-sm text-slate-500">
+                      No activity logged.
+                    </p>
                   )}
                 </div>
               )}
@@ -884,13 +1130,18 @@ export function AdminUsersPage() {
                   Suspend {suspendUser.name}?
                 </h2>
               </div>
-              <button onClick={() => setSuspendUser(null)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setSuspendUser(null)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700">Reason</label>
+                <label className="text-sm font-medium text-slate-700">
+                  Reason
+                </label>
                 <select
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}
@@ -911,7 +1162,9 @@ export function AdminUsersPage() {
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700">Suspension duration</label>
+                <label className="text-sm font-medium text-slate-700">
+                  Suspension duration
+                </label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {['7 days', '30 days', 'Permanent'].map((duration) => (
                     <button
@@ -938,7 +1191,8 @@ export function AdminUsersPage() {
                 Send email notification
               </label>
               <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
-                User will be logged out immediately and receive an email notification.
+                User will be logged out immediately and receive an email
+                notification.
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
@@ -981,7 +1235,9 @@ export function AdminUsersPage() {
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-red-600 font-medium">This action cannot be undone.</p>
+              <p className="text-sm text-red-600 font-medium">
+                This action cannot be undone.
+              </p>
               <ul className="space-y-2 text-sm text-slate-600">
                 <li>All user data will be deleted</li>
                 <li>Order history will be anonymized</li>
@@ -1038,16 +1294,21 @@ export function AdminUsersPage() {
               <div className="flex items-center gap-2">
                 <ShieldAlert className="text-orange-600" size={20} />
                 <h2 className="text-lg font-semibold text-slate-900">
-                  Suspend {selectedCount} selected user{selectedCount === 1 ? '' : 's'}?
+                  Suspend {selectedCount} selected user
+                  {selectedCount === 1 ? '' : 's'}?
                 </h2>
               </div>
-              <button onClick={() => setBulkSuspendOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkSuspendOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
-                Selected users will be logged out immediately and receive email notifications.
+                Selected users will be logged out immediately and receive email
+                notifications.
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
@@ -1076,15 +1337,21 @@ export function AdminUsersPage() {
               <div className="flex items-center gap-2">
                 <AlertTriangle className="text-red-600" size={20} />
                 <h2 className="text-lg font-semibold text-slate-900">
-                  Delete {selectedCount} selected user{selectedCount === 1 ? '' : 's'}?
+                  Delete {selectedCount} selected user
+                  {selectedCount === 1 ? '' : 's'}?
                 </h2>
               </div>
-              <button onClick={() => setBulkDeleteOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setBulkDeleteOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-3">
-              <p className="text-sm text-red-600 font-medium">This action cannot be undone.</p>
+              <p className="text-sm text-red-600 font-medium">
+                This action cannot be undone.
+              </p>
               <ul className="space-y-2 text-sm text-slate-600">
                 <li>All user data will be deleted</li>
                 <li>Order history will be anonymized</li>

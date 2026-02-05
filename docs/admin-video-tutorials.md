@@ -7,4 +7,3 @@
 5. Dispute resolution workflow
 6. Audit log review
 7. Settings overview and best practices
-

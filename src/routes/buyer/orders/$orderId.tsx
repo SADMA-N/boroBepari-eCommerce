@@ -51,16 +51,51 @@ export const Route = createFileRoute('/buyer/orders/$orderId')({
 })
 
 // Status configuration
-const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
-  pending: { label: 'Pending', color: 'text-yellow-700', bgColor: 'bg-yellow-100' },
+const statusConfig: Record<
+  string,
+  { label: string; color: string; bgColor: string }
+> = {
+  pending: {
+    label: 'Pending',
+    color: 'text-yellow-700',
+    bgColor: 'bg-yellow-100',
+  },
   placed: { label: 'Placed', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  confirmed: { label: 'Confirmed by Supplier', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  processing: { label: 'Processing/Packing', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-  shipped: { label: 'Shipped', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
-  out_for_delivery: { label: 'Out for Delivery', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
-  delivered: { label: 'Delivered', color: 'text-green-700', bgColor: 'bg-green-100' },
-  cancelled: { label: 'Cancelled', color: 'text-red-700', bgColor: 'bg-red-100' },
-  returned: { label: 'Returned', color: 'text-orange-700', bgColor: 'bg-orange-100' },
+  confirmed: {
+    label: 'Confirmed by Supplier',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+  },
+  processing: {
+    label: 'Processing/Packing',
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-100',
+  },
+  shipped: {
+    label: 'Shipped',
+    color: 'text-indigo-700',
+    bgColor: 'bg-indigo-100',
+  },
+  out_for_delivery: {
+    label: 'Out for Delivery',
+    color: 'text-cyan-700',
+    bgColor: 'bg-cyan-100',
+  },
+  delivered: {
+    label: 'Delivered',
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
+  },
+  cancelled: {
+    label: 'Cancelled',
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
+  },
+  returned: {
+    label: 'Returned',
+    color: 'text-orange-700',
+    bgColor: 'bg-orange-100',
+  },
 }
 
 const paymentStatusConfig: Record<string, { label: string; color: string }> = {
@@ -108,15 +143,25 @@ function OrderDetailPage() {
   const [isReordering, setIsReordering] = useState(false)
   const [reorderItems, setReorderItems] = useState<Array<ReorderItem>>([])
   const [supplierGroups, setSupplierGroups] = useState<Array<SupplierGroup>>([])
-  const [supplierSelection, setSupplierSelection] = useState<Record<string, boolean>>({})
-  const [priceChangeItems, setPriceChangeItems] = useState<Array<ReorderItem>>([])
-  const [unavailableItems, setUnavailableItems] = useState<Array<ReorderItem>>([])
+  const [supplierSelection, setSupplierSelection] = useState<
+    Record<string, boolean>
+  >({})
+  const [priceChangeItems, setPriceChangeItems] = useState<Array<ReorderItem>>(
+    [],
+  )
+  const [unavailableItems, setUnavailableItems] = useState<Array<ReorderItem>>(
+    [],
+  )
   const [availableItems, setAvailableItems] = useState<Array<ReorderItem>>([])
-  const [alternativeProducts, setAlternativeProducts] = useState<Array<ReorderItem>>([])
+  const [alternativeProducts, setAlternativeProducts] = useState<
+    Array<ReorderItem>
+  >([])
   const [reorderModal, setReorderModal] = useState<
     'supplier' | 'price' | 'unavailable' | 'alternatives' | null
   >(null)
-  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(order?.invoiceUrl ?? null)
+  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(
+    order?.invoiceUrl ?? null,
+  )
   const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false)
   const [isEmailingInvoice, setIsEmailingInvoice] = useState(false)
   const [isCancellingOrder, setIsCancellingOrder] = useState(false)
@@ -151,8 +196,12 @@ function OrderDetailPage() {
     return (
       <div className="max-w-[1440px] mx-auto px-6 py-16 text-center">
         <Package size={64} className="mx-auto text-gray-300 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h2>
-        <p className="text-gray-500 mb-6">The order you're looking for doesn't exist or has been removed.</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Order Not Found
+        </h2>
+        <p className="text-gray-500 mb-6">
+          The order you're looking for doesn't exist or has been removed.
+        </p>
         <Link
           to="/buyer/orders"
           className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
@@ -173,8 +222,10 @@ function OrderDetailPage() {
   const isEscrow = order.paymentStatus === 'escrow_hold'
 
   // Get default address
-  const defaultAddress = (order as any).user?.addresses?.find((a: any) => a.isDefault) ||
-    (order as any).user?.addresses?.[0] || null
+  const defaultAddress =
+    (order as any).user?.addresses?.find((a: any) => a.isDefault) ||
+    (order as any).user?.addresses?.[0] ||
+    null
 
   // Group items by supplier
   const itemsBySupplier = order.items.reduce((acc: any, item: any) => {
@@ -195,10 +246,12 @@ function OrderDetailPage() {
     return acc
   }, {})
 
-  const [statusState, setStatusState] = useState(cachedOrder?.status ?? order.status)
-  const [statusUpdatedAt, setStatusUpdatedAt] = useState<Date | string | undefined>(
-    cachedOrder?.updatedAt ?? order.updatedAt,
+  const [statusState, setStatusState] = useState(
+    cachedOrder?.status ?? order.status,
   )
+  const [statusUpdatedAt, setStatusUpdatedAt] = useState<
+    Date | string | undefined
+  >(cachedOrder?.updatedAt ?? order.updatedAt)
   const [trackingInfo, setTrackingInfo] = useState(() =>
     buildMockTrackingInfo(createdAt, cachedOrder ?? order),
   )
@@ -354,7 +407,10 @@ function OrderDetailPage() {
       }).catch(() => null)
     } catch (error) {
       console.error('Failed to generate invoice:', error)
-      setToast({ message: 'Failed to generate invoice. Please try again.', isVisible: true })
+      setToast({
+        message: 'Failed to generate invoice. Please try again.',
+        isVisible: true,
+      })
     } finally {
       setIsGeneratingInvoice(false)
     }
@@ -384,7 +440,10 @@ function OrderDetailPage() {
       setToast({ message: 'Invoice emailed successfully.', isVisible: true })
     } catch (error) {
       console.error('Failed to email invoice:', error)
-      setToast({ message: 'Failed to email invoice. Please try again.', isVisible: true })
+      setToast({
+        message: 'Failed to email invoice. Please try again.',
+        isVisible: true,
+      })
     } finally {
       setIsEmailingInvoice(false)
     }
@@ -392,7 +451,10 @@ function OrderDetailPage() {
 
   const handleCancelOrder = async () => {
     if (!canCancel || isCancelled) {
-      setToast({ message: 'This order can no longer be cancelled.', isVisible: true })
+      setToast({
+        message: 'This order can no longer be cancelled.',
+        isVisible: true,
+      })
       return
     }
 
@@ -424,13 +486,17 @@ function OrderDetailPage() {
       setCancellationReason(data?.cancellationReason ?? finalReason)
       setCancelledAt(data?.cancelledAt ?? new Date())
       setToast({
-        message: 'Order cancelled. Refund will be processed within 3-5 business days.',
+        message:
+          'Order cancelled. Refund will be processed within 3-5 business days.',
         isVisible: true,
       })
       setCancelModalOpen(false)
     } catch (error) {
       console.error('Failed to cancel order:', error)
-      setToast({ message: 'Failed to cancel order. Please try again.', isVisible: true })
+      setToast({
+        message: 'Failed to cancel order. Please try again.',
+        isVisible: true,
+      })
     } finally {
       setIsCancellingOrder(false)
     }
@@ -444,7 +510,12 @@ function OrderDetailPage() {
   )
 
   const handleRefreshStatus = useCallback(async () => {
-    const mockTimestamps = buildStageTimestamps(createdAt, statusState, statusUpdatedAt, true)
+    const mockTimestamps = buildStageTimestamps(
+      createdAt,
+      statusState,
+      statusUpdatedAt,
+      true,
+    )
     const fallbackTracking = buildMockTrackingInfo(createdAt, order)
     const fallbackStatus = getMockStatusByNow(
       new Date(),
@@ -475,7 +546,9 @@ function OrderDetailPage() {
       setStatusState(nextStatus)
       setStatusUpdatedAt(statusJson?.updatedAt ?? new Date())
       if (statusJson?.status === 'cancelled') {
-        setCancellationReason(statusJson?.cancellationReason ?? cancellationReason)
+        setCancellationReason(
+          statusJson?.cancellationReason ?? cancellationReason,
+        )
         setCancelledAt(statusJson?.cancelledAt ?? cancelledAt ?? new Date())
       }
 
@@ -498,18 +571,19 @@ function OrderDetailPage() {
       setTrackingInfo(() => fallbackTracking)
       setStatusUpdatedAt(new Date())
     }
-  }, [
-    createdAt,
-    order,
-    showOutForDelivery,
-    statusState,
-    statusUpdatedAt,
-  ])
+  }, [createdAt, order, showOutForDelivery, statusState, statusUpdatedAt])
 
   useEffect(() => {
     if (!statusState) return
-    if (previousStatusRef.current && previousStatusRef.current !== statusState) {
-      const payload = buildOrderStatusNotification(order, statusState, trackingInfo)
+    if (
+      previousStatusRef.current &&
+      previousStatusRef.current !== statusState
+    ) {
+      const payload = buildOrderStatusNotification(
+        order,
+        statusState,
+        trackingInfo,
+      )
       if (shouldNotifyStatus(statusState, preferences)) {
         addNotification(payload)
       }
@@ -547,7 +621,10 @@ function OrderDetailPage() {
       (key) => supplierSelection[key],
     )
     if (selectedKeys.length === 0) {
-      setToast({ message: 'Select at least one supplier to continue.', isVisible: true })
+      setToast({
+        message: 'Select at least one supplier to continue.',
+        isVisible: true,
+      })
       return
     }
     const selectedItems = reorderItems.filter((item) =>
@@ -604,16 +681,30 @@ function OrderDetailPage() {
       <div className="max-w-[1440px] mx-auto px-6 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6 transition-colors">
-          <Link to="/" className="hover:text-orange-600 dark:hover:text-orange-500 flex items-center gap-1 transition-colors">
+          <Link
+            to="/"
+            className="hover:text-orange-600 dark:hover:text-orange-500 flex items-center gap-1 transition-colors"
+          >
             <Home size={14} />
             Home
           </Link>
-          <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
-          <Link to="/buyer/orders" className="hover:text-orange-600 dark:hover:text-orange-500 transition-colors">
+          <ChevronRight
+            size={14}
+            className="text-gray-400 dark:text-gray-600"
+          />
+          <Link
+            to="/buyer/orders"
+            className="hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
+          >
             My Orders
           </Link>
-          <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
-          <span className="text-gray-900 dark:text-gray-100 font-medium transition-colors">Order #{order.id.toString().padStart(6, '0')}</span>
+          <ChevronRight
+            size={14}
+            className="text-gray-400 dark:text-gray-600"
+          />
+          <span className="text-gray-900 dark:text-gray-100 font-medium transition-colors">
+            Order #{order.id.toString().padStart(6, '0')}
+          </span>
         </nav>
 
         {/* Hero Section */}
@@ -635,9 +726,12 @@ function OrderDetailPage() {
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 transition-colors">
                 <span className="flex items-center gap-1.5">
                   <Calendar size={14} />
-                  {format(createdAt, 'MMMM d, yyyy')} at {format(createdAt, 'h:mm a')}
+                  {format(createdAt, 'MMMM d, yyyy')} at{' '}
+                  {format(createdAt, 'h:mm a')}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${status.bgColor} ${status.color} dark:bg-opacity-20`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${status.bgColor} ${status.color} dark:bg-opacity-20`}
+                >
                   {status.label}
                 </span>
               </div>
@@ -698,7 +792,9 @@ function OrderDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Order Status Timeline */}
             <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 transition-colors">Order Status</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 transition-colors">
+                Order Status
+              </h2>
               <OrderStatusTimeline
                 orderId={order.id}
                 status={statusState}
@@ -713,17 +809,21 @@ function OrderDetailPage() {
 
             {isCancelled && (
               <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-xl p-5 transition-colors">
-                <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">Cancellation Details</h3>
+                <h3 className="text-sm font-semibold text-red-700 dark:text-red-400">
+                  Cancellation Details
+                </h3>
                 <p className="text-sm text-red-600 dark:text-red-300 mt-2 transition-colors">
                   Reason: {cancellationReason ?? 'Not provided'}
                 </p>
                 {cancelledAt && (
                   <p className="text-xs text-red-500 dark:text-red-500 mt-1">
-                    Cancelled on {format(new Date(cancelledAt), 'MMM d, yyyy h:mm a')}
+                    Cancelled on{' '}
+                    {format(new Date(cancelledAt), 'MMM d, yyyy h:mm a')}
                   </p>
                 )}
                 <p className="text-xs text-red-500 dark:text-red-500 mt-2">
-                  Refund will be processed in 3-5 business days to the original payment method.
+                  Refund will be processed in 3-5 business days to the original
+                  payment method.
                 </p>
                 <Link
                   to="/search"
@@ -737,7 +837,9 @@ function OrderDetailPage() {
 
             {/* Order Items by Supplier */}
             <div className="flex items-center justify-between md:hidden transition-colors">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white">Order Items</h3>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+                Order Items
+              </h3>
               <button
                 onClick={() => setItemsExpanded((prev) => !prev)}
                 className="text-xs text-orange-600 dark:text-orange-500 font-medium transition-colors"
@@ -746,23 +848,35 @@ function OrderDetailPage() {
               </button>
             </div>
 
-            <div className={`${itemsExpanded ? 'block' : 'hidden'} md:block space-y-6`}>
+            <div
+              className={`${itemsExpanded ? 'block' : 'hidden'} md:block space-y-6`}
+            >
               {Object.values(itemsBySupplier).map((supplier: any) => (
-                <div key={supplier.id} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden transition-colors">
+                <div
+                  key={supplier.id}
+                  className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden transition-colors"
+                >
                   {/* Supplier Header */}
                   <div className="px-6 py-4 bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-200 dark:bg-slate-800 rounded-lg flex items-center justify-center transition-colors">
-                        <Package size={20} className="text-gray-500 dark:text-gray-400" />
+                        <Package
+                          size={20}
+                          className="text-gray-500 dark:text-gray-400"
+                        />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 transition-colors">{supplier.name}</h3>
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 transition-colors">
+                            {supplier.name}
+                          </h3>
                           {supplier.verified && (
                             <BadgeCheck size={16} className="text-blue-500" />
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors">{supplier.items.length} item(s)</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors">
+                          {supplier.items.length} item(s)
+                        </p>
                       </div>
                     </div>
                     {supplier.slug && (
@@ -779,13 +893,19 @@ function OrderDetailPage() {
                   {/* Items */}
                   <div className="divide-y divide-gray-100 dark:divide-slate-800">
                     {supplier.items.map((item: any) => (
-                      <div key={item.id} className="p-6 flex gap-4 transition-colors">
+                      <div
+                        key={item.id}
+                        className="p-6 flex gap-4 transition-colors"
+                      >
                         <Link
                           to={`/products/${item.product?.slug || item.productId}`}
                           className="w-20 h-20 bg-gray-100 dark:bg-slate-800 rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-slate-700 transition-colors"
                         >
                           <img
-                            src={item.product?.images?.[0] || `https://picsum.photos/seed/product${item.productId}/200/200`}
+                            src={
+                              item.product?.images?.[0] ||
+                              `https://picsum.photos/seed/product${item.productId}/200/200`
+                            }
                             alt={item.product?.name}
                             className="w-full h-full object-cover"
                           />
@@ -798,11 +918,23 @@ function OrderDetailPage() {
                             {item.product?.name || 'Product'}
                           </Link>
                           <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
-                            Qty: <span className="font-medium text-gray-700 dark:text-gray-300">{item.quantity}</span>
-                            {item.product?.unit && <span className="ml-1">{item.product.unit}(s)</span>}
+                            Qty:{' '}
+                            <span className="font-medium text-gray-700 dark:text-gray-300">
+                              {item.quantity}
+                            </span>
+                            {item.product?.unit && (
+                              <span className="ml-1">
+                                {item.product.unit}(s)
+                              </span>
+                            )}
                           </div>
                           <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
-                            Unit Price: <span className="font-medium text-gray-700 dark:text-gray-300">{formatBDT(parseFloat(item.price) / item.quantity)}</span>
+                            Unit Price:{' '}
+                            <span className="font-medium text-gray-700 dark:text-gray-300">
+                              {formatBDT(
+                                parseFloat(item.price) / item.quantity,
+                              )}
+                            </span>
                           </div>
                           {isDelivered && (
                             <button className="mt-2 text-sm text-orange-600 dark:text-orange-500 hover:underline flex items-center gap-1 transition-colors">
@@ -812,7 +944,9 @@ function OrderDetailPage() {
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900 dark:text-white transition-colors">{formatBDT(parseFloat(item.price))}</p>
+                          <p className="font-semibold text-gray-900 dark:text-white transition-colors">
+                            {formatBDT(parseFloat(item.price))}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -827,17 +961,26 @@ function OrderDetailPage() {
             {/* Delivery Information */}
             <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
-                <MapPin size={18} className="text-gray-400 dark:text-gray-500" />
+                <MapPin
+                  size={18}
+                  className="text-gray-400 dark:text-gray-500"
+                />
                 Delivery Information
               </h3>
 
               {defaultAddress ? (
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">{defaultAddress.name}</p>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors">{defaultAddress.address}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">
+                      {defaultAddress.name}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors">
+                      {defaultAddress.address}
+                    </p>
                     {defaultAddress.city && (
-                      <p className="text-gray-600 dark:text-gray-400 transition-colors">{defaultAddress.city} {defaultAddress.postcode}</p>
+                      <p className="text-gray-600 dark:text-gray-400 transition-colors">
+                        {defaultAddress.city} {defaultAddress.postcode}
+                      </p>
                     )}
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors">
@@ -846,53 +989,84 @@ function OrderDetailPage() {
                   </div>
                   <hr className="border-gray-100 dark:border-slate-800" />
                   <div className="flex items-start gap-2">
-                    <Calendar size={14} className="text-gray-400 dark:text-gray-500 mt-0.5" />
+                    <Calendar
+                      size={14}
+                      className="text-gray-400 dark:text-gray-500 mt-0.5"
+                    />
                     <div>
-                      <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">Estimated Delivery</p>
-                      <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">{format(estimatedDelivery, 'MMMM d, yyyy')}</p>
+                      <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">
+                        Estimated Delivery
+                      </p>
+                      <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">
+                        {format(estimatedDelivery, 'MMMM d, yyyy')}
+                      </p>
                     </div>
                   </div>
                   {isDelivered && order.updatedAt && (
                     <div className="flex items-start gap-2">
-                      <CheckCircle size={14} className="text-green-500 mt-0.5" />
+                      <CheckCircle
+                        size={14}
+                        className="text-green-500 mt-0.5"
+                      />
                       <div>
-                        <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">Delivered On</p>
-                        <p className="font-medium text-green-600 transition-colors">{format(new Date(order.updatedAt), 'MMMM d, yyyy')}</p>
+                        <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">
+                          Delivered On
+                        </p>
+                        <p className="font-medium text-green-600 transition-colors">
+                          {format(new Date(order.updatedAt), 'MMMM d, yyyy')}
+                        </p>
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors">No delivery address available</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors">
+                  No delivery address available
+                </p>
               )}
             </div>
 
             {/* Payment Information */}
             <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
-                <CreditCard size={18} className="text-gray-400 dark:text-gray-500" />
+                <CreditCard
+                  size={18}
+                  className="text-gray-400 dark:text-gray-500"
+                />
                 Payment Information
               </h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 transition-colors">Method</span>
+                  <span className="text-gray-500 dark:text-gray-400 transition-colors">
+                    Method
+                  </span>
                   <span className="font-medium text-gray-900 dark:text-gray-100 capitalize transition-colors">
-                    {order.paymentMethod === 'cod' ? 'Cash on Delivery' :
-                     order.paymentMethod === 'deposit' ? '30% Deposit' :
-                     order.paymentMethod || 'N/A'}
+                    {order.paymentMethod === 'cod'
+                      ? 'Cash on Delivery'
+                      : order.paymentMethod === 'deposit'
+                        ? '30% Deposit'
+                        : order.paymentMethod || 'N/A'}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 transition-colors">Status</span>
-                  <span className={`font-medium ${paymentStatus.color} transition-colors`}>
+                  <span className="text-gray-500 dark:text-gray-400 transition-colors">
+                    Status
+                  </span>
+                  <span
+                    className={`font-medium ${paymentStatus.color} transition-colors`}
+                  >
                     {paymentStatus.label}
                   </span>
                 </div>
                 {order.transactionId && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400 transition-colors">Transaction ID</span>
-                    <span className="font-mono text-xs text-gray-700 dark:text-gray-300 transition-colors">{order.transactionId}</span>
+                    <span className="text-gray-500 dark:text-gray-400 transition-colors">
+                      Transaction ID
+                    </span>
+                    <span className="font-mono text-xs text-gray-700 dark:text-gray-300 transition-colors">
+                      {order.transactionId}
+                    </span>
                   </div>
                 )}
 
@@ -900,11 +1074,17 @@ function OrderDetailPage() {
                 {isEscrow && (
                   <div className="mt-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-100 dark:border-purple-900/30 transition-colors">
                     <div className="flex items-start gap-2">
-                      <AlertCircle size={16} className="text-purple-600 dark:text-purple-400 mt-0.5" />
+                      <AlertCircle
+                        size={16}
+                        className="text-purple-600 dark:text-purple-400 mt-0.5"
+                      />
                       <div className="text-xs">
-                        <p className="font-semibold text-purple-800 dark:text-purple-300 transition-colors">Payment in Escrow</p>
+                        <p className="font-semibold text-purple-800 dark:text-purple-300 transition-colors">
+                          Payment in Escrow
+                        </p>
                         <p className="text-purple-600 dark:text-purple-400 mt-0.5 transition-colors">
-                          Your payment is held securely and will be released 3 days after delivery.
+                          Your payment is held securely and will be released 3
+                          days after delivery.
                         </p>
                       </div>
                     </div>
@@ -916,7 +1096,10 @@ function OrderDetailPage() {
             {/* Order Summary */}
             <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
               <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
-                <FileText size={18} className="text-gray-400 dark:text-gray-500" />
+                <FileText
+                  size={18}
+                  className="text-gray-400 dark:text-gray-500"
+                />
                 Order Summary
               </h3>
 
@@ -927,21 +1110,31 @@ function OrderDetailPage() {
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
                   <span>Delivery</span>
-                  <span className="text-green-600 dark:text-green-400 transition-colors">Free</span>
+                  <span className="text-green-600 dark:text-green-400 transition-colors">
+                    Free
+                  </span>
                 </div>
                 {isDeposit && depositAmount > 0 && (
                   <>
                     <hr className="border-gray-100 dark:border-slate-800 my-2 transition-colors" />
                     <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
                       <span>Deposit Paid (30%)</span>
-                      <span className="text-green-600 dark:text-green-400 transition-colors">-{formatBDT(depositAmount)}</span>
+                      <span className="text-green-600 dark:text-green-400 transition-colors">
+                        -{formatBDT(depositAmount)}
+                      </span>
                     </div>
                   </>
                 )}
                 <hr className="border-gray-100 dark:border-slate-800 my-2 transition-colors" />
                 <div className="flex justify-between font-bold text-lg dark:text-white transition-colors">
                   <span>{balanceDue > 0 ? 'Balance Due' : 'Total Paid'}</span>
-                  <span className={balanceDue > 0 ? 'text-orange-600 dark:text-orange-500' : 'text-gray-900 dark:text-white'}>
+                  <span
+                    className={
+                      balanceDue > 0
+                        ? 'text-orange-600 dark:text-orange-500'
+                        : 'text-gray-900 dark:text-white'
+                    }
+                  >
                     {formatBDT(balanceDue > 0 ? balanceDue : totalAmount)}
                   </span>
                 </div>
@@ -949,7 +1142,8 @@ function OrderDetailPage() {
                 {balanceDue > 0 && (
                   <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-100 dark:border-orange-900/30 transition-colors">
                     <p className="text-xs text-orange-700 dark:text-orange-400 transition-colors">
-                      <strong>Note:</strong> Please pay the remaining balance of {formatBDT(balanceDue)} upon delivery.
+                      <strong>Note:</strong> Please pay the remaining balance of{' '}
+                      {formatBDT(balanceDue)} upon delivery.
                     </p>
                   </div>
                 )}
@@ -1015,7 +1209,9 @@ function OrderDetailPage() {
                   onChange={() => handleSupplierSelectionChange(group.key)}
                   className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                 />
-                <span className="font-medium text-gray-900">{group.supplierName}</span>
+                <span className="font-medium text-gray-900">
+                  {group.supplierName}
+                </span>
                 <span className="text-xs text-gray-500">
                   {group.itemCount} item{group.itemCount > 1 ? 's' : ''}
                 </span>
@@ -1060,10 +1256,17 @@ function OrderDetailPage() {
 
           <div className="space-y-2">
             {unavailableItems.map((item) => (
-              <div key={item.id} className="flex items-center justify-between text-sm">
+              <div
+                key={item.id}
+                className="flex items-center justify-between text-sm"
+              >
                 <span className="text-gray-800">{item.productName}</span>
                 <span className="text-xs text-gray-500">
-                  {!item.supplierActive ? 'Supplier inactive' : item.inStock ? 'Unavailable' : 'Out of stock'}
+                  {!item.supplierActive
+                    ? 'Supplier inactive'
+                    : item.inStock
+                      ? 'Unavailable'
+                      : 'Out of stock'}
                 </span>
               </div>
             ))}
@@ -1103,9 +1306,15 @@ function OrderDetailPage() {
             <thead className="bg-gray-50 text-gray-600">
               <tr>
                 <th className="px-4 py-2 text-left font-semibold">Product</th>
-                <th className="px-4 py-2 text-right font-semibold">Old Price</th>
-                <th className="px-4 py-2 text-right font-semibold">New Price</th>
-                <th className="px-4 py-2 text-right font-semibold">Difference</th>
+                <th className="px-4 py-2 text-right font-semibold">
+                  Old Price
+                </th>
+                <th className="px-4 py-2 text-right font-semibold">
+                  New Price
+                </th>
+                <th className="px-4 py-2 text-right font-semibold">
+                  Difference
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -1113,11 +1322,20 @@ function OrderDetailPage() {
                 const diff = item.newPrice - item.oldPrice
                 return (
                   <tr key={item.id} className="border-t">
-                    <td className="px-4 py-2 text-gray-800">{item.productName}</td>
-                    <td className="px-4 py-2 text-right text-gray-500">{formatBDT(item.oldPrice)}</td>
-                    <td className="px-4 py-2 text-right text-gray-900">{formatBDT(item.newPrice)}</td>
-                    <td className={`px-4 py-2 text-right ${diff >= 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {diff >= 0 ? '+' : '-'}{formatBDT(Math.abs(diff))}
+                    <td className="px-4 py-2 text-gray-800">
+                      {item.productName}
+                    </td>
+                    <td className="px-4 py-2 text-right text-gray-500">
+                      {formatBDT(item.oldPrice)}
+                    </td>
+                    <td className="px-4 py-2 text-right text-gray-900">
+                      {formatBDT(item.newPrice)}
+                    </td>
+                    <td
+                      className={`px-4 py-2 text-right ${diff >= 0 ? 'text-red-600' : 'text-green-600'}`}
+                    >
+                      {diff >= 0 ? '+' : '-'}
+                      {formatBDT(Math.abs(diff))}
                     </td>
                   </tr>
                 )
@@ -1155,11 +1373,18 @@ function OrderDetailPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {alternativeProducts.map((item) => (
-              <div key={item.id} className="rounded-lg border border-gray-200 p-3">
+              <div
+                key={item.id}
+                className="rounded-lg border border-gray-200 p-3"
+              >
                 <div className="flex items-start gap-3">
                   <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
                     {item.image ? (
-                      <img src={item.image} alt={item.productName} className="w-full h-full object-cover" />
+                      <img
+                        src={item.image}
+                        alt={item.productName}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
                         <Package size={20} />
@@ -1167,8 +1392,12 @@ function OrderDetailPage() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900">{item.productName}</p>
-                    <p className="text-xs text-gray-500 mt-1">{formatBDT(item.newPrice)}</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {item.productName}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formatBDT(item.newPrice)}
+                    </p>
                     {item.productSlug && (
                       <Link
                         to={`/products/${item.productSlug}`}
@@ -1201,7 +1430,9 @@ function OrderDetailPage() {
         position="bottom"
       >
         <div className="space-y-4">
-          <label className="text-sm font-medium text-gray-700">Reason for cancellation</label>
+          <label className="text-sm font-medium text-gray-700">
+            Reason for cancellation
+          </label>
           <select
             value={cancelReason}
             onChange={(event) => setCancelReason(event.target.value)}
@@ -1224,7 +1455,8 @@ function OrderDetailPage() {
           )}
 
           <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-xs text-red-600">
-            Refunds are sent to the original payment method. Deposit payments will be refunded for the paid amount only.
+            Refunds are sent to the original payment method. Deposit payments
+            will be refunded for the paid amount only.
           </div>
         </div>
 
@@ -1250,9 +1482,16 @@ function OrderDetailPage() {
           <button
             onClick={() => {
               if (trackingInfo.trackingUrl) {
-                window.open(trackingInfo.trackingUrl, '_blank', 'noopener,noreferrer')
+                window.open(
+                  trackingInfo.trackingUrl,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
               } else {
-                setToast({ message: 'Tracking details are not available yet.', isVisible: true })
+                setToast({
+                  message: 'Tracking details are not available yet.',
+                  isVisible: true,
+                })
               }
             }}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
@@ -1292,15 +1531,22 @@ function ReorderModalShell({
       aria-modal="true"
       aria-labelledby="reorder-modal-title"
     >
-      <div className={`bg-white shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] ${
-        position === 'bottom' ? 'rounded-t-2xl sm:rounded-xl' : 'rounded-xl'
-      }`}>
+      <div
+        className={`bg-white shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] ${
+          position === 'bottom' ? 'rounded-t-2xl sm:rounded-xl' : 'rounded-xl'
+        }`}
+      >
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <div>
-            <h2 id="reorder-modal-title" className="text-lg font-bold text-gray-900">
+            <h2
+              id="reorder-modal-title"
+              className="text-lg font-bold text-gray-900"
+            >
               {title}
             </h2>
-            {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+            {subtitle && (
+              <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -1337,7 +1583,10 @@ function getCancelReasonLabel(value: string) {
   }
 }
 
-function shouldNotifyStatus(status: string, preferences: NotificationPreferences) {
+function shouldNotifyStatus(
+  status: string,
+  preferences: NotificationPreferences,
+) {
   switch (status) {
     case 'placed':
       return preferences.orderPlaced
@@ -1358,14 +1607,23 @@ function shouldNotifyStatus(status: string, preferences: NotificationPreferences
   }
 }
 
-function buildOrderStatusNotification(order: any, status: string, trackingInfo?: any) {
+function buildOrderStatusNotification(
+  order: any,
+  status: string,
+  trackingInfo?: any,
+) {
   const orderLabel = formatOrderLabel(order)
   const statusLabel = status.replace(/_/g, ' ')
   const base = {
     id: `order-${order.id}-${status}`,
     title: `Order #${orderLabel}`,
     message: `Status updated to ${statusLabel}.`,
-    type: status === 'cancelled' ? 'warning' : status === 'delivered' ? 'success' : 'info',
+    type:
+      status === 'cancelled'
+        ? 'warning'
+        : status === 'delivered'
+          ? 'success'
+          : 'info',
     link: `/buyer/orders/${order.id}`,
     orderId: order.id,
     category: 'order' as const,
@@ -1382,7 +1640,8 @@ function buildOrderStatusNotification(order: any, status: string, trackingInfo?:
   if (status === 'out_for_delivery') {
     return {
       ...base,
-      message: 'Out for delivery. Please keep your phone available to receive the package.',
+      message:
+        'Out for delivery. Please keep your phone available to receive the package.',
     }
   }
 
@@ -1403,14 +1662,16 @@ function buildOrderStatusNotification(order: any, status: string, trackingInfo?:
   if (status === 'delivered') {
     return {
       ...base,
-      message: 'Delivered successfully. If there is any issue, contact support.',
+      message:
+        'Delivered successfully. If there is any issue, contact support.',
     }
   }
 
   if (status === 'cancelled') {
     return {
       ...base,
-      message: 'Order cancelled. Refund will be processed in 3-5 business days.',
+      message:
+        'Order cancelled. Refund will be processed in 3-5 business days.',
     }
   }
 
@@ -1422,7 +1683,8 @@ function buildReorderItems(order: any): Array<ReorderItem> {
     const fallbackProduct = item.product || {}
     const productId = item.productId ?? fallbackProduct.id ?? index
     const product = getProductById(productId) ?? fallbackProduct
-    const supplierId = product?.supplierId ?? fallbackProduct?.supplierId ?? null
+    const supplierId =
+      product?.supplierId ?? fallbackProduct?.supplierId ?? null
     const supplier = supplierId ? getSupplierById(supplierId) : undefined
     const supplierName =
       supplier?.name ??
@@ -1432,10 +1694,12 @@ function buildReorderItems(order: any): Array<ReorderItem> {
     const oldPrice = parseFloat(item.price)
     const newPrice = product?.price ? Number(product.price) : oldPrice
     const productExists = Boolean(product?.id)
-    const inStock = productExists && typeof product?.stock === 'number'
-      ? product.stock >= item.quantity
-      : false
-    const supplierActive = Boolean(supplier) || Boolean(fallbackProduct?.supplier?.id)
+    const inStock =
+      productExists && typeof product?.stock === 'number'
+        ? product.stock >= item.quantity
+        : false
+    const supplierActive =
+      Boolean(supplier) || Boolean(fallbackProduct?.supplier?.id)
     const available = productExists && inStock && supplierActive
 
     return {
@@ -1514,11 +1778,16 @@ function buildAlternatives(unavailable: Array<ReorderItem>) {
 }
 
 function formatOrderLabel(order: any) {
-  const year = order.createdAt ? new Date(order.createdAt).getFullYear() : new Date().getFullYear()
+  const year = order.createdAt
+    ? new Date(order.createdAt).getFullYear()
+    : new Date().getFullYear()
   return `BO-${year}-${order.id.toString().padStart(4, '0')}`
 }
 
-function persistReorderHighlight(orderLabel: string, productIds: Array<number>) {
+function persistReorderHighlight(
+  orderLabel: string,
+  productIds: Array<number>,
+) {
   try {
     sessionStorage.setItem(
       REORDER_HIGHLIGHT_STORAGE_KEY,
@@ -1537,7 +1806,9 @@ function persistReorderHighlight(orderLabel: string, productIds: Array<number>) 
 function trackReorderAnalytics(orderLabel: string, productIds: Array<number>) {
   try {
     const stored = localStorage.getItem(REORDER_ANALYTICS_STORAGE_KEY)
-    const payload = stored ? JSON.parse(stored) : { events: [], productCounts: {}, hourlyCounts: {} }
+    const payload = stored
+      ? JSON.parse(stored)
+      : { events: [], productCounts: {}, hourlyCounts: {} }
 
     payload.events.push({
       orderLabel,
@@ -1628,7 +1899,8 @@ function buildInvoiceMeta(order: any, address: any | null): InvoiceMeta {
     buyerEmail: order.user?.email || 'N/A',
     buyerPhone: address?.phone || order.user?.phoneNumber || 'N/A',
     deliveryAddress: addressLine,
-    companyAddress: 'BoroBepari HQ, 120/A Gulshan Avenue, Dhaka-1212, Bangladesh',
+    companyAddress:
+      'BoroBepari HQ, 120/A Gulshan Avenue, Dhaka-1212, Bangladesh',
     companyContact: 'support@borobepari.com · +880 1700-000000',
     taxId: 'GST/TAX ID: BB-1200-XYZ',
     items,
@@ -1665,8 +1937,15 @@ async function generateInvoicePdf(meta: InvoiceMeta) {
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'normal')
-  doc.text(`Invoice: ${meta.invoiceNumber}`, pageWidth - margin, 60, { align: 'right' })
-  doc.text(`Invoice Date: ${format(meta.invoiceDate, 'MMM d, yyyy')}`, pageWidth - margin, 76, { align: 'right' })
+  doc.text(`Invoice: ${meta.invoiceNumber}`, pageWidth - margin, 60, {
+    align: 'right',
+  })
+  doc.text(
+    `Invoice Date: ${format(meta.invoiceDate, 'MMM d, yyyy')}`,
+    pageWidth - margin,
+    76,
+    { align: 'right' },
+  )
 
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
@@ -1687,9 +1966,18 @@ async function generateInvoicePdf(meta: InvoiceMeta) {
   doc.setFont('helvetica', 'bold')
   doc.text('ORDER DETAILS', pageWidth - margin, 190, { align: 'right' })
   doc.setFont('helvetica', 'normal')
-  doc.text(`Order: ${meta.orderNumber}`, pageWidth - margin, 208, { align: 'right' })
-  doc.text(`Order Date: ${format(meta.orderDate, 'MMM d, yyyy')}`, pageWidth - margin, 226, { align: 'right' })
-  doc.text(`Payment: ${meta.paymentMethod}`, pageWidth - margin, 244, { align: 'right' })
+  doc.text(`Order: ${meta.orderNumber}`, pageWidth - margin, 208, {
+    align: 'right',
+  })
+  doc.text(
+    `Order Date: ${format(meta.orderDate, 'MMM d, yyyy')}`,
+    pageWidth - margin,
+    226,
+    { align: 'right' },
+  )
+  doc.text(`Payment: ${meta.paymentMethod}`, pageWidth - margin, 244, {
+    align: 'right',
+  })
 
   doc.setFillColor(229, 231, 235)
   doc.rect(margin, tableTop - 20, pageWidth - margin * 2, 24, 'F')
@@ -1716,38 +2004,83 @@ async function generateInvoicePdf(meta: InvoiceMeta) {
   const summaryStart = Math.max(y + 10, tableTop + 140)
   doc.setFont('helvetica', 'normal')
   doc.text(`Subtotal`, pageWidth - 220, summaryStart)
-  doc.text(formatBDT(meta.subtotal), pageWidth - 70, summaryStart, { align: 'right' })
+  doc.text(formatBDT(meta.subtotal), pageWidth - 70, summaryStart, {
+    align: 'right',
+  })
   doc.text(`Delivery`, pageWidth - 220, summaryStart + rowHeight)
-  doc.text(formatBDT(meta.deliveryFee), pageWidth - 70, summaryStart + rowHeight, { align: 'right' })
+  doc.text(
+    formatBDT(meta.deliveryFee),
+    pageWidth - 70,
+    summaryStart + rowHeight,
+    { align: 'right' },
+  )
   doc.text(`Discount`, pageWidth - 220, summaryStart + rowHeight * 2)
-  doc.text(`-${formatBDT(meta.discount)}`, pageWidth - 70, summaryStart + rowHeight * 2, { align: 'right' })
+  doc.text(
+    `-${formatBDT(meta.discount)}`,
+    pageWidth - 70,
+    summaryStart + rowHeight * 2,
+    { align: 'right' },
+  )
   doc.text(`Tax`, pageWidth - 220, summaryStart + rowHeight * 3)
-  doc.text(formatBDT(meta.tax), pageWidth - 70, summaryStart + rowHeight * 3, { align: 'right' })
+  doc.text(formatBDT(meta.tax), pageWidth - 70, summaryStart + rowHeight * 3, {
+    align: 'right',
+  })
 
   doc.setFont('helvetica', 'bold')
   doc.text('Grand Total', pageWidth - 220, summaryStart + rowHeight * 4)
-  doc.text(formatBDT(meta.total), pageWidth - 70, summaryStart + rowHeight * 4, { align: 'right' })
+  doc.text(
+    formatBDT(meta.total),
+    pageWidth - 70,
+    summaryStart + rowHeight * 4,
+    { align: 'right' },
+  )
 
   const paymentStart = summaryStart + rowHeight * 6
   doc.setFont('helvetica', 'bold')
   doc.text('PAYMENT INFORMATION', margin, paymentStart)
   doc.setFont('helvetica', 'normal')
-  doc.text(`Amount Paid: ${formatBDT(meta.amountPaid)}`, margin, paymentStart + rowHeight)
-  doc.text(`Balance Due: ${formatBDT(meta.balanceDue)}`, margin, paymentStart + rowHeight * 2)
-  doc.text(`Payment Status: ${meta.paymentStatus}`, margin, paymentStart + rowHeight * 3)
-  doc.text(`Transaction Ref: ${meta.transactionReference}`, margin, paymentStart + rowHeight * 4)
+  doc.text(
+    `Amount Paid: ${formatBDT(meta.amountPaid)}`,
+    margin,
+    paymentStart + rowHeight,
+  )
+  doc.text(
+    `Balance Due: ${formatBDT(meta.balanceDue)}`,
+    margin,
+    paymentStart + rowHeight * 2,
+  )
+  doc.text(
+    `Payment Status: ${meta.paymentStatus}`,
+    margin,
+    paymentStart + rowHeight * 3,
+  )
+  doc.text(
+    `Transaction Ref: ${meta.transactionReference}`,
+    margin,
+    paymentStart + rowHeight * 4,
+  )
 
   const footerStart = paymentStart + rowHeight * 6
   doc.setFontSize(9)
-  doc.text('Terms: Payment due upon delivery unless otherwise agreed.', margin, footerStart)
-  doc.text('Return policy: https://borobepari.com/returns', margin, footerStart + 14)
+  doc.text(
+    'Terms: Payment due upon delivery unless otherwise agreed.',
+    margin,
+    footerStart,
+  )
+  doc.text(
+    'Return policy: https://borobepari.com/returns',
+    margin,
+    footerStart + 14,
+  )
   doc.text('Thank you for your business!', margin, footerStart + 30)
 
   return doc.output('datauristring')
 }
 
 function buildInvoiceFileName(order: any) {
-  const year = order.createdAt ? new Date(order.createdAt).getFullYear() : new Date().getFullYear()
+  const year = order.createdAt
+    ? new Date(order.createdAt).getFullYear()
+    : new Date().getFullYear()
   return `Invoice_BO-${year}-${order.id.toString().padStart(5, '0')}.pdf`
 }
 

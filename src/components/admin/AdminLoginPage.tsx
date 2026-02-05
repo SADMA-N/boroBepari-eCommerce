@@ -42,7 +42,9 @@ export function AdminLoginPage() {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">BoroBepari Admin</h1>
-          <p className="mt-2 text-slate-400">Sign in to access the admin console</p>
+          <p className="mt-2 text-slate-400">
+            Sign in to access the admin console
+          </p>
         </div>
 
         <div className="bg-slate-800 dark:bg-slate-900 border border-slate-700 dark:border-slate-800 rounded-2xl p-8 shadow-xl transition-colors">
@@ -116,7 +118,10 @@ export function AdminLoginPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <Link to="/" className="text-sm text-slate-400 hover:text-slate-300 transition-colors">
+          <Link
+            to="/"
+            className="text-sm text-slate-400 hover:text-slate-300 transition-colors"
+          >
             Back to BoroBepari
           </Link>
         </div>

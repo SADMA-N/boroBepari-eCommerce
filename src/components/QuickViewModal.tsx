@@ -149,7 +149,9 @@ export default function QuickViewModal({
                   <span className="text-3xl font-bold text-orange-600 dark:text-orange-500">
                     {formatBDT(currentPrice)}
                   </span>
-                  <span className="text-gray-500 dark:text-gray-400">/ {product.unit}</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    / {product.unit}
+                  </span>
                 </div>
                 {product.originalPrice && (
                   <div className="text-sm text-gray-400 dark:text-gray-500 line-through mt-1">

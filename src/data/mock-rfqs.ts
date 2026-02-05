@@ -1,6 +1,6 @@
 import { addDays, subDays } from 'date-fns'
 import { mockProducts } from './mock-products'
-import type { MockProduct} from './mock-products';
+import type { MockProduct } from './mock-products'
 import type { Quote, Rfq } from '@/db/schema'
 
 // Extended types for UI with relations
@@ -18,7 +18,8 @@ export interface MockRfq extends Partial<Rfq> {
   quoteCount: number
 }
 
-const getProduct = (id: number) => mockProducts.find(p => p.id === id) || mockProducts[0]
+const getProduct = (id: number) =>
+  mockProducts.find((p) => p.id === id) || mockProducts[0]
 
 export const mockRfqs: Array<MockRfq> = [
   {
@@ -53,8 +54,8 @@ export const mockRfqs: Array<MockRfq> = [
         validityPeriod: addDays(new Date(), 3),
         status: 'pending',
         createdAt: subDays(new Date(), 1),
-      }
-    ]
+      },
+    ],
   },
   {
     id: 2,
@@ -68,7 +69,7 @@ export const mockRfqs: Array<MockRfq> = [
     expiresAt: addDays(new Date(), 6),
     quoteCount: 0,
     deliveryLocation: 'Chittagong Port',
-    quotes: []
+    quotes: [],
   },
   {
     id: 3,
@@ -82,7 +83,7 @@ export const mockRfqs: Array<MockRfq> = [
     expiresAt: subDays(new Date(), 3),
     quoteCount: 5,
     deliveryLocation: 'Gazipur Industrial Area',
-    quotes: [] // In real app, we'd load these
+    quotes: [], // In real app, we'd load these
   },
   {
     id: 4,
@@ -96,6 +97,6 @@ export const mockRfqs: Array<MockRfq> = [
     expiresAt: subDays(new Date(), 1),
     quoteCount: 1,
     deliveryLocation: 'Sylhet',
-    quotes: []
-  }
+    quotes: [],
+  },
 ]

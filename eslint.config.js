@@ -11,6 +11,7 @@ export default [
       'build/**',
       'eslint.config.js',
       'prettier.config.js',
+      'tailwind.config.js',
     ],
   },
   ...tanstackConfig,

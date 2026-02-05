@@ -143,7 +143,9 @@ function ProductDetailPage() {
       } else if (data?.alreadySubscribed) {
         setToastMessage('You are already subscribed for this stock alert.')
       } else {
-        setToastMessage('We will notify you as soon as this product is back in stock.')
+        setToastMessage(
+          'We will notify you as soon as this product is back in stock.',
+        )
         addNotification({
           id: `stock-alert-${product.id}-${Date.now()}`,
           title: `${product.name} stock alert`,
@@ -187,7 +189,10 @@ function ProductDetailPage() {
 
       {/* Breadcrumb - Basic placeholder */}
       <div className="text-sm text-gray-500 dark:text-gray-400 mb-6 transition-colors">
-        Home / Products / <span className="text-gray-900 dark:text-gray-100 font-medium">{product.name}</span>
+        Home / Products /{' '}
+        <span className="text-gray-900 dark:text-gray-100 font-medium">
+          {product.name}
+        </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -233,7 +238,9 @@ function ProductDetailPage() {
                     i < Math.floor(product.rating) ? 'currentColor' : 'none'
                   }
                   className={
-                    i < Math.floor(product.rating) ? '' : 'text-gray-300 dark:text-gray-700'
+                    i < Math.floor(product.rating)
+                      ? ''
+                      : 'text-gray-300 dark:text-gray-700'
                   }
                 />
               ))}
@@ -253,7 +260,9 @@ function ProductDetailPage() {
               <span className="text-3xl font-bold text-blue-600 dark:text-blue-500">
                 {formatBDT(currentPrice)}
               </span>
-              <span className="text-gray-500 dark:text-gray-400">/ {product.unit}</span>
+              <span className="text-gray-500 dark:text-gray-400">
+                / {product.unit}
+              </span>
             </div>
             {product.originalPrice && (
               <div className="text-sm text-gray-400 dark:text-gray-500 line-through mt-1">
@@ -343,7 +352,9 @@ function ProductDetailPage() {
           {/* Action Buttons */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors">Quantity:</span>
+              <span className="text-gray-700 dark:text-gray-300 font-medium transition-colors">
+                Quantity:
+              </span>
               <div className="flex items-center border dark:border-slate-800 rounded-md transition-colors">
                 <button
                   onClick={() => handleQuantityChange(quantity - 1)}
@@ -434,7 +445,9 @@ function ProductDetailPage() {
                   className="w-16 h-16 rounded-full border dark:border-slate-800"
                 />
                 <div>
-                  <h3 className="font-bold text-gray-900 dark:text-white transition-colors">{supplier.name}</h3>
+                  <h3 className="font-bold text-gray-900 dark:text-white transition-colors">
+                    {supplier.name}
+                  </h3>
                   <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 transition-colors">
                     <span className="mr-2">{supplier.location}</span>
                   </div>
@@ -449,17 +462,25 @@ function ProductDetailPage() {
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Response Rate</span>
-                  <span className="font-medium dark:text-gray-200">{supplier.responseRate}%</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Response Rate
+                  </span>
+                  <span className="font-medium dark:text-gray-200">
+                    {supplier.responseRate}%
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">On-time Delivery</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    On-time Delivery
+                  </span>
                   <span className="font-medium dark:text-gray-200">
                     {supplier.onTimeDelivery}%
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Years in Business</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Years in Business
+                  </span>
                   <span className="font-medium dark:text-gray-200">
                     {supplier.yearsInBusiness} Years
                   </span>
@@ -520,7 +541,10 @@ function ProductDetailPage() {
               </h3>
               <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4">
                 {product.specifications.map((spec, idx) => (
-                  <div key={idx} className="flex border-b border-gray-200 dark:border-slate-800 pb-2 transition-colors">
+                  <div
+                    key={idx}
+                    className="flex border-b border-gray-200 dark:border-slate-800 pb-2 transition-colors"
+                  >
                     <dt className="w-1/3 text-gray-500 dark:text-gray-400 text-sm font-medium">
                       {spec.key}
                     </dt>
@@ -546,8 +570,12 @@ function ProductDetailPage() {
           {activeTab === 'supplier' && supplier && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 transition-colors">
               <div>
-                <h3 className="text-lg font-bold mb-2 dark:text-white">{supplier.name}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">{supplier.description}</p>
+                <h3 className="text-lg font-bold mb-2 dark:text-white">
+                  {supplier.name}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  {supplier.description}
+                </p>
                 <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
                   <div className="flex items-center">
                     <Clock size={16} className="mr-1" />
@@ -560,7 +588,9 @@ function ProductDetailPage() {
                 </div>
               </div>
               <div className="bg-gray-50 dark:bg-slate-900 border dark:border-slate-800 p-6 rounded-lg transition-colors">
-                <h4 className="font-semibold mb-3 dark:text-white">Supplier Capabilities</h4>
+                <h4 className="font-semibold mb-3 dark:text-white">
+                  Supplier Capabilities
+                </h4>
                 <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                   <li className="flex items-center">
                     <CheckCircle size={14} className="text-green-600 mr-2" />{' '}
@@ -591,7 +621,10 @@ function ProductDetailPage() {
           <div className="bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl shadow-xl w-full max-w-md overflow-hidden relative animate-in zoom-in-95 duration-200 transition-colors">
             <div className="px-6 py-4 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800/50 transition-colors">
               <div>
-                <h2 id="stock-alert-title" className="text-lg font-bold text-gray-900 dark:text-white transition-colors">
+                <h2
+                  id="stock-alert-title"
+                  className="text-lg font-bold text-gray-900 dark:text-white transition-colors"
+                >
                   Notify Me When Available
                 </h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 transition-colors">
@@ -608,7 +641,9 @@ function ProductDetailPage() {
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">Email</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">
+                  Email
+                </label>
                 <input
                   type="email"
                   value={alertEmail}
@@ -617,7 +652,9 @@ function ProductDetailPage() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">Phone (optional)</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">
+                  Phone (optional)
+                </label>
                 <input
                   type="tel"
                   value={alertPhone}

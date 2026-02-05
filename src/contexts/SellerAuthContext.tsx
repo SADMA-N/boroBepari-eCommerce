@@ -1,6 +1,22 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import type { SellerLoginData, SellerRegisterData, SellerUser  } from '@/types/seller'
-import { sellerGoogleLogin, sellerLogin, sellerRegister, updateSellerProfile, validateSellerToken } from '@/lib/seller-auth-server'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+import type {
+  SellerLoginData,
+  SellerRegisterData,
+  SellerUser,
+} from '@/types/seller'
+import {
+  sellerGoogleLogin,
+  sellerLogin,
+  sellerRegister,
+  updateSellerProfile,
+  validateSellerToken,
+} from '@/lib/seller-auth-server'
 
 const SELLER_TOKEN_KEY = 'seller_token'
 
@@ -16,9 +32,15 @@ interface SellerAuthContextType {
   refreshSeller: () => Promise<void>
 }
 
-const SellerAuthContext = createContext<SellerAuthContextType | undefined>(undefined)
+const SellerAuthContext = createContext<SellerAuthContextType | undefined>(
+  undefined,
+)
 
-export function SellerAuthProvider({ children }: { children: React.ReactNode }) {
+export function SellerAuthProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [seller, setSeller] = useState<SellerUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -51,7 +73,10 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
       } else {
         setToken(null)
         setSeller(null)
-        if (typeof window !== 'undefined' && window.location.pathname.startsWith('/seller')) {
+        if (
+          typeof window !== 'undefined' &&
+          window.location.pathname.startsWith('/seller')
+        ) {
           window.location.href = '/seller/login'
         }
       }
@@ -59,7 +84,10 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
       console.error('Failed to validate seller token:', error)
       setToken(null)
       setSeller(null)
-      if (typeof window !== 'undefined' && window.location.pathname.startsWith('/seller')) {
+      if (
+        typeof window !== 'undefined' &&
+        window.location.pathname.startsWith('/seller')
+      ) {
         window.location.href = '/seller/login'
       }
     } finally {
@@ -67,34 +95,64 @@ export function SellerAuthProvider({ children }: { children: React.ReactNode }) 
     }
   }, [getToken, setToken])
 
-  const login = useCallback(async (data: SellerLoginData) => {
-    const result = await sellerLogin({ data })
-    setToken(result.token)
-    setSeller(result.seller)
-    return result.seller
-  }, [setToken])
+  const login = useCallback(
+    async (data: SellerLoginData) => {
+      const result = await sellerLogin({ data })
+      setToken(result.token)
+      setSeller(result.seller)
+      return result.seller
+    },
+    [setToken],
+  )
 
-  const googleLogin = useCallback(async (email: string) => {
-    const result = await sellerGoogleLogin({ data: { email } })
-    setToken(result.token)
-    setSeller(result.seller)
-    return result.seller
-  }, [setToken])
+  const googleLogin = useCallback(
+    async (email: string) => {
+      const result = await sellerGoogleLogin({ data: { email } })
+      setToken(result.token)
+      setSeller(result.seller)
+      return result.seller
+    },
+    [setToken],
+  )
 
   const updateProfile = useCallback(async (data: Partial<SellerUser>) => {
     // Only pass fields that updateSellerProfile expects
-    const { 
-      businessName, businessType, tradeLicenseNumber, businessCategory, 
-      yearsInBusiness, fullName, phone, address, city, postalCode,
-      bankName, accountHolderName, accountNumber, branchName, routingNumber
+    const {
+      businessName,
+      businessType,
+      tradeLicenseNumber,
+      businessCategory,
+      yearsInBusiness,
+      fullName,
+      phone,
+      address,
+      city,
+      postalCode,
+      bankName,
+      accountHolderName,
+      accountNumber,
+      branchName,
+      routingNumber,
     } = data
 
     const result = await updateSellerProfile({
       data: {
-        businessName, businessType, tradeLicenseNumber, businessCategory,
-        yearsInBusiness, fullName, phone, address, city, postalCode,
-        bankName, accountHolderName, accountNumber, branchName, routingNumber
-      }
+        businessName,
+        businessType,
+        tradeLicenseNumber,
+        businessCategory,
+        yearsInBusiness,
+        fullName,
+        phone,
+        address,
+        city,
+        postalCode,
+        bankName,
+        accountHolderName,
+        accountNumber,
+        branchName,
+        routingNumber,
+      },
     })
     setSeller(result.seller)
   }, [])

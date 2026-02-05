@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { subMinutes } from 'date-fns'
 import { useAuth } from './AuthContext'
 import Toast from '@/components/Toast'
@@ -46,11 +52,15 @@ interface NotificationContextType {
   markAllAsRead: () => void
   archiveNotification: (id: string) => void
   restoreNotification: (id: string) => void
-  addNotification: (notification: Omit<Notification, 'createdAt' | 'isRead'> & { id?: string }) => void
+  addNotification: (
+    notification: Omit<Notification, 'createdAt' | 'isRead'> & { id?: string },
+  ) => void
   updatePreferences: (prefs: Partial<NotificationPreferences>) => void
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined)
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined,
+)
 
 const STORAGE_KEY = 'bb_notifications'
 const PREFS_STORAGE_KEY = 'bb_notification_prefs'
@@ -77,7 +87,7 @@ const initialNotifications: Array<Notification> = [
     createdAt: subMinutes(new Date(), 120),
     link: '/buyer/rfqs/2',
     category: 'rfq',
-  }
+  },
 ]
 
 const defaultPreferences: NotificationPreferences = {
@@ -97,38 +107,56 @@ const defaultPreferences: NotificationPreferences = {
   frequency: 'immediate',
 }
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
-  const [notifications, setNotifications] = useState<Array<Notification>>(() => {
-    try {
-      if (typeof window === 'undefined') return initialNotifications
-      const stored = localStorage.getItem(STORAGE_KEY)
-      if (stored) {
-        const parsed = JSON.parse(stored) as Array<Notification & { createdAt: string }>
-        return parsed.map((n) => ({ ...n, createdAt: new Date(n.createdAt) }))
+export function NotificationProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const [notifications, setNotifications] = useState<Array<Notification>>(
+    () => {
+      try {
+        if (typeof window === 'undefined') return initialNotifications
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+          const parsed = JSON.parse(stored) as Array<
+            Notification & { createdAt: string }
+          >
+          return parsed.map((n) => ({ ...n, createdAt: new Date(n.createdAt) }))
+        }
+      } catch (error) {
+        console.error('Failed to load notifications', error)
       }
-    } catch (error) {
-      console.error('Failed to load notifications', error)
-    }
-    return initialNotifications
-  })
-  const [preferences, setPreferences] = useState<NotificationPreferences>(() => {
-    try {
-      if (typeof window === 'undefined') return defaultPreferences
-      const stored = localStorage.getItem(PREFS_STORAGE_KEY)
-      if (stored) {
-        return { ...defaultPreferences, ...JSON.parse(stored) }
+      return initialNotifications
+    },
+  )
+  const [preferences, setPreferences] = useState<NotificationPreferences>(
+    () => {
+      try {
+        if (typeof window === 'undefined') return defaultPreferences
+        const stored = localStorage.getItem(PREFS_STORAGE_KEY)
+        if (stored) {
+          return { ...defaultPreferences, ...JSON.parse(stored) }
+        }
+      } catch (error) {
+        console.error('Failed to load notification preferences', error)
       }
-    } catch (error) {
-      console.error('Failed to load notification preferences', error)
-    }
-    return defaultPreferences
-  })
+      return defaultPreferences
+    },
+  )
   const { isAuthenticated, user } = useAuth()
-  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: '', isVisible: false })
+  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
+    message: '',
+    isVisible: false,
+  })
 
-  const unreadCount = notifications.filter(n => !n.isRead && !n.archived).length
+  const unreadCount = notifications.filter(
+    (n) => !n.isRead && !n.archived,
+  ).length
   const orderUnreadCount = useMemo(
-    () => notifications.filter(n => !n.isRead && !n.archived && n.category === 'order').length,
+    () =>
+      notifications.filter(
+        (n) => !n.isRead && !n.archived && n.category === 'order',
+      ).length,
     [notifications],
   )
 
@@ -188,7 +216,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       if (typeof window === 'undefined') return
       const queued = localStorage.getItem(QUEUE_STORAGE_KEY)
       if (!queued) return
-      const parsed = JSON.parse(queued) as Array<Notification & { createdAt?: string }>
+      const parsed = JSON.parse(queued) as Array<
+        Notification & { createdAt?: string }
+      >
       if (!parsed.length) return
       setNotifications((prev) => {
         const existingIds = new Set(prev.map((n) => n.id))
@@ -208,28 +238,36 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n))
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+    )
   }
 
   const toggleRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(n => n.id === id ? { ...n, isRead: !n.isRead } : n),
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, isRead: !n.isRead } : n)),
     )
   }
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
   }
 
   const archiveNotification = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, archived: true } : n))
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, archived: true } : n)),
+    )
   }
 
   const restoreNotification = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, archived: false } : n))
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, archived: false } : n)),
+    )
   }
 
-  const addNotification = (notif: Omit<Notification, 'createdAt' | 'isRead' | 'id'> & { id?: string }) => {
+  const addNotification = (
+    notif: Omit<Notification, 'createdAt' | 'isRead' | 'id'> & { id?: string },
+  ) => {
     if (!preferences.channels.inApp) {
       return
     }
@@ -240,11 +278,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       createdAt: new Date(),
       archived: false,
     }
-    setNotifications(prev => {
-      if (prev.some(n => n.id === newNotif.id)) return prev
+    setNotifications((prev) => {
+      if (prev.some((n) => n.id === newNotif.id)) return prev
       return [newNotif, ...prev]
     })
-    setToast({ message: newNotif.title + ': ' + newNotif.message, isVisible: true })
+    setToast({
+      message: newNotif.title + ': ' + newNotif.message,
+      isVisible: true,
+    })
   }
 
   useEffect(() => {
@@ -253,7 +294,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     const fetchStockAlerts = async () => {
       try {
-        const response = await fetch(`/api/stock-alerts?userId=${user.id}&includeNotified=1`)
+        const response = await fetch(
+          `/api/stock-alerts?userId=${user.id}&includeNotified=1`,
+        )
         const data = await response.json().catch(() => ({}))
         const notified = data?.notified ?? []
         if (!Array.isArray(notified) || notified.length === 0) return
@@ -290,32 +333,37 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   }, [addNotification, isAuthenticated, user?.id])
 
   const updatePreferences = (prefs: Partial<NotificationPreferences>) => {
-    setPreferences(prev => ({
+    setPreferences((prev) => ({
       ...prev,
       ...prefs,
-      channels: { ...prev.channels, ...(prefs as NotificationPreferences).channels },
+      channels: {
+        ...prev.channels,
+        ...(prefs as NotificationPreferences).channels,
+      },
     }))
   }
 
   return (
-    <NotificationContext.Provider value={{
-      notifications,
-      unreadCount,
-      orderUnreadCount,
-      preferences,
-      markAsRead,
-      toggleRead,
-      markAllAsRead,
-      archiveNotification,
-      restoreNotification,
-      addNotification,
-      updatePreferences,
-    }}>
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        unreadCount,
+        orderUnreadCount,
+        preferences,
+        markAsRead,
+        toggleRead,
+        markAllAsRead,
+        archiveNotification,
+        restoreNotification,
+        addNotification,
+        updatePreferences,
+      }}
+    >
       {children}
-      <Toast 
-        message={toast.message} 
-        isVisible={toast.isVisible} 
-        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))} 
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
     </NotificationContext.Provider>
   )
@@ -324,7 +372,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 export function useNotifications() {
   const context = useContext(NotificationContext)
   if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationProvider')
+    throw new Error(
+      'useNotifications must be used within a NotificationProvider',
+    )
   }
   return context
 }

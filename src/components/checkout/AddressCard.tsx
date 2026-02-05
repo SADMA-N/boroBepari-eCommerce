@@ -1,4 +1,12 @@
-import { Building2, CheckCircle, Home, MapPin, Pencil, Store, Trash2 } from 'lucide-react'
+import {
+  Building2,
+  CheckCircle,
+  Home,
+  MapPin,
+  Pencil,
+  Store,
+  Trash2,
+} from 'lucide-react'
 import type { Address } from '@/db/schema'
 
 interface AddressCardProps {
@@ -27,16 +35,19 @@ export function AddressCard({
     <div
       className={`
         relative border rounded-xl p-5 cursor-pointer transition-all duration-200 group
-        ${isSelected 
-          ? 'border-orange-500 bg-orange-50/30 ring-1 ring-orange-500 shadow-sm' 
-          : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+        ${
+          isSelected
+            ? 'border-orange-500 bg-orange-50/30 ring-1 ring-orange-500 shadow-sm'
+            : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
         }
       `}
       onClick={onSelect}
     >
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-2">
-          <span className={`p-1.5 rounded-lg ${isSelected ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600'}`}>
+          <span
+            className={`p-1.5 rounded-lg ${isSelected ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600'}`}
+          >
             {getIcon(address.name)}
           </span>
           <span className="font-bold text-gray-900">{address.name}</span>
@@ -46,10 +57,12 @@ export function AddressCard({
             </span>
           )}
         </div>
-        <div className={`
+        <div
+          className={`
           w-5 h-5 rounded-full border flex items-center justify-center transition-colors
           ${isSelected ? 'border-orange-500 bg-orange-500 text-white' : 'border-gray-300 bg-white'}
-        `}>
+        `}
+        >
           {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
         </div>
       </div>
@@ -57,8 +70,8 @@ export function AddressCard({
       <div className="space-y-1 text-sm text-gray-600 mb-4 ml-1">
         <p className="line-clamp-2 min-h-[40px]">{address.address}</p>
         <p className="flex items-center gap-2 text-xs text-gray-500">
-           {address.city && <span>{address.city} - </span>}
-           <span>{address.postcode}</span>
+          {address.city && <span>{address.city} - </span>}
+          <span>{address.postcode}</span>
         </p>
         <p className="flex items-center gap-2 pt-1">
           <span className="font-medium text-gray-900">{address.phone}</span>

@@ -13,10 +13,13 @@ export const Route = createFileRoute('/api/stock-alerts/trigger')({
         const productId = Number(payload?.productId)
 
         if (!productId) {
-          return new Response(JSON.stringify({ error: 'productId is required' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
+          return new Response(
+            JSON.stringify({ error: 'productId is required' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
         }
 
         const product = await db.query.products.findFirst({
@@ -24,14 +27,20 @@ export const Route = createFileRoute('/api/stock-alerts/trigger')({
         })
 
         if (!product || product.stock <= 0) {
-          return new Response(JSON.stringify({ error: 'Product not in stock' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
+          return new Response(
+            JSON.stringify({ error: 'Product not in stock' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
         }
 
         const alerts = await db.query.stockAlerts.findMany({
-          where: and(eq(stockAlerts.productId, productId), eq(stockAlerts.isActive, true)),
+          where: and(
+            eq(stockAlerts.productId, productId),
+            eq(stockAlerts.isActive, true),
+          ),
           with: {
             user: true,
           },

@@ -104,7 +104,9 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">Company</h3>
+            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">
+              Company
+            </h3>
             <ul className="space-y-2">
               {companyLinks.map((link) => (
                 <li key={link.href}>
@@ -121,7 +123,9 @@ export default function Footer() {
 
           {/* Marketplace Links */}
           <div>
-            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">Marketplace</h3>
+            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">
+              Marketplace
+            </h3>
             <ul className="space-y-2">
               {marketplaceLinks.map((link) => (
                 <li key={link.href}>
@@ -138,7 +142,9 @@ export default function Footer() {
 
           {/* Help Links */}
           <div>
-            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">Help & Support</h3>
+            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">
+              Help & Support
+            </h3>
             <ul className="space-y-2">
               {helpLinks.map((link) => (
                 <li key={link.href}>
@@ -155,7 +161,9 @@ export default function Footer() {
 
           {/* Payment & Social */}
           <div>
-            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">Payment Methods</h3>
+            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">
+              Payment Methods
+            </h3>
             <div className="flex flex-wrap gap-2 mb-6">
               {paymentMethods.map((method) => (
                 <div
@@ -170,7 +178,9 @@ export default function Footer() {
               ))}
             </div>
 
-            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">Follow Us</h3>
+            <h3 className="text-white dark:text-gray-100 font-semibold mb-4 transition-colors">
+              Follow Us
+            </h3>
             <div className="flex gap-3">
               {socialLinks.map((social) => {
                 const Icon = social.icon
@@ -212,7 +222,9 @@ export default function Footer() {
                     {link.label}
                   </Link>
                   {index < legalLinks.length - 1 && (
-                    <span className="ml-4 text-gray-700 dark:text-gray-800">|</span>
+                    <span className="ml-4 text-gray-700 dark:text-gray-800">
+                      |
+                    </span>
                   )}
                 </span>
               ))}
@@ -238,7 +250,9 @@ export default function Footer() {
                         setShowLanguageMenu(false)
                       }}
                       className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-700 dark:hover:bg-slate-800 transition-colors ${
-                        language === lang ? 'text-orange-500' : 'text-gray-300 dark:text-gray-400'
+                        language === lang
+                          ? 'text-orange-500'
+                          : 'text-gray-300 dark:text-gray-400'
                       }`}
                     >
                       {lang}

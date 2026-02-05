@@ -1,11 +1,6 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import {
-  ChevronDown,
-  Package,
-  Search,
-  X,
-} from 'lucide-react'
+import { ChevronDown, Package, Search, X } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
@@ -56,20 +51,20 @@ const ORDERS: Array<Order> = [
     lineItems: [
       {
         name: 'Industrial Safety Gloves',
-        image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=400&auto=format&fit=crop',
+        image:
+          'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=400&auto=format&fit=crop',
         quantity: 200,
         unitPrice: 120,
       },
       {
         name: 'HDPE Packaging Bags',
-        image: 'https://images.unsplash.com/photo-1531498860502-7c67cf02f657?q=80&w=400&auto=format&fit=crop',
+        image:
+          'https://images.unsplash.com/photo-1531498860502-7c67cf02f657?q=80&w=400&auto=format&fit=crop',
         quantity: 500,
         unitPrice: 18,
       },
     ],
-    timeline: [
-      { label: 'Order placed', time: 'Feb 3, 2026 09:12 AM' },
-    ],
+    timeline: [{ label: 'Order placed', time: 'Feb 3, 2026 09:12 AM' }],
   },
   {
     id: 'BB-1043',
@@ -86,7 +81,8 @@ const ORDERS: Array<Order> = [
     lineItems: [
       {
         name: 'Stainless Steel Cookware Set',
-        image: 'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?q=80&w=400&auto=format&fit=crop',
+        image:
+          'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?q=80&w=400&auto=format&fit=crop',
         quantity: 30,
         unitPrice: 1250,
       },
@@ -112,7 +108,8 @@ const ORDERS: Array<Order> = [
     lineItems: [
       {
         name: 'Cotton T-Shirts Bulk Pack',
-        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=400&auto=format&fit=crop',
+        image:
+          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=400&auto=format&fit=crop',
         quantity: 200,
         unitPrice: 210,
       },
@@ -169,21 +166,27 @@ export function SellerOrdersPage() {
   }, [pushToast])
 
   const counts = useMemo(() => {
-    return STATUS_TABS.reduce((acc, status) => {
-      acc[status] = orders.filter((order) => order.status === status).length
-      return acc
-    }, {} as Record<OrderStatus, number>)
+    return STATUS_TABS.reduce(
+      (acc, status) => {
+        acc[status] = orders.filter((order) => order.status === status).length
+        return acc
+      },
+      {} as Record<OrderStatus, number>,
+    )
   }, [orders])
 
   const filtered = useMemo(() => {
     return orders
       .filter((order) => order.status === tab)
-      .filter((order) =>
-        order.id.toLowerCase().includes(query.toLowerCase()) ||
-        order.buyer.toLowerCase().includes(query.toLowerCase()),
+      .filter(
+        (order) =>
+          order.id.toLowerCase().includes(query.toLowerCase()) ||
+          order.buyer.toLowerCase().includes(query.toLowerCase()),
       )
       .filter((order) => (statusFilter ? order.status === statusFilter : true))
-      .filter((order) => (paymentFilter ? order.paymentStatus === paymentFilter : true))
+      .filter((order) =>
+        paymentFilter ? order.paymentStatus === paymentFilter : true,
+      )
       .filter((order) => {
         const min = amountRange.min ? Number(amountRange.min) : null
         const max = amountRange.max ? Number(amountRange.max) : null
@@ -203,7 +206,9 @@ export function SellerOrdersPage() {
   }, [filtered, page])
 
   const toggleSelected = (id: string) => {
-    setSelected((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
   }
 
   const toggleAll = () => {
@@ -215,7 +220,9 @@ export function SellerOrdersPage() {
   }
 
   const updateStatus = (id: string, status: OrderStatus) => {
-    setOrders((prev) => prev.map((order) => (order.id === id ? { ...order, status } : order)))
+    setOrders((prev) =>
+      prev.map((order) => (order.id === id ? { ...order, status } : order)),
+    )
   }
 
   return (
@@ -252,7 +259,9 @@ export function SellerOrdersPage() {
               key={status}
               onClick={() => setTab(status)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                tab === status ? 'bg-orange-600 text-white' : 'bg-white border border-slate-200 text-slate-600'
+                tab === status
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-white border border-slate-200 text-slate-600'
               }`}
             >
               {status}
@@ -266,7 +275,10 @@ export function SellerOrdersPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-4 space-y-4">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div className="relative w-full lg:max-w-sm">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
@@ -301,13 +313,23 @@ export function SellerOrdersPage() {
               </select>
               <input
                 value={amountRange.min}
-                onChange={(event) => setAmountRange((prev) => ({ ...prev, min: event.target.value }))}
+                onChange={(event) =>
+                  setAmountRange((prev) => ({
+                    ...prev,
+                    min: event.target.value,
+                  }))
+                }
                 placeholder="Min amount"
                 className="w-28 rounded-lg border border-slate-200 px-3 py-2 text-sm"
               />
               <input
                 value={amountRange.max}
-                onChange={(event) => setAmountRange((prev) => ({ ...prev, max: event.target.value }))}
+                onChange={(event) =>
+                  setAmountRange((prev) => ({
+                    ...prev,
+                    max: event.target.value,
+                  }))
+                }
                 placeholder="Max amount"
                 className="w-28 rounded-lg border border-slate-200 px-3 py-2 text-sm"
               />
@@ -340,7 +362,9 @@ export function SellerOrdersPage() {
                         const nextStatus = value as OrderStatus
                         setOrders((prev) =>
                           prev.map((order) =>
-                            selected.includes(order.id) ? { ...order, status: nextStatus } : order,
+                            selected.includes(order.id)
+                              ? { ...order, status: nextStatus }
+                              : order,
                           ),
                         )
                       }}
@@ -352,8 +376,12 @@ export function SellerOrdersPage() {
                         </option>
                       ))}
                     </select>
-                    <button className="rounded-lg border border-slate-200 px-2 py-1">Bulk Print</button>
-                    <button className="rounded-lg border border-slate-200 px-2 py-1">Bulk Export</button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1">
+                      Bulk Print
+                    </button>
+                    <button className="rounded-lg border border-slate-200 px-2 py-1">
+                      Bulk Export
+                    </button>
                   </>
                 )}
               </div>
@@ -361,98 +389,118 @@ export function SellerOrdersPage() {
                 <table className="w-full text-sm">
                   <thead className="text-left text-slate-400">
                     <tr>
-                    <th className="py-3">
-                      <input
-                        type="checkbox"
-                        checked={selected.length === filtered.length}
-                        onChange={toggleAll}
-                      />
-                    </th>
-                    <th>Order</th>
-                    <th>Buyer</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Payment</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-600">
-                  {paged.map((order) => (
-                    <Fragment key={order.id}>
-                  <tr className="hover:bg-slate-50">
-                        <td className="py-3">
-                          <input
-                            type="checkbox"
-                            checked={selected.includes(order.id)}
-                            onChange={() => toggleSelected(order.id)}
-                          />
-                        </td>
-                        <td className="font-semibold text-slate-800">
-                          <button
-                            onClick={() => setExpanded(expanded === order.id ? null : order.id)}
-                            className="hover:text-orange-600"
-                          >
-                            {order.id}
-                          </button>
-                        </td>
-                        <td>{order.buyer}</td>
-                        <td>{order.items}</td>
-                        <td>৳{order.total.toLocaleString()}</td>
-                        <td>
-                          <span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}>
-                            {order.status}
-                          </span>
-                        </td>
-                        <td>{order.date}</td>
-                        <td>{order.paymentStatus}</td>
-                        <td>
-                          <ActionMenu
-                            status={order.status}
-                            onConfirm={() => setShowConfirm(order)}
-                            onShip={() => setShowShip(order)}
-                            onUpdateStatus={(status) => updateStatus(order.id, status)}
-                            onCancel={() => {
-                              const reason = window.prompt('Cancellation reason?')
-                              if (!reason) return
-                              updateStatus(order.id, 'Cancelled')
-                              pushToast(`Order ${order.id} cancelled`, 'info')
-                            }}
-                          />
-                        </td>
-                      </tr>
-                      {expanded === order.id && (
-                        <tr>
-                          <td colSpan={9} className="bg-slate-50">
-                            <OrderDetail order={order} />
+                      <th className="py-3">
+                        <input
+                          type="checkbox"
+                          checked={selected.length === filtered.length}
+                          onChange={toggleAll}
+                        />
+                      </th>
+                      <th>Order</th>
+                      <th>Buyer</th>
+                      <th>Items</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Date</th>
+                      <th>Payment</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-600">
+                    {paged.map((order) => (
+                      <Fragment key={order.id}>
+                        <tr className="hover:bg-slate-50">
+                          <td className="py-3">
+                            <input
+                              type="checkbox"
+                              checked={selected.includes(order.id)}
+                              onChange={() => toggleSelected(order.id)}
+                            />
+                          </td>
+                          <td className="font-semibold text-slate-800">
+                            <button
+                              onClick={() =>
+                                setExpanded(
+                                  expanded === order.id ? null : order.id,
+                                )
+                              }
+                              className="hover:text-orange-600"
+                            >
+                              {order.id}
+                            </button>
+                          </td>
+                          <td>{order.buyer}</td>
+                          <td>{order.items}</td>
+                          <td>৳{order.total.toLocaleString()}</td>
+                          <td>
+                            <span
+                              className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}
+                            >
+                              {order.status}
+                            </span>
+                          </td>
+                          <td>{order.date}</td>
+                          <td>{order.paymentStatus}</td>
+                          <td>
+                            <ActionMenu
+                              status={order.status}
+                              onConfirm={() => setShowConfirm(order)}
+                              onShip={() => setShowShip(order)}
+                              onUpdateStatus={(status) =>
+                                updateStatus(order.id, status)
+                              }
+                              onCancel={() => {
+                                const reason = window.prompt(
+                                  'Cancellation reason?',
+                                )
+                                if (!reason) return
+                                updateStatus(order.id, 'Cancelled')
+                                pushToast(`Order ${order.id} cancelled`, 'info')
+                              }}
+                            />
                           </td>
                         </tr>
-                      )}
-                    </Fragment>
-                  ))}
-                </tbody>
+                        {expanded === order.id && (
+                          <tr>
+                            <td colSpan={9} className="bg-slate-50">
+                              <OrderDetail order={order} />
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    ))}
+                  </tbody>
                 </table>
               </div>
               <div className="grid gap-4 lg:hidden">
                 {paged.map((order) => (
-                  <div key={order.id} className="rounded-xl border border-slate-200 p-4">
+                  <div
+                    key={order.id}
+                    className="rounded-xl border border-slate-200 p-4"
+                  >
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-xs text-slate-400">{order.id}</p>
-                        <p className="font-semibold text-slate-800">{order.buyer}</p>
+                        <p className="font-semibold text-slate-800">
+                          {order.buyer}
+                        </p>
                         <p className="text-xs text-slate-500">{order.date}</p>
                       </div>
-                      <span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}>
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}
+                      >
                         {order.status}
                       </span>
                     </div>
                     <div className="mt-3 text-sm text-slate-600">
-                      ৳{order.total.toLocaleString()} · {order.items} items · {order.paymentStatus}
+                      ৳{order.total.toLocaleString()} · {order.items} items ·{' '}
+                      {order.paymentStatus}
                     </div>
                     <div className="mt-3 flex gap-2">
                       <button
-                        onClick={() => setExpanded(expanded === order.id ? null : order.id)}
+                        onClick={() =>
+                          setExpanded(expanded === order.id ? null : order.id)
+                        }
                         className="rounded-lg border border-slate-200 px-3 py-2 text-xs"
                       >
                         Details
@@ -504,7 +552,10 @@ export function SellerOrdersPage() {
             onConfirm={(processingTime) => {
               updateStatus(showConfirm.id, 'Confirmed')
               setShowConfirm(null)
-              pushToast(`Order ${showConfirm.id} confirmed (${processingTime})`, 'success')
+              pushToast(
+                `Order ${showConfirm.id} confirmed (${processingTime})`,
+                'success',
+              )
             }}
           />
         )}
@@ -530,7 +581,9 @@ function OrderDetail({ order }: { order: Order }) {
     <div className="p-6 space-y-6">
       <div className="grid md:grid-cols-2 gap-4">
         <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-slate-800">Order Information</h3>
+          <h3 className="text-sm font-semibold text-slate-800">
+            Order Information
+          </h3>
           <div className="mt-3 space-y-2 text-sm text-slate-600">
             <p>Order: {order.id}</p>
             <p>Date: {order.date}</p>
@@ -539,7 +592,9 @@ function OrderDetail({ order }: { order: Order }) {
           </div>
         </div>
         <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-slate-800">Buyer Details</h3>
+          <h3 className="text-sm font-semibold text-slate-800">
+            Buyer Details
+          </h3>
           <div className="mt-3 space-y-2 text-sm text-slate-600">
             <p>{order.buyer}</p>
             <p>{order.buyerPhone}</p>
@@ -555,13 +610,21 @@ function OrderDetail({ order }: { order: Order }) {
           {order.lineItems.map((item) => (
             <div key={item.name} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src={item.image} alt={item.name} className="h-12 w-12 rounded-lg object-cover" />
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="h-12 w-12 rounded-lg object-cover"
+                />
                 <div>
-                  <p className="text-sm font-medium text-slate-800">{item.name}</p>
+                  <p className="text-sm font-medium text-slate-800">
+                    {item.name}
+                  </p>
                   <p className="text-xs text-slate-400">Qty: {item.quantity}</p>
                 </div>
               </div>
-              <p className="text-sm text-slate-700">৳{(item.quantity * item.unitPrice).toLocaleString()}</p>
+              <p className="text-sm text-slate-700">
+                ৳{(item.quantity * item.unitPrice).toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
@@ -574,15 +637,21 @@ function OrderDetail({ order }: { order: Order }) {
             <div key={event.label} className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-orange-500" />
               <span>{event.label}</span>
-              <span className="ml-auto text-xs text-slate-400">{event.time}</span>
+              <span className="ml-auto text-xs text-slate-400">
+                {event.time}
+              </span>
             </div>
           ))}
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold">Print Packing Slip</button>
-        <button className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-semibold text-orange-700">Contact Buyer</button>
+        <button className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold">
+          Print Packing Slip
+        </button>
+        <button className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-semibold text-orange-700">
+          Contact Buyer
+        </button>
       </div>
     </div>
   )
@@ -616,8 +685,12 @@ function ActionMenu({
         <option value="">Actions</option>
         <option value="view">View Details</option>
         {status === 'New' && <option value="confirm">Confirm Order</option>}
-        {status !== 'Shipped' && <option value="processing">Mark as Processing</option>}
-        {status === 'Processing' && <option value="shipped">Mark as Shipped</option>}
+        {status !== 'Shipped' && (
+          <option value="processing">Mark as Processing</option>
+        )}
+        {status === 'Processing' && (
+          <option value="shipped">Mark as Shipped</option>
+        )}
         <option value="print">Print Invoice</option>
         <option value="contact">Contact Buyer</option>
         <option value="cancelled">Cancel Order</option>
@@ -650,7 +723,10 @@ function ConfirmModal({
         <option>3-5 days</option>
       </select>
       <div className="mt-4 flex justify-end gap-3">
-        <button onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2 text-sm">
+        <button
+          onClick={onClose}
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+        >
           Cancel
         </button>
         <button
@@ -704,7 +780,10 @@ function ShipModal({
         <input type="file" className="w-full text-sm" />
       </div>
       <div className="mt-4 flex justify-end gap-3">
-        <button onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2 text-sm">
+        <button
+          onClick={onClose}
+          className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+        >
           Cancel
         </button>
         <button
@@ -729,11 +808,20 @@ function Modal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+            aria-label="Close modal"
+            autoFocus
+          >
             <X size={16} />
           </button>
         </div>

@@ -22,11 +22,11 @@ function SellerCallback() {
 
       try {
         const session = await authClient.getSession()
-        
+
         if (session.data.user.email) {
           try {
             const seller = await googleLogin(session.data.user.email)
-            
+
             // Success! Redirect based on KYC status
             if (seller.kycStatus === 'approved') {
               navigate({ to: '/seller/dashboard' })
@@ -36,10 +36,11 @@ function SellerCallback() {
               navigate({ to: '/seller/kyc' })
             }
           } catch (err: any) {
-            const message = err.message || 'This email is not registered as a seller account.'
+            const message =
+              err.message || 'This email is not registered as a seller account.'
             setError(message)
             pushToast(message, 'error')
-            
+
             // Sign out from buyer session to keep it clean if they aren't a seller
             await authClient.signOut()
             navigate({ to: '/seller/login' })
@@ -64,8 +65,12 @@ function SellerCallback() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-        <h2 className="mt-4 text-xl font-semibold text-slate-900">Verifying your seller account...</h2>
-        <p className="mt-2 text-slate-600">Please wait while we check your credentials.</p>
+        <h2 className="mt-4 text-xl font-semibold text-slate-900">
+          Verifying your seller account...
+        </h2>
+        <p className="mt-2 text-slate-600">
+          Please wait while we check your credentials.
+        </p>
         {error && <p className="mt-4 text-red-500 font-medium">{error}</p>}
       </div>
     </div>

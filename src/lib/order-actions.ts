@@ -48,11 +48,13 @@ export const getOrder = createServerFn({ method: 'GET' })
 
 const createOrderSchema = z.object({
   userId: z.string(),
-  items: z.array(z.object({
-    productId: z.number(),
-    quantity: z.number(),
-    price: z.number(),
-  })),
+  items: z.array(
+    z.object({
+      productId: z.number(),
+      quantity: z.number(),
+      price: z.number(),
+    }),
+  ),
   totalAmount: z.number(),
   paymentMethod: z.string(),
   depositAmount: z.number().default(0),
@@ -69,12 +71,15 @@ export const createOrder = createServerFn({ method: 'POST' })
       throw new Error('Unauthorized')
     }
 
-    const normalizedItems = data.items.map(item => ({
+    const normalizedItems = data.items.map((item) => ({
       ...item,
       lineTotal: item.price * item.quantity,
     }))
 
-    const calculatedTotal = normalizedItems.reduce((sum, item) => sum + item.lineTotal, 0)
+    const calculatedTotal = normalizedItems.reduce(
+      (sum, item) => sum + item.lineTotal,
+      0,
+    )
     const totalAmount = Math.round(calculatedTotal * 100) / 100
     const depositAmount = Math.max(0, data.depositAmount)
     const balanceDue = Math.max(0, totalAmount - depositAmount)
@@ -87,26 +92,29 @@ export const createOrder = createServerFn({ method: 'POST' })
     }
 
     // 1. Create Order
-    const [newOrder] = await db.insert(orders).values({
-      userId: session.user.id,
-      totalAmount: totalAmount.toString(),
-      status: 'pending',
-      paymentStatus: 'pending',
-      paymentMethod: data.paymentMethod,
-      depositAmount: depositAmount.toString(),
-      balanceDue: balanceDue.toString(),
-      notes: data.notes,
-    }).returning()
+    const [newOrder] = await db
+      .insert(orders)
+      .values({
+        userId: session.user.id,
+        totalAmount: totalAmount.toString(),
+        status: 'pending',
+        paymentStatus: 'pending',
+        paymentMethod: data.paymentMethod,
+        depositAmount: depositAmount.toString(),
+        balanceDue: balanceDue.toString(),
+        notes: data.notes,
+      })
+      .returning()
 
     // 2. Create Order Items
     if (normalizedItems.length > 0) {
       await db.insert(orderItems).values(
-        normalizedItems.map(item => ({
+        normalizedItems.map((item) => ({
           orderId: newOrder.id,
           productId: item.productId,
           quantity: item.quantity,
           price: item.lineTotal.toString(),
-        }))
+        })),
       )
     }
 
@@ -131,31 +139,34 @@ export const createOrder = createServerFn({ method: 'POST' })
   })
 
 export const updateOrderPayment = createServerFn({ method: 'POST' })
-  .inputValidator((data: { orderId: number; status: string; transactionId?: string }) => data)
+  .inputValidator(
+    (data: { orderId: number; status: string; transactionId?: string }) => data,
+  )
   .handler(async ({ data }) => {
     const updateData: any = {
       // Default to what was passed, but override logic below
-      paymentStatus: data.status, 
+      paymentStatus: data.status,
       transactionId: data.transactionId,
     }
 
     // Timeline updates & Logic
     const now = new Date()
-    
+
     if (data.status === 'deposit_paid') {
       updateData.depositPaidAt = now
       updateData.paymentStatus = 'deposit_paid'
-      updateData.status = 'processing' 
+      updateData.status = 'processing'
     } else if (data.status === 'full_paid') {
       updateData.fullPaymentPaidAt = now
       // Logic: Full payment -> Escrow Hold
       updateData.paymentStatus = 'escrow_hold'
       updateData.status = 'processing'
     } else if (data.status === 'escrow_hold') {
-       updateData.paymentStatus = 'escrow_hold'
+      updateData.paymentStatus = 'escrow_hold'
     }
 
-    const [updatedOrder] = await db.update(orders)
+    const [updatedOrder] = await db
+      .update(orders)
       .set(updateData)
       .where(eq(orders.id, data.orderId))
       .returning()
@@ -167,7 +178,9 @@ export const updateOrderPayment = createServerFn({ method: 'POST' })
 const buyerOrdersFilterSchema = z.object({
   filter: z.enum(['all', 'active', 'delivered', 'cancelled']).default('all'),
   search: z.string().optional(),
-  sortBy: z.enum(['date_desc', 'date_asc', 'amount_desc', 'amount_asc', 'status']).default('date_desc'),
+  sortBy: z
+    .enum(['date_desc', 'date_asc', 'amount_desc', 'amount_asc', 'status'])
+    .default('date_desc'),
   page: z.number().default(1),
   limit: z.number().default(10),
 })
@@ -187,7 +200,14 @@ export const getBuyerOrders = createServerFn({ method: 'GET' })
     const { filter, search, sortBy, page, limit } = data
 
     // Build status filter
-    const activeStatuses = ['placed', 'confirmed', 'processing', 'shipped', 'out_for_delivery', 'pending']
+    const activeStatuses = [
+      'placed',
+      'confirmed',
+      'processing',
+      'shipped',
+      'out_for_delivery',
+      'pending',
+    ]
     const deliveredStatuses = ['delivered']
     const cancelledStatuses = ['cancelled', 'returned']
 
@@ -217,27 +237,28 @@ export const getBuyerOrders = createServerFn({ method: 'GET' })
           },
         },
       },
-      orderBy: sortBy === 'date_asc'
-        ? [asc(orders.createdAt)]
-        : sortBy === 'amount_desc'
-        ? [desc(orders.totalAmount)]
-        : sortBy === 'amount_asc'
-        ? [asc(orders.totalAmount)]
-        : sortBy === 'status'
-        ? [asc(orders.status), desc(orders.createdAt)]
-        : [desc(orders.createdAt)],
+      orderBy:
+        sortBy === 'date_asc'
+          ? [asc(orders.createdAt)]
+          : sortBy === 'amount_desc'
+            ? [desc(orders.totalAmount)]
+            : sortBy === 'amount_asc'
+              ? [asc(orders.totalAmount)]
+              : sortBy === 'status'
+                ? [asc(orders.status), desc(orders.createdAt)]
+                : [desc(orders.createdAt)],
     })
 
     // Apply search filter on results (including product names)
     let filteredOrders = allUserOrders
     if (search && search.trim()) {
       const searchLower = search.toLowerCase().trim()
-      filteredOrders = allUserOrders.filter(order => {
+      filteredOrders = allUserOrders.filter((order) => {
         // Search by order ID
         if (order.id.toString().includes(searchLower)) return true
         // Search by product names
-        const hasMatchingProduct = order.items.some(item =>
-          item.product.name.toLowerCase().includes(searchLower)
+        const hasMatchingProduct = order.items.some((item) =>
+          item.product.name.toLowerCase().includes(searchLower),
         )
         return hasMatchingProduct
       })
@@ -250,9 +271,11 @@ export const getBuyerOrders = createServerFn({ method: 'GET' })
 
     const counts = {
       all: allOrders.length,
-      active: allOrders.filter(o => activeStatuses.includes(o.status)).length,
-      delivered: allOrders.filter(o => deliveredStatuses.includes(o.status)).length,
-      cancelled: allOrders.filter(o => cancelledStatuses.includes(o.status)).length,
+      active: allOrders.filter((o) => activeStatuses.includes(o.status)).length,
+      delivered: allOrders.filter((o) => deliveredStatuses.includes(o.status))
+        .length,
+      cancelled: allOrders.filter((o) => cancelledStatuses.includes(o.status))
+        .length,
     }
 
     // Paginate

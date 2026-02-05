@@ -82,7 +82,9 @@ export function FrequentlySearched({
 }: FrequentlySearchedProps) {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-4 transition-colors">
-      <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-3 transition-colors">{title}</h3>
+      <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-3 transition-colors">
+        {title}
+      </h3>
       <div className="flex flex-wrap gap-2">
         {keywords.map((keyword, index) => (
           <Link

@@ -23,7 +23,7 @@ export const Route = createFileRoute('/order-confirmation/$orderId')({
     const orderId = parseInt(params.orderId)
     if (isNaN(orderId)) return null
     return await getOrder({ data: orderId })
-  }
+  },
 })
 
 function OrderConfirmationPage() {
@@ -53,15 +53,17 @@ function OrderConfirmationPage() {
   const isDeposit = Number(order.depositAmount) > 0
   const balanceDue = Number(order.balanceDue)
   const isEscrow = order.paymentStatus === 'escrow_hold'
-  
+
   const estimatedDelivery = addDays(new Date(order.createdAt), 5)
 
   // Mock address linkage if missing (schema limitation workaround)
-  const displayAddress = (order as any).user?.addresses?.find((a: any) => a.isDefault) || {
-      name: 'Customer',
-      address: 'Delivery Address',
-      city: 'City',
-      phone: 'Phone'
+  const displayAddress = (order as any).user?.addresses?.find(
+    (a: any) => a.isDefault,
+  ) || {
+    name: 'Customer',
+    address: 'Delivery Address',
+    city: 'City',
+    phone: 'Phone',
   }
 
   return (
@@ -77,7 +79,10 @@ function OrderConfirmationPage() {
         <div className="relative max-w-5xl mx-auto px-4 py-12 space-y-8">
           <div className="bg-white/90 backdrop-blur rounded-2xl border shadow-sm p-8 text-center">
             <div className="mx-auto mb-5 w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
-              <CheckCircle className="w-10 h-10 text-emerald-600" strokeWidth={2.4} />
+              <CheckCircle
+                className="w-10 h-10 text-emerald-600"
+                strokeWidth={2.4}
+              />
             </div>
             <p className="text-emerald-700 text-sm font-semibold tracking-wide uppercase">
               Thanks for your order
@@ -86,8 +91,10 @@ function OrderConfirmationPage() {
               Your order is confirmed
             </h1>
             <p className="text-slate-600 mt-3">
-              Order <span className="font-semibold text-slate-900">#{order.id}</span> was placed
-              successfully. We will notify you when the supplier confirms and ships it.
+              Order{' '}
+              <span className="font-semibold text-slate-900">#{order.id}</span>{' '}
+              was placed successfully. We will notify you when the supplier
+              confirms and ships it.
             </p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -115,7 +122,9 @@ function OrderConfirmationPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-2xl border shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-slate-900">What happens next</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  What happens next
+                </h2>
                 <div className="mt-4 grid gap-4 md:grid-cols-3 text-sm">
                   {[
                     {
@@ -139,7 +148,9 @@ function OrderConfirmationPage() {
                       className="rounded-xl border border-slate-100 bg-slate-50/70 p-4"
                     >
                       <step.icon className="text-emerald-600" size={18} />
-                      <h3 className="mt-3 font-semibold text-slate-900">{step.title}</h3>
+                      <h3 className="mt-3 font-semibold text-slate-900">
+                        {step.title}
+                      </h3>
                       <p className="mt-2 text-slate-600">{step.detail}</p>
                     </div>
                   ))}
@@ -160,7 +171,9 @@ function OrderConfirmationPage() {
                         <h4 className="font-medium text-slate-900 text-sm">
                           {item.product?.name || 'Product'}
                         </h4>
-                        <p className="text-xs text-slate-500 mt-1">Quantity: {item.quantity}</p>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Quantity: {item.quantity}
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-slate-900 text-sm">
@@ -176,7 +189,9 @@ function OrderConfirmationPage() {
             <div className="space-y-6">
               <div className="bg-white rounded-2xl border shadow-sm p-6 space-y-4">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
+                  <p className="text-xs uppercase tracking-wide text-slate-500">
+                    Total
+                  </p>
                   <p className="text-2xl font-semibold text-slate-900">
                     {formatCurrency(Number(order.totalAmount))}
                   </p>
@@ -192,7 +207,9 @@ function OrderConfirmationPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} className="text-slate-400" />
-                    <span>Placed on {new Date(order.createdAt).toLocaleDateString()}</span>
+                    <span>
+                      Placed on {new Date(order.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
                 {isEscrow && (
@@ -200,9 +217,12 @@ function OrderConfirmationPage() {
                     <div className="flex items-start gap-2">
                       <ShieldCheck size={18} className="mt-0.5 text-blue-600" />
                       <div>
-                        <p className="font-semibold text-blue-800">Payment in escrow</p>
+                        <p className="font-semibold text-blue-800">
+                          Payment in escrow
+                        </p>
                         <p className="mt-1">
-                          Funds are held securely and released after delivery confirmation.
+                          Funds are held securely and released after delivery
+                          confirmation.
                         </p>
                       </div>
                     </div>
@@ -210,9 +230,12 @@ function OrderConfirmationPage() {
                 )}
                 {isDeposit && balanceDue > 0 && (
                   <div className="rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700">
-                    <p className="font-semibold text-amber-800">Balance due on delivery</p>
+                    <p className="font-semibold text-amber-800">
+                      Balance due on delivery
+                    </p>
                     <p className="mt-1">
-                      Remaining amount: <strong>{formatCurrency(balanceDue)}</strong>
+                      Remaining amount:{' '}
+                      <strong>{formatCurrency(balanceDue)}</strong>
                     </p>
                   </div>
                 )}

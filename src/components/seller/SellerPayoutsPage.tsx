@@ -1,10 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-  Banknote,
-  Download,
-  Plus,
-  X,
-} from 'lucide-react'
+import { Banknote, Download, Plus, X } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
@@ -140,7 +135,9 @@ export function SellerPayoutsPage() {
   const totalEarnings = 1250000
 
   const feeRate = 0.01
-  const fee = withdrawAmount ? Math.max(10, Number(withdrawAmount) * feeRate) : 0
+  const fee = withdrawAmount
+    ? Math.max(10, Number(withdrawAmount) * feeRate)
+    : 0
   const netAmount = withdrawAmount ? Number(withdrawAmount) - fee : 0
 
   const filteredPayouts = useMemo(() => {
@@ -161,7 +158,9 @@ export function SellerPayoutsPage() {
       <div className="space-y-8">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Payouts & Finance</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Payouts & Finance
+            </h1>
             <p className="text-sm text-slate-500 mt-1">
               Manage your earnings, withdrawals, and financial settings.
             </p>
@@ -200,7 +199,9 @@ export function SellerPayoutsPage() {
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Payout History</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Payout History
+              </h2>
               <div className="flex items-center gap-2">
                 <select
                   value={statusFilter}
@@ -238,11 +239,15 @@ export function SellerPayoutsPage() {
                 <tbody className="divide-y divide-slate-100 text-slate-600">
                   {filteredPayouts.map((payout) => (
                     <tr key={payout.id}>
-                      <td className="py-2 font-semibold text-slate-800">{payout.id}</td>
+                      <td className="py-2 font-semibold text-slate-800">
+                        {payout.id}
+                      </td>
                       <td>{payout.requestedAt}</td>
                       <td>৳{payout.amount.toLocaleString()}</td>
                       <td>
-                        <span className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(payout.status)}`}>
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(payout.status)}`}
+                        >
                           {payout.status}
                         </span>
                       </td>
@@ -251,9 +256,13 @@ export function SellerPayoutsPage() {
                       <td>{payout.transactionId ?? '-'}</td>
                       <td>
                         {payout.status === 'Failed' ? (
-                          <button className="text-xs text-red-500">Retry</button>
+                          <button className="text-xs text-red-500">
+                            Retry
+                          </button>
                         ) : (
-                          <button className="text-xs text-slate-500">Download</button>
+                          <button className="text-xs text-slate-500">
+                            Download
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -264,21 +273,36 @@ export function SellerPayoutsPage() {
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Bank Accounts</h2>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Bank Accounts
+            </h2>
             <div className="space-y-3">
               {bankAccounts.map((account) => (
-                <div key={account.id} className="rounded-xl border border-slate-200 p-4">
+                <div
+                  key={account.id}
+                  className="rounded-xl border border-slate-200 p-4"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-slate-800">{account.bankName}</p>
-                      <p className="text-xs text-slate-500">{account.accountNumber}</p>
+                      <p className="font-semibold text-slate-800">
+                        {account.bankName}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {account.accountNumber}
+                      </p>
                     </div>
-                    <span className={`text-xs font-semibold ${account.status === 'Verified' ? 'text-green-600' : 'text-orange-600'}`}>
+                    <span
+                      className={`text-xs font-semibold ${account.status === 'Verified' ? 'text-green-600' : 'text-orange-600'}`}
+                    >
                       {account.status}
                     </span>
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
-                    {account.isPrimary && <span className="rounded-full bg-green-50 px-2 py-0.5 text-green-600">Primary</span>}
+                    {account.isPrimary && (
+                      <span className="rounded-full bg-green-50 px-2 py-0.5 text-green-600">
+                        Primary
+                      </span>
+                    )}
                     <button>Edit</button>
                     <button>Delete</button>
                   </div>
@@ -295,7 +319,9 @@ export function SellerPayoutsPage() {
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Transaction History</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Transaction History
+              </h2>
               <button className="text-sm text-slate-500">Export CSV/PDF</button>
             </div>
             <table className="w-full text-sm">
@@ -314,8 +340,13 @@ export function SellerPayoutsPage() {
                     <td className="py-2">{tx.date}</td>
                     <td>{tx.description}</td>
                     <td>{tx.reference}</td>
-                    <td className={tx.type === 'credit' ? 'text-green-600' : 'text-red-500'}>
-                      {tx.type === 'credit' ? '+' : '-'}৳{tx.amount.toLocaleString()}
+                    <td
+                      className={
+                        tx.type === 'credit' ? 'text-green-600' : 'text-red-500'
+                      }
+                    >
+                      {tx.type === 'credit' ? '+' : '-'}৳
+                      {tx.amount.toLocaleString()}
                     </td>
                     <td>৳{tx.balanceAfter.toLocaleString()}</td>
                   </tr>
@@ -326,30 +357,45 @@ export function SellerPayoutsPage() {
 
           <div className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-              <h2 className="text-lg font-semibold text-slate-900">Commission Breakdown</h2>
-              <p className="text-sm text-slate-500">Commission rate: 3% per order</p>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Commission Breakdown
+              </h2>
+              <p className="text-sm text-slate-500">
+                Commission rate: 3% per order
+              </p>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
                 Monthly commission: ৳12,800
               </div>
-              <button className="text-sm text-orange-600">View commission policy</button>
+              <button className="text-sm text-orange-600">
+                View commission policy
+              </button>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-              <h2 className="text-lg font-semibold text-slate-900">Escrow Details</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Escrow Details
+              </h2>
               {escrowOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between text-sm text-slate-600">
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between text-sm text-slate-600"
+                >
                   <span>{order.id}</span>
                   <span>৳{order.amount.toLocaleString()}</span>
                   <span>{order.daysRemaining} days</span>
                 </div>
               ))}
-              <p className="text-xs text-slate-400">Total escrow: ৳{pendingBalance.toLocaleString()}</p>
+              <p className="text-xs text-slate-400">
+                Total escrow: ৳{pendingBalance.toLocaleString()}
+              </p>
             </div>
           </div>
         </section>
 
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Payment Settings</h2>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Payment Settings
+            </h2>
             <div className="flex items-center justify-between">
               <p className="text-sm text-slate-600">Auto-withdrawal</p>
               <label className="inline-flex items-center cursor-pointer">
@@ -359,8 +405,12 @@ export function SellerPayoutsPage() {
                   onChange={(event) => setAutoWithdraw(event.target.checked)}
                   className="sr-only"
                 />
-                <div className={`h-6 w-11 rounded-full ${autoWithdraw ? 'bg-orange-600' : 'bg-slate-200'} relative`}>
-                  <div className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${autoWithdraw ? 'translate-x-5' : 'translate-x-1'}`} />
+                <div
+                  className={`h-6 w-11 rounded-full ${autoWithdraw ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                >
+                  <div
+                    className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${autoWithdraw ? 'translate-x-5' : 'translate-x-1'}`}
+                  />
                 </div>
               </label>
             </div>
@@ -391,21 +441,37 @@ export function SellerPayoutsPage() {
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900">Tax Information</h2>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Tax Information
+            </h2>
             <p className="text-sm text-slate-500">TDS and GST summaries</p>
-            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">Download TDS Certificate</button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">Tax Reports</button>
+            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+              Download TDS Certificate
+            </button>
+            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+              Tax Reports
+            </button>
           </div>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-slate-900">Help & Support</h2>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Help & Support
+          </h2>
           <div className="grid md:grid-cols-3 gap-3 text-sm text-slate-600">
-            <div className="rounded-lg border border-slate-200 p-3">Withdrawal not received</div>
-            <div className="rounded-lg border border-slate-200 p-3">Incorrect amount</div>
-            <div className="rounded-lg border border-slate-200 p-3">Update bank details</div>
+            <div className="rounded-lg border border-slate-200 p-3">
+              Withdrawal not received
+            </div>
+            <div className="rounded-lg border border-slate-200 p-3">
+              Incorrect amount
+            </div>
+            <div className="rounded-lg border border-slate-200 p-3">
+              Update bank details
+            </div>
           </div>
-          <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">Contact Support</button>
+          <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
+            Contact Support
+          </button>
         </section>
 
         {showWithdraw && (
@@ -448,13 +514,20 @@ function BalanceCard({
   updated?: string
   subtext?: string
   expandable?: boolean
-  details?: Array<{ id: string; amount: number; releaseDate: string; daysRemaining: number }>
+  details?: Array<{
+    id: string
+    amount: number
+    releaseDate: string
+    daysRemaining: number
+  }>
 }) {
   const [expanded, setExpanded] = useState(false)
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
       <p className="text-sm text-slate-500">{title}</p>
-      <p className="text-2xl font-bold text-slate-900">৳{amount.toLocaleString()}</p>
+      <p className="text-2xl font-bold text-slate-900">
+        ৳{amount.toLocaleString()}
+      </p>
       {subtext && <p className="text-xs text-slate-400">{subtext}</p>}
       {updated && <p className="text-xs text-slate-400">{updated}</p>}
       {actionLabel && onAction && (
@@ -476,7 +549,10 @@ function BalanceCard({
           {expanded && (
             <div className="mt-2 space-y-2 text-xs text-slate-600">
               {details.map((item) => (
-                <div key={item.id} className="flex items-center justify-between">
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between"
+                >
                   <span>{item.id}</span>
                   <span>৳{item.amount.toLocaleString()}</span>
                   <span>{item.daysRemaining} days</span>
@@ -516,11 +592,22 @@ function WithdrawModal({
   onConfirm: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">Request Withdrawal</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600" aria-label="Close modal" autoFocus>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Request Withdrawal
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+            aria-label="Close modal"
+            autoFocus
+          >
             <X size={16} />
           </button>
         </div>
@@ -534,7 +621,9 @@ function WithdrawModal({
             placeholder="Enter withdrawal amount"
             className="w-full rounded-lg border border-slate-200 px-3 py-2"
           />
-          {minimumError && <p className="text-xs text-red-500">{minimumError}</p>}
+          {minimumError && (
+            <p className="text-xs text-red-500">{minimumError}</p>
+          )}
           <select
             value={selectedBank}
             onChange={(event) => onBankChange(event.target.value)}
@@ -546,13 +635,18 @@ function WithdrawModal({
               </option>
             ))}
           </select>
-          <p className="text-xs text-slate-400">Expected transfer date: 3-5 business days</p>
+          <p className="text-xs text-slate-400">
+            Expected transfer date: 3-5 business days
+          </p>
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
-            Withdrawal fee: ৳{fee.toFixed(2)} · Net amount: ৳{netAmount.toFixed(2)}
+            Withdrawal fee: ৳{fee.toFixed(2)} · Net amount: ৳
+            {netAmount.toFixed(2)}
           </div>
           <button
             className="w-full rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
-            disabled={!amount || Number(amount) > available || Boolean(minimumError)}
+            disabled={
+              !amount || Number(amount) > available || Boolean(minimumError)
+            }
             onClick={onConfirm}
           >
             Confirm Withdrawal

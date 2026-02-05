@@ -8,7 +8,11 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router'
-import type { CouponCode, ValidateCouponRequest, ValidateCouponResponse } from '@/types/cart'
+import type {
+  CouponCode,
+  ValidateCouponRequest,
+  ValidateCouponResponse,
+} from '@/types/cart'
 
 // ============================================================================
 // Mock Coupon Database
@@ -146,7 +150,13 @@ const COUPON_DATABASE: Partial<Record<string, StoredCoupon>> = {
 interface ValidationResult {
   isValid: boolean
   error?: string
-  errorCode?: 'INVALID' | 'EXPIRED' | 'MIN_ORDER' | 'ALREADY_USED' | 'MAX_USES' | 'INACTIVE'
+  errorCode?:
+    | 'INVALID'
+    | 'EXPIRED'
+    | 'MIN_ORDER'
+    | 'ALREADY_USED'
+    | 'MAX_USES'
+    | 'INACTIVE'
   coupon?: CouponCode
   calculatedDiscount?: number
   description?: string
@@ -155,7 +165,7 @@ interface ValidationResult {
 function validateCoupon(
   code: string,
   subtotal: number,
-  userId?: string
+  userId?: string,
 ): ValidationResult {
   const couponCode = code.trim().toUpperCase()
 
@@ -187,7 +197,7 @@ function validateCoupon(
       error: `This coupon expired on ${expiry.toLocaleDateString('en-BD', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       })}.`,
       errorCode: 'EXPIRED',
     }
@@ -203,7 +213,10 @@ function validateCoupon(
   }
 
   // Check if max uses reached
-  if (storedCoupon.maxUses !== null && storedCoupon.usedCount >= storedCoupon.maxUses) {
+  if (
+    storedCoupon.maxUses !== null &&
+    storedCoupon.usedCount >= storedCoupon.maxUses
+  ) {
     return {
       isValid: false,
       error: 'This coupon has reached its maximum usage limit.',
@@ -212,7 +225,11 @@ function validateCoupon(
   }
 
   // Check single-use per user
-  if (storedCoupon.singleUse && userId && storedCoupon.usedByUsers.includes(userId)) {
+  if (
+    storedCoupon.singleUse &&
+    userId &&
+    storedCoupon.usedByUsers.includes(userId)
+  ) {
     return {
       isValid: false,
       error: 'You have already used this coupon.',
@@ -263,7 +280,9 @@ export const Route = createFileRoute('/api/cart/validate-coupon')({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const body = await request.json() as ValidateCouponRequest & { userId?: string }
+          const body = (await request.json()) as ValidateCouponRequest & {
+            userId?: string
+          }
           const { code, cartSubtotal, userId } = body
 
           // Validate required fields
@@ -276,7 +295,7 @@ export const Route = createFileRoute('/api/cart/validate-coupon')({
               {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },
-              }
+              },
             )
           }
 
@@ -289,7 +308,7 @@ export const Route = createFileRoute('/api/cart/validate-coupon')({
               {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' },
-              }
+              },
             )
           }
 
@@ -324,7 +343,7 @@ export const Route = createFileRoute('/api/cart/validate-coupon')({
             {
               status: 500,
               headers: { 'Content-Type': 'application/json' },
-            }
+            },
           )
         }
       },

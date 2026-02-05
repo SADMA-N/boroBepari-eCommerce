@@ -14,9 +14,9 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import type { MouseEvent } from 'react'
-import type {BuyerOrdersFilter} from '@/lib/order-actions';
+import type { BuyerOrdersFilter } from '@/lib/order-actions'
 import { formatBDT } from '@/data/mock-products'
-import {  getBuyerOrders } from '@/lib/order-actions'
+import { getBuyerOrders } from '@/lib/order-actions'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 
@@ -25,7 +25,12 @@ export const Route = createFileRoute('/buyer/orders/')({
 })
 
 type FilterTab = 'all' | 'active' | 'delivered' | 'cancelled'
-type SortOption = 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc' | 'status'
+type SortOption =
+  | 'date_desc'
+  | 'date_asc'
+  | 'amount_desc'
+  | 'amount_asc'
+  | 'status'
 
 const sortOptions: Array<{ value: SortOption; label: string }> = [
   { value: 'date_desc', label: 'Newest First' },
@@ -107,7 +112,15 @@ function BuyerOrderHistoryPage() {
     if (!isAuthenticated || authLoading) return
 
     fetchOrders()
-  }, [isAuthenticated, authLoading, activeTab, debouncedSearch, sortBy, page, fetchOrders])
+  }, [
+    isAuthenticated,
+    authLoading,
+    activeTab,
+    debouncedSearch,
+    sortBy,
+    page,
+    fetchOrders,
+  ])
 
   useEffect(() => {
     if (!isAuthenticated || authLoading) return
@@ -157,8 +170,12 @@ function BuyerOrderHistoryPage() {
           <div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
             <ShoppingBag className="w-10 h-10 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Sign in to view your orders</h2>
-          <p className="text-gray-500 mb-6">Please log in to access your order history</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Sign in to view your orders
+          </h2>
+          <p className="text-gray-500 mb-6">
+            Please log in to access your order history
+          </p>
           <Link
             to="/login"
             className="inline-flex items-center px-6 py-3 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 transition-colors"
@@ -306,8 +323,11 @@ function BuyerOrderHistoryPage() {
         <div className="mt-8 flex items-center justify-between transition-colors">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Showing {(pagination.page - 1) * pagination.limit + 1} -{' '}
-            {Math.min(pagination.page * pagination.limit, pagination.totalCount)} of{' '}
-            {pagination.totalCount} orders
+            {Math.min(
+              pagination.page * pagination.limit,
+              pagination.totalCount,
+            )}{' '}
+            of {pagination.totalCount} orders
           </p>
 
           <div className="flex items-center gap-2">
@@ -334,7 +354,9 @@ function BuyerOrderHistoryPage() {
                   return (
                     <span key={p} className="flex items-center">
                       {showEllipsis && (
-                        <span className="px-2 text-gray-400 dark:text-gray-600">...</span>
+                        <span className="px-2 text-gray-400 dark:text-gray-600">
+                          ...
+                        </span>
                       )}
                       <button
                         onClick={() => setPage(p)}
@@ -352,7 +374,9 @@ function BuyerOrderHistoryPage() {
             </div>
 
             <button
-              onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+              onClick={() =>
+                setPage((p) => Math.min(pagination.totalPages, p + 1))
+              }
               disabled={!pagination.hasNext}
               className="p-2 border border-gray-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all"
             >
@@ -369,7 +393,14 @@ function filterOrdersByTab(orders: Array<any>, tab: FilterTab) {
   const currentTab = String(tab)
   if (currentTab === 'all') return orders
 
-  const activeStatuses = ['placed', 'confirmed', 'processing', 'shipped', 'out_for_delivery', 'pending']
+  const activeStatuses = [
+    'placed',
+    'confirmed',
+    'processing',
+    'shipped',
+    'out_for_delivery',
+    'pending',
+  ]
   const deliveredStatuses = ['delivered']
   const cancelledStatuses = ['cancelled', 'returned']
 
@@ -432,11 +463,12 @@ function OrderCard({ order }: { order: any }) {
   }
 
   // Get first 3 product images
-  const productImages = order.items
-    ?.slice(0, 3)
-    .map((item: any) => ({
+  const productImages =
+    order.items?.slice(0, 3).map((item: any) => ({
       name: item.product?.name || 'Product',
-      image: item.product?.images?.[0] || `https://picsum.photos/seed/product${item.productId}/100/100`,
+      image:
+        item.product?.images?.[0] ||
+        `https://picsum.photos/seed/product${item.productId}/100/100`,
     })) || []
 
   return (
@@ -458,7 +490,8 @@ function OrderCard({ order }: { order: any }) {
               </span>
               <span
                 className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
-                  statusStyles[order.status] || 'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200'
+                  statusStyles[order.status] ||
+                  'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200'
                 }`}
               >
                 {statusLabels[order.status] || order.status}
@@ -483,7 +516,9 @@ function OrderCard({ order }: { order: any }) {
                 )}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                <span className="font-medium text-gray-900 dark:text-gray-200">{itemCount}</span>{' '}
+                <span className="font-medium text-gray-900 dark:text-gray-200">
+                  {itemCount}
+                </span>{' '}
                 {itemCount === 1 ? 'item' : 'items'}
               </div>
             </div>
@@ -529,12 +564,17 @@ function EmptyState({
   return (
     <div className="bg-white dark:bg-slate-900 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 p-16 text-center transition-colors">
       <div className="mx-auto w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 transition-colors">
-        <Package size={40} className="text-gray-300 dark:text-gray-600 transition-colors" />
+        <Package
+          size={40}
+          className="text-gray-300 dark:text-gray-600 transition-colors"
+        />
       </div>
 
       {hasFilters ? (
         <>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">No orders found</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
+            No orders found
+          </h3>
           <p className="text-gray-500 dark:text-gray-400 mb-6 transition-colors">
             Try adjusting your search or filter criteria
           </p>
@@ -547,7 +587,9 @@ function EmptyState({
         </>
       ) : (
         <>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">No orders yet</h3>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
+            No orders yet
+          </h3>
           <p className="text-gray-500 dark:text-gray-400 mb-6 transition-colors">
             Start shopping to see your orders here
           </p>

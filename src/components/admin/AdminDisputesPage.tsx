@@ -33,7 +33,13 @@ import {
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
-type DisputeStatus = 'open' | 'under_review' | 'resolved' | 'closed' | 'awaiting_response' | 'escalated'
+type DisputeStatus =
+  | 'open'
+  | 'under_review'
+  | 'resolved'
+  | 'closed'
+  | 'awaiting_response'
+  | 'escalated'
 type Priority = 'normal' | 'high'
 type IssueType =
   | 'Product not received'
@@ -48,8 +54,21 @@ type IssueType =
 type Dispute = {
   id: string
   orderNumber: string
-  buyer: { name: string; email: string; phone: string; totalOrders: number; disputes: number }
-  seller: { name: string; email: string; phone: string; totalOrders: number; disputes: number; rating: number }
+  buyer: {
+    name: string
+    email: string
+    phone: string
+    totalOrders: number
+    disputes: number
+  }
+  seller: {
+    name: string
+    email: string
+    phone: string
+    totalOrders: number
+    disputes: number
+    rating: number
+  }
   issueType: IssueType
   filedDate: string
   priority: Priority
@@ -63,8 +82,20 @@ type Dispute = {
   evidence: { images: Array<string>; documents: Array<string> }
   products: Array<{ name: string; qty: number; price: number }>
   timeline: Array<{ id: string; label: string; time: string }>
-  conversation: Array<{ id: string; author: string; role: 'buyer' | 'seller' | 'admin'; message: string; time: string }>
-  auditTrail: Array<{ id: string; actor: string; action: string; time: string; notes?: string }>
+  conversation: Array<{
+    id: string
+    author: string
+    role: 'buyer' | 'seller' | 'admin'
+    message: string
+    time: string
+  }>
+  auditTrail: Array<{
+    id: string
+    actor: string
+    action: string
+    time: string
+    notes?: string
+  }>
 }
 
 const DISPUTES: Array<Dispute> = [
@@ -100,9 +131,7 @@ const DISPUTES: Array<Dispute> = [
       images: ['/img/disputes/img-1.png', '/img/disputes/img-2.png'],
       documents: ['Damage report.pdf'],
     },
-    products: [
-      { name: 'Cotton Bedsheets', qty: 50, price: 500 },
-    ],
+    products: [{ name: 'Cotton Bedsheets', qty: 50, price: 500 }],
     timeline: [
       { id: 'tl-1', label: 'Order placed', time: '2026-01-05 10:12' },
       { id: 'tl-2', label: 'Payment made', time: '2026-01-05 10:20' },
@@ -111,12 +140,34 @@ const DISPUTES: Array<Dispute> = [
       { id: 'tl-5', label: 'Dispute filed', time: '2026-01-20 09:42' },
     ],
     conversation: [
-      { id: 'msg-1', author: 'Karim Hossain', role: 'buyer', message: 'Items arrived damaged.', time: '2 days ago' },
-      { id: 'msg-2', author: 'Rahim Textiles', role: 'seller', message: 'Please share photos.', time: '1 day ago' },
+      {
+        id: 'msg-1',
+        author: 'Karim Hossain',
+        role: 'buyer',
+        message: 'Items arrived damaged.',
+        time: '2 days ago',
+      },
+      {
+        id: 'msg-2',
+        author: 'Rahim Textiles',
+        role: 'seller',
+        message: 'Please share photos.',
+        time: '1 day ago',
+      },
     ],
     auditTrail: [
-      { id: 'aud-1', actor: 'System', action: 'Dispute created', time: '2026-01-20 09:42' },
-      { id: 'aud-2', actor: 'Admin Sumi', action: 'Assigned', time: '2026-01-20 11:10' },
+      {
+        id: 'aud-1',
+        actor: 'System',
+        action: 'Dispute created',
+        time: '2026-01-20 09:42',
+      },
+      {
+        id: 'aud-2',
+        actor: 'Admin Sumi',
+        action: 'Assigned',
+        time: '2026-01-20 11:10',
+      },
     ],
   },
   {
@@ -154,11 +205,28 @@ const DISPUTES: Array<Dispute> = [
       { id: 'tl-3', label: 'Dispute filed', time: '2026-01-18 14:20' },
     ],
     conversation: [
-      { id: 'msg-3', author: 'Fatima Rahman', role: 'buyer', message: 'No tracking update.', time: '3 days ago' },
-      { id: 'msg-4', author: 'Admin', role: 'admin', message: 'We are investigating.', time: '2 days ago' },
+      {
+        id: 'msg-3',
+        author: 'Fatima Rahman',
+        role: 'buyer',
+        message: 'No tracking update.',
+        time: '3 days ago',
+      },
+      {
+        id: 'msg-4',
+        author: 'Admin',
+        role: 'admin',
+        message: 'We are investigating.',
+        time: '2 days ago',
+      },
     ],
     auditTrail: [
-      { id: 'aud-3', actor: 'System', action: 'Dispute created', time: '2026-01-18 14:20' },
+      {
+        id: 'aud-3',
+        actor: 'System',
+        action: 'Dispute created',
+        time: '2026-01-18 14:20',
+      },
     ],
   },
   {
@@ -195,10 +263,21 @@ const DISPUTES: Array<Dispute> = [
       { id: 'tl-2', label: 'Resolved', time: '2026-01-13 15:15' },
     ],
     conversation: [
-      { id: 'msg-5', author: 'Admin', role: 'admin', message: 'Refund processed.', time: '1 week ago' },
+      {
+        id: 'msg-5',
+        author: 'Admin',
+        role: 'admin',
+        message: 'Refund processed.',
+        time: '1 week ago',
+      },
     ],
     auditTrail: [
-      { id: 'aud-4', actor: 'Admin Nayeem', action: 'Full refund', time: '2026-01-13 15:15' },
+      {
+        id: 'aud-4',
+        actor: 'Admin Nayeem',
+        action: 'Full refund',
+        time: '2026-01-13 15:15',
+      },
     ],
   },
 ]
@@ -250,17 +329,41 @@ const buyerDisputes = [
 function statusBadge(status: DisputeStatus) {
   switch (status) {
     case 'open':
-      return <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-700">Open</span>
+      return (
+        <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-700">
+          Open
+        </span>
+      )
     case 'under_review':
-      return <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-xs text-yellow-700">Under Review</span>
+      return (
+        <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-xs text-yellow-700">
+          Under Review
+        </span>
+      )
     case 'resolved':
-      return <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-700">Resolved</span>
+      return (
+        <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-700">
+          Resolved
+        </span>
+      )
     case 'closed':
-      return <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">Closed</span>
+      return (
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+          Closed
+        </span>
+      )
     case 'awaiting_response':
-      return <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs text-blue-700">Awaiting Response</span>
+      return (
+        <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs text-blue-700">
+          Awaiting Response
+        </span>
+      )
     case 'escalated':
-      return <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs text-orange-700">Escalated</span>
+      return (
+        <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs text-orange-700">
+          Escalated
+        </span>
+      )
   }
 }
 
@@ -306,12 +409,21 @@ export function AdminDisputesPage() {
         dispute.orderNumber.toLowerCase().includes(query) ||
         dispute.buyer.name.toLowerCase().includes(query) ||
         dispute.seller.name.toLowerCase().includes(query)
-      const matchesIssue = issueFilter === 'all' || dispute.issueType === issueFilter
-      const matchesPriority = priorityFilter === 'all' || dispute.priority === priorityFilter
+      const matchesIssue =
+        issueFilter === 'all' || dispute.issueType === issueFilter
+      const matchesPriority =
+        priorityFilter === 'all' || dispute.priority === priorityFilter
       const filedDate = new Date(dispute.filedDate)
       const withinFrom = dateFrom ? filedDate >= new Date(dateFrom) : true
       const withinTo = dateTo ? filedDate <= new Date(dateTo) : true
-      return matchesTab && matchesSearch && matchesIssue && matchesPriority && withinFrom && withinTo
+      return (
+        matchesTab &&
+        matchesSearch &&
+        matchesIssue &&
+        matchesPriority &&
+        withinFrom &&
+        withinTo
+      )
     })
   }, [activeTab, searchQuery, issueFilter, priorityFilter, dateFrom, dateTo])
 
@@ -320,7 +432,9 @@ export function AdminDisputesPage() {
   )
 
   const openCount = DISPUTES.filter((d) => d.status === 'open').length
-  const underReviewCount = DISPUTES.filter((d) => d.status === 'under_review').length
+  const underReviewCount = DISPUTES.filter(
+    (d) => d.status === 'under_review',
+  ).length
   const resolvedCount = DISPUTES.filter((d) => d.status === 'resolved').length
   const closedCount = DISPUTES.filter((d) => d.status === 'closed').length
 
@@ -337,16 +451,23 @@ export function AdminDisputesPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Dispute Resolution</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Dispute Resolution
+            </h1>
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600">
-              <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
-                openCount > 0 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
-              }`}>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
+                  openCount > 0
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
                 {openCount} open disputes
               </span>
               <span className="inline-flex items-center gap-2">
                 <Clock size={14} />
-                Avg resolution time: {stats.avgResolution} hours (target &lt;72h)
+                Avg resolution time: {stats.avgResolution} hours (target
+                &lt;72h)
               </span>
             </div>
           </div>
@@ -377,7 +498,9 @@ export function AdminDisputesPage() {
                 }`}
               >
                 {tab.label}
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs">{count}</span>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs">
+                  {count}
+                </span>
               </button>
             )
           })}
@@ -397,7 +520,9 @@ export function AdminDisputesPage() {
             <div className="flex flex-wrap items-center gap-3">
               <select
                 value={issueFilter}
-                onChange={(e) => setIssueFilter(e.target.value as IssueType | 'all')}
+                onChange={(e) =>
+                  setIssueFilter(e.target.value as IssueType | 'all')
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 <option value="all">Issue Type: All</option>
@@ -409,14 +534,18 @@ export function AdminDisputesPage() {
               </select>
               <select
                 value={priorityFilter}
-                onChange={(e) => setPriorityFilter(e.target.value as Priority | 'all')}
+                onChange={(e) =>
+                  setPriorityFilter(e.target.value as Priority | 'all')
+                }
                 className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
               >
                 <option value="all">Priority: All</option>
                 <option value="normal">Priority: Normal</option>
                 <option value="high">Priority: High</option>
               </select>
-              <div className="flex items-center gap-2 text-sm text-slate-600">Date range</div>
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                Date range
+              </div>
               <input
                 type="date"
                 value={dateFrom}
@@ -454,14 +583,26 @@ export function AdminDisputesPage() {
               <tbody className="divide-y divide-slate-200">
                 {sortedDisputes.map((dispute) => (
                   <tr key={dispute.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-900">{dispute.id}</td>
-                    <td className="px-4 py-3 text-slate-700">
-                      <button className="text-orange-600 hover:text-orange-700">{dispute.orderNumber}</button>
+                    <td className="px-4 py-3 font-medium text-slate-900">
+                      {dispute.id}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{dispute.buyer.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{dispute.seller.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{dispute.issueType}</td>
-                    <td className="px-4 py-3 text-slate-600">{dispute.filedDate}</td>
+                    <td className="px-4 py-3 text-slate-700">
+                      <button className="text-orange-600 hover:text-orange-700">
+                        {dispute.orderNumber}
+                      </button>
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {dispute.buyer.name}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {dispute.seller.name}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {dispute.issueType}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {dispute.filedDate}
+                    </td>
                     <td className="px-4 py-3">
                       {dispute.priority === 'high' ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs text-red-700">
@@ -469,10 +610,14 @@ export function AdminDisputesPage() {
                           High
                         </span>
                       ) : (
-                        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">Normal</span>
+                        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
+                          Normal
+                        </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{dispute.assignedTo || 'Unassigned'}</td>
+                    <td className="px-4 py-3 text-slate-600">
+                      {dispute.assignedTo || 'Unassigned'}
+                    </td>
                     <td className="px-4 py-3">{statusBadge(dispute.status)}</td>
                     <td className="px-4 py-3 text-right">
                       <button
@@ -487,7 +632,10 @@ export function AdminDisputesPage() {
                 ))}
                 {sortedDisputes.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-4 py-10 text-center text-slate-500">
+                    <td
+                      colSpan={10}
+                      className="px-4 py-10 text-center text-slate-500"
+                    >
                       No disputes found.
                     </td>
                   </tr>
@@ -500,37 +648,62 @@ export function AdminDisputesPage() {
         <div className="grid gap-4 lg:grid-cols-5">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Open disputes</p>
-            <p className={`mt-2 text-xl font-semibold ${stats.open > 10 ? 'text-red-600' : 'text-slate-900'}`}>
+            <p
+              className={`mt-2 text-xl font-semibold ${stats.open > 10 ? 'text-red-600' : 'text-slate-900'}`}
+            >
               {stats.open}
             </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Resolved today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{stats.resolvedToday}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {stats.resolvedToday}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Average resolution</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{stats.avgResolution}h</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {stats.avgResolution}h
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">Refund issued today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">₹{stats.refundToday.toLocaleString()}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              ₹{stats.refundToday.toLocaleString()}
+            </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
             <p className="text-xs text-slate-500">My disputes resolved</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">{stats.myResolved}</p>
+            <p className="mt-2 text-xl font-semibold text-slate-900">
+              {stats.myResolved}
+            </p>
           </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Common Dispute Reasons</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Common Dispute Reasons
+            </h3>
             <div className="mt-3 h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={ISSUE_CHART} dataKey="value" nameKey="name" innerRadius={40} outerRadius={70}>
+                  <Pie
+                    data={ISSUE_CHART}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={40}
+                    outerRadius={70}
+                  >
                     {ISSUE_CHART.map((entry, index) => (
-                      <Cell key={entry.name} fill={['#f97316', '#facc15', '#ef4444', '#22c55e'][index % 4]} />
+                      <Cell
+                        key={entry.name}
+                        fill={
+                          ['#f97316', '#facc15', '#ef4444', '#22c55e'][
+                            index % 4
+                          ]
+                        }
+                      />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -539,27 +712,43 @@ export function AdminDisputesPage() {
             </div>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Disputes by Seller</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Disputes by Seller
+            </h3>
             <div className="mt-3 space-y-2">
               {sellerDisputes.map((seller) => (
-                <div key={seller.name} className="flex items-center justify-between text-sm text-slate-600">
+                <div
+                  key={seller.name}
+                  className="flex items-center justify-between text-sm text-slate-600"
+                >
                   <span>{seller.name}</span>
-                  <span className="font-medium text-slate-900">{seller.count}</span>
+                  <span className="font-medium text-slate-900">
+                    {seller.count}
+                  </span>
                 </div>
               ))}
             </div>
-            <h3 className="mt-4 text-sm font-semibold text-slate-900">Disputes by Buyer</h3>
+            <h3 className="mt-4 text-sm font-semibold text-slate-900">
+              Disputes by Buyer
+            </h3>
             <div className="mt-3 space-y-2">
               {buyerDisputes.map((buyer) => (
-                <div key={buyer.name} className="flex items-center justify-between text-sm text-slate-600">
+                <div
+                  key={buyer.name}
+                  className="flex items-center justify-between text-sm text-slate-600"
+                >
                   <span>{buyer.name}</span>
-                  <span className="font-medium text-slate-900">{buyer.count}</span>
+                  <span className="font-medium text-slate-900">
+                    {buyer.count}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">Refund Rate Trend</h3>
+            <h3 className="text-sm font-semibold text-slate-900">
+              Refund Rate Trend
+            </h3>
             <div className="mt-3 h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={REFUND_TRENDS}>
@@ -567,7 +756,12 @@ export function AdminDisputesPage() {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="refund" stroke="#ef4444" strokeWidth={2} />
+                  <Line
+                    type="monotone"
+                    dataKey="refund"
+                    stroke="#ef4444"
+                    strokeWidth={2}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -580,8 +774,12 @@ export function AdminDisputesPage() {
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-6 py-4 text-white">
               <div>
-                <h2 className="text-lg font-semibold">Dispute Review - {selectedDispute.id}</h2>
-                <p className="text-xs text-slate-400">Order {selectedDispute.orderNumber}</p>
+                <h2 className="text-lg font-semibold">
+                  Dispute Review - {selectedDispute.id}
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Order {selectedDispute.orderNumber}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -600,20 +798,37 @@ export function AdminDisputesPage() {
             </div>
             <div className="flex flex-1 overflow-hidden">
               <div className="w-full lg:w-1/3 bg-white p-6 overflow-y-auto border-r border-slate-200">
-                <h3 className="text-sm font-semibold text-slate-900">Dispute Information</h3>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Dispute Information
+                </h3>
                 <div className="mt-3 space-y-2 text-sm text-slate-600">
-                  <p><strong>Dispute ID:</strong> {selectedDispute.id}</p>
-                  <p><strong>Filed Date:</strong> {selectedDispute.filedDate}</p>
-                  <p><strong>Order:</strong> {selectedDispute.orderNumber}</p>
-                  <p><strong>Issue:</strong> {selectedDispute.issueType}</p>
-                  <p><strong>Priority:</strong> {selectedDispute.priority}</p>
-                  <p><strong>Status:</strong> {statusBadge(selectedDispute.status)}</p>
+                  <p>
+                    <strong>Dispute ID:</strong> {selectedDispute.id}
+                  </p>
+                  <p>
+                    <strong>Filed Date:</strong> {selectedDispute.filedDate}
+                  </p>
+                  <p>
+                    <strong>Order:</strong> {selectedDispute.orderNumber}
+                  </p>
+                  <p>
+                    <strong>Issue:</strong> {selectedDispute.issueType}
+                  </p>
+                  <p>
+                    <strong>Priority:</strong> {selectedDispute.priority}
+                  </p>
+                  <p>
+                    <strong>Status:</strong>{' '}
+                    {statusBadge(selectedDispute.status)}
+                  </p>
                 </div>
                 <div className="mt-6 space-y-4">
                   <div>
                     <h4 className="text-xs uppercase text-slate-400">Buyer</h4>
                     <div className="mt-2 text-sm text-slate-600">
-                      <p className="font-medium text-slate-900">{selectedDispute.buyer.name}</p>
+                      <p className="font-medium text-slate-900">
+                        {selectedDispute.buyer.name}
+                      </p>
                       <p>{selectedDispute.buyer.email}</p>
                       <p>{selectedDispute.buyer.phone}</p>
                       <p>Orders: {selectedDispute.buyer.totalOrders}</p>
@@ -623,7 +838,9 @@ export function AdminDisputesPage() {
                   <div>
                     <h4 className="text-xs uppercase text-slate-400">Seller</h4>
                     <div className="mt-2 text-sm text-slate-600">
-                      <p className="font-medium text-slate-900">{selectedDispute.seller.name}</p>
+                      <p className="font-medium text-slate-900">
+                        {selectedDispute.seller.name}
+                      </p>
                       <p>{selectedDispute.seller.email}</p>
                       <p>{selectedDispute.seller.phone}</p>
                       <p>Orders: {selectedDispute.seller.totalOrders}</p>
@@ -634,12 +851,19 @@ export function AdminDisputesPage() {
                 </div>
               </div>
               <div className="w-full lg:w-2/5 bg-slate-50 p-6 overflow-y-auto border-r border-slate-200">
-                <h3 className="text-sm font-semibold text-slate-900">Evidence & Timeline</h3>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Evidence & Timeline
+                </h3>
                 <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4">
-                  <p className="text-sm text-slate-600">{selectedDispute.description}</p>
+                  <p className="text-sm text-slate-600">
+                    {selectedDispute.description}
+                  </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {selectedDispute.evidence.images.map((img) => (
-                      <div key={img} className="flex h-24 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+                      <div
+                        key={img}
+                        className="flex h-24 items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+                      >
                         <FileText size={20} />
                       </div>
                     ))}
@@ -653,41 +877,67 @@ export function AdminDisputesPage() {
                   )}
                 </div>
                 <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-                  <h4 className="text-sm font-semibold text-slate-900">Order Details</h4>
+                  <h4 className="text-sm font-semibold text-slate-900">
+                    Order Details
+                  </h4>
                   <div className="mt-2 text-sm text-slate-600">
-                    <p>Amount paid: ₹{selectedDispute.amountPaid.toLocaleString()}</p>
+                    <p>
+                      Amount paid: ₹
+                      {selectedDispute.amountPaid.toLocaleString()}
+                    </p>
                     <p>Delivery: {selectedDispute.deliveryStatus}</p>
                     <p>Tracking: {selectedDispute.trackingInfo}</p>
                     <div className="mt-2">
                       {selectedDispute.products.map((item) => (
-                        <div key={item.name} className="flex items-center justify-between text-xs text-slate-500">
+                        <div
+                          key={item.name}
+                          className="flex items-center justify-between text-xs text-slate-500"
+                        >
                           <span>{item.name}</span>
-                          <span>{item.qty} x ₹{item.price}</span>
+                          <span>
+                            {item.qty} x ₹{item.price}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-                  <h4 className="text-sm font-semibold text-slate-900">Timeline</h4>
+                  <h4 className="text-sm font-semibold text-slate-900">
+                    Timeline
+                  </h4>
                   <div className="mt-2 space-y-2 text-sm text-slate-600">
                     {selectedDispute.timeline.map((step) => (
-                      <div key={step.id} className="flex items-center justify-between">
+                      <div
+                        key={step.id}
+                        className="flex items-center justify-between"
+                      >
                         <span>{step.label}</span>
-                        <span className="text-xs text-slate-400">{step.time}</span>
+                        <span className="text-xs text-slate-400">
+                          {step.time}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-slate-900">Conversation Thread</h4>
-                    <button className="text-xs text-orange-600">Add Comment</button>
+                    <h4 className="text-sm font-semibold text-slate-900">
+                      Conversation Thread
+                    </h4>
+                    <button className="text-xs text-orange-600">
+                      Add Comment
+                    </button>
                   </div>
                   <div className="mt-2 space-y-2 text-sm text-slate-600">
                     {selectedDispute.conversation.map((msg) => (
-                      <div key={msg.id} className="rounded-lg border border-slate-200 px-3 py-2">
-                        <p className="font-medium text-slate-900">{msg.author}</p>
+                      <div
+                        key={msg.id}
+                        className="rounded-lg border border-slate-200 px-3 py-2"
+                      >
+                        <p className="font-medium text-slate-900">
+                          {msg.author}
+                        </p>
                         <p>{msg.message}</p>
                         <p className="text-xs text-slate-400">{msg.time}</p>
                       </div>
@@ -696,11 +946,18 @@ export function AdminDisputesPage() {
                 </div>
               </div>
               <div className="w-full lg:w-1/3 bg-white p-6 overflow-y-auto">
-                <h3 className="text-sm font-semibold text-slate-900">Resolution Actions</h3>
+                <h3 className="text-sm font-semibold text-slate-900">
+                  Resolution Actions
+                </h3>
                 <div className="mt-3 space-y-4">
                   <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-medium text-slate-900">Full Refund</p>
-                    <p className="text-xs text-slate-500">Refund amount: ₹{selectedDispute.amountPaid.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      Full Refund
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Refund amount: ₹
+                      {selectedDispute.amountPaid.toLocaleString()}
+                    </p>
                     <button
                       onClick={() => setFullRefundOpen(true)}
                       disabled={!canResolve}
@@ -710,7 +967,9 @@ export function AdminDisputesPage() {
                     </button>
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">Partial Refund</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      Partial Refund
+                    </p>
                     <input
                       value={partialAmount}
                       onChange={(e) => setPartialAmount(e.target.value)}
@@ -732,7 +991,9 @@ export function AdminDisputesPage() {
                     </button>
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">Reject Dispute</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      Reject Dispute
+                    </p>
                     <button
                       onClick={() => setRejectOpen(true)}
                       disabled={!canResolve}
@@ -742,7 +1003,9 @@ export function AdminDisputesPage() {
                     </button>
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">Request More Info</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      Request More Info
+                    </p>
                     <button
                       onClick={() => setRequestInfoOpen(true)}
                       disabled={!canResolve}
@@ -752,7 +1015,9 @@ export function AdminDisputesPage() {
                     </button>
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">Escalate</p>
+                    <p className="text-sm font-medium text-slate-900">
+                      Escalate
+                    </p>
                     <button
                       onClick={() => setEscalateOpen(true)}
                       disabled={!canResolve}
@@ -763,15 +1028,26 @@ export function AdminDisputesPage() {
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4">
                     <p className="text-sm font-medium text-slate-900">Escrow</p>
-                    <p className="text-xs text-slate-500">Escrow amount: ₹{selectedDispute.escrowAmount.toLocaleString()}</p>
+                    <p className="text-xs text-slate-500">
+                      Escrow amount: ₹
+                      {selectedDispute.escrowAmount.toLocaleString()}
+                    </p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Release to seller</button>
-                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Release to buyer</button>
-                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Split escrow</button>
+                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                        Release to seller
+                      </button>
+                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                        Release to buyer
+                      </button>
+                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                        Split escrow
+                      </button>
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-900">Admin Notes</label>
+                    <label className="text-sm font-semibold text-slate-900">
+                      Admin Notes
+                    </label>
                     <textarea
                       value={adminNote}
                       onChange={(e) => setAdminNote(e.target.value)}
@@ -781,12 +1057,21 @@ export function AdminDisputesPage() {
                     />
                   </div>
                   <div className="rounded-lg border border-slate-200 p-4">
-                    <h4 className="text-sm font-semibold text-slate-900">Audit Trail</h4>
+                    <h4 className="text-sm font-semibold text-slate-900">
+                      Audit Trail
+                    </h4>
                     <div className="mt-2 space-y-2 text-xs text-slate-500">
                       {selectedDispute.auditTrail.map((entry) => (
-                        <div key={entry.id} className="rounded-lg border border-slate-200 px-3 py-2">
-                          <p className="font-medium text-slate-900">{entry.action}</p>
-                          <p>{entry.actor} • {entry.time}</p>
+                        <div
+                          key={entry.id}
+                          className="rounded-lg border border-slate-200 px-3 py-2"
+                        >
+                          <p className="font-medium text-slate-900">
+                            {entry.action}
+                          </p>
+                          <p>
+                            {entry.actor} • {entry.time}
+                          </p>
                           {entry.notes && <p>Notes: {entry.notes}</p>}
                         </div>
                       ))}
@@ -806,10 +1091,14 @@ export function AdminDisputesPage() {
               <div className="flex items-center gap-2">
                 <DollarSign className="text-green-600" size={20} />
                 <h2 className="text-lg font-semibold text-slate-900">
-                  Issue full refund of ₹{selectedDispute.amountPaid.toLocaleString()}?
+                  Issue full refund of ₹
+                  {selectedDispute.amountPaid.toLocaleString()}?
                 </h2>
               </div>
-              <button onClick={() => setFullRefundOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setFullRefundOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -848,15 +1137,27 @@ export function AdminDisputesPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <Scale className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Confirm Partial Refund</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Confirm Partial Refund
+                </h2>
               </div>
-              <button onClick={() => setPartialRefundOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setPartialRefundOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 text-sm text-slate-600 space-y-2">
               <p>₹{partialAmount || 0} refunded to buyer</p>
-              <p>₹{Math.max(selectedDispute.amountPaid - Number(partialAmount || 0), 0)} released to seller</p>
+              <p>
+                ₹
+                {Math.max(
+                  selectedDispute.amountPaid - Number(partialAmount || 0),
+                  0,
+                )}{' '}
+                released to seller
+              </p>
             </div>
             <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
               <button
@@ -882,9 +1183,14 @@ export function AdminDisputesPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <Ban className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Reject Dispute</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Reject Dispute
+                </h2>
               </div>
-              <button onClick={() => setRejectOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setRejectOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -932,9 +1238,14 @@ export function AdminDisputesPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <MessageSquare className="text-blue-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Request More Info</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Request More Info
+                </h2>
               </div>
-              <button onClick={() => setRequestInfoOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setRequestInfoOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -989,9 +1300,14 @@ export function AdminDisputesPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Escalate Dispute</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Escalate Dispute
+                </h2>
               </div>
-              <button onClick={() => setEscalateOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setEscalateOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>
@@ -1028,9 +1344,14 @@ export function AdminDisputesPage() {
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
               <div className="flex items-center gap-2">
                 <User className="text-slate-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">Assignment</h2>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Assignment
+                </h2>
               </div>
-              <button onClick={() => setAssignOpen(false)} className="p-2 hover:bg-slate-100 rounded-lg">
+              <button
+                onClick={() => setAssignOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
                 <X size={18} />
               </button>
             </div>

@@ -5,7 +5,9 @@ export const Route = createFileRoute('/api/orders/$orderId/track')({
     handlers: {
       POST: ({ request, params }) => {
         return new Response(
-          JSON.stringify({ message: `Fetching tracking info for order ${params.orderId}` }),
+          JSON.stringify({
+            message: `Fetching tracking info for order ${params.orderId}`,
+          }),
           { headers: { 'Content-Type': 'application/json' } },
         )
       },

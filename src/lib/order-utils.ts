@@ -13,7 +13,10 @@ export function generateOrderNumber(sequence: number): string {
 /**
  * Calculates estimated delivery date based on order date and business days.
  */
-export function calculateEstimatedDelivery(orderDate: Date, businessDays: number = 3): Date {
+export function calculateEstimatedDelivery(
+  orderDate: Date,
+  businessDays: number = 3,
+): Date {
   return addBusinessDays(orderDate, businessDays)
 }
 

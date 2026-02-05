@@ -43,7 +43,8 @@ export function AdminProtectedRoute({
   }
 
   // Check specific permission if required
-  const permissionsToCheck = requiredPermissions || (requiredPermission ? [requiredPermission] : [])
+  const permissionsToCheck =
+    requiredPermissions || (requiredPermission ? [requiredPermission] : [])
   if (permissionsToCheck.length > 0 && permissions) {
     const allowed = requireAll
       ? permissionsToCheck.every((perm) => permissions[perm])
@@ -54,7 +55,9 @@ export function AdminProtectedRoute({
         <AdminLayout>
           <div className="flex flex-col items-center justify-center py-20">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-slate-900">Access Denied</h2>
+              <h2 className="text-2xl font-bold text-slate-900">
+                Access Denied
+              </h2>
               <p className="mt-2 text-slate-600">
                 You don't have permission to access this page.
               </p>

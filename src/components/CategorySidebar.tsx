@@ -47,7 +47,9 @@ export default function CategorySidebar({
       className={`bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 transition-colors ${className}`}
     >
       <div className="p-3 border-b border-gray-100 dark:border-slate-800">
-        <h3 className="font-semibold text-gray-800 dark:text-gray-100">Categories</h3>
+        <h3 className="font-semibold text-gray-800 dark:text-gray-100">
+          Categories
+        </h3>
       </div>
       <nav className="py-2">
         {categories.map((category) => {
@@ -60,7 +62,9 @@ export default function CategorySidebar({
               to="/categories/$categorySlug"
               params={{ categorySlug: category.slug }}
               className={`flex items-center justify-between px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors group ${
-                isActive ? 'bg-orange-50 dark:bg-orange-950/30 border-l-2 border-orange-500' : ''
+                isActive
+                  ? 'bg-orange-50 dark:bg-orange-950/30 border-l-2 border-orange-500'
+                  : ''
               }`}
             >
               <div className="flex items-center gap-3">

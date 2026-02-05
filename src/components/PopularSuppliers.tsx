@@ -45,7 +45,9 @@ export default function PopularSuppliers({
   return (
     <section className="py-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors">{title}</h2>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors">
+          {title}
+        </h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => scroll('left')}

@@ -1,4 +1,7 @@
-import { sendCancellationEmail, sendOrderStatusEmail as sendOrderStatusEmailEmail } from './email'
+import {
+  sendCancellationEmail,
+  sendOrderStatusEmail as sendOrderStatusEmailEmail,
+} from './email'
 
 type OrderStatus =
   | 'placed'
@@ -32,7 +35,8 @@ export async function sendOrderStatusEmail({
       email,
       name,
       orderNumber: buildOrderNumber(orderId),
-      refundSummary: 'Refunds will be processed to the original payment method.',
+      refundSummary:
+        'Refunds will be processed to the original payment method.',
     })
   }
 
@@ -48,11 +52,25 @@ export async function sendOrderStatusEmail({
   })
 }
 
-export function sendSmsNotification({ phone, message }: { phone: string; message: string }) {
+export function sendSmsNotification({
+  phone,
+  message,
+}: {
+  phone: string
+  message: string
+}) {
   console.log('SMS notification placeholder:', phone, message)
 }
 
-export function sendPushNotification({ userId, title, message }: { userId: string; title: string; message: string }) {
+export function sendPushNotification({
+  userId,
+  title,
+  message,
+}: {
+  userId: string
+  title: string
+  message: string
+}) {
   console.log('Push notification placeholder:', userId, title, message)
 }
 

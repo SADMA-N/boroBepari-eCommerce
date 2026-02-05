@@ -1,15 +1,18 @@
 import {
-  
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react'
-import type {ReactNode} from 'react';
-import type { AdminPermission, AdminPermissions, AdminUser } from '@/types/admin'
+import type { ReactNode } from 'react'
+import type {
+  AdminPermission,
+  AdminPermissions,
+  AdminUser,
+} from '@/types/admin'
 import { adminLogin, validateAdminToken } from '@/lib/admin-auth-server'
 import { getAdminPermissions, hasPermission } from '@/types/admin'
 
@@ -20,7 +23,11 @@ interface AdminAuthContextValue {
   permissions: AdminPermissions | null
   isLoading: boolean
   isAuthenticated: boolean
-  login: (credentials: { email: string; password: string; otp: string }) => Promise<AdminUser>
+  login: (credentials: {
+    email: string
+    password: string
+    otp: string
+  }) => Promise<AdminUser>
   logout: () => void
   getToken: () => string | null
   can: (permission: AdminPermission) => boolean
@@ -124,7 +131,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       getToken,
-      can: (permission: AdminPermission) => hasPermission(permissions, permission),
+      can: (permission: AdminPermission) =>
+        hasPermission(permissions, permission),
     }),
     [admin, permissions, isLoading, login, logout, getToken],
   )

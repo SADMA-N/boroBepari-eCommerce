@@ -176,11 +176,19 @@ function SearchPage() {
       <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors">
+            <Link
+              to="/"
+              className="text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+            >
               Home
             </Link>
-            <ChevronRight size={14} className="text-gray-400 dark:text-gray-600" />
-            <span className="text-gray-800 dark:text-gray-200 font-medium transition-colors">Search Results</span>
+            <ChevronRight
+              size={14}
+              className="text-gray-400 dark:text-gray-600"
+            />
+            <span className="text-gray-800 dark:text-gray-200 font-medium transition-colors">
+              Search Results
+            </span>
           </nav>
         </div>
       </div>
@@ -253,7 +261,9 @@ function SearchPage() {
               <div className="flex items-center justify-between flex-wrap gap-4">
                 {/* Results count */}
                 <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                  <span className="font-medium text-gray-900 dark:text-gray-200">{products.length}</span>{' '}
+                  <span className="font-medium text-gray-900 dark:text-gray-200">
+                    {products.length}
+                  </span>{' '}
                   products found
                 </p>
 
@@ -393,7 +403,10 @@ function SearchPage() {
             ) : products.length === 0 ? (
               <div className="space-y-12">
                 <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-12 text-center transition-colors">
-                  <Search size={48} className="mx-auto text-gray-300 dark:text-gray-700 mb-4" />
+                  <Search
+                    size={48}
+                    className="mx-auto text-gray-300 dark:text-gray-700 mb-4"
+                  />
                   <p className="text-gray-500 dark:text-gray-400 text-lg mb-2 transition-colors">
                     No products found
                     {search.q && ` for "${search.q}"`}
@@ -541,7 +554,10 @@ function FilterTag({
   return (
     <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 text-sm rounded-full transition-colors border border-orange-200 dark:border-orange-900/50">
       {label}
-      <button onClick={onRemove} className="hover:text-orange-900 dark:hover:text-orange-200 transition-colors">
+      <button
+        onClick={onRemove}
+        className="hover:text-orange-900 dark:hover:text-orange-200 transition-colors"
+      >
         <X size={14} />
       </button>
     </span>

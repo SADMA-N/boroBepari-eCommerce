@@ -159,7 +159,10 @@ export default function SearchBar({
                     onClick={() => handleSuggestionClick(search)}
                     className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded hover:bg-gray-50 dark:hover:bg-slate-800/50 text-gray-700 dark:text-gray-300 transition-colors"
                   >
-                    <Clock size={14} className="text-gray-400 dark:text-gray-500" />
+                    <Clock
+                      size={14}
+                      className="text-gray-400 dark:text-gray-500"
+                    />
                     <span className="text-sm">{search}</span>
                   </button>
                 ))}

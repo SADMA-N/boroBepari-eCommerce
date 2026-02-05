@@ -512,8 +512,12 @@ function AddressSection({
                       </span>
                     )}
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400">{addr.address}</p>
-                  <p className="text-gray-600 dark:text-gray-400">{addr.postcode}</p>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {addr.address}
+                  </p>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {addr.postcode}
+                  </p>
                   <p className="text-gray-600 dark:text-gray-400 mt-1 flex items-center gap-1.5 text-sm transition-colors">
                     <Phone size={14} />
                     {addr.phone}
@@ -712,7 +716,10 @@ function OrdersSection({ orders }: { orders: Array<any> }) {
   if (orders.length === 0) {
     return (
       <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 text-center py-12 border dark:border-slate-800 transition-colors">
-        <Package size={48} className="mx-auto text-gray-300 dark:text-gray-700 mb-4 transition-colors" />
+        <Package
+          size={48}
+          className="mx-auto text-gray-300 dark:text-gray-700 mb-4 transition-colors"
+        />
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1 transition-colors">
           No Orders Yet
         </h3>
@@ -762,7 +769,9 @@ function OrdersSection({ orders }: { orders: Array<any> }) {
                 <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wider transition-colors">
                   Order ID
                 </p>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">#{order.id}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors">
+                  #{order.id}
+                </p>
               </div>
               <div>
                 <span
@@ -783,7 +792,10 @@ function OrdersSection({ orders }: { orders: Array<any> }) {
             <div className="p-6 transition-colors">
               <div className="space-y-4">
                 {order.items.map((item: any) => (
-                  <div key={item.id} className="flex items-center gap-4 transition-colors">
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-4 transition-colors"
+                  >
                     <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-lg overflow-hidden flex-shrink-0 transition-colors border dark:border-slate-700">
                       {/* Placeholder for product image */}
                       <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600 transition-colors">
