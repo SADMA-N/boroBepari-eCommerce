@@ -153,6 +153,9 @@ export function SellerAuthProvider({
         branchName,
         routingNumber,
       },
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
     })
     setSeller(result.seller)
   }, [])

@@ -21,6 +21,11 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react'
+import {
+  getKycReviewQueue,
+  getSellerKycDetails,
+  reviewSellerKyc,
+} from '@/lib/seller-kyc-server'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
@@ -253,7 +258,7 @@ const REJECTION_REASONS = [
 ]
 
 export function AdminKYCPage() {
-  const { can } = useAdminAuth()
+  const { can, getToken } = useAdminAuth()
   const canReview = can('kyc.review')
   const canApprove = can('kyc.approve')
   const canReject = can('kyc.reject')
@@ -263,7 +268,10 @@ export function AdminKYCPage() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [selectedIds, setSelectedIds] = useState<Array<string>>([])
-  const [reviewItem, setReviewItem] = useState<KycSubmission | null>(null)
+  const [queue, setQueue] = useState<any[]>([])
+  const [isLoadingQueue, setIsLoadingQueue] = useState(true)
+  const [reviewItem, setReviewItem] = useState<any | null>(null)
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false)
   const [docIndex, setDocIndex] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [rotation, setRotation] = useState(0)
@@ -279,13 +287,74 @@ export function AdminKYCPage() {
   const [assignOpen, setAssignOpen] = useState(false)
   const [bulkApproveOpen, setBulkApproveOpen] = useState(false)
 
+  const fetchQueue = async () => {
+    setIsLoadingQueue(true)
+    try {
+      const data = await getKycReviewQueue({
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      setQueue(data)
+    } catch (error) {
+      console.error('Failed to fetch KYC queue:', error)
+    } finally {
+      setIsLoadingQueue(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchQueue()
+  }, [])
+
+  const handleReview = async (item: any) => {
+    setIsLoadingDetails(true)
+    try {
+      const details = await getSellerKycDetails({
+        data: { sellerId: item.id },
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      setReviewItem(details)
+      setDocIndex(0)
+      setZoom(1)
+      setRotation(0)
+    } catch (error) {
+      console.error('Failed to fetch KYC details:', error)
+    } finally {
+      setIsLoadingDetails(false)
+    }
+  }
+
+  const handleAction = async (status: 'approved' | 'rejected') => {
+    if (!reviewItem) return
+    try {
+      await reviewSellerKyc({
+        data: {
+          sellerId: reviewItem.seller.id,
+          status,
+          reason: status === 'rejected' ? rejectFeedback : undefined,
+        },
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      })
+      setReviewItem(null)
+      setApproveOpen(false)
+      setRejectOpen(false)
+      fetchQueue()
+    } catch (error) {
+      console.error('Failed to review KYC:', error)
+    }
+  }
+
   useEffect(() => {
     if (!reviewItem) return
     const handler = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') {
-        setDocIndex((prev) =>
-          Math.min(prev + 1, reviewItem.documents.length - 1),
-        )
+        const docCount = reviewItem.documents?.length || 0
+        setDocIndex((prev) => Math.min(prev + 1, docCount - 1))
       }
       if (event.key === 'ArrowLeft') {
         setDocIndex((prev) => Math.max(prev - 1, 0))
@@ -303,30 +372,21 @@ export function AdminKYCPage() {
 
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    return MOCK_KYC.filter((item) => {
-      const matchesStatus = item.status === activeTab
+    return queue.filter((item) => {
       const matchesSearch =
         !query ||
         item.businessName.toLowerCase().includes(query) ||
-        item.ownerName.toLowerCase().includes(query)
-      const matchesPriority =
-        priorityFilter === 'all' || item.priority === priorityFilter
-      const submittedDate = new Date(item.submittedAt)
-      const withinFrom = dateFrom ? submittedDate >= new Date(dateFrom) : true
-      const withinTo = dateTo ? submittedDate <= new Date(dateTo) : true
-      return (
-        matchesStatus &&
-        matchesSearch &&
-        matchesPriority &&
-        withinFrom &&
-        withinTo
-      )
+        item.fullName.toLowerCase().includes(query)
+      const submittedDate = item.submittedAt ? new Date(item.submittedAt) : null
+      const withinFrom =
+        dateFrom && submittedDate ? submittedDate >= new Date(dateFrom) : true
+      const withinTo =
+        dateTo && submittedDate ? submittedDate <= new Date(dateTo) : true
+      return matchesSearch && withinFrom && withinTo
     })
-  }, [activeTab, searchQuery, priorityFilter, dateFrom, dateTo])
+  }, [queue, searchQuery, dateFrom, dateTo])
 
   const pendingQueue = filtered
-    .filter((item) => item.status === 'pending')
-    .sort((a, b) => a.waitHours - b.waitHours)
 
   const filteredCount = [
     searchQuery,
@@ -334,18 +394,10 @@ export function AdminKYCPage() {
     dateFrom,
     dateTo,
   ].filter(Boolean).length
-  const pendingCount = MOCK_KYC.filter(
-    (item) => item.status === 'pending',
-  ).length
-  const approvedCount = MOCK_KYC.filter(
-    (item) => item.status === 'approved',
-  ).length
-  const rejectedCount = MOCK_KYC.filter(
-    (item) => item.status === 'rejected',
-  ).length
-  const resubmittedCount = MOCK_KYC.filter(
-    (item) => item.status === 'resubmitted',
-  ).length
+  const pendingCount = queue.length
+  const approvedCount = 0 // Mock for now
+  const rejectedCount = 0 // Mock for now
+  const resubmittedCount = 0 // Mock for now
 
   const todayReviewed = 18
   const averageReview = 18
@@ -370,7 +422,7 @@ export function AdminKYCPage() {
     )
   }
 
-  const activeDocs = reviewItem ? reviewItem.documents : []
+  const activeDocs = reviewItem?.documents || []
   const currentDoc =
     activeDocs.length > 0
       ? activeDocs[Math.min(docIndex, activeDocs.length - 1)]
@@ -586,43 +638,27 @@ export function AdminKYCPage() {
                           {item.businessName}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
-                          {item.ownerName}
+                          {item.fullName}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
-                          {item.submittedAt}
+                          {item.submittedAt
+                            ? new Date(item.submittedAt).toLocaleDateString()
+                            : '-'}
                         </td>
-                        <td className="px-4 py-3 text-slate-600">
-                          {item.waitHours} hours ago
-                        </td>
+                        <td className="px-4 py-3 text-slate-600">-</td>
                         <td className="px-4 py-3">
-                          {item.waitHours > 24 ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs text-red-700">
-                              <AlertTriangle size={12} />
-                              Urgent
-                            </span>
-                          ) : (
-                            <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
-                              Normal
-                            </span>
-                          )}
+                          <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
+                            Normal
+                          </span>
                         </td>
-                        <td className="px-4 py-3 text-slate-600">
-                          {item.assignedTo
-                            ? `Assigned to ${item.assignedTo}`
-                            : 'Unassigned'}
-                        </td>
+                        <td className="px-4 py-3 text-slate-600">Unassigned</td>
                         <td className="px-4 py-3 text-right">
                           <button
-                            onClick={() => {
-                              setReviewItem(item)
-                              setDocIndex(0)
-                              setZoom(1)
-                              setRotation(0)
-                            }}
-                            disabled={!canReview}
-                            className="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-700"
+                            onClick={() => handleReview(item)}
+                            disabled={!canReview || isLoadingDetails}
+                            className="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-700 disabled:opacity-50"
                           >
-                            Review
+                            {isLoadingDetails ? 'Loading...' : 'Review'}
                           </button>
                         </td>
                       </tr>
@@ -651,19 +687,13 @@ export function AdminKYCPage() {
             <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-6 py-4 text-white">
               <div>
                 <h2 className="text-lg font-semibold">
-                  Review KYC - {reviewItem.businessName}
+                  Review KYC - {reviewItem.seller.businessName}
                 </h2>
                 <p className="text-xs text-slate-400">
-                  Submission {reviewItem.id}
+                  Submission {reviewItem.seller.id}
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setAssignOpen(true)}
-                  className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs"
-                >
-                  {reviewItem.assignedTo ? 'Unassign' : 'Assign to Me'}
-                </button>
                 <button
                   onClick={() => setReviewItem(null)}
                   className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs"
@@ -675,7 +705,7 @@ export function AdminKYCPage() {
             <div className="flex flex-1 overflow-hidden">
               <div className="w-full lg:w-3/5 bg-slate-950 text-white p-6 overflow-y-auto">
                 <div className="flex flex-wrap items-center gap-2">
-                  {activeDocs.map((doc, index) => (
+                  {activeDocs.map((doc: any, index: number) => (
                     <button
                       key={doc.id}
                       onClick={() => setDocIndex(index)}
@@ -685,14 +715,16 @@ export function AdminKYCPage() {
                           : 'border-slate-700 text-slate-300'
                       }`}
                     >
-                      {doc.label}
+                      {doc.type.replace('_', ' ').toUpperCase()}
                     </button>
                   ))}
                 </div>
                 <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900 p-4">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium">
-                      {currentDoc ? currentDoc.label : 'Document'}
+                      {currentDoc
+                        ? currentDoc.type.replace('_', ' ').toUpperCase()
+                        : 'Document'}
                     </p>
                     <div className="flex items-center gap-2">
                       <button
@@ -717,20 +749,33 @@ export function AdminKYCPage() {
                       >
                         <RotateCw size={14} />
                       </button>
-                      <button className="rounded-lg border border-slate-700 px-3 py-1 text-xs">
+                      <a
+                        href={currentDoc?.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-lg border border-slate-700 px-3 py-1 text-xs"
+                      >
                         Download
-                      </button>
+                      </a>
                     </div>
                   </div>
-                  <div className="mt-4 flex h-96 items-center justify-center rounded-lg bg-slate-800">
-                    <div
-                      className="flex items-center justify-center text-slate-400"
-                      style={{
-                        transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                      }}
-                    >
-                      <Image size={48} />
-                    </div>
+                  <div className="mt-4 flex h-[600px] items-center justify-center rounded-lg bg-slate-800 overflow-hidden">
+                    {currentDoc?.mimeType === 'application/pdf' ? (
+                      <iframe
+                        src={currentDoc.url}
+                        className="w-full h-full"
+                        title="PDF Document"
+                      />
+                    ) : (
+                      <img
+                        src={currentDoc?.url}
+                        alt="KYC Document"
+                        className="max-w-full max-h-full object-contain"
+                        style={{
+                          transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between text-slate-400 text-xs">
@@ -776,28 +821,29 @@ export function AdminKYCPage() {
                     </h3>
                     <div className="mt-3 grid gap-2 text-sm text-slate-600">
                       <p>
-                        <strong>Business:</strong> {reviewItem.businessName}
+                        <strong>Business:</strong>{' '}
+                        {reviewItem.seller.businessName}
                       </p>
                       <p>
-                        <strong>Owner:</strong> {reviewItem.ownerName}
+                        <strong>Owner:</strong> {reviewItem.seller.fullName}
                       </p>
                       <p>
-                        <strong>Email:</strong> {reviewItem.email}
+                        <strong>Email:</strong> {reviewItem.seller.email}
                       </p>
                       <p>
-                        <strong>Phone:</strong> {reviewItem.phone}
+                        <strong>Phone:</strong> {reviewItem.seller.phone}
                       </p>
                       <p>
                         <strong>Business Type:</strong>{' '}
-                        {reviewItem.businessType}
+                        {reviewItem.seller.businessType}
                       </p>
                       <p>
-                        <strong>Trade License:</strong>{' '}
-                        {reviewItem.tradeLicenseNumber}
+                        <strong>Category:</strong>{' '}
+                        {reviewItem.seller.businessCategory}
                       </p>
                       <p>
-                        <strong>Registration:</strong>{' '}
-                        {reviewItem.registrationDate}
+                        <strong>Description:</strong>{' '}
+                        {reviewItem.seller.additionalInfo?.description}
                       </p>
                     </div>
                   </div>
@@ -864,7 +910,7 @@ export function AdminKYCPage() {
                       Audit Trail
                     </h3>
                     <div className="mt-3 space-y-2 text-sm text-slate-600">
-                      {reviewItem.auditTrail.map((entry) => (
+                      {reviewItem.auditTrail?.map((entry: any) => (
                         <div
                           key={entry.id}
                           className="rounded-lg border border-slate-200 px-3 py-2"
@@ -881,7 +927,9 @@ export function AdminKYCPage() {
                             </p>
                           )}
                         </div>
-                      ))}
+                      )) || (
+                        <p className="text-xs text-slate-400">No audit logs available.</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -898,7 +946,7 @@ export function AdminKYCPage() {
               <div className="flex items-center gap-2">
                 <ShieldCheck className="text-green-600" size={20} />
                 <h2 className="text-lg font-semibold text-slate-900">
-                  Approve KYC for {reviewItem.businessName}?
+                  Approve KYC for {reviewItem.seller.businessName}?
                 </h2>
               </div>
               <button
@@ -924,7 +972,7 @@ export function AdminKYCPage() {
                 Cancel
               </button>
               <button
-                onClick={() => setApproveOpen(false)}
+                onClick={() => handleAction('approved')}
                 className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
               >
                 Confirm Approval
@@ -941,7 +989,7 @@ export function AdminKYCPage() {
               <div className="flex items-center gap-2">
                 <Ban className="text-red-600" size={20} />
                 <h2 className="text-lg font-semibold text-slate-900">
-                  Reject KYC for {reviewItem.businessName}
+                  Reject KYC for {reviewItem.seller.businessName}
                 </h2>
               </div>
               <button
@@ -992,7 +1040,7 @@ export function AdminKYCPage() {
                 Cancel
               </button>
               <button
-                onClick={() => setRejectOpen(false)}
+                onClick={() => handleAction('rejected')}
                 className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
               >
                 Confirm Rejection

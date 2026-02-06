@@ -29,10 +29,7 @@ export function SellerProtectedRoute({
     }
 
     // Check verification status
-    if (
-      requireVerified &&
-      !['approved', 'submitted'].includes(seller?.kycStatus || '')
-    ) {
+    if (requireVerified && seller?.kycStatus !== 'approved') {
       // If not on KYC page, redirect to it
       if (location.pathname !== '/seller/kyc') {
         navigate({ to: '/seller/kyc' })
@@ -64,11 +61,8 @@ export function SellerProtectedRoute({
     return null
   }
 
-  // Requires verification but neither approved nor submitted
-  if (
-    requireVerified &&
-    !['approved', 'submitted'].includes(seller?.kycStatus || '')
-  ) {
+  // Requires verification but not approved
+  if (requireVerified && seller?.kycStatus !== 'approved') {
     return null
   }
 

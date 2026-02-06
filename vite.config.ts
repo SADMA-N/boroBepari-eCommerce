@@ -27,6 +27,14 @@ const config = defineConfig({
       },
     }),
   ],
+  ssr: {
+    external: ['bun'],
+  },
+  build: {
+    rollupOptions: {
+      external: ['bun'],
+    },
+  },
 })
 
 export default config

@@ -16,7 +16,12 @@ import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import { submitSellerKyc } from '@/lib/seller-kyc-server'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
-type UploadKey = 'tradeLicense' | 'nidFront' | 'nidBack' | 'bankProof'
+type UploadKey =
+  | 'trade_license'
+  | 'nid_front'
+  | 'nid_back'
+  | 'bank_proof'
+  | 'selfie'
 
 type UploadItem = {
   file: File
@@ -51,18 +56,20 @@ export function SellerKYCPage() {
   const search = useSearch({ from: '/seller/kyc', strict: false })
   const [localStatus, setLocalStatus] = useState<KycStatus | null>(null)
   const [uploads, setUploads] = useState<Record<UploadKey, UploadItem | null>>({
-    tradeLicense: null,
-    nidFront: null,
-    nidBack: null,
-    bankProof: null,
+    trade_license: null,
+    nid_front: null,
+    nid_back: null,
+    bank_proof: null,
+    selfie: null,
   })
   const [uploadErrors, setUploadErrors] = useState<
     Record<UploadKey, string | null>
   >({
-    tradeLicense: null,
-    nidFront: null,
-    nidBack: null,
-    bankProof: null,
+    trade_license: null,
+    nid_front: null,
+    nid_back: null,
+    bank_proof: null,
+    selfie: null,
   })
   const [description, setDescription] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<Array<string>>(
@@ -173,7 +180,7 @@ export function SellerKYCPage() {
   }
 
   const validateSubmission = () => {
-    const requiredMissing = ['tradeLicense', 'nidFront', 'nidBack'].some(
+    const requiredMissing = ['trade_license', 'nid_front', 'nid_back'].some(
       (key) => !uploads[key as UploadKey],
     )
     if (requiredMissing) return false
@@ -198,13 +205,17 @@ export function SellerKYCPage() {
       if (!token) throw new Error('Unauthorized')
 
       const payload = await buildSubmissionPayload(
-        token,
         uploads,
         description,
         selectedCategories,
         inventoryRange,
       )
-      const result = await submitSellerKyc({ data: payload })
+      const result = await submitSellerKyc({
+        data: payload,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       setSubmittedAt(new Date(result.submittedAt))
       setLocalStatus('submitted')
       setSuccessMessage(true)
@@ -324,11 +335,11 @@ export function SellerKYCPage() {
             label="Trade License"
             description="Upload clear image of trade license"
             required
-            item={uploads.tradeLicense}
-            error={uploadErrors.tradeLicense}
-            onDrop={(event) => handleDrop('tradeLicense', event)}
-            onBrowse={(files) => handleBrowse('tradeLicense', files)}
-            onClear={() => clearUpload('tradeLicense')}
+            item={uploads.trade_license}
+            error={uploadErrors.trade_license}
+            onDrop={(event) => handleDrop('trade_license', event)}
+            onBrowse={(files) => handleBrowse('trade_license', files)}
+            onClear={() => clearUpload('trade_license')}
           />
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -336,33 +347,44 @@ export function SellerKYCPage() {
               label="National ID (Front)"
               description="Owner/Manager NID required"
               required
-              item={uploads.nidFront}
-              error={uploadErrors.nidFront}
-              onDrop={(event) => handleDrop('nidFront', event)}
-              onBrowse={(files) => handleBrowse('nidFront', files)}
-              onClear={() => clearUpload('nidFront')}
+              item={uploads.nid_front}
+              error={uploadErrors.nid_front}
+              onDrop={(event) => handleDrop('nid_front', event)}
+              onBrowse={(files) => handleBrowse('nid_front', files)}
+              onClear={() => clearUpload('nid_front')}
             />
             <DocumentUploader
               label="National ID (Back)"
               description="Owner/Manager NID required"
               required
-              item={uploads.nidBack}
-              error={uploadErrors.nidBack}
-              onDrop={(event) => handleDrop('nidBack', event)}
-              onBrowse={(files) => handleBrowse('nidBack', files)}
-              onClear={() => clearUpload('nidBack')}
+              item={uploads.nid_back}
+              error={uploadErrors.nid_back}
+              onDrop={(event) => handleDrop('nid_back', event)}
+              onBrowse={(files) => handleBrowse('nid_back', files)}
+              onClear={() => clearUpload('nid_back')}
             />
           </div>
 
-          <DocumentUploader
-            label="Bank Account Proof (Optional)"
-            description="Cancelled cheque or bank statement for faster payout verification"
-            item={uploads.bankProof}
-            error={uploadErrors.bankProof}
-            onDrop={(event) => handleDrop('bankProof', event)}
-            onBrowse={(files) => handleBrowse('bankProof', files)}
-            onClear={() => clearUpload('bankProof')}
-          />
+          <div className="grid md:grid-cols-2 gap-6">
+            <DocumentUploader
+              label="Selfie with NID (Optional)"
+              description="Helps verify identity faster"
+              item={uploads.selfie}
+              error={uploadErrors.selfie}
+              onDrop={(event) => handleDrop('selfie', event)}
+              onBrowse={(files) => handleBrowse('selfie', files)}
+              onClear={() => clearUpload('selfie')}
+            />
+            <DocumentUploader
+              label="Bank Account Proof (Optional)"
+              description="Cancelled cheque or bank statement"
+              item={uploads.bank_proof}
+              error={uploadErrors.bank_proof}
+              onDrop={(event) => handleDrop('bank_proof', event)}
+              onBrowse={(files) => handleBrowse('bank_proof', files)}
+              onClear={() => clearUpload('bank_proof')}
+            />
+          </div>
         </section>
 
         <section className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 transition-colors">
@@ -732,48 +754,54 @@ async function fileToBase64(file: File) {
 }
 
 async function buildSubmissionPayload(
-  token: string,
   uploads: Record<UploadKey, UploadItem | null>,
   description: string,
   categories: Array<string>,
   inventoryRange: string,
 ) {
-  const tradeLicense = uploads.tradeLicense?.file
-  const nidFront = uploads.nidFront?.file
-  const nidBack = uploads.nidBack?.file
-  const bankProof = uploads.bankProof?.file
+  const trade_license = uploads.trade_license?.file
+  const nid_front = uploads.nid_front?.file
+  const nid_back = uploads.nid_back?.file
+  const bank_proof = uploads.bank_proof?.file
+  const selfie = uploads.selfie?.file
 
-  if (!tradeLicense || !nidFront || !nidBack) {
+  if (!trade_license || !nid_front || !nid_back) {
     throw new Error('Please upload all required documents.')
   }
 
   const payloadDocuments = {
-    tradeLicense: {
-      filename: tradeLicense.name,
-      mimeType: tradeLicense.type,
-      data: await fileToBase64(tradeLicense),
+    trade_license: {
+      filename: trade_license.name,
+      mimeType: trade_license.type,
+      data: await fileToBase64(trade_license),
     },
-    nidFront: {
-      filename: nidFront.name,
-      mimeType: nidFront.type,
-      data: await fileToBase64(nidFront),
+    nid_front: {
+      filename: nid_front.name,
+      mimeType: nid_front.type,
+      data: await fileToBase64(nid_front),
     },
-    nidBack: {
-      filename: nidBack.name,
-      mimeType: nidBack.type,
-      data: await fileToBase64(nidBack),
+    nid_back: {
+      filename: nid_back.name,
+      mimeType: nid_back.type,
+      data: await fileToBase64(nid_back),
     },
-    bankProof: bankProof
+    bank_proof: bank_proof
       ? {
-          filename: bankProof.name,
-          mimeType: bankProof.type,
-          data: await fileToBase64(bankProof),
+          filename: bank_proof.name,
+          mimeType: bank_proof.type,
+          data: await fileToBase64(bank_proof),
+        }
+      : undefined,
+    selfie: selfie
+      ? {
+          filename: selfie.name,
+          mimeType: selfie.type,
+          data: await fileToBase64(selfie),
         }
       : undefined,
   }
 
   return {
-    token,
     description,
     categories,
     inventoryRange,

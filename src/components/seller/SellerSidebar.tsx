@@ -3,12 +3,14 @@ import {
   BarChart3,
   FileText,
   LayoutDashboard,
+  Lock,
   Package,
   Settings,
   ShoppingCart,
   Wallet,
   X,
 } from 'lucide-react'
+import { useSellerAuth } from '@/contexts/SellerAuthContext'
 
 interface SellerSidebarProps {
   isOpen: boolean
@@ -27,6 +29,8 @@ const navItems = [
 
 export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {
   const location = useLocation()
+  const { seller } = useSellerAuth()
+  const isVerified = seller?.kycStatus === 'approved'
 
   return (
     <>
@@ -78,6 +82,28 @@ export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {
               (item.path !== '/seller/dashboard' &&
                 location.pathname.startsWith(item.path))
             const Icon = item.icon
+            const isRestricted = !isVerified && item.path !== '/seller/profile' && item.path !== '/seller/dashboard'
+
+            if (isRestricted) {
+              return (
+                <div
+                  key={item.path}
+                  className="flex items-center justify-between px-4 py-3 rounded-lg text-gray-400 cursor-not-allowed group relative"
+                  title="Verification required"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon size={20} />
+                    <span>{item.label}</span>
+                  </div>
+                  <Lock size={14} className="text-gray-300 dark:text-gray-600" />
+                  
+                  {/* Tooltip */}
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                    Verification Required
+                  </div>
+                </div>
+              )
+            }
 
             return (
               <Link

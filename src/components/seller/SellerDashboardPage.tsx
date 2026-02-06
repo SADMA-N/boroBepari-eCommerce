@@ -25,6 +25,8 @@ import {
   YAxis,
 } from 'recharts'
 import { SellerProtectedRoute } from '@/components/seller'
+import { useSellerAuth } from '@/contexts/SellerAuthContext'
+import { BadgeCheck, CheckCircle2, XCircle, Info as InfoIcon } from 'lucide-react'
 
 type DateRange = 'today' | '7d' | '30d' | 'custom'
 
@@ -47,6 +49,7 @@ const RANGE_LABELS: Record<DateRange, string> = {
 
 export function SellerDashboardPage() {
   const navigate = useNavigate()
+  const { seller } = useSellerAuth()
   const [range, setRange] = useState<DateRange>('7d')
   const [loading, setLoading] = useState(false)
   const [alerts, setAlerts] = useState([
@@ -224,8 +227,10 @@ export function SellerDashboardPage() {
   ]
 
   return (
-    <SellerProtectedRoute requireVerified>
+    <SellerProtectedRoute>
       <div className="space-y-8">
+        <VerificationStatus seller={seller} />
+
         <section className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
@@ -680,6 +685,57 @@ function ActionButton({
       </span>
       {label}
     </button>
+  )
+}
+
+function VerificationStatus({ seller }: { seller: any }) {
+  const status = seller?.kycStatus || 'pending'
+  const isVerified = status === 'approved'
+  const isRejected = status === 'rejected'
+  const isPending = status === 'pending'
+  const isSubmitted = status === 'submitted'
+
+  return (
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className={`mt-1 p-3 rounded-xl ${
+            isVerified ? 'bg-green-50 dark:bg-green-900/20 text-green-600' :
+            isRejected ? 'bg-red-50 dark:bg-red-900/20 text-red-600' :
+            'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600'
+          }`}>
+            {isVerified ? <BadgeCheck size={24} /> :
+             isRejected ? <XCircle size={24} /> :
+             <AlertTriangle size={24} />}
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white transition-colors">
+              Account Verification: {status.toUpperCase()}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
+              {isVerified ? 'Your account is fully verified. You have full access to all features.' :
+               isRejected ? 'Your verification was rejected. Please review and resubmit.' :
+               isSubmitted ? 'Your documents are under review. This usually takes 24-48 hours.' :
+               'Complete your profile verification to start selling on BoroBepari.'}
+            </p>
+          </div>
+        </div>
+        {!isVerified && !isSubmitted && (
+          <Link
+            to="/seller/kyc"
+            className="inline-flex items-center justify-center rounded-lg bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
+          >
+            Complete Verification
+          </Link>
+        )}
+        {isSubmitted && (
+          <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-500 text-sm font-medium">
+            <Clock size={16} />
+            Under Review
+          </div>
+        )}
+      </div>
+    </section>
   )
 }
 

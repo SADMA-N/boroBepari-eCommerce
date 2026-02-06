@@ -8,6 +8,7 @@ import {
   serial,
   text,
   timestamp,
+  uuid,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
@@ -28,6 +29,19 @@ export const verificationBadgeEnum = pgEnum('verification_badge', [
   'basic',
   'verified',
   'premium',
+])
+export const sellerDocumentTypeEnum = pgEnum('seller_document_type', [
+  'nid_front',
+  'nid_back',
+  'trade_license',
+  'selfie',
+  'bank_proof',
+  'other',
+])
+export const sellerDocumentStatusEnum = pgEnum('seller_document_status', [
+  'pending',
+  'approved',
+  'rejected',
 ])
 
 // Categories table
@@ -113,12 +127,40 @@ export const sellers = pgTable('sellers', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
-export const sellersRelations = relations(sellers, ({ one }) => ({
+export const sellersRelations = relations(sellers, ({ one, many }) => ({
   supplier: one(suppliers, {
     fields: [sellers.supplierId],
     references: [suppliers.id],
   }),
+  documents: many(sellerDocuments),
 }))
+
+export const sellerDocuments = pgTable('seller_documents', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  sellerId: text('seller_id')
+    .notNull()
+    .references(() => sellers.id),
+  documentType: sellerDocumentTypeEnum('document_type').notNull(),
+  s3Bucket: text('s3_bucket').notNull(),
+  s3Key: text('s3_key').notNull(),
+  mimeType: text('mime_type').notNull(),
+  fileSize: integer('file_size').notNull(),
+  status: sellerDocumentStatusEnum('status').default('pending').notNull(),
+  uploadedAt: timestamp('uploaded_at').defaultNow().notNull(),
+})
+
+export const sellerDocumentsRelations = relations(
+  sellerDocuments,
+  ({ one }) => ({
+    seller: one(sellers, {
+      fields: [sellerDocuments.sellerId],
+      references: [sellers.id],
+    }),
+  }),
+)
+
+export type SellerDocument = typeof sellerDocuments.$inferSelect
+export type NewSellerDocument = typeof sellerDocuments.$inferInsert
 
 export type Seller = typeof sellers.$inferSelect
 export type NewSeller = typeof sellers.$inferInsert
