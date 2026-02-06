@@ -191,8 +191,10 @@ export function SellerRFQsPage() {
       <div className="space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">RFQs</h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 transition-colors">
+              RFQs
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
               Respond quickly to win more orders.
             </p>
           </div>
@@ -200,14 +202,14 @@ export function SellerRFQsPage() {
             <select
               value={dateRange}
               onChange={(event) => setDateRange(event.target.value)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
             >
-              <option>Today</option>
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-              <option>Custom Range</option>
+              <option className="dark:bg-slate-900">Today</option>
+              <option className="dark:bg-slate-900">Last 7 Days</option>
+              <option className="dark:bg-slate-900">Last 30 Days</option>
+              <option className="dark:bg-slate-900">Custom Range</option>
             </select>
-            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <button className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               Export
             </button>
           </div>
@@ -237,21 +239,23 @@ export function SellerRFQsPage() {
             <button
               key={status}
               onClick={() => setTab(status)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 tab === status
-                  ? 'bg-orange-600 text-white'
-                  : 'bg-white border border-slate-200 text-slate-600'
+                  ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {status}
-              <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs">
+              <span
+                className={`ml-2 rounded-full px-2 py-0.5 text-xs ${tab === status ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}
+              >
                 {counts[status]}
               </span>
             </button>
           ))}
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 space-y-4">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -259,30 +263,34 @@ export function SellerRFQsPage() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search by product or RFQ #"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 transition-all"
                 />
                 <SearchIcon />
               </div>
               <select
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
               >
-                <option value="">All categories</option>
-                <option>Industrial Supplies</option>
-                <option>Apparel & Fashion</option>
+                <option value="" className="dark:bg-slate-900">
+                  All categories
+                </option>
+                <option className="dark:bg-slate-900">
+                  Industrial Supplies
+                </option>
+                <option className="dark:bg-slate-900">Apparel & Fashion</option>
               </select>
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
               >
-                <option>Date</option>
-                <option>Quantity</option>
-                <option>Target Price</option>
+                <option className="dark:bg-slate-900">Date</option>
+                <option className="dark:bg-slate-900">Quantity</option>
+                <option className="dark:bg-slate-900">Target Price</option>
               </select>
             </div>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               <Filter size={16} />
               Filters
             </button>
@@ -297,24 +305,28 @@ export function SellerRFQsPage() {
               {paged.map((rfq) => (
                 <div
                   key={rfq.id}
-                  className="rounded-2xl border border-slate-200 p-4"
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 transition-colors hover:border-orange-200 dark:hover:border-orange-900/50"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                     <div className="flex items-center gap-3">
                       <img
                         src={rfq.productImage}
                         alt={rfq.product}
-                        className="h-16 w-16 rounded-lg object-cover"
+                        className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                       />
                       <div>
-                        <p className="text-sm text-slate-400">{rfq.id}</p>
-                        <p className="text-base font-semibold text-slate-800">
+                        <p className="text-sm text-slate-400 dark:text-gray-500">
+                          {rfq.id}
+                        </p>
+                        <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
                           {rfq.product}
                         </p>
-                        <p className="text-xs text-slate-500">{rfq.buyer}</p>
+                        <p className="text-xs text-slate-500 dark:text-gray-400">
+                          {rfq.buyer}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+                    <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-gray-300">
                       <InfoItem
                         label="Quantity"
                         value={`${rfq.quantity} units`}
@@ -329,7 +341,7 @@ export function SellerRFQsPage() {
                     <div className="ml-auto flex items-center gap-3">
                       <UrgencyBadge hoursLeft={rfq.hoursLeft} />
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(rfq.status)}`}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${statusBadge(rfq.status)}`}
                       >
                         {rfq.status}
                       </span>
@@ -337,7 +349,7 @@ export function SellerRFQsPage() {
                         <button
                           type="button"
                           onClick={() => setQuoteModal(rfq)}
-                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white"
+                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
                         >
                           Send Quote
                         </button>
@@ -345,7 +357,7 @@ export function SellerRFQsPage() {
                       <button
                         type="button"
                         onClick={() => setDetail(rfq)}
-                        className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold"
+                        className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         View Details
                       </button>
@@ -358,7 +370,7 @@ export function SellerRFQsPage() {
         </section>
 
         {filtered.length > perPage && (
-          <div className="flex items-center justify-between text-sm text-slate-500">
+          <div className="flex items-center justify-between text-sm text-slate-500 dark:text-gray-400">
             <span>
               Page {page} of {Math.ceil(filtered.length / perPage)}
             </span>
@@ -366,14 +378,14 @@ export function SellerRFQsPage() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage((prev) => prev - 1)}
-                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Previous
               </button>
               <button
                 disabled={page >= Math.ceil(filtered.length / perPage)}
                 onClick={() => setPage((prev) => prev + 1)}
-                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Next
               </button>
@@ -416,9 +428,13 @@ export function SellerRFQsPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
-      <p className="text-xs uppercase text-slate-400">{label}</p>
-      <p className="mt-1 text-xl font-semibold text-slate-800">{value}</p>
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+      <p className="text-xs uppercase text-slate-400 dark:text-gray-500">
+        {label}
+      </p>
+      <p className="mt-1 text-xl font-semibold text-slate-800 dark:text-gray-100">
+        {value}
+      </p>
     </div>
   )
 }
@@ -426,20 +442,35 @@ function StatCard({ label, value }: { label: string; value: string }) {
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-sm font-semibold text-slate-700">{value}</p>
+      <p className="text-xs text-slate-400 dark:text-gray-500">{label}</p>
+      <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
+        {value}
+      </p>
     </div>
   )
 }
 
 function UrgencyBadge({ hoursLeft }: { hoursLeft: number }) {
   if (hoursLeft < 6)
-    return <Badge label="Urgent" className="bg-red-50 text-red-600" />
+    return (
+      <Badge
+        label="Urgent"
+        className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
+      />
+    )
   if (hoursLeft < 12)
     return (
-      <Badge label="Respond Soon" className="bg-orange-50 text-orange-600" />
+      <Badge
+        label="Respond Soon"
+        className="bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400"
+      />
     )
-  return <Badge label="New" className="bg-green-50 text-green-600" />
+  return (
+    <Badge
+      label="New"
+      className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400"
+    />
+  )
 }
 
 function Badge({ label, className }: { label: string; className: string }) {
@@ -456,18 +487,23 @@ function SearchIcon() {
   return (
     <Search
       size={16}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 pointer-events-none"
     />
   )
 }
 
 function statusBadge(status: RFQStatus) {
-  if (status === 'New') return 'bg-orange-50 text-orange-700'
-  if (status === 'Quoted') return 'bg-blue-50 text-blue-700'
-  if (status === 'Accepted') return 'bg-green-50 text-green-700'
-  if (status === 'Rejected') return 'bg-red-50 text-red-600'
-  if (status === 'Expired') return 'bg-slate-100 text-slate-500'
-  return 'bg-purple-50 text-purple-700'
+  if (status === 'New')
+    return 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+  if (status === 'Quoted')
+    return 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+  if (status === 'Accepted')
+    return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+  if (status === 'Rejected')
+    return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
+  if (status === 'Expired')
+    return 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-gray-400'
+  return 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
 }
 
 function RFQDetailPanel({
@@ -481,16 +517,18 @@ function RFQDetailPanel({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/40"
+      className="fixed inset-0 z-50 flex justify-end bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-all"
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-xl bg-white p-6 overflow-y-auto">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 p-6 overflow-y-auto border-l border-slate-200 dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">{rfq.id}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
+            {rfq.id}
+          </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
             aria-label="Close details"
             autoFocus
           >
@@ -502,37 +540,45 @@ function RFQDetailPanel({
             <img
               src={rfq.productImage}
               alt={rfq.product}
-              className="h-16 w-16 rounded-lg object-cover"
+              className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
             />
             <div>
-              <p className="text-sm text-slate-400">Product</p>
-              <p className="text-base font-semibold text-slate-800">
+              <p className="text-sm text-slate-400 dark:text-gray-500">
+                Product
+              </p>
+              <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
                 {rfq.product}
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm text-slate-600">
+          <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 dark:text-gray-300">
             <InfoItem label="Quantity" value={`${rfq.quantity}`} />
             <InfoItem label="Target Price" value={`৳${rfq.targetPrice}`} />
             <InfoItem label="Delivery Location" value={rfq.location} />
             <InfoItem label="Time remaining" value={`${rfq.hoursLeft} hours`} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-700">
+            <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
               Additional Notes
             </p>
-            <p className="mt-1 text-sm text-slate-500">{rfq.notes}</p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
+              {rfq.notes}
+            </p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-700">Attachments</p>
+            <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
+              Attachments
+            </p>
             {rfq.attachments.length === 0 ? (
-              <p className="text-sm text-slate-400 mt-1">No attachments</p>
+              <p className="text-sm text-slate-400 dark:text-gray-500 mt-1">
+                No attachments
+              </p>
             ) : (
               <div className="mt-2 space-y-2">
                 {rfq.attachments.map((file) => (
                   <div
                     key={file}
-                    className="flex items-center gap-2 text-sm text-slate-600"
+                    className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300"
                   >
                     <FileText size={16} />
                     {file}
@@ -542,8 +588,10 @@ function RFQDetailPanel({
             )}
           </div>
           {rfq.buyerStats && (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-              <p className="font-semibold text-slate-700">Buyer history</p>
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-4 text-sm text-slate-600 dark:text-gray-300 transition-colors">
+              <p className="font-semibold text-slate-700 dark:text-gray-200">
+                Buyer history
+              </p>
               <div className="mt-2 grid grid-cols-3 gap-3">
                 <InfoItem
                   label="Past orders"
@@ -561,7 +609,7 @@ function RFQDetailPanel({
             </div>
           )}
           {rfq.counterOffer && (
-            <div className="rounded-xl border border-orange-100 bg-orange-50 p-4 text-sm text-orange-700">
+            <div className="rounded-xl border border-orange-100 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 p-4 text-sm text-orange-700 dark:text-orange-400 transition-colors">
               Buyer countered with ৳{rfq.counterOffer}. Respond with a new offer
               or accept.
             </div>
@@ -570,11 +618,11 @@ function RFQDetailPanel({
             <button
               type="button"
               onClick={onSendQuote}
-              className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
+              className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
             >
               Send Quote
             </button>
-            <button className="rounded-lg border border-slate-200 px-4 py-2 text-sm">
+            <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               Contact Buyer
             </button>
           </div>
@@ -605,54 +653,58 @@ function SendQuoteModal({
 
   return (
     <Modal onClose={onClose} title={`Send Quote for ${rfq.id}`}>
-      <div className="space-y-4 text-sm text-slate-600">
+      <div className="space-y-4 text-sm text-slate-600 dark:text-gray-300">
         <div className="grid md:grid-cols-2 gap-3">
           <input
             value={unitPrice}
             onChange={(event) => setUnitPrice(event.target.value)}
             placeholder="Unit price (৳)"
-            className="rounded-lg border border-slate-200 px-3 py-2"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
           />
-          <div className="rounded-lg border border-slate-200 px-3 py-2 text-slate-700">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-slate-700 dark:text-gray-200 flex items-center transition-colors">
             Total: ৳{total.toLocaleString()}
           </div>
         </div>
         <select
           value={validity}
           onChange={(event) => setValidity(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
         >
-          <option>7 days</option>
-          <option>14 days</option>
-          <option>30 days</option>
+          <option className="dark:bg-slate-950">7 days</option>
+          <option className="dark:bg-slate-950">14 days</option>
+          <option className="dark:bg-slate-950">30 days</option>
         </select>
         <select
           value={paymentTerms}
           onChange={(event) => setPaymentTerms(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
         >
           {PAYMENT_TERMS.map((term) => (
-            <option key={term}>{term}</option>
+            <option key={term} className="dark:bg-slate-950">
+              {term}
+            </option>
           ))}
         </select>
         <select
           value={deliveryTime}
           onChange={(event) => setDeliveryTime(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
         >
           {DELIVERY_TIMES.map((time) => (
-            <option key={time}>{time}</option>
+            <option key={time} className="dark:bg-slate-950">
+              {time}
+            </option>
           ))}
         </select>
         <textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           placeholder="Additional terms & notes"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
           rows={3}
         />
-        <input type="file" className="text-sm" />
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+        <input type="file" className="text-sm dark:text-gray-400" />
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-3 text-xs text-slate-600 dark:text-gray-400 transition-colors">
           Buyer target: ৳{rfq.targetPrice} · Your quote: ৳{unitPrice || '--'}
           {unitPrice && (
             <span
@@ -676,13 +728,13 @@ function SendQuoteModal({
                 notes,
               })
             }
-            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
           >
             Send Quote
           </button>
           <button
             type="button"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-semibold dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             Save as Draft
           </button>
@@ -703,16 +755,18 @@ function Modal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 px-4 backdrop-blur-sm transition-all"
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl border border-slate-200 dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
+            {title}
+          </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
             aria-label="Close modal"
             autoFocus
           >
@@ -727,8 +781,8 @@ function Modal({
 
 function EmptyState() {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
-      <Timer size={28} className="mx-auto text-slate-400" />
+    <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-8 text-center text-slate-500 dark:text-gray-400 transition-colors">
+      <Timer size={28} className="mx-auto text-slate-400 dark:text-gray-500" />
       <p className="mt-3 text-sm">No RFQs match filters</p>
     </div>
   )
@@ -738,7 +792,10 @@ function RfqSkeleton() {
   return (
     <div className="space-y-3">
       {[1, 2, 3].map((row) => (
-        <div key={row} className="h-20 rounded-lg bg-slate-100 animate-pulse" />
+        <div
+          key={row}
+          className="h-20 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse"
+        />
       ))}
     </div>
   )

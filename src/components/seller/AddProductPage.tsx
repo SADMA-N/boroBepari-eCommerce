@@ -239,7 +239,9 @@ export function AddProductPage() {
   useEffect(() => {
     const computeActive = () => {
       // If scrolled to the bottom, activate the last section
-      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 40
       if (atBottom) return SECTION_IDS[SECTION_IDS.length - 1].id
 
       const threshold = window.innerHeight * 0.35
@@ -268,7 +270,10 @@ export function AddProductPage() {
     setActiveSection(computeActive())
 
     window.addEventListener('scroll', onScroll, { passive: true })
-    document.addEventListener('scroll', onScroll, { passive: true, capture: true })
+    document.addEventListener('scroll', onScroll, {
+      passive: true,
+      capture: true,
+    })
     return () => {
       window.removeEventListener('scroll', onScroll)
       document.removeEventListener('scroll', onScroll, { capture: true })
@@ -639,7 +644,10 @@ export function AddProductPage() {
                       onClick={(e) => {
                         e.preventDefault()
                         setActiveSection(section.id)
-                        document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        document.getElementById(section.id)?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        })
                       }}
                       className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                         activeSection === section.id
@@ -742,7 +750,9 @@ export function AddProductPage() {
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Basic Information
                 </h2>
-                <span className="text-xs text-slate-400 dark:text-gray-500">Section 1</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">
+                  Section 1
+                </span>
               </div>
               <Field
                 label="Product Title"
@@ -855,8 +865,12 @@ export function AddProductPage() {
               className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Images</h2>
-                <span className="text-xs text-slate-400 dark:text-gray-500">Section 2</span>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Images
+                </h2>
+                <span className="text-xs text-slate-400 dark:text-gray-500">
+                  Section 2
+                </span>
               </div>
               <div
                 className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 p-4"
@@ -955,7 +969,9 @@ export function AddProductPage() {
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Pricing & Inventory
                 </h2>
-                <span className="text-xs text-slate-400 dark:text-gray-500">Section 3</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">
+                  Section 3
+                </span>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-3">
                 <div>
@@ -1092,7 +1108,9 @@ export function AddProductPage() {
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Specifications
                 </h2>
-                <span className="text-xs text-slate-400 dark:text-gray-500">Section 4</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">
+                  Section 4
+                </span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {specSuggestions.map((spec) => (
@@ -1155,7 +1173,9 @@ export function AddProductPage() {
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Shipping & Delivery
                 </h2>
-                <span className="text-xs text-slate-400 dark:text-gray-500">Section 5</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">
+                  Section 5
+                </span>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <Field
@@ -1240,7 +1260,9 @@ export function AddProductPage() {
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Sample Orders
                 </h2>
-                <span className="text-xs text-slate-400 dark:text-gray-500">Section 6</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">
+                  Section 6
+                </span>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-3">
                 <div>
@@ -1434,7 +1456,11 @@ function Field({
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20"
       />
-      {helper && <p className="mt-1 text-xs text-slate-400 dark:text-gray-500">{helper}</p>}
+      {helper && (
+        <p className="mt-1 text-xs text-slate-400 dark:text-gray-500">
+          {helper}
+        </p>
+      )}
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   )
@@ -1521,7 +1547,9 @@ function Modal({
     >
       <div className="w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            {title}
+          </h2>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 dark:text-gray-500 dark:hover:text-gray-300"

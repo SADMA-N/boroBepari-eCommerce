@@ -15,7 +15,7 @@ const getS3Client = async () => {
   if (!isS3Configured) return null
 
   try {
-    // @ts-ignore
+    // @ts-ignore -- S3Client is a Bun-specific API not in default types
     const { S3Client } = await import('bun')
     s3Client = new S3Client({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -42,10 +42,12 @@ export async function uploadToS3(
 
   if (!s3) {
     // FALLBACK: Local storage for development if S3 is not configured
-    console.warn(`S3 not configured. Saving ${key} to local filesystem (fallback).`)
+    console.warn(
+      `S3 not configured. Saving ${key} to local filesystem (fallback).`,
+    )
     const localPath = path.join(process.cwd(), 'public', 'uploads', key)
     await fs.mkdir(path.dirname(localPath), { recursive: true })
-    
+
     let buffer: Buffer
     if (typeof file === 'string') {
       buffer = Buffer.from(file, 'base64')
@@ -54,7 +56,7 @@ export async function uploadToS3(
     } else {
       buffer = Buffer.from(file)
     }
-    
+
     await fs.writeFile(localPath, buffer)
     return {
       bucket: 'local-fs',
@@ -74,7 +76,7 @@ export async function uploadToS3(
 
 export async function getSignedUrl(key: string, expiresIn: number = 3600) {
   const s3 = await getS3Client()
-  
+
   if (!s3) {
     // FALLBACK: Local URL for development
     return `/uploads/${key}`
@@ -87,7 +89,7 @@ export async function getSignedUrl(key: string, expiresIn: number = 3600) {
 
 export async function deleteFromS3(key: string) {
   const s3 = await getS3Client()
-  
+
   if (!s3) {
     // FALLBACK: Local delete
     const localPath = path.join(process.cwd(), 'public', 'uploads', key)

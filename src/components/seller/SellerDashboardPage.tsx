@@ -2,15 +2,19 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
   AlertTriangle,
+  BadgeCheck,
   BarChart3,
   Box,
+  CheckCircle2,
   ClipboardList,
   DollarSign,
   FileText,
+  Info as InfoIcon,
   LineChart as LineIcon,
   PackagePlus,
   ShoppingCart,
   Sparkles,
+  XCircle,
 } from 'lucide-react'
 import {
   CartesianGrid,
@@ -26,7 +30,6 @@ import {
 } from 'recharts'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
-import { BadgeCheck, CheckCircle2, XCircle, Info as InfoIcon } from 'lucide-react'
 
 type DateRange = 'today' | '7d' | '30d' | 'custom'
 
@@ -699,24 +702,35 @@ function VerificationStatus({ seller }: { seller: any }) {
     <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-start gap-4">
-          <div className={`mt-1 p-3 rounded-xl ${
-            isVerified ? 'bg-green-50 dark:bg-green-900/20 text-green-600' :
-            isRejected ? 'bg-red-50 dark:bg-red-900/20 text-red-600' :
-            'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600'
-          }`}>
-            {isVerified ? <BadgeCheck size={24} /> :
-             isRejected ? <XCircle size={24} /> :
-             <AlertTriangle size={24} />}
+          <div
+            className={`mt-1 p-3 rounded-xl ${
+              isVerified
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-600'
+                : isRejected
+                  ? 'bg-red-50 dark:bg-red-900/20 text-red-600'
+                  : 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600'
+            }`}
+          >
+            {isVerified ? (
+              <BadgeCheck size={24} />
+            ) : isRejected ? (
+              <XCircle size={24} />
+            ) : (
+              <AlertTriangle size={24} />
+            )}
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white transition-colors">
               Account Verification: {status.toUpperCase()}
             </h2>
             <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
-              {isVerified ? 'Your account is fully verified. You have full access to all features.' :
-               isRejected ? 'Your verification was rejected. Please review and resubmit.' :
-               isSubmitted ? 'Your documents are under review. This usually takes 24-48 hours.' :
-               'Complete your profile verification to start selling on BoroBepari.'}
+              {isVerified
+                ? 'Your account is fully verified. You have full access to all features.'
+                : isRejected
+                  ? 'Your verification was rejected. Please review and resubmit.'
+                  : isSubmitted
+                    ? 'Your documents are under review. This usually takes 24-48 hours.'
+                    : 'Complete your profile verification to start selling on BoroBepari.'}
             </p>
           </div>
         </div>

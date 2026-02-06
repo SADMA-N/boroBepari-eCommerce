@@ -389,31 +389,33 @@ export function AdminAuditLogsPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Audit Logs</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+              Audit Logs
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
               Complete record of all admin actions
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <span>Date range</span>
               <input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
               <span className="text-slate-400">to</span>
               <input
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
             </div>
             <button
               onClick={exportCsv}
-              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-all shadow-lg shadow-orange-600/20"
             >
               <Download size={16} />
               Export CSV
@@ -436,26 +438,32 @@ export function AdminAuditLogsPage() {
           </div>
         )}
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search admin, action, target ID"
-                className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <select
                 value={adminFilter}
                 onChange={(e) => setAdminFilter(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
-                <option value="all">Admin: All</option>
+                <option value="all" className="dark:bg-slate-900">
+                  Admin: All
+                </option>
                 {ADMINS.map((admin) => (
-                  <option key={admin.id} value={admin.id}>
+                  <option
+                    key={admin.id}
+                    value={admin.id}
+                    className="dark:bg-slate-900"
+                  >
                     {admin.name} ({admin.role})
                   </option>
                 ))}
@@ -463,10 +471,12 @@ export function AdminAuditLogsPage() {
               <select
                 value={actionFilter}
                 onChange={(e) => setActionFilter(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {ACTION_TYPES.map((action) => (
-                  <option key={action}>{action}</option>
+                  <option key={action} className="dark:bg-slate-900">
+                    {action}
+                  </option>
                 ))}
               </select>
               <select
@@ -474,67 +484,102 @@ export function AdminAuditLogsPage() {
                 onChange={(e) =>
                   setSeverityFilter(e.target.value as 'all' | Severity)
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
-                <option value="all">Severity: All</option>
-                <option value="critical">Critical</option>
-                <option value="high">High</option>
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
+                <option value="all" className="dark:bg-slate-900">
+                  Severity: All
+                </option>
+                <option value="critical" className="dark:bg-slate-900">
+                  Critical
+                </option>
+                <option value="high" className="dark:bg-slate-900">
+                  High
+                </option>
+                <option value="medium" className="dark:bg-slate-900">
+                  Medium
+                </option>
+                <option value="low" className="dark:bg-slate-900">
+                  Low
+                </option>
               </select>
             </div>
           </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Total actions today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Total actions today
+            </p>
+            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
               {totalToday}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Critical actions</p>
-            <p className="mt-2 text-xl font-semibold text-red-600">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Critical actions
+            </p>
+            <p className="mt-2 text-xl font-semibold text-red-600 dark:text-red-400 transition-colors">
               {criticalCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 lg:col-span-2">
-            <p className="text-xs text-slate-500">Actions per admin</p>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 lg:col-span-2 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Actions per admin
+            </p>
             <div className="mt-2 h-24">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={actionCounts}>
-                  <XAxis dataKey="admin" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#f97316" />
+                  <XAxis
+                    dataKey="admin"
+                    tick={{
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                      fontSize: 10,
+                    }}
+                  />
+                  <YAxis
+                    tick={{
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                      fontSize: 10,
+                    }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                      borderColor: isDark ? '#334155' : '#e2e8f0',
+                      color: isDark ? '#f8fafc' : '#0f172a',
+                    }}
+                  />
+                  <Bar dataKey="count" fill="#f97316" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-sm font-semibold text-slate-900">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+          <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
             Most common actions
           </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-4">
+          <div className="mt-3 grid gap-3 sm:grid-cols-4 transition-colors">
             {commonActions.map((item) => (
               <div
                 key={item.label}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 transition-colors"
               >
-                <span className="font-medium text-slate-900">{item.value}</span>{' '}
+                <span className="font-medium text-slate-900 dark:text-slate-200">
+                  {item.value}
+                </span>{' '}
                 {item.label}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                 <tr>
                   <th className="px-4 py-3 text-left">Timestamp</th>
                   <th className="px-4 py-3 text-left">Admin User</th>
@@ -547,26 +592,31 @@ export function AdminAuditLogsPage() {
                   <th className="px-4 py-3 text-right">View Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                 {filtered.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 text-slate-600">
+                  <tr
+                    key={log.id}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {log.timestamp}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {log.adminName}
-                      <span className="ml-2 text-xs text-slate-400">
+                      <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">
                         {log.adminRole}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {log.actionType}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {log.actionDescription}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{log.targetId}</td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
+                      {log.targetId}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {log.ipAddress}
                     </td>
                     <td className="px-4 py-3">{statusBadge(log.status)}</td>
@@ -574,7 +624,7 @@ export function AdminAuditLogsPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => setDetailsLog(log)}
-                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs"
+                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         <Eye size={12} />
                         View Details
@@ -586,7 +636,7 @@ export function AdminAuditLogsPage() {
                   <tr>
                     <td
                       colSpan={9}
-                      className="px-4 py-10 text-center text-slate-500"
+                      className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
                     >
                       No audit logs found.
                     </td>
@@ -597,9 +647,12 @@ export function AdminAuditLogsPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <ShieldAlert size={16} className="text-orange-600" />
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <ShieldAlert
+              size={16}
+              className="text-orange-600 dark:text-orange-500"
+            />
             Logs are immutable and retained per compliance policy. Critical
             actions trigger super admin alerts.
           </div>
@@ -607,23 +660,25 @@ export function AdminAuditLogsPage() {
       </div>
 
       {detailsLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Audit Log Details
                 </h2>
-                <p className="text-sm text-slate-500">{detailsLog.id}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                  {detailsLog.id}
+                </p>
               </div>
               <button
                 onClick={() => setDetailsLog(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-4 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <p>
                 <strong>Admin:</strong> {detailsLog.adminName} (
                 {detailsLog.adminRole})
@@ -648,27 +703,31 @@ export function AdminAuditLogsPage() {
                 <strong>User Agent:</strong> {detailsLog.userAgent}
               </p>
               {detailsLog.errorMessage && (
-                <p className="text-red-600">
+                <p className="text-red-600 dark:text-red-400">
                   <strong>Error:</strong> {detailsLog.errorMessage}
                 </p>
               )}
               <div>
-                <p className="font-medium text-slate-900">Before State</p>
-                <pre className="mt-2 rounded-lg bg-slate-900 p-3 text-xs text-slate-100 overflow-auto">
+                <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                  Before State
+                </p>
+                <pre className="mt-2 rounded-lg bg-slate-900 dark:bg-slate-950 p-3 text-xs text-slate-100 dark:text-slate-300 overflow-auto border dark:border-slate-800 transition-colors">
                   {JSON.stringify(detailsLog.beforeState, null, 2)}
                 </pre>
               </div>
               <div>
-                <p className="font-medium text-slate-900">After State</p>
-                <pre className="mt-2 rounded-lg bg-slate-900 p-3 text-xs text-slate-100 overflow-auto">
+                <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                  After State
+                </p>
+                <pre className="mt-2 rounded-lg bg-slate-900 dark:bg-slate-950 p-3 text-xs text-slate-100 dark:text-slate-300 overflow-auto border dark:border-slate-800 transition-colors">
                   {JSON.stringify(detailsLog.afterState, null, 2)}
                 </pre>
               </div>
             </div>
-            <div className="flex items-center justify-end border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setDetailsLog(null)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Close
               </button>

@@ -451,15 +451,15 @@ export function AdminDisputesPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               Dispute Resolution
             </h1>
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600">
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <span
-                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   openCount > 0
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-slate-100 text-slate-600'
+                    ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                 }`}
               >
                 {openCount} open disputes
@@ -471,7 +471,7 @@ export function AdminDisputesPage() {
               </span>
             </div>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm text-slate-700">
+          <button className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <ChevronDown size={16} />
             Export
           </button>
@@ -491,14 +491,16 @@ export function AdminDisputesPage() {
               <button
                 key={tab.value}
                 onClick={() => setActiveTab(tab.value)}
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm ${
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
                   activeTab === tab.value
-                    ? 'border-orange-500 bg-orange-50 text-orange-700'
-                    : 'border-slate-200 text-slate-600'
+                    ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`}
               >
                 {tab.label}
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}
+                >
                   {count}
                 </span>
               </button>
@@ -506,15 +508,15 @@ export function AdminDisputesPage() {
           })}
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by order, buyer, seller"
-                className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -523,11 +525,17 @@ export function AdminDisputesPage() {
                 onChange={(e) =>
                   setIssueFilter(e.target.value as IssueType | 'all')
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
-                <option value="all">Issue Type: All</option>
+                <option value="all" className="dark:bg-slate-900">
+                  Issue Type: All
+                </option>
                 {ISSUE_TYPES.map((issue) => (
-                  <option key={issue} value={issue}>
+                  <option
+                    key={issue}
+                    value={issue}
+                    className="dark:bg-slate-900"
+                  >
                     {issue}
                   </option>
                 ))}
@@ -537,36 +545,42 @@ export function AdminDisputesPage() {
                 onChange={(e) =>
                   setPriorityFilter(e.target.value as Priority | 'all')
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
-                <option value="all">Priority: All</option>
-                <option value="normal">Priority: Normal</option>
-                <option value="high">Priority: High</option>
+                <option value="all" className="dark:bg-slate-900">
+                  Priority: All
+                </option>
+                <option value="normal" className="dark:bg-slate-900">
+                  Priority: Normal
+                </option>
+                <option value="high" className="dark:bg-slate-900">
+                  Priority: High
+                </option>
               </select>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 Date range
               </div>
               <input
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
               <span className="text-sm text-slate-400">to</span>
               <input
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                 <tr>
                   <th className="px-4 py-3 text-left">Dispute ID</th>
                   <th className="px-4 py-3 text-left">Order Number</th>
@@ -580,42 +594,45 @@ export function AdminDisputesPage() {
                   <th className="px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                 {sortedDisputes.map((dispute) => (
-                  <tr key={dispute.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-900">
+                  <tr
+                    key={dispute.id}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {dispute.id}
                     </td>
-                    <td className="px-4 py-3 text-slate-700">
-                      <button className="text-orange-600 hover:text-orange-700">
+                    <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                      <button className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors">
                         {dispute.orderNumber}
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {dispute.buyer.name}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {dispute.seller.name}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {dispute.issueType}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {dispute.filedDate}
                     </td>
                     <td className="px-4 py-3">
                       {dispute.priority === 'high' ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs text-red-700">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/20 px-2 py-1 text-xs text-red-700 dark:text-red-400 transition-colors">
                           <Flag size={12} />
                           High
                         </span>
                       ) : (
-                        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">
+                        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs text-slate-600 dark:text-slate-400 transition-colors">
                           Normal
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                       {dispute.assignedTo || 'Unassigned'}
                     </td>
                     <td className="px-4 py-3">{statusBadge(dispute.status)}</td>
@@ -623,7 +640,7 @@ export function AdminDisputesPage() {
                       <button
                         onClick={() => setSelectedDispute(dispute)}
                         disabled={!canView}
-                        className="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-700"
+                        className="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-700 transition-all shadow-lg shadow-orange-600/20"
                       >
                         Review
                       </button>
@@ -634,7 +651,7 @@ export function AdminDisputesPage() {
                   <tr>
                     <td
                       colSpan={10}
-                      className="px-4 py-10 text-center text-slate-500"
+                      className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
                     >
                       No disputes found.
                     </td>
@@ -646,43 +663,53 @@ export function AdminDisputesPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-5">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Open disputes</p>
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Open disputes
+            </p>
             <p
-              className={`mt-2 text-xl font-semibold ${stats.open > 10 ? 'text-red-600' : 'text-slate-900'}`}
+              className={`mt-2 text-xl font-semibold transition-colors ${stats.open > 10 ? 'text-red-600 dark:text-red-400' : 'text-slate-900 dark:text-white'}`}
             >
               {stats.open}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Resolved today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Resolved today
+            </p>
+            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
               {stats.resolvedToday}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Average resolution</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Average resolution
+            </p>
+            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
               {stats.avgResolution}h
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">Refund issued today</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              Refund issued today
+            </p>
+            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
               ₹{stats.refundToday.toLocaleString()}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-xs text-slate-500">My disputes resolved</p>
-            <p className="mt-2 text-xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+              My disputes resolved
+            </p>
+            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
               {stats.myResolved}
             </p>
           </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Common Dispute Reasons
             </h3>
             <div className="mt-3 h-44">
@@ -706,56 +733,84 @@ export function AdminDisputesPage() {
                       />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                      borderColor: isDark ? '#334155' : '#e2e8f0',
+                      color: isDark ? '#f8fafc' : '#0f172a',
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Disputes by Seller
             </h3>
             <div className="mt-3 space-y-2">
               {sellerDisputes.map((seller) => (
                 <div
                   key={seller.name}
-                  className="flex items-center justify-between text-sm text-slate-600"
+                  className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400 transition-colors"
                 >
                   <span>{seller.name}</span>
-                  <span className="font-medium text-slate-900">
+                  <span className="font-medium text-slate-900 dark:text-slate-200">
                     {seller.count}
                   </span>
                 </div>
               ))}
             </div>
-            <h3 className="mt-4 text-sm font-semibold text-slate-900">
+            <h3 className="mt-4 text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Disputes by Buyer
             </h3>
             <div className="mt-3 space-y-2">
               {buyerDisputes.map((buyer) => (
                 <div
                   key={buyer.name}
-                  className="flex items-center justify-between text-sm text-slate-600"
+                  className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400 transition-colors"
                 >
                   <span>{buyer.name}</span>
-                  <span className="font-medium text-slate-900">
+                  <span className="font-medium text-slate-900 dark:text-slate-200">
                     {buyer.count}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Refund Rate Trend
             </h3>
             <div className="mt-3 h-44">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={REFUND_TRENDS}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
+                  <XAxis
+                    dataKey="month"
+                    tick={{
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                      fontSize: 12,
+                    }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
+                  <YAxis
+                    tick={{
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                      fontSize: 12,
+                    }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                      borderColor: isDark ? '#334155' : '#e2e8f0',
+                      color: isDark ? '#f8fafc' : '#0f172a',
+                    }}
+                  />
                   <Line
                     type="monotone"
                     dataKey="refund"
@@ -770,38 +825,38 @@ export function AdminDisputesPage() {
       </div>
 
       {selectedDispute && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80">
+        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm transition-all">
           <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-6 py-4 text-white">
+            <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900 px-6 py-4 text-white transition-colors">
               <div>
-                <h2 className="text-lg font-semibold">
+                <h2 className="text-lg font-semibold transition-colors">
                   Dispute Review - {selectedDispute.id}
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 transition-colors">
                   Order {selectedDispute.orderNumber}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setAssignOpen(true)}
-                  className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs"
+                  className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-800 transition-colors"
                 >
                   Assign to Me
                 </button>
                 <button
                   onClick={() => setSelectedDispute(null)}
-                  className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs"
+                  className="rounded-lg border border-slate-700 px-3 py-1.5 text-xs hover:bg-slate-800 transition-colors"
                 >
                   Close
                 </button>
               </div>
             </div>
-            <div className="flex flex-1 overflow-hidden">
-              <div className="w-full lg:w-1/3 bg-white p-6 overflow-y-auto border-r border-slate-200">
-                <h3 className="text-sm font-semibold text-slate-900">
+            <div className="flex flex-1 overflow-hidden transition-colors">
+              <div className="w-full lg:w-1/3 bg-white dark:bg-slate-900 p-6 overflow-y-auto border-r border-slate-200 dark:border-slate-800 transition-colors">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                   Dispute Information
                 </h3>
-                <div className="mt-3 space-y-2 text-sm text-slate-600">
+                <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                   <p>
                     <strong>Dispute ID:</strong> {selectedDispute.id}
                   </p>
@@ -824,9 +879,11 @@ export function AdminDisputesPage() {
                 </div>
                 <div className="mt-6 space-y-4">
                   <div>
-                    <h4 className="text-xs uppercase text-slate-400">Buyer</h4>
-                    <div className="mt-2 text-sm text-slate-600">
-                      <p className="font-medium text-slate-900">
+                    <h4 className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                      Buyer
+                    </h4>
+                    <div className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                      <p className="font-medium text-slate-900 dark:text-slate-200">
                         {selectedDispute.buyer.name}
                       </p>
                       <p>{selectedDispute.buyer.email}</p>
@@ -836,9 +893,11 @@ export function AdminDisputesPage() {
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-xs uppercase text-slate-400">Seller</h4>
-                    <div className="mt-2 text-sm text-slate-600">
-                      <p className="font-medium text-slate-900">
+                    <h4 className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                      Seller
+                    </h4>
+                    <div className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                      <p className="font-medium text-slate-900 dark:text-slate-200">
                         {selectedDispute.seller.name}
                       </p>
                       <p>{selectedDispute.seller.email}</p>
@@ -850,37 +909,37 @@ export function AdminDisputesPage() {
                   </div>
                 </div>
               </div>
-              <div className="w-full lg:w-2/5 bg-slate-50 p-6 overflow-y-auto border-r border-slate-200">
-                <h3 className="text-sm font-semibold text-slate-900">
+              <div className="w-full lg:w-2/5 bg-slate-50 dark:bg-slate-950 p-6 overflow-y-auto border-r border-slate-200 dark:border-slate-800 transition-colors">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                   Evidence & Timeline
                 </h3>
-                <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4">
-                  <p className="text-sm text-slate-600">
+                <div className="mt-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     {selectedDispute.description}
                   </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {selectedDispute.evidence.images.map((img) => (
                       <div
                         key={img}
-                        className="flex h-24 items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+                        className="flex h-24 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors"
                       >
                         <FileText size={20} />
                       </div>
                     ))}
                   </div>
                   {selectedDispute.evidence.documents.length > 0 && (
-                    <div className="mt-3 space-y-1 text-xs text-slate-500">
+                    <div className="mt-3 space-y-1 text-xs text-slate-500 dark:text-slate-500 transition-colors">
                       {selectedDispute.evidence.documents.map((doc) => (
                         <p key={doc}>{doc}</p>
                       ))}
                     </div>
                   )}
                 </div>
-                <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-                  <h4 className="text-sm font-semibold text-slate-900">
+                <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+                  <h4 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                     Order Details
                   </h4>
-                  <div className="mt-2 text-sm text-slate-600">
+                  <div className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                     <p>
                       Amount paid: ₹
                       {selectedDispute.amountPaid.toLocaleString()}
@@ -891,7 +950,7 @@ export function AdminDisputesPage() {
                       {selectedDispute.products.map((item) => (
                         <div
                           key={item.name}
-                          className="flex items-center justify-between text-xs text-slate-500"
+                          className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500 transition-colors"
                         >
                           <span>{item.name}</span>
                           <span>
@@ -902,171 +961,175 @@ export function AdminDisputesPage() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-                  <h4 className="text-sm font-semibold text-slate-900">
+                <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+                  <h4 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                     Timeline
                   </h4>
-                  <div className="mt-2 space-y-2 text-sm text-slate-600">
+                  <div className="mt-2 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                     {selectedDispute.timeline.map((step) => (
                       <div
                         key={step.id}
-                        className="flex items-center justify-between"
+                        className="flex items-center justify-between transition-colors"
                       >
                         <span>{step.label}</span>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
                           {step.time}
                         </span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-slate-900">
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                       Conversation Thread
                     </h4>
-                    <button className="text-xs text-orange-600">
+                    <button className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 transition-colors">
                       Add Comment
                     </button>
                   </div>
-                  <div className="mt-2 space-y-2 text-sm text-slate-600">
+                  <div className="mt-2 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                     {selectedDispute.conversation.map((msg) => (
                       <div
                         key={msg.id}
-                        className="rounded-lg border border-slate-200 px-3 py-2"
+                        className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
                       >
-                        <p className="font-medium text-slate-900">
+                        <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
                           {msg.author}
                         </p>
                         <p>{msg.message}</p>
-                        <p className="text-xs text-slate-400">{msg.time}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
+                          {msg.time}
+                        </p>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="w-full lg:w-1/3 bg-white p-6 overflow-y-auto">
-                <h3 className="text-sm font-semibold text-slate-900">
+              <div className="w-full lg:w-1/3 bg-white dark:bg-slate-900 p-6 overflow-y-auto transition-colors">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                   Resolution Actions
                 </h3>
                 <div className="mt-3 space-y-4">
-                  <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-medium text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       Full Refund
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
                       Refund amount: ₹
                       {selectedDispute.amountPaid.toLocaleString()}
                     </p>
                     <button
                       onClick={() => setFullRefundOpen(true)}
                       disabled={!canResolve}
-                      className="mt-2 w-full rounded-lg bg-green-600 px-3 py-2 text-sm text-white"
+                      className="mt-2 w-full rounded-lg bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/20"
                     >
                       Process Full Refund
                     </button>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 space-y-2 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       Partial Refund
                     </p>
                     <input
                       value={partialAmount}
                       onChange={(e) => setPartialAmount(e.target.value)}
                       placeholder="Refund amount"
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                     />
                     <input
                       value={partialReason}
                       onChange={(e) => setPartialReason(e.target.value)}
                       placeholder="Reason/justification"
-                      className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                     />
                     <button
                       onClick={() => setPartialRefundOpen(true)}
                       disabled={!canResolve}
-                      className="w-full rounded-lg bg-orange-600 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg bg-orange-600 px-3 py-2 text-sm text-white hover:bg-orange-700 transition-all shadow-lg shadow-orange-600/20"
                     >
                       Process Partial Refund
                     </button>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 space-y-2 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       Reject Dispute
                     </p>
                     <button
                       onClick={() => setRejectOpen(true)}
                       disabled={!canResolve}
-                      className="w-full rounded-lg bg-red-600 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 transition-all shadow-lg shadow-red-600/20"
                     >
                       Reject Dispute
                     </button>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 space-y-2 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       Request More Info
                     </p>
                     <button
                       onClick={() => setRequestInfoOpen(true)}
                       disabled={!canResolve}
-                      className="w-full rounded-lg bg-blue-600 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
                     >
                       Send Request
                     </button>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4 space-y-2">
-                    <p className="text-sm font-medium text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 space-y-2 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       Escalate
                     </p>
                     <button
                       onClick={() => setEscalateOpen(true)}
                       disabled={!canResolve}
-                      className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg bg-slate-900 dark:bg-slate-800 px-3 py-2 text-sm text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
                     >
                       Escalate Dispute
                     </button>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-medium text-slate-900">Escrow</p>
-                    <p className="text-xs text-slate-500">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                      Escrow
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
                       Escrow amount: ₹
                       {selectedDispute.escrowAmount.toLocaleString()}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                      <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                         Release to seller
                       </button>
-                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                      <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                         Release to buyer
                       </button>
-                      <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                      <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                         Split escrow
                       </button>
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-900">
+                    <label className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                       Admin Notes
                     </label>
                     <textarea
                       value={adminNote}
                       onChange={(e) => setAdminNote(e.target.value)}
                       placeholder="Internal notes"
-                      className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                       rows={3}
                     />
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4">
-                    <h4 className="text-sm font-semibold text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                       Audit Trail
                     </h4>
-                    <div className="mt-2 space-y-2 text-xs text-slate-500">
+                    <div className="mt-2 space-y-2 text-xs text-slate-500 dark:text-slate-500 transition-colors">
                       {selectedDispute.auditTrail.map((entry) => (
                         <div
                           key={entry.id}
-                          className="rounded-lg border border-slate-200 px-3 py-2"
+                          className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
                         >
-                          <p className="font-medium text-slate-900">
+                          <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
                             {entry.action}
                           </p>
                           <p>
@@ -1085,44 +1148,48 @@ export function AdminDisputesPage() {
       )}
 
       {fullRefundOpen && selectedDispute && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <DollarSign className="text-green-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <DollarSign
+                  className="text-green-600 dark:text-green-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Issue full refund of ₹
                   {selectedDispute.amountPaid.toLocaleString()}?
                 </h2>
               </div>
               <button
                 onClick={() => setFullRefundOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600 space-y-2">
+            <div className="px-6 py-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 transition-colors">
               <p>Reason: {selectedDispute.issueType}</p>
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={fullRefundNotify}
                   onChange={(e) => setFullRefundNotify(e.target.checked)}
+                  className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500 transition-colors"
                 />
                 Notify buyer and seller
               </label>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setFullRefundOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setFullRefundOpen(false)}
-                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20"
               >
                 Confirm Refund
               </button>
@@ -1132,23 +1199,26 @@ export function AdminDisputesPage() {
       )}
 
       {partialRefundOpen && selectedDispute && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Scale className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <Scale
+                  className="text-orange-600 dark:text-orange-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Confirm Partial Refund
                 </h2>
               </div>
               <button
                 onClick={() => setPartialRefundOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600 space-y-2">
+            <div className="px-6 py-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 transition-colors">
               <p>₹{partialAmount || 0} refunded to buyer</p>
               <p>
                 ₹
@@ -1159,16 +1229,16 @@ export function AdminDisputesPage() {
                 released to seller
               </p>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setPartialRefundOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setPartialRefundOpen(false)}
-                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
               >
                 Confirm Partial Refund
               </button>
@@ -1178,52 +1248,58 @@ export function AdminDisputesPage() {
       )}
 
       {rejectOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Ban className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <Ban className="text-red-600 dark:text-red-500" size={20} />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Reject Dispute
                 </h2>
               </div>
               <button
                 onClick={() => setRejectOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <select
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
               >
-                <option>Insufficient evidence</option>
-                <option>Buyer misuse</option>
-                <option>Order as described</option>
-                <option>Shipping issue (not seller fault)</option>
-                <option>Other</option>
+                <option className="dark:bg-slate-900">
+                  Insufficient evidence
+                </option>
+                <option className="dark:bg-slate-900">Buyer misuse</option>
+                <option className="dark:bg-slate-900">
+                  Order as described
+                </option>
+                <option className="dark:bg-slate-900">
+                  Shipping issue (not seller fault)
+                </option>
+                <option className="dark:bg-slate-900">Other</option>
               </select>
               <textarea
                 value={rejectDetails}
                 onChange={(e) => setRejectDetails(e.target.value)}
                 placeholder="Detailed explanation"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setRejectOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setRejectOpen(false)}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
               >
                 Reject Dispute
               </button>
@@ -1233,59 +1309,62 @@ export function AdminDisputesPage() {
       )}
 
       {requestInfoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <MessageSquare className="text-blue-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <MessageSquare
+                  className="text-blue-600 dark:text-blue-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Request More Info
                 </h2>
               </div>
               <button
                 onClick={() => setRequestInfoOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <select
                 value={requestRecipient}
                 onChange={(e) => setRequestRecipient(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
               >
-                <option>Buyer</option>
-                <option>Seller</option>
-                <option>Both</option>
+                <option className="dark:bg-slate-900">Buyer</option>
+                <option className="dark:bg-slate-900">Seller</option>
+                <option className="dark:bg-slate-900">Both</option>
               </select>
               <select
                 value={requestDeadline}
                 onChange={(e) => setRequestDeadline(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
               >
-                <option>24 hours</option>
-                <option>48 hours</option>
-                <option>72 hours</option>
+                <option className="dark:bg-slate-900">24 hours</option>
+                <option className="dark:bg-slate-900">48 hours</option>
+                <option className="dark:bg-slate-900">72 hours</option>
               </select>
               <textarea
                 value={requestMessage}
                 onChange={(e) => setRequestMessage(e.target.value)}
                 placeholder="What info is needed?"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setRequestInfoOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setRequestInfoOpen(false)}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
               >
                 Send Request
               </button>
@@ -1295,41 +1374,44 @@ export function AdminDisputesPage() {
       )}
 
       {escalateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <AlertTriangle
+                  className="text-orange-600 dark:text-orange-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Escalate Dispute
                 </h2>
               </div>
               <button
                 onClick={() => setEscalateOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <textarea
                 value={escalateReason}
                 onChange={(e) => setEscalateReason(e.target.value)}
                 placeholder="Escalation reason"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setEscalateOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setEscalateOpen(false)}
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors shadow-lg"
               >
                 Escalate
               </button>
@@ -1339,35 +1421,38 @@ export function AdminDisputesPage() {
       )}
 
       {assignOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <User className="text-slate-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <User
+                  className="text-slate-600 dark:text-slate-400"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Assignment
                 </h2>
               </div>
               <button
                 onClick={() => setAssignOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600">
+            <div className="px-6 py-5 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               Assigning will prevent other admins from editing this dispute.
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setAssignOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setAssignOpen(false)}
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors shadow-lg"
               >
                 Assign to Me
               </button>

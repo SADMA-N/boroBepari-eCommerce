@@ -11,7 +11,10 @@ export const authMiddleware = createMiddleware().server(
       const session = await auth.api.getSession({ headers: request.headers })
       return next({ context: { session, headers: request.headers } })
     } catch (error) {
-      console.error('Failed to get session in middleware:', (error as Error).message)
+      console.error(
+        'Failed to get session in middleware:',
+        (error as Error).message,
+      )
       return next({ context: { session: null, headers: request.headers } })
     }
   },
@@ -59,6 +62,44 @@ export const setUserPassword = createServerFn({ method: 'POST' })
     })
 
     return { success: true }
+  })
+
+export const updateUserPassword = createServerFn({ method: 'POST' })
+  .inputValidator((data: any) => {
+    return z
+      .object({
+        currentPassword: z.string().min(1, 'Current password is required'),
+        newPassword: z
+          .string()
+          .min(8, 'Password must be at least 8 characters')
+          .regex(
+            /^(?=.*[a-zA-Z])(?=.*\d).+$/,
+            'Password must include both letters and numbers',
+          ),
+      })
+      .parse(data)
+  })
+  .middleware([authMiddleware])
+  .handler(async ({ data, context }) => {
+    const { session, headers } = context
+    if (!session) throw new Error('Unauthorized')
+
+    try {
+      await auth.api.changePassword({
+        body: {
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+          revokeOtherSessions: true,
+        },
+        headers: headers,
+      })
+      return { success: true }
+    } catch (err: any) {
+      if (err.message?.includes('password') || err.status === 400) {
+        throw new Error('Incorrect current password')
+      }
+      throw err
+    }
   })
 
 export const checkUserPasswordStatus = createServerFn({ method: 'GET' })

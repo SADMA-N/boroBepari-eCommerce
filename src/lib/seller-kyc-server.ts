@@ -1,9 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
-import { eq, desc, and } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { sellerAuthMiddleware } from './seller-auth-server'
 import { adminAuthMiddleware } from './admin-auth-server'
-import { uploadToS3, getSignedUrl, BUCKET_NAME } from './s3'
+import { BUCKET_NAME, getSignedUrl, uploadToS3 } from './s3'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
 
@@ -82,10 +82,12 @@ export const submitSellerKyc = createServerFn({ method: 'POST' })
     const { description, categories, inventoryRange, documents } = data
 
     // Process all documents
-    const docEntries = Object.entries(documents) as [
-      schema.SellerDocument['documentType'],
-      z.infer<typeof documentSchema> | undefined,
-    ][]
+    const docEntries = Object.entries(documents) as Array<
+      [
+        schema.SellerDocument['documentType'],
+        z.infer<typeof documentSchema> | undefined,
+      ]
+    >
 
     const uploadPromises = docEntries
       .filter(([_, doc]) => !!doc)
@@ -143,8 +145,8 @@ export const getKycReviewQueue = createServerFn({ method: 'GET' })
 
     return queue.map((seller) => {
       // Get unique document types
-      const uniqueTypes = new Set(seller.documents.map(d => d.documentType));
-      
+      const uniqueTypes = new Set(seller.documents.map((d) => d.documentType))
+
       return {
         id: seller.id,
         businessName: seller.businessName,
@@ -177,13 +179,21 @@ export const getSellerKycDetails = createServerFn({ method: 'GET' })
     }
 
     // Deduplicate documents (keep latest of each type)
-    const latestDocs = seller.documents.reduce((acc, current) => {
-      const existing = acc.find(d => d.documentType === current.documentType);
-      if (!existing || current.uploadedAt > existing.uploadedAt) {
-        return [...acc.filter(d => d.documentType !== current.documentType), current];
-      }
-      return acc;
-    }, [] as typeof seller.documents);
+    const latestDocs = seller.documents.reduce(
+      (acc, current) => {
+        const existing = acc.find(
+          (d) => d.documentType === current.documentType,
+        )
+        if (!existing || current.uploadedAt > existing.uploadedAt) {
+          return [
+            ...acc.filter((d) => d.documentType !== current.documentType),
+            current,
+          ]
+        }
+        return acc
+      },
+      [] as typeof seller.documents,
+    )
 
     // Generate signed URLs for each document
     const documentsWithUrls = await Promise.all(

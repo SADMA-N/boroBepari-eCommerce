@@ -527,12 +527,12 @@ export function AdminProductsPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               Product Moderation
             </h1>
-            <div className="mt-2 flex items-center gap-3 text-sm text-slate-600">
+            <div className="mt-2 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <span>Total: {totalProducts} products</span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-xs text-red-700">
+              <span className="inline-flex items-center gap-2 rounded-full bg-red-100 dark:bg-red-900/20 px-3 py-1 text-xs font-medium text-red-700 dark:text-red-400 transition-colors">
                 <Flag size={12} />
                 {flaggedCount} flagged
               </span>
@@ -593,33 +593,43 @@ export function AdminProductsPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Total Products</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Total Products
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {totalProducts}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Published</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Published
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {publishedCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Flagged</p>
-            <p className="mt-2 text-2xl font-semibold text-red-600">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Flagged
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-red-600 dark:text-red-400 transition-colors">
               {flaggedCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Suspended</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Suspended
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {suspendedCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Out of Stock</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Out of Stock
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {outOfStockCount}
             </p>
           </div>
@@ -630,15 +640,17 @@ export function AdminProductsPage() {
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`rounded-full border px-4 py-2 text-sm ${
+              className={`rounded-full border px-4 py-2 text-sm transition-colors ${
                 activeTab === tab.value
-                  ? 'border-orange-500 bg-orange-50 text-orange-700'
-                  : 'border-slate-200 text-slate-600'
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {tab.label}
               {tab.value === 'flagged' && (
-                <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
+                <span
+                  className={`ml-2 rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'}`}
+                >
                   {flaggedCount}
                 </span>
               )}
@@ -646,30 +658,36 @@ export function AdminProductsPage() {
           ))}
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by product name, SKU, supplier"
-                className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600">
+              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <Filter size={16} />
                 Filters
               </div>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
-                <option value="all">Category: All</option>
+                <option value="all" className="dark:bg-slate-900">
+                  Category: All
+                </option>
                 {CATEGORIES.map((category) => (
-                  <option key={category} value={category}>
+                  <option
+                    key={category}
+                    value={category}
+                    className="dark:bg-slate-900"
+                  >
                     {category}
                   </option>
                 ))}
@@ -678,9 +696,9 @@ export function AdminProductsPage() {
                 value={supplierFilter}
                 onChange={(e) => setSupplierFilter(e.target.value)}
                 placeholder="Supplier search"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 Price
               </div>
               <input
@@ -688,22 +706,26 @@ export function AdminProductsPage() {
                 value={priceMin}
                 onChange={(e) => setPriceMin(e.target.value)}
                 placeholder="Min"
-                className="w-20 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="w-20 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
               <input
                 type="number"
                 value={priceMax}
                 onChange={(e) => setPriceMax(e.target.value)}
                 placeholder="Max"
-                className="w-20 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="w-20 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
               <select
                 value={stockFilter}
                 onChange={(e) => setStockFilter(e.target.value as StockFilter)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {STOCK_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Stock: {option.label}
                   </option>
                 ))}
@@ -711,10 +733,14 @@ export function AdminProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {SORT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Sort by: {option.label}
                   </option>
                 ))}
@@ -722,64 +748,66 @@ export function AdminProductsPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-slate-600">Date added</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              Date added
+            </span>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
             <span className="text-sm text-slate-400">to</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
           </div>
         </div>
 
         {selectedIds.length > 0 && (
-          <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-orange-800">
+          <div className="rounded-xl border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 flex flex-wrap items-center gap-2 transition-colors">
+            <span className="text-sm text-orange-800 dark:text-orange-400">
               {selectedIds.length} selected
             </span>
             <button
               disabled={!canModerate}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Bulk Publish
             </button>
             <button
               disabled={!canModerate}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Bulk Suspend
             </button>
             <button
               onClick={() => setBulkDeleteOpen(true)}
               disabled={!canDelete}
-              className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white"
+              className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700 transition-all shadow-lg shadow-red-600/20"
             >
               Bulk Delete
             </button>
             <button
               onClick={() => setBulkCategoryOpen(true)}
               disabled={!canModerate}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm disabled:opacity-50"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Bulk Category
             </button>
-            <button className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+            <button className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               Bulk Export
             </button>
           </div>
         )}
 
-        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                 <tr>
                   <th className="px-4 py-3 text-left">
                     <input
@@ -789,6 +817,7 @@ export function AdminProductsPage() {
                         sortedProducts.every((p) => selectedIds.includes(p.id))
                       }
                       onChange={toggleSelectAll}
+                      className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                     />
                   </th>
                   <th className="px-4 py-3 text-left">Product</th>
@@ -803,24 +832,25 @@ export function AdminProductsPage() {
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                 {sortedProducts.map((product) => {
                   const rowTone =
                     product.status === 'suspended'
-                      ? 'bg-red-50'
+                      ? 'bg-red-50 dark:bg-red-900/10'
                       : product.flags > 0
-                        ? 'bg-yellow-50'
+                        ? 'bg-yellow-50 dark:bg-yellow-900/10'
                         : ''
                   return (
                     <tr
                       key={product.id}
-                      className={`${rowTone} hover:bg-slate-50`}
+                      className={`${rowTone} hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors`}
                     >
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selectedIds.includes(product.id)}
                           onChange={() => toggleSelectOne(product.id)}
+                          className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -830,50 +860,52 @@ export function AdminProductsPage() {
                             setDetailTab('info')
                           }}
                           disabled={!canView}
-                          className="flex items-center gap-3 text-left"
+                          className="flex items-center gap-3 text-left disabled:opacity-50"
                         >
-                          <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                          <div className="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors">
                             <Image size={16} />
                           </div>
                           <div>
-                            <p className="font-medium text-slate-900">
+                            <p className="font-medium text-slate-900 dark:text-slate-100 transition-colors">
                               {product.name}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 dark:text-slate-500">
                               {product.id}
                             </p>
                           </div>
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {product.sku}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {product.supplier}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {product.category}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {formatCurrency(product.price)} / MOQ {product.moq}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">
+                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {product.stock}
                       </td>
                       <td className="px-4 py-3">
                         {statusBadge(product.status)}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">
+                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {product.orders}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {product.flags > 0 ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/20 px-2 py-0.5 text-xs text-red-700 dark:text-red-400 transition-colors">
                             <Flag size={12} />
                             {product.flags}
                           </span>
                         ) : (
-                          <span className="text-xs text-slate-400">0</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500">
+                            0
+                          </span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -884,7 +916,7 @@ export function AdminProductsPage() {
                                 openMenuId === product.id ? null : product.id,
                               )
                             }
-                            className="rounded-lg p-2 hover:bg-slate-100"
+                            className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
                           >
                             <MoreVertical size={16} />
                           </button>
@@ -894,13 +926,13 @@ export function AdminProductsPage() {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setOpenMenuId(null)}
                               />
-                              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg">
+                              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg transition-colors overflow-hidden">
                                 <a
                                   href={`/products/${product.id}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                 >
                                   <Eye size={14} />
                                   View on Marketplace
@@ -908,7 +940,7 @@ export function AdminProductsPage() {
                                 <button
                                   onClick={() => setOpenMenuId(null)}
                                   disabled={!canModerate}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Edit3 size={14} />
                                   Edit Product
@@ -917,7 +949,7 @@ export function AdminProductsPage() {
                                   <button
                                     onClick={() => setOpenMenuId(null)}
                                     disabled={!canModerate}
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                   >
                                     <CheckCircle size={14} />
                                     Activate Product
@@ -929,7 +961,7 @@ export function AdminProductsPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canModerate}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Product
@@ -941,14 +973,14 @@ export function AdminProductsPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canModerate}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Flag size={14} />
                                   View Reports/Flags
                                 </button>
                                 <button
                                   onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                 >
                                   <FileText size={14} />
                                   View Orders for Product
@@ -959,7 +991,7 @@ export function AdminProductsPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canDelete}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors disabled:opacity-50"
                                 >
                                   <Trash2 size={14} />
                                   Delete Product
@@ -976,7 +1008,7 @@ export function AdminProductsPage() {
                   <tr>
                     <td
                       colSpan={11}
-                      className="px-4 py-10 text-center text-slate-500"
+                      className="px-4 py-10 text-center text-slate-500 dark:text-slate-400 transition-colors"
                     >
                       No products found.
                     </td>
@@ -988,33 +1020,35 @@ export function AdminProductsPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Category Breakdown
             </h3>
             <div className="mt-3 space-y-2">
               {categoryBreakdown.map((item) => (
                 <div
                   key={item.category}
-                  className="flex items-center justify-between text-sm"
+                  className="flex items-center justify-between text-sm transition-colors"
                 >
-                  <span className="text-slate-600">{item.category}</span>
-                  <span className="text-slate-900 font-medium">
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {item.category}
+                  </span>
+                  <span className="text-slate-900 dark:text-slate-200 font-medium">
                     {item.count}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Most Popular Categories
             </h3>
             <div className="mt-3 space-y-2">
               {popularCategories.map((item) => (
                 <div
                   key={item.category}
-                  className="flex items-center gap-2 text-sm text-slate-600"
+                  className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors"
                 >
                   <Tag size={14} />
                   {item.category} ({item.count})
@@ -1022,15 +1056,15 @@ export function AdminProductsPage() {
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Underrepresented
             </h3>
             <div className="mt-3 space-y-2">
               {underrepresentedCategories.map((item) => (
                 <div
                   key={item.category}
-                  className="flex items-center gap-2 text-sm text-slate-600"
+                  className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors"
                 >
                   <Layers size={14} />
                   {item.category} ({item.count})
@@ -1042,23 +1076,25 @@ export function AdminProductsPage() {
       </div>
 
       {detailProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-4xl rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-4xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   {detailProduct.name}
                 </h2>
-                <p className="text-sm text-slate-500">{detailProduct.sku}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                  {detailProduct.sku}
+                </p>
               </div>
               <button
                 onClick={() => setDetailProduct(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="border-b border-slate-200 px-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 px-6 transition-colors">
               <div className="flex flex-wrap gap-6 text-sm">
                 {(
                   [
@@ -1071,10 +1107,10 @@ export function AdminProductsPage() {
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}
-                    className={`py-3 border-b-2 ${
+                    className={`py-3 border-b-2 transition-colors ${
                       detailTab === tab
                         ? 'border-orange-600 text-orange-600'
-                        : 'border-transparent text-slate-500'
+                        : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
                   >
                     {tab === 'info'
@@ -1092,58 +1128,61 @@ export function AdminProductsPage() {
               {detailTab === 'info' && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-2 text-sm text-slate-600">
+                    <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                       <input
                         type="checkbox"
                         checked={editMode}
                         onChange={(e) => setEditMode(e.target.checked)}
+                        className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500 transition-colors"
                       />
                       Admin edit mode
                     </label>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-xs uppercase text-slate-400">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Supplier
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailProduct.supplier}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-xs uppercase text-slate-400">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Category
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailProduct.category}
                       </p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">
+                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                       Description
                     </p>
-                    <p className="mt-2 text-sm text-slate-700">
+                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 transition-colors">
                       {detailProduct.description}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">
+                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                       Specifications
                     </p>
-                    <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                    <ul className="mt-2 space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
                       {detailProduct.specs.map((spec) => (
                         <li key={spec}>• {spec}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">Images</p>
+                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                      Images
+                    </p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-3">
                       {detailProduct.images.map((image) => (
                         <div
                           key={image}
-                          className="flex h-24 items-center justify-center rounded-lg bg-slate-100 text-slate-400"
+                          className="flex h-24 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors"
                         >
                           <Image size={20} />
                         </div>
@@ -1155,21 +1194,21 @@ export function AdminProductsPage() {
 
               {detailTab === 'pricing' && (
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-slate-200 overflow-hidden">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
                     <table className="min-w-full text-sm">
-                      <thead className="bg-slate-50 text-slate-600">
+                      <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                         <tr>
                           <th className="px-4 py-2 text-left">Min Qty</th>
                           <th className="px-4 py-2 text-right">Price</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200">
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                         {detailProduct.tieredPricing.map((tier) => (
                           <tr key={tier.min}>
-                            <td className="px-4 py-2 text-slate-700">
+                            <td className="px-4 py-2 text-slate-700 dark:text-slate-300 transition-colors">
                               {tier.min}
                             </td>
-                            <td className="px-4 py-2 text-right text-slate-700">
+                            <td className="px-4 py-2 text-right text-slate-700 dark:text-slate-300 transition-colors">
                               {formatCurrency(tier.price)}
                             </td>
                           </tr>
@@ -1178,31 +1217,57 @@ export function AdminProductsPage() {
                     </table>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-xs text-slate-400">Current Stock</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Current Stock
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                         {detailProduct.stock}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-xs text-slate-400">MOQ</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        MOQ
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                         {detailProduct.moq}
                       </p>
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-sm font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                         Stock History
                       </p>
                       <div className="mt-2 h-32">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={detailProduct.stockHistory}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis />
-                            <Tooltip />
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke={isDark ? '#334155' : '#e2e8f0'}
+                            />
+                            <XAxis
+                              dataKey="date"
+                              tick={{
+                                fill: isDark ? '#94a3b8' : '#64748b',
+                                fontSize: 10,
+                              }}
+                              stroke={isDark ? '#334155' : '#e2e8f0'}
+                            />
+                            <YAxis
+                              tick={{
+                                fill: isDark ? '#94a3b8' : '#64748b',
+                                fontSize: 10,
+                              }}
+                              stroke={isDark ? '#334155' : '#e2e8f0'}
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                                borderColor: isDark ? '#334155' : '#e2e8f0',
+                                color: isDark ? '#f8fafc' : '#0f172a',
+                              }}
+                            />
                             <Line
                               type="monotone"
                               dataKey="stock"
@@ -1213,17 +1278,39 @@ export function AdminProductsPage() {
                         </ResponsiveContainer>
                       </div>
                     </div>
-                    <div className="rounded-lg border border-slate-200 p-4">
-                      <p className="text-sm font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                         Price History
                       </p>
                       <div className="mt-2 h-32">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={detailProduct.priceHistory}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis />
-                            <Tooltip />
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              stroke={isDark ? '#334155' : '#e2e8f0'}
+                            />
+                            <XAxis
+                              dataKey="date"
+                              tick={{
+                                fill: isDark ? '#94a3b8' : '#64748b',
+                                fontSize: 10,
+                              }}
+                              stroke={isDark ? '#334155' : '#e2e8f0'}
+                            />
+                            <YAxis
+                              tick={{
+                                fill: isDark ? '#94a3b8' : '#64748b',
+                                fontSize: 10,
+                              }}
+                              stroke={isDark ? '#334155' : '#e2e8f0'}
+                            />
+                            <Tooltip
+                              contentStyle={{
+                                backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                                borderColor: isDark ? '#334155' : '#e2e8f0',
+                                color: isDark ? '#f8fafc' : '#0f172a',
+                              }}
+                            />
                             <Line
                               type="monotone"
                               dataKey="price"
@@ -1241,45 +1328,45 @@ export function AdminProductsPage() {
               {detailTab === 'reports' && (
                 <div className="space-y-4">
                   {detailProduct.reports.length === 0 && (
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
                       No reports for this product.
                     </p>
                   )}
                   {detailProduct.reports.map((report) => (
                     <div
                       key={report.id}
-                      className="rounded-lg border border-slate-200 p-4"
+                      className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors"
                     >
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-slate-900">
+                      <div className="flex items-center justify-between transition-colors">
+                        <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                           {report.reason}
                         </p>
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-400 dark:text-slate-500">
                           {report.date}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm text-slate-600">
+                      <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                         {report.details}
                       </p>
-                      <p className="mt-2 text-xs text-slate-500">
+                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-500 transition-colors">
                         Reporter: {report.reporter}
                       </p>
                       {report.action && (
-                        <p className="mt-1 text-xs text-slate-500">
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-500 transition-colors">
                           Action: {report.action}
                         </p>
                       )}
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                      <div className="mt-3 flex flex-wrap gap-2 transition-colors">
+                        <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                           Dismiss
                         </button>
-                        <button className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+                        <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                           Warn Supplier
                         </button>
-                        <button className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs text-orange-700">
+                        <button className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-3 py-1.5 text-xs text-orange-700 dark:text-orange-400 transition-colors hover:bg-orange-100 dark:hover:bg-orange-900/20">
                           Suspend Product
                         </button>
-                        <button className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs text-red-700">
+                        <button className="rounded-lg border border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10 px-3 py-1.5 text-xs text-red-700 dark:text-red-400 transition-colors hover:bg-red-100 dark:hover:bg-red-900/20">
                           Delete Product
                         </button>
                       </div>
@@ -1289,7 +1376,7 @@ export function AdminProductsPage() {
               )}
 
               {detailTab === 'analytics' && (
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-3 transition-colors">
                   {[
                     { label: 'Views', value: detailProduct.analytics.views },
                     {
@@ -1312,10 +1399,12 @@ export function AdminProductsPage() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      className="rounded-lg border border-slate-200 p-4"
+                      className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors"
                     >
-                      <p className="text-xs text-slate-400">{item.label}</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        {item.label}
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                         {item.value}
                       </p>
                     </div>
@@ -1328,69 +1417,73 @@ export function AdminProductsPage() {
       )}
 
       {flagReviewProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Flag Review
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
                   {flagReviewProduct.name}
                 </p>
               </div>
               <button
                 onClick={() => setFlagReviewProduct(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <div className="rounded-lg border border-slate-200 p-4 text-sm text-slate-600">
-                <p className="font-medium text-slate-900">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
                   {flagReviewProduct.name}
                 </p>
                 <p>Supplier: {flagReviewProduct.supplier}</p>
                 <p>Category: {flagReviewProduct.category}</p>
               </div>
-              <div className="rounded-lg border border-slate-200 p-4">
-                <p className="text-sm font-medium text-slate-900">Reports</p>
-                <div className="mt-2 space-y-2 text-sm text-slate-600">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                  Reports
+                </p>
+                <div className="mt-2 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                   {flagReviewProduct.reports.map((report) => (
                     <div
                       key={report.id}
-                      className="rounded-lg border border-slate-200 px-3 py-2"
+                      className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
                     >
-                      <p className="font-medium">{report.reason}</p>
+                      <p className="font-medium dark:text-slate-300">
+                        {report.reason}
+                      </p>
                       <p>{report.details}</p>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-900">
+                <label className="text-sm font-medium text-slate-900 dark:text-white transition-colors">
                   Admin Notes
                 </label>
                 <textarea
                   value={flagReviewNotes}
                   onChange={(e) => setFlagReviewNotes(e.target.value)}
                   placeholder="Notes or request edits from supplier"
-                  className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                   rows={3}
                 />
               </div>
-              <div className="flex flex-wrap gap-2">
-                <button className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white">
+              <div className="flex flex-wrap gap-2 transition-colors">
+                <button className="rounded-lg bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/20">
                   Approve
                 </button>
-                <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white">
+                <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white hover:bg-orange-700 transition-all shadow-lg shadow-orange-600/20">
                   Suspend
                 </button>
-                <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white">
+                <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
                   Request Edit
                 </button>
-                <button className="rounded-lg bg-red-600 px-4 py-2 text-sm text-white">
+                <button className="rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 transition-all shadow-lg shadow-red-600/20">
                   Delete
                 </button>
               </div>
@@ -1400,57 +1493,66 @@ export function AdminProductsPage() {
       )}
 
       {suspendProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Ban className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <Ban
+                  className="text-orange-600 dark:text-orange-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Suspend {suspendProduct.name}?
                 </h2>
               </div>
               <button
                 onClick={() => setSuspendProduct(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-4 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <select
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
               >
-                <option>Policy violation</option>
-                <option>Incorrect information</option>
-                <option>Misleading listing</option>
-                <option>Intellectual property issue</option>
-                <option>Other</option>
+                <option className="dark:bg-slate-900">Policy violation</option>
+                <option className="dark:bg-slate-900">
+                  Incorrect information
+                </option>
+                <option className="dark:bg-slate-900">
+                  Misleading listing
+                </option>
+                <option className="dark:bg-slate-900">
+                  Intellectual property issue
+                </option>
+                <option className="dark:bg-slate-900">Other</option>
               </select>
               {suspendReason === 'Other' && (
                 <input
                   value={suspendOtherReason}
                   onChange={(e) => setSuspendOtherReason(e.target.value)}
                   placeholder="Other reason"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
                 />
               )}
-              <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
+              <div className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 text-sm text-orange-700 dark:text-orange-400 transition-colors">
                 Suspension details will be sent to the supplier. Supplier can
                 appeal or edit.
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setSuspendProduct(null)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setSuspendProduct(null)}
-                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
               >
                 Confirm Suspension
               </button>
@@ -1460,32 +1562,35 @@ export function AdminProductsPage() {
       )}
 
       {deleteProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <AlertTriangle
+                  className="text-red-600 dark:text-red-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Delete {deleteProduct.name}?
                 </h2>
               </div>
               <button
                 onClick={() => setDeleteProduct(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-red-600 font-medium">
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium transition-colors">
                 This action cannot be undone.
               </p>
-              <label className="flex items-center gap-2 text-sm text-slate-600">
+              <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <input
                   type="checkbox"
                   checked={deleteConfirm}
                   onChange={(e) => setDeleteConfirm(e.target.checked)}
-                  className="rounded border-slate-300 text-red-600 focus:ring-red-500"
+                  className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-red-600 focus:ring-red-500 transition-colors"
                 />
                 I understand this action is permanent
               </label>
@@ -1493,17 +1598,17 @@ export function AdminProductsPage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE to confirm"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => {
                   setDeleteProduct(null)
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1514,7 +1619,7 @@ export function AdminProductsPage() {
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-600/20"
               >
                 Delete Product
               </button>
@@ -1524,39 +1629,41 @@ export function AdminProductsPage() {
       )}
 
       {bulkCategoryOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Tag className="text-slate-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <Tag className="text-slate-600 dark:text-slate-400" size={20} />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Bulk Category Change
                 </h2>
               </div>
               <button
                 onClick={() => setBulkCategoryOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
-              <select className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <div className="px-6 py-5 space-y-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              <select className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none">
                 {CATEGORIES.map((category) => (
-                  <option key={category}>{category}</option>
+                  <option key={category} className="dark:bg-slate-900">
+                    {category}
+                  </option>
                 ))}
               </select>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setBulkCategoryOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setBulkCategoryOpen(false)}
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors shadow-lg"
               >
                 Apply
               </button>
@@ -1566,35 +1673,35 @@ export function AdminProductsPage() {
       )}
 
       {bulkDeleteOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Trash2 className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <Trash2 className="text-red-600 dark:text-red-500" size={20} />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Bulk Delete Products
                 </h2>
               </div>
               <button
                 onClick={() => setBulkDeleteOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600">
+            <div className="px-6 py-5 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               This action cannot be undone.
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setBulkDeleteOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setBulkDeleteOpen(false)}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
               >
                 Delete Products
               </button>

@@ -44,6 +44,7 @@ import {
   YAxis,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useTheme } from '@/contexts/ThemeContext'
 
 // Mock data generators
 const generateGMVData = (days: number) => {
@@ -328,6 +329,7 @@ function getStatusBadge(status: string) {
 }
 
 export function AdminDashboardPage() {
+  const { theme } = useTheme()
   const [dateRange, setDateRange] = useState('30d')
   const [chartRange, setChartRange] = useState(30)
   const [autoRefresh, setAutoRefresh] = useState(true)
@@ -339,6 +341,12 @@ export function AdminDashboardPage() {
   const [userGrowthData, setUserGrowthData] = useState(() =>
     generateUserGrowthData(30),
   )
+
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
 
   const refreshData = useCallback(() => {
     setIsRefreshing(true)
@@ -390,8 +398,12 @@ export function AdminDashboardPage() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-            <p className="text-slate-600">Platform overview and key metrics</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+              Dashboard
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400 transition-colors">
+              Platform overview and key metrics
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -399,7 +411,7 @@ export function AdminDashboardPage() {
             <div className="relative">
               <button
                 onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <Calendar size={16} />
                 {DATE_RANGES.find((r) => r.value === dateRange)?.label}
@@ -411,7 +423,7 @@ export function AdminDashboardPage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setDateDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-20">
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-20 transition-colors">
                     {DATE_RANGES.map((range) => (
                       <button
                         key={range.value}
@@ -419,10 +431,10 @@ export function AdminDashboardPage() {
                           setDateRange(range.value)
                           setDateDropdownOpen(false)
                         }}
-                        className={`w-full px-4 py-2 text-left text-sm ${
+                        className={`w-full px-4 py-2 text-left text-sm transition-colors ${
                           dateRange === range.value
-                            ? 'bg-orange-50 text-orange-700'
-                            : 'text-slate-700 hover:bg-slate-50'
+                            ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
                         {range.label}
@@ -434,14 +446,16 @@ export function AdminDashboardPage() {
             </div>
 
             {/* Auto-refresh Toggle */}
-            <label className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm cursor-pointer">
+            <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm cursor-pointer transition-colors">
               <input
                 type="checkbox"
                 checked={autoRefresh}
                 onChange={(e) => setAutoRefresh(e.target.checked)}
-                className="rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
               />
-              <span className="text-slate-600">Auto-refresh</span>
+              <span className="text-slate-600 dark:text-slate-400">
+                Auto-refresh
+              </span>
             </label>
 
             {/* Manual Refresh */}
@@ -471,42 +485,44 @@ export function AdminDashboardPage() {
             {activeAlerts.map((alert) => (
               <div
                 key={alert.id}
-                className={`flex items-center justify-between p-4 rounded-xl border ${
+                className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
                   alert.type === 'critical'
-                    ? 'bg-red-50 border-red-200'
+                    ? 'bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900/20'
                     : alert.type === 'warning'
-                      ? 'bg-yellow-50 border-yellow-200'
-                      : 'bg-blue-50 border-blue-200'
+                      ? 'bg-yellow-50 dark:bg-yellow-900/10 border-yellow-200 dark:border-yellow-900/20'
+                      : 'bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/20'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   {alert.type === 'critical' ? (
-                    <AlertCircle className="h-5 w-5 text-red-600" />
+                    <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                   ) : alert.type === 'warning' ? (
-                    <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
                   ) : (
-                    <AlertCircle className="h-5 w-5 text-blue-600" />
+                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   )}
                   <div>
                     <p
                       className={`text-sm font-medium ${
                         alert.type === 'critical'
-                          ? 'text-red-900'
+                          ? 'text-red-900 dark:text-red-200'
                           : alert.type === 'warning'
-                            ? 'text-yellow-900'
-                            : 'text-blue-900'
+                            ? 'text-yellow-900 dark:text-yellow-200'
+                            : 'text-blue-900 dark:text-blue-200'
                       }`}
                     >
                       {alert.message}
                     </p>
-                    <p className="text-xs text-slate-500">{alert.time}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {alert.time}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={() => dismissAlert(alert.id)}
-                  className="p-1 hover:bg-white/50 rounded"
+                  className="p-1 hover:bg-white/50 dark:hover:bg-slate-800 rounded transition-colors"
                 >
-                  <X size={16} className="text-slate-400" />
+                  <X size={16} className="text-slate-400 dark:text-slate-500" />
                 </button>
               </div>
             ))}
@@ -516,14 +532,16 @@ export function AdminDashboardPage() {
         {/* Key Metrics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* GMV Card */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 rounded-lg bg-green-100">
-                <DollarSign className="h-5 w-5 text-green-600" />
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
+                <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <span
                 className={`flex items-center gap-1 text-xs font-medium ${
-                  gmvChange >= 0 ? 'text-green-600' : 'text-red-600'
+                  gmvChange >= 0
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-red-600 dark:text-red-400'
                 }`}
               >
                 {gmvChange >= 0 ? (
@@ -534,14 +552,16 @@ export function AdminDashboardPage() {
                 {Math.abs(gmvChange).toFixed(1)}%
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">
+            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               ৳{totalGMV.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500">Gross Merchandise Value</p>
-            <div className="mt-3 pt-3 border-t border-slate-100">
-              <p className="text-xs text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Gross Merchandise Value
+            </p>
+            <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Today:{' '}
-                <span className="font-medium text-slate-700">
+                <span className="font-medium text-slate-700 dark:text-slate-300">
                   ৳{todayGMV.toLocaleString()}
                 </span>
               </p>
@@ -563,55 +583,73 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Active Users Card */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <Users className="h-5 w-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20">
+                <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+              <span className="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
                 <TrendingUp size={14} />
                 +124 today
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">12,847</p>
-            <p className="text-sm text-slate-500">Active Users</p>
-            <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+              12,847
+            </p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Active Users
+            </p>
+            <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors grid grid-cols-2 gap-2">
               <div>
-                <p className="text-xs text-slate-500">Buyers</p>
-                <p className="text-sm font-medium text-slate-700">11,563</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Buyers
+                </p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  11,563
+                </p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">Sellers</p>
-                <p className="text-sm font-medium text-slate-700">1,284</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Sellers
+                </p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  1,284
+                </p>
               </div>
             </div>
           </div>
 
           {/* Total Orders Card */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 rounded-lg bg-purple-100">
-                <ShoppingCart className="h-5 w-5 text-purple-600" />
+              <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/20">
+                <ShoppingCart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+              <span className="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
                 <TrendingUp size={14} />
                 +18.7%
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">
+            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               {totalOrders.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500">Total Orders</p>
-            <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Total Orders
+            </p>
+            <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors grid grid-cols-2 gap-2">
               <div>
-                <p className="text-xs text-slate-500">Today</p>
-                <p className="text-sm font-medium text-slate-700">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Today
+                </p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   {todayOrders}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-slate-500">Avg Value</p>
-                <p className="text-sm font-medium text-slate-700">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Avg Value
+                </p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                   ৳{avgOrderValue.toLocaleString()}
                 </p>
               </div>
@@ -619,23 +657,25 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Commission Card */}
-          <div className="bg-white rounded-xl border border-slate-200 p-5">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2 rounded-lg bg-orange-100">
-                <DollarSign className="h-5 w-5 text-orange-600" />
+              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
+                <DollarSign className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
-              <span className="text-xs font-medium text-slate-500">
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 3% of GMV
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900">
+            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               ৳{monthlyCommission.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500">Platform Commission</p>
-            <div className="mt-3 pt-3 border-t border-slate-100">
-              <p className="text-xs text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Platform Commission
+            </p>
+            <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Today:{' '}
-                <span className="font-medium text-slate-700">
+                <span className="font-medium text-slate-700 dark:text-slate-300">
                   ৳{todayCommission.toLocaleString()}
                 </span>
               </p>
@@ -647,80 +687,88 @@ export function AdminDashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/admin/kyc"
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-orange-300 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-yellow-100">
-                <FileCheck className="h-5 w-5 text-yellow-600" />
+              <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20">
+                <FileCheck className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                   KYC Pending
                 </p>
-                <p className="text-xs text-slate-500">Awaiting review</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                  Awaiting review
+                </p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 text-red-700">
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400">
               47
             </span>
           </Link>
 
           <Link
             to="/admin/disputes"
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-orange-300 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-orange-100">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
+              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
+                <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                   Open Disputes
                 </p>
-                <p className="text-xs text-slate-500">Need resolution</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                  Need resolution
+                </p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-orange-100 text-orange-700">
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400">
               23
             </span>
           </Link>
 
           <Link
             to="/admin/products"
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-orange-300 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-red-100">
-                <Flag className="h-5 w-5 text-red-600" />
+              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/20">
+                <Flag className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                   Flagged Products
                 </p>
-                <p className="text-xs text-slate-500">Needs review</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                  Needs review
+                </p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 text-red-700">
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400">
               12
             </span>
           </Link>
 
           <Link
             to="/admin/suppliers"
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-orange-300 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <Building2 className="h-5 w-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20">
+                <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                   Seller Verification
                 </p>
-                <p className="text-xs text-slate-500">Badge requests</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                  Badge requests
+                </p>
               </div>
             </div>
-            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-blue-100 text-blue-700">
+            <span className="px-2.5 py-1 text-sm font-bold rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400">
               8
             </span>
           </Link>
@@ -729,25 +777,25 @@ export function AdminDashboardPage() {
         {/* Charts Section */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* GMV & Orders Chart */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="font-semibold text-slate-900">
+                <h2 className="font-semibold text-slate-900 dark:text-white transition-colors">
                   GMV & Orders Over Time
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
                   Revenue and order trends
                 </p>
               </div>
-              <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 transition-colors">
                 {CHART_RANGES.map((range) => (
                   <button
                     key={range.value}
                     onClick={() => setChartRange(range.value)}
                     className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                       chartRange === range.value
-                        ? 'bg-white text-slate-900 shadow-sm'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     {range.label}
@@ -758,29 +806,46 @@ export function AdminDashboardPage() {
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={gmvData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
                   <XAxis
                     dataKey="date"
-                    tick={{ fontSize: 12 }}
-                    stroke="#94a3b8"
+                    tick={{
+                      fontSize: 12,
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                    }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
                   />
                   <YAxis
                     yAxisId="left"
-                    tick={{ fontSize: 12 }}
-                    stroke="#94a3b8"
+                    tick={{
+                      fontSize: 12,
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                    }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
                     tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}k`}
                   />
                   <YAxis
                     yAxisId="right"
                     orientation="right"
-                    tick={{ fontSize: 12 }}
-                    stroke="#94a3b8"
+                    tick={{
+                      fontSize: 12,
+                      fill: isDark ? '#94a3b8' : '#64748b',
+                    }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
                   />
                   <Tooltip
                     contentStyle={{
                       borderRadius: '8px',
-                      border: '1px solid #e2e8f0',
+                      border: isDark
+                        ? '1px solid #334155'
+                        : '1px solid #e2e8f0',
+                      backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                      color: isDark ? '#f8fafc' : '#0f172a',
                     }}
+                    itemStyle={{ color: isDark ? '#f8fafc' : '#0f172a' }}
                     formatter={(value: number, name: string) =>
                       name === 'gmv'
                         ? [`৳${value.toLocaleString()}`, 'GMV']
@@ -809,20 +874,28 @@ export function AdminDashboardPage() {
             <div className="flex items-center justify-center gap-6 mt-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-sm text-slate-600">GMV</span>
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  GMV
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500" />
-                <span className="text-sm text-slate-600">Orders</span>
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  Orders
+                </span>
               </div>
             </div>
           </div>
 
           {/* Order Status Breakdown */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
             <div className="mb-6">
-              <h2 className="font-semibold text-slate-900">Order Status</h2>
-              <p className="text-sm text-slate-500">Breakdown by status</p>
+              <h2 className="font-semibold text-slate-900 dark:text-white transition-colors">
+                Order Status
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                Breakdown by status
+              </p>
             </div>
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
@@ -841,6 +914,14 @@ export function AdminDashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
+                    contentStyle={{
+                      borderRadius: '8px',
+                      border: isDark
+                        ? '1px solid #334155'
+                        : '1px solid #e2e8f0',
+                      backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                      color: isDark ? '#f8fafc' : '#0f172a',
+                    }}
                     formatter={(value: number) => [
                       value.toLocaleString(),
                       'Orders',
@@ -856,8 +937,10 @@ export function AdminDashboardPage() {
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-xs text-slate-600">{item.name}</span>
-                  <span className="text-xs font-medium text-slate-900 ml-auto">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                    {item.name}
+                  </span>
+                  <span className="text-xs font-medium text-slate-900 dark:text-slate-200 ml-auto">
                     {item.value.toLocaleString()}
                   </span>
                 </div>
@@ -867,27 +950,37 @@ export function AdminDashboardPage() {
         </div>
 
         {/* User Growth Chart */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
           <div className="mb-6">
-            <h2 className="font-semibold text-slate-900">User Growth</h2>
-            <p className="text-sm text-slate-500">
+            <h2 className="font-semibold text-slate-900 dark:text-white transition-colors">
+              User Growth
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
               Cumulative user registrations
             </p>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={userGrowthData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={isDark ? '#334155' : '#e2e8f0'}
+                />
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 12 }}
-                  stroke="#94a3b8"
+                  tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#64748b' }}
+                  stroke={isDark ? '#334155' : '#e2e8f0'}
                 />
-                <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" />
+                <YAxis
+                  tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#64748b' }}
+                  stroke={isDark ? '#334155' : '#e2e8f0'}
+                />
                 <Tooltip
                   contentStyle={{
                     borderRadius: '8px',
-                    border: '1px solid #e2e8f0',
+                    border: isDark ? '1px solid #334155' : '1px solid #e2e8f0',
+                    backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                    color: isDark ? '#f8fafc' : '#0f172a',
                   }}
                 />
                 <Area
@@ -912,11 +1005,15 @@ export function AdminDashboardPage() {
           <div className="flex items-center justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-400" />
-              <span className="text-sm text-slate-600">Buyers</span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">
+                Buyers
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-400" />
-              <span className="text-sm text-slate-600">Sellers</span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">
+                Sellers
+              </span>
             </div>
           </div>
         </div>
@@ -924,41 +1021,45 @@ export function AdminDashboardPage() {
         {/* Tables and Activity */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Top Sellers */}
-          <div className="bg-white rounded-xl border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-              <h2 className="font-semibold text-slate-900">Top Sellers</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+              <h2 className="font-semibold text-slate-900 dark:text-white">
+                Top Sellers
+              </h2>
               <Link
                 to="/admin/suppliers"
-                className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
               >
                 View All <ExternalLink size={12} />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800 transition-colors">
               {TOP_SELLERS.map((seller, index) => (
                 <div
                   key={seller.id}
                   className="px-6 py-3 flex items-center gap-3"
                 >
-                  <span className="text-sm font-medium text-slate-400 w-5">
+                  <span className="text-sm font-medium text-slate-400 dark:text-slate-500 w-5">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 truncate transition-colors">
                       {seller.name}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         ৳{seller.gmv.toLocaleString()}
                       </span>
                       {getStatusBadge(seller.status)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       {seller.orders}
                     </p>
-                    <p className="text-xs text-slate-500">orders</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-500">
+                      orders
+                    </p>
                   </div>
                 </div>
               ))}
@@ -966,38 +1067,42 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Top Buyers */}
-          <div className="bg-white rounded-xl border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-              <h2 className="font-semibold text-slate-900">Top Buyers</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+              <h2 className="font-semibold text-slate-900 dark:text-white">
+                Top Buyers
+              </h2>
               <Link
                 to="/admin/users"
-                className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                className="text-sm text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
               >
                 View All <ExternalLink size={12} />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800 transition-colors">
               {TOP_BUYERS.map((buyer, index) => (
                 <div
                   key={buyer.id}
                   className="px-6 py-3 flex items-center gap-3"
                 >
-                  <span className="text-sm font-medium text-slate-400 w-5">
+                  <span className="text-sm font-medium text-slate-400 dark:text-slate-500 w-5">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 truncate transition-colors">
                       {buyer.name}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
                       ৳{buyer.spent.toLocaleString()}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       {buyer.orders}
                     </p>
-                    <p className="text-xs text-slate-500">orders</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-500">
+                      orders
+                    </p>
                   </div>
                 </div>
               ))}
@@ -1005,19 +1110,19 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-xl border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
               <div className="flex items-center gap-2">
-                <h2 className="font-semibold text-slate-900">
+                <h2 className="font-semibold text-slate-900 dark:text-white">
                   Recent Activity
                 </h2>
                 <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
               </div>
-              <button className="text-sm text-orange-600 hover:text-orange-700">
+              <button className="text-sm text-orange-600 hover:text-orange-700 transition-colors">
                 View All
               </button>
             </div>
-            <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto transition-colors">
               {RECENT_ACTIVITIES.map((activity) => (
                 <div
                   key={activity.id}
@@ -1025,12 +1130,14 @@ export function AdminDashboardPage() {
                 >
                   <div className="mt-0.5">{getActivityIcon(activity.type)}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-900">{activity.message}</p>
-                    <p className="text-xs text-slate-500 truncate">
+                    <p className="text-sm text-slate-900 dark:text-slate-200 transition-colors">
+                      {activity.message}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-500 truncate transition-colors">
                       {activity.detail}
                     </p>
                   </div>
-                  <span className="text-xs text-slate-400 whitespace-nowrap">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap transition-colors">
                     {activity.time}
                   </span>
                 </div>
@@ -1040,19 +1147,21 @@ export function AdminDashboardPage() {
         </div>
 
         {/* System Health */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h2 className="font-semibold text-slate-900 mb-4">System Health</h2>
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
+          <h2 className="font-semibold text-slate-900 dark:text-white mb-4 transition-colors">
+            System Health
+          </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-              <div className="p-2 rounded-lg bg-green-100">
-                <Server className="h-5 w-5 text-green-600" />
+            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
+                <Server className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                   API Response
                 </p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">
+                  <span className="text-lg font-bold text-green-600 dark:text-green-400">
                     124ms
                   </span>
                   <CheckCircle size={14} className="text-green-500" />
@@ -1060,14 +1169,16 @@ export function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-              <div className="p-2 rounded-lg bg-green-100">
-                <Database className="h-5 w-5 text-green-600" />
+            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
+                <Database className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">Database</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                  Database
+                </p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">
+                  <span className="text-lg font-bold text-green-600 dark:text-green-400">
                     Healthy
                   </span>
                   <CheckCircle size={14} className="text-green-500" />
@@ -1075,27 +1186,35 @@ export function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-              <div className="p-2 rounded-lg bg-yellow-100">
-                <HardDrive className="h-5 w-5 text-yellow-600" />
+            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+              <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20">
+                <HardDrive className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">Storage</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                  Storage
+                </p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-yellow-600">68%</span>
-                  <span className="text-xs text-slate-500">used</span>
+                  <span className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
+                    68%
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    used
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-              <div className="p-2 rounded-lg bg-green-100">
-                <Activity className="h-5 w-5 text-green-600" />
+            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
+                <Activity className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">Uptime</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                  Uptime
+                </p>
                 <div className="flex items-center gap-1">
-                  <span className="text-lg font-bold text-green-600">
+                  <span className="text-lg font-bold text-green-600 dark:text-green-400">
                     99.98%
                   </span>
                   <CheckCircle size={14} className="text-green-500" />

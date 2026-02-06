@@ -6,17 +6,21 @@ import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import {
   Edit2,
+  Eye,
+  EyeOff,
   Loader2,
   MapPin,
   Package,
   Phone,
   Plus,
+  RefreshCw,
+  Shield,
   Trash2,
   User,
 } from 'lucide-react'
 import { addresses, user as userTable } from '@/db/schema'
 import { db } from '@/db'
-import { authMiddleware } from '@/lib/auth-server'
+import { authMiddleware, updateUserPassword } from '@/lib/auth-server'
 import { useAuth } from '@/contexts/AuthContext'
 
 // --- Server Functions ---
@@ -179,8 +183,12 @@ export const Route = createFileRoute('/account')({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       tab:
-        (search.tab as 'profile' | 'address' | 'orders' | undefined) ??
-        'profile',
+        (search.tab as
+          | 'profile'
+          | 'address'
+          | 'orders'
+          | 'security'
+          | undefined) ?? 'profile',
     }
   },
 })
@@ -192,7 +200,9 @@ function AccountPage() {
 
   const activeTab = tab
 
-  const setActiveTab = (newTab: 'profile' | 'address' | 'orders') => {
+  const setActiveTab = (
+    newTab: 'profile' | 'address' | 'orders' | 'security',
+  ) => {
     navigate({ search: { tab: newTab } })
   }
 
@@ -241,6 +251,17 @@ function AccountPage() {
                   <Package size={20} />
                   My Orders
                 </button>
+                <button
+                  onClick={() => setActiveTab('security')}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-colors ${
+                    activeTab === 'security'
+                      ? 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-500'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <Shield size={20} />
+                  Security
+                </button>
               </nav>
             </div>
           </div>
@@ -254,6 +275,7 @@ function AccountPage() {
             {activeTab === 'orders' && (
               <OrdersSection orders={userData.orders} />
             )}
+            {activeTab === 'security' && <SecuritySection />}
           </div>
         </div>
       </div>
@@ -705,6 +727,237 @@ function AddressForm({
             className="px-6 py-2.5 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 focus:ring-4 focus:ring-gray-100 transition-all"
           >
             Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+function SecuritySection() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
+
+  const generateStrongPassword = () => {
+    const chars =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
+    let password = ''
+    // Ensure at least one letter and one number
+    password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]
+    password += '0123456789'[Math.floor(Math.random() * 10)]
+
+    for (let i = 2; i < 12; i++) {
+      password += chars[Math.floor(Math.random() * chars.length)]
+    }
+    // Shuffle the password
+    return password
+      .split('')
+      .sort(() => 0.5 - Math.random())
+      .join('')
+  }
+
+  const form = useForm({
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+    onSubmit: async ({ value }) => {
+      if (value.newPassword !== value.confirmPassword) {
+        setMessage({ type: 'error', text: 'New passwords do not match' })
+        return
+      }
+
+      setIsLoading(true)
+      setMessage(null)
+      try {
+        await updateUserPassword({
+          data: {
+            currentPassword: value.currentPassword,
+            newPassword: value.newPassword,
+          },
+        })
+        setMessage({ type: 'success', text: 'Password updated successfully' })
+        form.reset()
+      } catch (err: any) {
+        console.error(err)
+        const errorMsg = err.message || 'Failed to update password'
+        setMessage({ type: 'error', text: errorMsg })
+      } finally {
+        setIsLoading(false)
+      }
+    },
+  })
+
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6 border dark:border-slate-800 transition-colors">
+      <h2 className="text-xl font-semibold mb-6 pb-4 border-b border-gray-100 dark:border-slate-800 dark:text-white transition-colors">
+        Password & Security
+      </h2>
+
+      {message && (
+        <div
+          className={`p-4 rounded-lg mb-6 transition-colors ${
+            message.type === 'success'
+              ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+              : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+        className="space-y-6 max-w-2xl"
+      >
+        <form.Field
+          name="currentPassword"
+          children={(field) => (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
+                Current Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                >
+                  {showCurrentPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        />
+
+        <form.Field
+          name="newPassword"
+          children={(field) => (
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors">
+                  New Password
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const pass = generateStrongPassword()
+                    field.handleChange(pass)
+                    setMessage({
+                      type: 'success',
+                      text: `Generated strong password: ${pass} (Save it or edit it)`,
+                    })
+                  }}
+                  className="text-xs text-orange-600 dark:text-orange-500 hover:underline flex items-center gap-1"
+                >
+                  <RefreshCw size={12} />
+                  Generate Strong Password
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                >
+                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              <div className="mt-2 space-y-1">
+                <p
+                  className={`text-xs ${
+                    field.state.value.length >= 8
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
+                  • Minimum 8 characters
+                </p>
+                <p
+                  className={`text-xs ${
+                    /^(?=.*[a-zA-Z])(?=.*\d).+$/.test(field.state.value)
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
+                  • Must include letters and numbers
+                </p>
+              </div>
+            </div>
+          )}
+        />
+
+        <form.Field
+          name="confirmPassword"
+          children={(field) => (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        />
+
+        <div className="pt-4">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-6 py-2.5 bg-orange-500 text-white font-medium rounded-lg hover:bg-orange-600 focus:ring-4 focus:ring-orange-200 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
+          >
+            {isLoading && <Loader2 className="animate-spin" size={18} />}
+            Update Password
           </button>
         </div>
       </form>

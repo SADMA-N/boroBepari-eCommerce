@@ -95,8 +95,38 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const showBuyerShell = !isSellerRoute && !isAdminRoute
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function getTheme() {
+                  try {
+                    var stored = localStorage.getItem('borobepari-theme');
+                    if (stored === 'dark' || stored === 'light') return stored;
+                    if (stored === 'system' || !stored) {
+                      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    }
+                  } catch (e) {}
+                  return 'light';
+                }
+                var theme = getTheme();
+                var root = document.documentElement;
+                root.classList.remove('light', 'dark');
+                root.classList.add(theme);
+                root.style.colorScheme = theme;
+                
+                // Immediate background color to prevent flash before CSS loads
+                if (theme === 'dark') {
+                  root.style.backgroundColor = '#020817';
+                } else {
+                  root.style.backgroundColor = '#ffffff';
+                }
+              })();
+            `,
+          }}
+        />
         <HeadContent />
       </head>
       <body className="antialiased" suppressHydrationWarning>

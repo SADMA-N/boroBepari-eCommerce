@@ -230,8 +230,10 @@ export function SellerOrdersPage() {
       <div className="space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Orders</h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 transition-colors">
+              Orders
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
               {filtered.length} orders with applied filters
             </p>
           </div>
@@ -239,16 +241,16 @@ export function SellerOrdersPage() {
             <select
               value={dateRange}
               onChange={(event) => setDateRange(event.target.value)}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
             >
-              <option>Today</option>
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-              <option>Custom Range</option>
+              <option className="dark:bg-slate-900">Today</option>
+              <option className="dark:bg-slate-900">Last 7 Days</option>
+              <option className="dark:bg-slate-900">Last 30 Days</option>
+              <option className="dark:bg-slate-900">Custom Range</option>
             </select>
-            <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
-              <option>Export CSV</option>
-              <option>Export PDF</option>
+            <select className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors">
+              <option className="dark:bg-slate-900">Export CSV</option>
+              <option className="dark:bg-slate-900">Export PDF</option>
             </select>
           </div>
         </header>
@@ -258,43 +260,51 @@ export function SellerOrdersPage() {
             <button
               key={status}
               onClick={() => setTab(status)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 tab === status
-                  ? 'bg-orange-600 text-white'
-                  : 'bg-white border border-slate-200 text-slate-600'
+                  ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
+                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               {status}
-              <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs">
+              <span
+                className={`ml-2 rounded-full px-2 py-0.5 text-xs ${tab === status ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}
+              >
                 {counts[status]}
               </span>
             </button>
           ))}
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 space-y-4">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div className="relative w-full lg:max-w-sm">
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500"
               />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search order number or buyer"
-                className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 pl-9 pr-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 transition-all"
               />
             </div>
             <div className="flex flex-wrap gap-2">
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
               >
-                <option value="">Order status</option>
+                <option value="" className="dark:bg-slate-900">
+                  Order status
+                </option>
                 {STATUS_TABS.map((status) => (
-                  <option key={status} value={status}>
+                  <option
+                    key={status}
+                    value={status}
+                    className="dark:bg-slate-900"
+                  >
                     {status}
                   </option>
                 ))}
@@ -302,11 +312,17 @@ export function SellerOrdersPage() {
               <select
                 value={paymentFilter}
                 onChange={(event) => setPaymentFilter(event.target.value)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
               >
-                <option value="">Payment status</option>
+                <option value="" className="dark:bg-slate-900">
+                  Payment status
+                </option>
                 {PAYMENT_STATUSES.map((status) => (
-                  <option key={status} value={status}>
+                  <option
+                    key={status}
+                    value={status}
+                    className="dark:bg-slate-900"
+                  >
                     {status}
                   </option>
                 ))}
@@ -320,7 +336,7 @@ export function SellerOrdersPage() {
                   }))
                 }
                 placeholder="Min amount"
-                className="w-28 rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-28 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 transition-colors"
               />
               <input
                 value={amountRange.max}
@@ -331,15 +347,19 @@ export function SellerOrdersPage() {
                   }))
                 }
                 placeholder="Max amount"
-                className="w-28 rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-28 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 transition-colors"
               />
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value)}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
               >
-                <option value="Date">Sort by Date</option>
-                <option value="Amount">Sort by Amount</option>
+                <option value="Date" className="dark:bg-slate-900">
+                  Sort by Date
+                </option>
+                <option value="Amount" className="dark:bg-slate-900">
+                  Sort by Amount
+                </option>
               </select>
             </div>
           </div>
@@ -350,12 +370,12 @@ export function SellerOrdersPage() {
             <EmptyState query={query} />
           ) : (
             <>
-              <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-slate-600">
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
                 {selected.length > 0 && (
                   <>
                     <span>{selected.length} selected</span>
                     <select
-                      className="rounded-lg border border-slate-200 px-2 py-1"
+                      className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 transition-colors"
                       onChange={(event) => {
                         const value = event.target.value
                         if (!value) return
@@ -369,17 +389,23 @@ export function SellerOrdersPage() {
                         )
                       }}
                     >
-                      <option value="">Bulk update status</option>
+                      <option value="" className="dark:bg-slate-900">
+                        Bulk update status
+                      </option>
                       {STATUS_TABS.map((status) => (
-                        <option key={status} value={status}>
+                        <option
+                          key={status}
+                          value={status}
+                          className="dark:bg-slate-900"
+                        >
                           {status}
                         </option>
                       ))}
                     </select>
-                    <button className="rounded-lg border border-slate-200 px-2 py-1">
+                    <button className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       Bulk Print
                     </button>
-                    <button className="rounded-lg border border-slate-200 px-2 py-1">
+                    <button className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       Bulk Export
                     </button>
                   </>
@@ -387,13 +413,14 @@ export function SellerOrdersPage() {
               </div>
               <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="text-left text-slate-400">
+                  <thead className="text-left text-slate-400 dark:text-gray-500 bg-slate-50 dark:bg-slate-900/50">
                     <tr>
-                      <th className="py-3">
+                      <th className="py-3 px-4">
                         <input
                           type="checkbox"
                           checked={selected.length === filtered.length}
                           onChange={toggleAll}
+                          className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
                         />
                       </th>
                       <th>Order</th>
@@ -406,25 +433,26 @@ export function SellerOrdersPage() {
                       <th>Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-600">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-gray-300">
                     {paged.map((order) => (
                       <Fragment key={order.id}>
-                        <tr className="hover:bg-slate-50">
-                          <td className="py-3">
+                        <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <td className="py-3 px-4">
                             <input
                               type="checkbox"
                               checked={selected.includes(order.id)}
                               onChange={() => toggleSelected(order.id)}
+                              className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
                             />
                           </td>
-                          <td className="font-semibold text-slate-800">
+                          <td className="font-semibold text-slate-800 dark:text-gray-100">
                             <button
                               onClick={() =>
                                 setExpanded(
                                   expanded === order.id ? null : order.id,
                                 )
                               }
-                              className="hover:text-orange-600"
+                              className="hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
                             >
                               {order.id}
                             </button>
@@ -434,7 +462,7 @@ export function SellerOrdersPage() {
                           <td>৳{order.total.toLocaleString()}</td>
                           <td>
                             <span
-                              className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}
+                              className={`rounded-full px-2 py-1 text-xs font-semibold transition-colors ${statusBadge(order.status)}`}
                             >
                               {order.status}
                             </span>
@@ -462,7 +490,10 @@ export function SellerOrdersPage() {
                         </tr>
                         {expanded === order.id && (
                           <tr>
-                            <td colSpan={9} className="bg-slate-50">
+                            <td
+                              colSpan={9}
+                              className="bg-slate-50 dark:bg-slate-900/50"
+                            >
                               <OrderDetail order={order} />
                             </td>
                           </tr>
@@ -476,23 +507,27 @@ export function SellerOrdersPage() {
                 {paged.map((order) => (
                   <div
                     key={order.id}
-                    className="rounded-xl border border-slate-200 p-4"
+                    className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors"
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-xs text-slate-400">{order.id}</p>
-                        <p className="font-semibold text-slate-800">
+                        <p className="text-xs text-slate-400 dark:text-gray-500">
+                          {order.id}
+                        </p>
+                        <p className="font-semibold text-slate-800 dark:text-gray-100">
                           {order.buyer}
                         </p>
-                        <p className="text-xs text-slate-500">{order.date}</p>
+                        <p className="text-xs text-slate-500 dark:text-gray-400">
+                          {order.date}
+                        </p>
                       </div>
                       <span
-                        className={`rounded-full px-2 py-1 text-xs font-semibold ${statusBadge(order.status)}`}
+                        className={`rounded-full px-2 py-1 text-xs font-semibold transition-colors ${statusBadge(order.status)}`}
                       >
                         {order.status}
                       </span>
                     </div>
-                    <div className="mt-3 text-sm text-slate-600">
+                    <div className="mt-3 text-sm text-slate-600 dark:text-gray-300">
                       ৳{order.total.toLocaleString()} · {order.items} items ·{' '}
                       {order.paymentStatus}
                     </div>
@@ -501,14 +536,14 @@ export function SellerOrdersPage() {
                         onClick={() =>
                           setExpanded(expanded === order.id ? null : order.id)
                         }
-                        className="rounded-lg border border-slate-200 px-3 py-2 text-xs"
+                        className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 text-xs dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         Details
                       </button>
                       {order.status === 'New' && (
                         <button
                           onClick={() => setShowConfirm(order)}
-                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs text-white"
+                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
                         >
                           Confirm
                         </button>
@@ -522,7 +557,7 @@ export function SellerOrdersPage() {
         </section>
 
         {filtered.length > perPage && (
-          <div className="flex items-center justify-between text-sm text-slate-500">
+          <div className="flex items-center justify-between text-sm text-slate-500 dark:text-gray-400">
             <span>
               Page {page} of {Math.ceil(filtered.length / perPage)}
             </span>
@@ -530,14 +565,14 @@ export function SellerOrdersPage() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage((prev) => prev - 1)}
-                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Previous
               </button>
               <button
                 disabled={page >= Math.ceil(filtered.length / perPage)}
                 onClick={() => setPage((prev) => prev + 1)}
-                className="rounded-lg border border-slate-200 px-3 py-1 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Next
               </button>
@@ -580,22 +615,22 @@ function OrderDetail({ order }: { order: Order }) {
   return (
     <div className="p-6 space-y-6">
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-slate-800">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-gray-100">
             Order Information
           </h3>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+          <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-gray-400">
             <p>Order: {order.id}</p>
             <p>Date: {order.date}</p>
             <p>Payment: {order.paymentMethod}</p>
             <p>Status: {order.paymentStatus}</p>
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <h3 className="text-sm font-semibold text-slate-800">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-gray-100">
             Buyer Details
           </h3>
-          <div className="mt-3 space-y-2 text-sm text-slate-600">
+          <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-gray-400">
             <p>{order.buyer}</p>
             <p>{order.buyerPhone}</p>
             <p>{order.buyerEmail}</p>
@@ -604,8 +639,10 @@ function OrderDetail({ order }: { order: Order }) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4">
-        <h3 className="text-sm font-semibold text-slate-800">Ordered Items</h3>
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-gray-100">
+          Ordered Items
+        </h3>
         <div className="mt-3 space-y-3">
           {order.lineItems.map((item) => (
             <div key={item.name} className="flex items-center justify-between">
@@ -613,16 +650,18 @@ function OrderDetail({ order }: { order: Order }) {
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="h-12 w-12 rounded-lg object-cover"
+                  className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                 />
                 <div>
-                  <p className="text-sm font-medium text-slate-800">
+                  <p className="text-sm font-medium text-slate-800 dark:text-gray-100">
                     {item.name}
                   </p>
-                  <p className="text-xs text-slate-400">Qty: {item.quantity}</p>
+                  <p className="text-xs text-slate-400 dark:text-gray-500">
+                    Qty: {item.quantity}
+                  </p>
                 </div>
               </div>
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-slate-700 dark:text-gray-200">
                 ৳{(item.quantity * item.unitPrice).toLocaleString()}
               </p>
             </div>
@@ -630,14 +669,16 @@ function OrderDetail({ order }: { order: Order }) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4">
-        <h3 className="text-sm font-semibold text-slate-800">Order Timeline</h3>
-        <div className="mt-3 space-y-2 text-sm text-slate-600">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-gray-100">
+          Order Timeline
+        </h3>
+        <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-gray-400">
           {order.timeline.map((event) => (
             <div key={event.label} className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-orange-500" />
               <span>{event.label}</span>
-              <span className="ml-auto text-xs text-slate-400">
+              <span className="ml-auto text-xs text-slate-400 dark:text-gray-500">
                 {event.time}
               </span>
             </div>
@@ -646,10 +687,10 @@ function OrderDetail({ order }: { order: Order }) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold">
+        <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 text-xs font-semibold dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
           Print Packing Slip
         </button>
-        <button className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs font-semibold text-orange-700">
+        <button className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-3 py-2 text-xs font-semibold text-orange-700 dark:text-orange-400 transition-colors">
           Contact Buyer
         </button>
       </div>
@@ -673,7 +714,7 @@ function ActionMenu({
   return (
     <div className="relative inline-flex items-center gap-2 text-xs">
       <select
-        className="appearance-none rounded-lg border border-slate-200 px-2 py-1 text-xs"
+        className="appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-gray-300 transition-colors"
         onChange={(event) => {
           const action = event.target.value
           if (action === 'confirm') onConfirm()
@@ -682,20 +723,38 @@ function ActionMenu({
           if (action === 'cancelled') onCancel()
         }}
       >
-        <option value="">Actions</option>
-        <option value="view">View Details</option>
-        {status === 'New' && <option value="confirm">Confirm Order</option>}
+        <option value="" className="dark:bg-slate-900">
+          Actions
+        </option>
+        <option value="view" className="dark:bg-slate-900">
+          View Details
+        </option>
+        {status === 'New' && (
+          <option value="confirm" className="dark:bg-slate-900">
+            Confirm Order
+          </option>
+        )}
         {status !== 'Shipped' && (
-          <option value="processing">Mark as Processing</option>
+          <option value="processing" className="dark:bg-slate-900">
+            Mark as Processing
+          </option>
         )}
         {status === 'Processing' && (
-          <option value="shipped">Mark as Shipped</option>
+          <option value="shipped" className="dark:bg-slate-900">
+            Mark as Shipped
+          </option>
         )}
-        <option value="print">Print Invoice</option>
-        <option value="contact">Contact Buyer</option>
-        <option value="cancelled">Cancel Order</option>
+        <option value="print" className="dark:bg-slate-900">
+          Print Invoice
+        </option>
+        <option value="contact" className="dark:bg-slate-900">
+          Contact Buyer
+        </option>
+        <option value="cancelled" className="dark:bg-slate-900">
+          Cancel Order
+        </option>
       </select>
-      <ChevronDown size={12} className="text-slate-400" />
+      <ChevronDown size={12} className="text-slate-400 dark:text-gray-500" />
     </div>
   )
 }
@@ -712,26 +771,28 @@ function ConfirmModal({
   const [processingTime, setProcessingTime] = useState('2-3 days')
   return (
     <Modal onClose={onClose} title={`Confirm Order ${order.id}`}>
-      <p className="text-sm text-slate-600">Confirm this order?</p>
+      <p className="text-sm text-slate-600 dark:text-gray-400">
+        Confirm this order?
+      </p>
       <select
         value={processingTime}
         onChange={(event) => setProcessingTime(event.target.value)}
-        className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+        className="mt-4 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
       >
-        <option>1-2 days</option>
-        <option>2-3 days</option>
-        <option>3-5 days</option>
+        <option className="dark:bg-slate-900">1-2 days</option>
+        <option className="dark:bg-slate-900">2-3 days</option>
+        <option className="dark:bg-slate-900">3-5 days</option>
       </select>
       <div className="mt-4 flex justify-end gap-3">
         <button
           onClick={onClose}
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+          className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           Cancel
         </button>
         <button
           onClick={() => onConfirm(processingTime)}
-          className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white"
+          className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
         >
           Confirm Order
         </button>
@@ -754,42 +815,42 @@ function ShipModal({
   const [deliveryDate, setDeliveryDate] = useState('')
   return (
     <Modal onClose={onClose} title={`Mark ${order.id} as shipped`}>
-      <div className="space-y-3 text-sm text-slate-600">
+      <div className="space-y-3 text-sm text-slate-600 dark:text-gray-400">
         <select
           value={courier}
           onChange={(event) => setCourier(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
         >
-          <option>BlueDart</option>
-          <option>Pathao</option>
-          <option>RedX</option>
-          <option>SteadFast</option>
+          <option className="dark:bg-slate-900">BlueDart</option>
+          <option className="dark:bg-slate-900">Pathao</option>
+          <option className="dark:bg-slate-900">RedX</option>
+          <option className="dark:bg-slate-900">SteadFast</option>
         </select>
         <input
           value={tracking}
           onChange={(event) => setTracking(event.target.value)}
           placeholder="Tracking number"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 transition-colors"
         />
         <input
           value={deliveryDate}
           onChange={(event) => setDeliveryDate(event.target.value)}
           placeholder="Estimated delivery date"
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 transition-colors"
         />
-        <input type="file" className="w-full text-sm" />
+        <input type="file" className="w-full text-sm dark:text-gray-400" />
       </div>
       <div className="mt-4 flex justify-end gap-3">
         <button
           onClick={onClose}
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+          className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           Cancel
         </button>
         <button
           onClick={onSubmit}
           disabled={!tracking}
-          className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white disabled:opacity-60"
+          className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white disabled:opacity-60 hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
         >
           Submit
         </button>
@@ -809,16 +870,18 @@ function Modal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 px-4 backdrop-blur-sm transition-all"
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl border border-slate-200 dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
+            {title}
+          </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
             aria-label="Close modal"
             autoFocus
           >
@@ -833,8 +896,11 @@ function Modal({
 
 function EmptyState({ query }: { query: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-slate-500">
-      <Package size={28} className="mx-auto text-slate-400" />
+    <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-8 text-center text-slate-500 dark:text-gray-400 transition-colors">
+      <Package
+        size={28}
+        className="mx-auto text-slate-400 dark:text-gray-500"
+      />
       <p className="mt-3 text-sm">
         {query ? `No orders match filters` : 'No orders yet'}
       </p>
@@ -846,19 +912,27 @@ function OrderSkeleton() {
   return (
     <div className="space-y-3">
       {[1, 2, 3, 4].map((row) => (
-        <div key={row} className="h-12 rounded-lg bg-slate-100 animate-pulse" />
+        <div
+          key={row}
+          className="h-12 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse"
+        />
       ))}
     </div>
   )
 }
 
 function statusBadge(status: OrderStatus) {
-  if (status === 'New') return 'bg-orange-50 text-orange-700'
-  if (status === 'Confirmed') return 'bg-blue-50 text-blue-700'
-  if (status === 'Processing') return 'bg-purple-50 text-purple-700'
-  if (status === 'Shipped') return 'bg-teal-50 text-teal-700'
-  if (status === 'Delivered') return 'bg-green-50 text-green-700'
-  return 'bg-red-50 text-red-600'
+  if (status === 'New')
+    return 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+  if (status === 'Confirmed')
+    return 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+  if (status === 'Processing')
+    return 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
+  if (status === 'Shipped')
+    return 'bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-400'
+  if (status === 'Delivered')
+    return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+  return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
 }
 
 function playNotificationSound() {

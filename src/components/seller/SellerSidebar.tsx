@@ -82,7 +82,10 @@ export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {
               (item.path !== '/seller/dashboard' &&
                 location.pathname.startsWith(item.path))
             const Icon = item.icon
-            const isRestricted = !isVerified && item.path !== '/seller/profile' && item.path !== '/seller/dashboard'
+            const isRestricted =
+              !isVerified &&
+              item.path !== '/seller/profile' &&
+              item.path !== '/seller/dashboard'
 
             if (isRestricted) {
               return (
@@ -95,8 +98,11 @@ export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {
                     <Icon size={20} />
                     <span>{item.label}</span>
                   </div>
-                  <Lock size={14} className="text-gray-300 dark:text-gray-600" />
-                  
+                  <Lock
+                    size={14}
+                    className="text-gray-300 dark:text-gray-600"
+                  />
+
                   {/* Tooltip */}
                   <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
                     Verification Required

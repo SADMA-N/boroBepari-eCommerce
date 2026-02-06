@@ -131,7 +131,10 @@ export const auth = betterAuth({
               userAgent: session.userAgent,
             })
           } catch (error) {
-            console.error('[Auth] Failed to create login event:', (error as Error).message)
+            console.error(
+              '[Auth] Failed to create login event:',
+              (error as Error).message,
+            )
           }
         },
       },

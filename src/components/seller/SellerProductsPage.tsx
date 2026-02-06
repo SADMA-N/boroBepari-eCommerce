@@ -241,14 +241,16 @@ export function SellerProductsPage() {
       <div className="space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">My Products</h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 transition-colors">
+              My Products
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
               Showing {showing.length} of {total} products
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {selected.length > 0 && (
-              <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-600 dark:text-gray-300 transition-colors">
                 {selected.length} selected
                 <BulkActions onAction={handleBulkAction} />
               </div>
@@ -256,7 +258,7 @@ export function SellerProductsPage() {
             <button
               type="button"
               onClick={() => setShowImport(true)}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <UploadCloud size={16} />
               Bulk Import
@@ -264,7 +266,7 @@ export function SellerProductsPage() {
             <button
               type="button"
               onClick={() => navigate({ to: '/seller/products/add' })}
-              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors"
             >
               <PackagePlus size={16} />
               Add Product
@@ -277,7 +279,7 @@ export function SellerProductsPage() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search by title or SKU"
-            className="w-full lg:max-w-sm rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+            className="w-full lg:max-w-sm rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all"
           />
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
@@ -293,10 +295,10 @@ export function SellerProductsPage() {
                 <button
                   key={tab}
                   onClick={() => setFilter(tab)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
                     filter === tab
-                      ? 'bg-orange-50 text-orange-700'
-                      : 'bg-white text-slate-500 border border-slate-200'
+                      ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                      : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-gray-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {tab}
@@ -307,7 +309,7 @@ export function SellerProductsPage() {
               <select
                 value={sort}
                 onChange={(event) => setSort(event.target.value as SortOption)}
-                className="appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2 pr-8 text-sm text-slate-700"
+                className="appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 pr-8 text-sm text-slate-700 dark:text-gray-200 focus:border-orange-500 transition-colors"
               >
                 {(
                   [
@@ -325,7 +327,7 @@ export function SellerProductsPage() {
               </select>
               <ChevronDown
                 size={16}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 pointer-events-none"
               />
             </div>
             <ExportMenu onExport={handleExport} />
@@ -344,9 +346,9 @@ export function SellerProductsPage() {
           />
         ) : (
           <>
-            <div className="hidden lg:block rounded-2xl border border-slate-200 bg-white overflow-hidden">
+            <div className="hidden lg:block rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
               <table className="w-full text-sm">
-                <thead className="text-left text-slate-400 bg-slate-50">
+                <thead className="text-left text-slate-400 dark:text-gray-500 bg-slate-50 dark:bg-slate-900/50">
                   <tr>
                     <th className="p-4">
                       <input
@@ -356,6 +358,7 @@ export function SellerProductsPage() {
                           showing.length > 0
                         }
                         onChange={toggleSelectAll}
+                        className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
                       />
                     </th>
                     <th className="p-4">Product</th>
@@ -367,14 +370,18 @@ export function SellerProductsPage() {
                     <th className="p-4">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {showing.map((product) => (
-                    <tr key={product.id} className="text-slate-600">
+                    <tr
+                      key={product.id}
+                      className="text-slate-600 dark:text-gray-300 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
                       <td className="p-4">
                         <input
                           type="checkbox"
                           checked={selected.includes(product.id)}
                           onChange={() => toggleSelection(product.id)}
+                          className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
                         />
                       </td>
                       <td className="p-4">
@@ -382,13 +389,13 @@ export function SellerProductsPage() {
                           <img
                             src={product.image}
                             alt={product.title}
-                            className="h-12 w-12 rounded-lg object-cover"
+                            className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                           />
                           <div>
-                            <p className="font-semibold text-slate-800">
+                            <p className="font-semibold text-slate-800 dark:text-gray-100">
                               {product.title}
                             </p>
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs text-slate-400 dark:text-gray-500">
                               ID: {product.id}
                             </p>
                           </div>
@@ -408,14 +415,14 @@ export function SellerProductsPage() {
                                 event.target.value,
                               )
                             }
-                            className="w-24 rounded border border-slate-200 px-2 py-1 text-sm"
+                            className="w-24 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2 py-1 text-sm dark:text-gray-100"
                           />
                         ) : (
                           <button
                             onClick={() =>
                               setEditing({ id: product.id, field: 'price' })
                             }
-                            className="text-slate-700 hover:text-orange-600"
+                            className="text-slate-700 dark:text-gray-200 hover:text-orange-600 dark:hover:text-orange-500 transition-colors text-left"
                           >
                             ৳{product.price} / Min: {product.moq}
                             {loadingEdit === product.id && (
@@ -439,14 +446,14 @@ export function SellerProductsPage() {
                                 event.target.value,
                               )
                             }
-                            className="w-20 rounded border border-slate-200 px-2 py-1 text-sm"
+                            className="w-20 rounded border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2 py-1 text-sm dark:text-gray-100"
                           />
                         ) : (
                           <button
                             onClick={() =>
                               setEditing({ id: product.id, field: 'stock' })
                             }
-                            className={`rounded-full px-3 py-1 text-xs font-semibold ${stockBadge(product)}`}
+                            className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${stockBadge(product)}`}
                             title={`${product.stock} units`}
                           >
                             {stockStatus(product)}
@@ -455,7 +462,7 @@ export function SellerProductsPage() {
                       </td>
                       <td className="p-4">
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${statusBadge(product.status)}`}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${statusBadge(product.status)}`}
                         >
                           {product.status}
                         </span>
@@ -479,34 +486,36 @@ export function SellerProductsPage() {
               {showing.map((product) => (
                 <div
                   key={product.id}
-                  className="rounded-2xl border border-slate-200 bg-white p-4"
+                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors"
                 >
                   <div className="flex gap-4">
                     <img
                       src={product.image}
                       alt={product.title}
-                      className="h-20 w-20 rounded-lg object-cover"
+                      className="h-20 w-20 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                     />
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-semibold text-slate-800 dark:text-gray-100">
                         {product.title}
                       </p>
-                      <p className="text-xs text-slate-400">{product.sku}</p>
-                      <p className="mt-2 text-sm text-slate-700">
+                      <p className="text-xs text-slate-400 dark:text-gray-500">
+                        {product.sku}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-700 dark:text-gray-300">
                         ৳{product.price} · MOQ {product.moq}
                       </p>
                       <span
-                        className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${stockBadge(product)}`}
+                        className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold transition-colors ${stockBadge(product)}`}
                       >
                         {stockStatus(product)}
                       </span>
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                    <button className="rounded-lg border border-slate-200 py-2">
+                    <button className="rounded-lg border border-slate-200 dark:border-slate-800 py-2 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       Edit
                     </button>
-                    <button className="rounded-lg border border-orange-200 bg-orange-50 py-2 text-orange-600">
+                    <button className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 py-2 text-orange-600 dark:text-orange-400 transition-colors">
                       View
                     </button>
                   </div>
@@ -517,21 +526,21 @@ export function SellerProductsPage() {
         )}
 
         <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-gray-400">
             Page {page} of {Math.max(1, Math.ceil(filtered.length / perPage))}
           </p>
           <div className="flex items-center gap-2">
             <button
               disabled={page === 1}
               onClick={() => setPage((prev) => prev - 1)}
-              className="rounded-lg border border-slate-200 px-3 py-1 text-sm disabled:opacity-50"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 text-sm text-slate-700 dark:text-gray-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Previous
             </button>
             <button
               disabled={page >= Math.ceil(filtered.length / perPage)}
               onClick={() => setPage((prev) => prev + 1)}
-              className="rounded-lg border border-slate-200 px-3 py-1 text-sm disabled:opacity-50"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 text-sm text-slate-700 dark:text-gray-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Next
             </button>
@@ -561,19 +570,27 @@ function BulkActions({
   return (
     <div className="relative">
       <select
-        className="appearance-none rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-600"
+        className="appearance-none rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-gray-300 transition-colors"
         onChange={(event) =>
           onAction(event.target.value as 'publish' | 'unpublish' | 'delete')
         }
       >
-        <option value="">Bulk actions</option>
-        <option value="publish">Publish selected</option>
-        <option value="unpublish">Unpublish selected</option>
-        <option value="delete">Delete selected</option>
+        <option value="" className="dark:bg-slate-900">
+          Bulk actions
+        </option>
+        <option value="publish" className="dark:bg-slate-900">
+          Publish selected
+        </option>
+        <option value="unpublish" className="dark:bg-slate-900">
+          Unpublish selected
+        </option>
+        <option value="delete" className="dark:bg-slate-900">
+          Delete selected
+        </option>
       </select>
       <ChevronDown
         size={12}
-        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400"
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 pointer-events-none"
       />
     </div>
   )
@@ -587,16 +604,22 @@ function ExportMenu({
   return (
     <div className="relative">
       <select
-        className="appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2 pr-8 text-sm text-slate-700"
+        className="appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 pr-8 text-sm text-slate-700 dark:text-gray-200 transition-colors focus:border-orange-500"
         onChange={(event) => onExport(event.target.value as 'csv' | 'excel')}
       >
-        <option value="">Export</option>
-        <option value="csv">CSV</option>
-        <option value="excel">Excel</option>
+        <option value="" className="dark:bg-slate-900">
+          Export
+        </option>
+        <option value="csv" className="dark:bg-slate-900">
+          CSV
+        </option>
+        <option value="excel" className="dark:bg-slate-900">
+          Excel
+        </option>
       </select>
       <Download
         size={16}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 pointer-events-none"
       />
     </div>
   )
@@ -610,27 +633,37 @@ function RowActions({
   isPublished: boolean
 }) {
   return (
-    <div className="flex items-center gap-2 text-xs text-slate-600">
-      <button className="rounded-lg border border-slate-200 px-2 py-1">
+    <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
+      <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-2 py-1 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
         View
       </button>
       <div className="relative">
         <select
-          className="appearance-none rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-600"
+          className="appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-gray-300 transition-colors"
           onChange={(event) => onAction(event.target.value)}
         >
-          <option value="">More</option>
-          <option value="view">View on marketplace</option>
-          <option value="edit">Edit product</option>
-          <option value="duplicate">Duplicate product</option>
-          <option value="toggle">
+          <option value="" className="dark:bg-slate-900">
+            More
+          </option>
+          <option value="view" className="dark:bg-slate-900">
+            View on marketplace
+          </option>
+          <option value="edit" className="dark:bg-slate-900">
+            Edit product
+          </option>
+          <option value="duplicate" className="dark:bg-slate-900">
+            Duplicate product
+          </option>
+          <option value="toggle" className="dark:bg-slate-900">
             {isPublished ? 'Unpublish' : 'Publish'}
           </option>
-          <option value="delete">Delete product</option>
+          <option value="delete" className="dark:bg-slate-900">
+            Delete product
+          </option>
         </select>
         <MoreVertical
           size={12}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 pointer-events-none"
         />
       </div>
     </div>
@@ -639,15 +672,16 @@ function RowActions({
 
 function statusBadge(status: ProductStatus) {
   return status === 'Published'
-    ? 'bg-green-50 text-green-700'
-    : 'bg-slate-100 text-slate-600'
+    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-gray-400'
 }
 
 function stockBadge(product: Product) {
-  if (product.stock === 0) return 'bg-red-50 text-red-600'
+  if (product.stock === 0)
+    return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
   if (product.stock < product.lowStockThreshold)
-    return 'bg-orange-50 text-orange-600'
-  return 'bg-green-50 text-green-600'
+    return 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400'
+  return 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
 }
 
 function EmptyState({
@@ -658,34 +692,34 @@ function EmptyState({
   onClear: () => void
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+    <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-10 text-center transition-colors">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-gray-500">
         <PackagePlus size={28} />
       </div>
       {query ? (
         <>
-          <h2 className="mt-4 text-lg font-semibold text-slate-800">
+          <h2 className="mt-4 text-lg font-semibold text-slate-800 dark:text-gray-100">
             No products found for “{query}”
           </h2>
           <button
             type="button"
             onClick={onClear}
-            className="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             Clear filters
           </button>
         </>
       ) : (
         <>
-          <h2 className="mt-4 text-lg font-semibold text-slate-800">
+          <h2 className="mt-4 text-lg font-semibold text-slate-800 dark:text-gray-100">
             Start selling by adding your first product
           </h2>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
             Showcase your catalog to buyers across Bangladesh.
           </p>
           <Link
             to="/seller/products/add"
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
           >
             <PackagePlus size={16} />
             Add Product
@@ -698,9 +732,12 @@ function EmptyState({
 
 function ProductSkeleton() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-3">
       {[1, 2, 3, 4].map((row) => (
-        <div key={row} className="h-12 rounded-lg bg-slate-100 animate-pulse" />
+        <div
+          key={row}
+          className="h-12 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse"
+        />
       ))}
     </div>
   )

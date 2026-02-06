@@ -522,24 +522,24 @@ export function AdminSuppliersPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               Supplier Management
             </h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
               Total: {totalSuppliers} sellers
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
               disabled={!canView}
-              className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
               <UserPlus size={16} />+ Add Supplier
             </button>
             <div className="relative">
               <button
                 onClick={() => setExportOpen((prev) => !prev)}
-                className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-all"
               >
                 <Download size={16} />
                 Export
@@ -551,34 +551,34 @@ export function AdminSuppliersPage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setExportOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg z-20 overflow-hidden">
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg z-20 overflow-hidden transition-colors">
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase">
                       Export Scope
                     </div>
                     <button
                       onClick={() => exportSuppliers('all', 'csv')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export All (CSV)
                     </button>
                     <button
                       onClick={() => exportSuppliers('all', 'excel')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export All (Excel)
                     </button>
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase border-t border-slate-100 dark:border-slate-800">
                       Filtered
                     </div>
                     <button
                       onClick={() => exportSuppliers('filtered', 'csv')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export Filtered (CSV)
                     </button>
                     <button
                       onClick={() => exportSuppliers('filtered', 'excel')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export Filtered (Excel)
                     </button>
@@ -590,45 +590,53 @@ export function AdminSuppliersPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Total Suppliers</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Total Suppliers
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {totalSuppliers}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Active Suppliers</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Active Suppliers
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {activeSuppliers}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">KYC Pending</p>
-            <p className="mt-2 text-2xl font-semibold text-red-600">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              KYC Pending
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-red-600 dark:text-red-400 transition-colors">
               {kycPending}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Suspended</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Suspended
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
               {suspendedSuppliers}
             </p>
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by business name, email, phone"
-                className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600">
+              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <Filter size={16} />
                 Filters
               </div>
@@ -637,10 +645,14 @@ export function AdminSuppliersPage() {
                 onChange={(e) =>
                   setKycFilter(e.target.value as KycStatus | 'all')
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {KYC_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     KYC: {option.label}
                   </option>
                 ))}
@@ -650,10 +662,14 @@ export function AdminSuppliersPage() {
                 onChange={(e) =>
                   setStatusFilter(e.target.value as SupplierStatus | 'all')
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {STATUS_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Status: {option.label}
                   </option>
                 ))}
@@ -663,10 +679,14 @@ export function AdminSuppliersPage() {
                 onChange={(e) =>
                   setPerformanceFilter(e.target.value as PerformanceFilter)
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {PERFORMANCE_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Performance: {option.label}
                   </option>
                 ))}
@@ -674,10 +694,14 @@ export function AdminSuppliersPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {SORT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Sort by: {option.label}
                   </option>
                 ))}
@@ -685,7 +709,9 @@ export function AdminSuppliersPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-600">Category</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              Category
+            </span>
             {CATEGORIES.map((category) => {
               const active = selectedCategories.includes(category)
               return (
@@ -698,10 +724,10 @@ export function AdminSuppliersPage() {
                         : [...prev, category],
                     )
                   }}
-                  className={`rounded-full px-3 py-1 text-xs border ${
+                  className={`rounded-full px-3 py-1 text-xs border transition-colors ${
                     active
-                      ? 'border-orange-500 bg-orange-50 text-orange-700'
-                      : 'border-slate-200 text-slate-600'
+                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {category}
@@ -711,7 +737,7 @@ export function AdminSuppliersPage() {
             {selectedCategories.length > 0 && (
               <button
                 onClick={() => setSelectedCategories([])}
-                className="rounded-full px-3 py-1 text-xs border border-slate-200 text-slate-500"
+                className="rounded-full px-3 py-1 text-xs border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
               >
                 Clear
               </button>
@@ -720,15 +746,15 @@ export function AdminSuppliersPage() {
         </div>
 
         {selectedCount > 0 && (
-          <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-orange-800">
+          <div className="rounded-xl border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between transition-colors">
+            <p className="text-sm text-orange-800 dark:text-orange-400">
               {selectedCount} supplier{selectedCount === 1 ? '' : 's'} selected
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setBulkApproveOpen(true)}
                 disabled={!canKycApprove}
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
+                className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <FileCheck size={14} />
                 Bulk Approve KYC
@@ -736,7 +762,7 @@ export function AdminSuppliersPage() {
               <button
                 onClick={() => setBulkVerifyOpen(true)}
                 disabled={!canVerify}
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
+                className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <ShieldCheck size={14} />
                 Bulk Verify
@@ -744,12 +770,12 @@ export function AdminSuppliersPage() {
               <button
                 onClick={() => setBulkSuspendOpen(true)}
                 disabled={!canSuspend}
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
+                className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <Ban size={14} />
                 Bulk Suspend
               </button>
-              <button className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200">
+              <button className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                 <Download size={14} />
                 Bulk Export
               </button>
@@ -757,10 +783,10 @@ export function AdminSuppliersPage() {
           </div>
         )}
 
-        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                 <tr>
                   <th className="px-4 py-3 text-left">
                     <input
@@ -770,6 +796,7 @@ export function AdminSuppliersPage() {
                         pageSuppliers.every((s) => selectedIds.includes(s.id))
                       }
                       onChange={toggleSelectAll}
+                      className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                     />
                   </th>
                   <th className="px-4 py-3 text-left">Supplier ID</th>
@@ -786,43 +813,47 @@ export function AdminSuppliersPage() {
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                 {pageSuppliers.map((supplier) => {
                   const rowTone =
                     supplier.status === 'suspended'
-                      ? 'bg-red-50'
+                      ? 'bg-red-50 dark:bg-red-900/10'
                       : supplier.kycStatus === 'pending'
-                        ? 'bg-yellow-50'
+                        ? 'bg-yellow-50 dark:bg-yellow-900/10'
                         : supplier.kycStatus === 'verified'
-                          ? 'bg-green-50'
+                          ? 'bg-green-50 dark:bg-green-900/10'
                           : ''
                   return (
                     <tr
                       key={supplier.id}
-                      className={`${rowTone} hover:bg-slate-50`}
+                      className={`${rowTone} hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors`}
                     >
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selectedIds.includes(supplier.id)}
                           onChange={() => toggleSelectOne(supplier.id)}
+                          className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                         />
                       </td>
-                      <td className="px-4 py-3 font-medium text-slate-900">
+                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
                         {supplier.id}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <Building2 size={16} className="text-slate-400" />
-                          <span className="font-medium text-slate-900">
+                          <Building2
+                            size={16}
+                            className="text-slate-400 dark:text-slate-500"
+                          />
+                          <span className="font-medium text-slate-900 dark:text-slate-100 transition-colors">
                             {supplier.businessName}
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {supplier.ownerName}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {supplier.email}
                       </td>
                       <td className="px-4 py-3">
@@ -837,20 +868,20 @@ export function AdminSuppliersPage() {
                         ) : (
                           <XCircle
                             size={16}
-                            className="inline-block text-slate-400"
+                            className="inline-block text-slate-400 dark:text-slate-600"
                           />
                         )}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">
+                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {supplier.totalProducts}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">
+                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {supplier.totalOrders}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600">
+                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {formatCurrency(supplier.gmv)}
                       </td>
-                      <td className="px-4 py-3 text-slate-600">
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                         {supplier.registrationDate}
                       </td>
                       <td className="px-4 py-3">
@@ -864,7 +895,7 @@ export function AdminSuppliersPage() {
                                 openMenuId === supplier.id ? null : supplier.id,
                               )
                             }
-                            className="rounded-lg p-2 hover:bg-slate-100"
+                            className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
                           >
                             <MoreVertical size={16} />
                           </button>
@@ -874,7 +905,7 @@ export function AdminSuppliersPage() {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setOpenMenuId(null)}
                               />
-                              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg">
+                              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg transition-colors overflow-hidden">
                                 <button
                                   onClick={() => {
                                     setDetailSupplier(supplier)
@@ -882,21 +913,21 @@ export function AdminSuppliersPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canView}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Eye size={14} />
                                   View Profile
                                 </button>
                                 <button
                                   disabled={!canView}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <FileText size={14} />
                                   View Products
                                 </button>
                                 <button
                                   disabled={!canView}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <FileText size={14} />
                                   View Orders
@@ -910,7 +941,7 @@ export function AdminSuppliersPage() {
                                         setOpenMenuId(null)
                                       }}
                                       disabled={!canKycApprove}
-                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                     >
                                       <FileCheck size={14} />
                                       Approve KYC
@@ -922,7 +953,7 @@ export function AdminSuppliersPage() {
                                         setOpenMenuId(null)
                                       }}
                                       disabled={!canKycReject}
-                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                     >
                                       <FileX2 size={14} />
                                       Reject KYC
@@ -932,7 +963,7 @@ export function AdminSuppliersPage() {
                                 {supplier.verificationBadge === 'none' ? (
                                   <button
                                     disabled={!canVerify}
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                   >
                                     <ShieldCheck size={14} />
                                     Verify Supplier
@@ -940,7 +971,7 @@ export function AdminSuppliersPage() {
                                 ) : (
                                   <button
                                     disabled={!canVerify}
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                   >
                                     <ShieldX size={14} />
                                     Revoke Verification
@@ -953,14 +984,14 @@ export function AdminSuppliersPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canSuspend}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Account
                                 </button>
                                 <button
                                   disabled={!canView}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <BarChart3 size={14} />
                                   View Analytics
@@ -972,7 +1003,7 @@ export function AdminSuppliersPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canSuspend}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors disabled:opacity-50"
                                 >
                                   <Trash2 size={14} />
                                   Delete Account
@@ -989,7 +1020,7 @@ export function AdminSuppliersPage() {
                   <tr>
                     <td
                       colSpan={13}
-                      className="px-4 py-10 text-center text-slate-500"
+                      className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
                     >
                       No suppliers found.
                     </td>
@@ -998,7 +1029,7 @@ export function AdminSuppliersPage() {
               </tbody>
             </table>
           </div>
-          <div className="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-t border-slate-200 dark:border-slate-800 px-4 py-3 text-sm text-slate-600 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between transition-colors">
             <p>
               Showing {pageSuppliers.length} of {sortedSuppliers.length}{' '}
               suppliers
@@ -1007,11 +1038,11 @@ export function AdminSuppliersPage() {
               <button
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Prev
               </button>
-              <span>
+              <span className="text-slate-600 dark:text-slate-400">
                 Page {currentPage} of {totalPages}
               </span>
               <button
@@ -1019,44 +1050,49 @@ export function AdminSuppliersPage() {
                   setPage((prev) => Math.min(totalPages, prev + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Next
               </button>
-              <span className="ml-2 text-xs text-slate-400">50 per page</span>
+              <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">
+                50 per page
+              </span>
             </div>
           </div>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 lg:col-span-2">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 lg:col-span-2 transition-colors">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-900">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                 Top 10 Suppliers (GMV)
               </h3>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
                 {newSuppliers} new this month
               </span>
             </div>
-            <div className="mt-3 overflow-hidden rounded-lg border border-slate-200">
+            <div className="mt-3 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 transition-colors">
               <table className="min-w-full text-sm">
-                <thead className="bg-slate-50 text-slate-600">
+                <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                   <tr>
                     <th className="px-4 py-2 text-left">Supplier</th>
                     <th className="px-4 py-2 text-right">GMV</th>
                     <th className="px-4 py-2 text-right">Orders</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                   {topSuppliers.map((supplier) => (
-                    <tr key={supplier.id}>
-                      <td className="px-4 py-2 text-slate-700">
+                    <tr
+                      key={supplier.id}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td className="px-4 py-2 text-slate-700 dark:text-slate-300 transition-colors">
                         {supplier.businessName}
                       </td>
-                      <td className="px-4 py-2 text-right text-slate-600">
+                      <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {formatCurrency(supplier.gmv)}
                       </td>
-                      <td className="px-4 py-2 text-right text-slate-600">
+                      <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-400 transition-colors">
                         {supplier.totalOrders}
                       </td>
                     </tr>
@@ -1065,24 +1101,26 @@ export function AdminSuppliersPage() {
               </table>
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
               Underperformers (0 orders / 30d)
             </h3>
             <div className="mt-3 space-y-2">
               {underperformers.map((supplier) => (
                 <div
                   key={supplier.id}
-                  className="rounded-lg border border-slate-200 px-3 py-2"
+                  className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
                 >
-                  <p className="text-sm font-medium text-slate-900">
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                     {supplier.businessName}
                   </p>
-                  <p className="text-xs text-slate-500">{supplier.ownerName}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
+                    {supplier.ownerName}
+                  </p>
                 </div>
               ))}
               {underperformers.length === 0 && (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-500 transition-colors text-center py-4">
                   No underperformers found.
                 </p>
               )}
@@ -1092,25 +1130,25 @@ export function AdminSuppliersPage() {
       </div>
 
       {detailSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-4xl rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-4xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   {detailSupplier.businessName}
                 </h2>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
                   {detailSupplier.ownerName}
                 </p>
               </div>
               <button
                 onClick={() => setDetailSupplier(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="border-b border-slate-200 px-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 px-6 transition-colors">
               <div className="flex flex-wrap gap-6 text-sm">
                 {(
                   [
@@ -1125,10 +1163,10 @@ export function AdminSuppliersPage() {
                   <button
                     key={tab}
                     onClick={() => setDetailTab(tab)}
-                    className={`py-3 border-b-2 ${
+                    className={`py-3 border-b-2 transition-colors ${
                       detailTab === tab
                         ? 'border-orange-600 text-orange-600'
-                        : 'border-transparent text-slate-500'
+                        : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
                   >
                     {tab === 'business'
@@ -1151,95 +1189,99 @@ export function AdminSuppliersPage() {
                 <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Business Name
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.businessName}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Business Type
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.businessType}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Category
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.category}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Trade License
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.tradeLicense}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Owner Name
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.ownerName}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Email</p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                        Email
+                      </p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.email}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Phone</p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                        Phone
+                      </p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.phone}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Business Address
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.address}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Bank Details
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.bank.name} •{' '}
                         {detailSupplier.bank.accountNumberMasked}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
                         {detailSupplier.bank.branch}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Registration Date
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.registrationDate}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Last Active
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                         {detailSupplier.lastActive}
                       </p>
                     </div>
                   </div>
-                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
+                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     Edit Business Info
                   </button>
                 </div>
@@ -1250,12 +1292,12 @@ export function AdminSuppliersPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     {kycBadge(detailSupplier.kycStatus)}
                     {detailSupplier.kycDecision?.date && (
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-500">
                         Updated: {detailSupplier.kycDecision.date}
                       </span>
                     )}
                     {detailSupplier.kycDecision?.reason && (
-                      <span className="text-xs text-red-600">
+                      <span className="text-xs text-red-600 dark:text-red-400">
                         Reason: {detailSupplier.kycDecision.reason}
                       </span>
                     )}
@@ -1281,45 +1323,45 @@ export function AdminSuppliersPage() {
                     ].map((doc) => (
                       <div
                         key={doc.label}
-                        className="rounded-lg border border-slate-200 p-3"
+                        className="rounded-lg border border-slate-200 dark:border-slate-800 p-3 transition-colors"
                       >
                         <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-slate-900">
+                          <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                             {doc.label}
                           </p>
-                          <button className="text-xs text-orange-600">
+                          <button className="text-xs text-orange-600 dark:text-orange-400">
                             Zoom
                           </button>
                         </div>
-                        <div className="mt-2 flex h-32 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+                        <div className="mt-2 flex h-32 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors">
                           <Image size={24} />
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-medium text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
                       Document Checklist
                     </p>
-                    <div className="mt-3 space-y-2 text-sm text-slate-600">
+                    <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          className="rounded border-slate-300"
+                          className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 transition-colors"
                         />{' '}
                         Trade License
                       </label>
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          className="rounded border-slate-300"
+                          className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 transition-colors"
                         />{' '}
                         NID Front
                       </label>
                       <label className="flex items-center gap-2">
                         <input
                           type="checkbox"
-                          className="rounded border-slate-300"
+                          className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 transition-colors"
                         />{' '}
                         NID Back
                       </label>
@@ -1329,14 +1371,14 @@ export function AdminSuppliersPage() {
                     <div className="flex flex-wrap gap-3">
                       <button
                         onClick={() => setApproveOpen(true)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm text-white"
+                        className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20"
                       >
                         <FileCheck size={14} />
                         Approve KYC
                       </button>
                       <button
                         onClick={() => setRejectOpen(true)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white"
+                        className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
                       >
                         <FileX2 size={14} />
                         Reject KYC
@@ -1349,28 +1391,40 @@ export function AdminSuppliersPage() {
               {detailTab === 'products' && (
                 <div className="space-y-4">
                   <div className="grid gap-3 sm:grid-cols-4">
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Total Products</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Total Products
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {detailSupplier.totalProducts}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Active</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Active
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         120
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Draft</p>
-                      <p className="text-lg font-semibold text-slate-900">24</p>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Draft
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                        24
+                      </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Out of Stock</p>
-                      <p className="text-lg font-semibold text-slate-900">12</p>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Out of Stock
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                        12
+                      </p>
                     </div>
                   </div>
-                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
+                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     View All Products
                   </button>
                 </div>
@@ -1379,30 +1433,40 @@ export function AdminSuppliersPage() {
               {detailTab === 'orders' && (
                 <div className="space-y-4">
                   <div className="grid gap-3 sm:grid-cols-4">
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Total Orders</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Total Orders
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {detailSupplier.totalOrders}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Completed</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Completed
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         1,120
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Cancelled</p>
-                      <p className="text-lg font-semibold text-slate-900">32</p>
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Cancelled
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                        32
+                      </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">GMV</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        GMV
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {formatCurrency(detailSupplier.gmv)}
                       </p>
                     </div>
                   </div>
-                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
+                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     View All Orders
                   </button>
                 </div>
@@ -1411,42 +1475,70 @@ export function AdminSuppliersPage() {
               {detailTab === 'analytics' && (
                 <div className="space-y-4">
                   <div className="grid gap-3 sm:grid-cols-4">
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Fulfillment Rate</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Fulfillment Rate
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {detailSupplier.analytics.fulfillmentRate}%
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Average Rating</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Average Rating
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {detailSupplier.analytics.averageRating}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">RFQ Response</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        RFQ Response
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {detailSupplier.analytics.rfqResponseRate}%
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Top Product</p>
-                      <p className="text-sm font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Top Product
+                      </p>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 transition-colors">
                         {detailSupplier.analytics.topProducts[0]?.name || 'N/A'}
                       </p>
                     </div>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-4">
-                    <p className="text-sm font-semibold text-slate-900">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
                       GMV Over Time
                     </p>
                     <div className="mt-3 h-48">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={detailSupplier.analytics.gmvSeries}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="date" />
-                          <YAxis />
-                          <Tooltip />
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke={isDark ? '#334155' : '#e2e8f0'}
+                          />
+                          <XAxis
+                            dataKey="date"
+                            tick={{
+                              fill: isDark ? '#94a3b8' : '#64748b',
+                              fontSize: 12,
+                            }}
+                          />
+                          <YAxis
+                            tick={{
+                              fill: isDark ? '#94a3b8' : '#64748b',
+                              fontSize: 12,
+                            }}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                              borderColor: isDark ? '#334155' : '#e2e8f0',
+                              color: isDark ? '#f8fafc' : '#0f172a',
+                            }}
+                          />
                           <Line
                             type="monotone"
                             dataKey="gmv"
@@ -1465,18 +1557,18 @@ export function AdminSuppliersPage() {
                   {detailSupplier.activityLog.map((activity) => (
                     <div
                       key={activity.id}
-                      className="flex items-start justify-between rounded-lg border border-slate-200 px-4 py-3"
+                      className="flex items-start justify-between rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors"
                     >
-                      <p className="text-sm text-slate-700">
+                      <p className="text-sm text-slate-700 dark:text-slate-300 transition-colors">
                         {activity.message}
                       </p>
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-400 dark:text-slate-500">
                         {activity.time}
                       </span>
                     </div>
                   ))}
                   {detailSupplier.activityLog.length === 0 && (
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
                       No activity logged.
                     </p>
                   )}
@@ -1488,44 +1580,47 @@ export function AdminSuppliersPage() {
       )}
 
       {approveOpen && detailSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="text-green-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <ShieldCheck
+                  className="text-green-600 dark:text-green-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Approve KYC
                 </h2>
               </div>
               <button
                 onClick={() => setApproveOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <div className="rounded-lg border border-slate-200 p-4 text-sm text-slate-600">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 Review document checklist and add notes before approval.
               </div>
               <textarea
                 value={approveNotes}
                 onChange={(e) => setApproveNotes(e.target.value)}
                 placeholder="Notes (optional)"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setApproveOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setApproveOpen(false)}
-                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20"
               >
                 Approve KYC
               </button>
@@ -1535,24 +1630,27 @@ export function AdminSuppliersPage() {
       )}
 
       {rejectOpen && detailSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <AlertTriangle
+                  className="text-red-600 dark:text-red-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Reject KYC
                 </h2>
               </div>
               <button
                 onClick={() => setRejectOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <div className="space-y-2 text-sm text-slate-700">
+              <div className="space-y-2 text-sm text-slate-700 dark:text-slate-300 transition-colors">
                 {[
                   'Document not clear/readable',
                   'Document expired',
@@ -1571,6 +1669,7 @@ export function AdminSuppliersPage() {
                             : prev.filter((item) => item !== reason),
                         )
                       }}
+                      className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500"
                     />
                     {reason}
                   </label>
@@ -1581,27 +1680,27 @@ export function AdminSuppliersPage() {
                   value={rejectOther}
                   onChange={(e) => setRejectOther(e.target.value)}
                   placeholder="Other reason"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 />
               )}
               <textarea
                 value={rejectCorrections}
                 onChange={(e) => setRejectCorrections(e.target.value)}
                 placeholder="Required corrections"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setRejectOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setRejectOpen(false)}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
               >
                 Reject KYC
               </button>
@@ -1611,24 +1710,27 @@ export function AdminSuppliersPage() {
       )}
 
       {suspendOpen && detailSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Ban className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <Ban
+                  className="text-orange-600 dark:text-orange-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Suspend {detailSupplier.businessName}?
                 </h2>
               </div>
               <button
                 onClick={() => setSuspendOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-4 text-sm text-slate-600">
-              <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3">
+            <div className="px-6 py-5 space-y-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              <div className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 transition-colors">
                 <p>All products hidden from marketplace</p>
                 <p>Cannot respond to RFQs</p>
                 <p>Pending orders unaffected</p>
@@ -1638,17 +1740,17 @@ export function AdminSuppliersPage() {
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
                 placeholder="Suspension reason"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
               />
               <div className="flex flex-wrap gap-2">
                 {['7 days', '30 days', 'Permanent'].map((duration) => (
                   <button
                     key={duration}
                     onClick={() => setSuspendDuration(duration)}
-                    className={`rounded-lg border px-3 py-2 text-sm ${
+                    className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
                       suspendDuration === duration
-                        ? 'border-orange-500 bg-orange-50 text-orange-700'
-                        : 'border-slate-200 text-slate-700'
+                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                        : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
                     {duration}
@@ -1656,16 +1758,16 @@ export function AdminSuppliersPage() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setSuspendOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setSuspendOpen(false)}
-                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
               >
                 Confirm Suspension
               </button>
@@ -1675,32 +1777,35 @@ export function AdminSuppliersPage() {
       )}
 
       {deleteOpen && detailSupplier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <AlertTriangle
+                  className="text-red-600 dark:text-red-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Delete {detailSupplier.businessName}?
                 </h2>
               </div>
               <button
                 onClick={() => setDeleteOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-red-600 font-medium">
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium transition-colors">
                 This action cannot be undone.
               </p>
-              <label className="flex items-center gap-2 text-sm text-slate-600">
+              <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <input
                   type="checkbox"
                   checked={deleteConfirm}
                   onChange={(e) => setDeleteConfirm(e.target.checked)}
-                  className="rounded border-slate-300 text-red-600 focus:ring-red-500"
+                  className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-red-600 focus:ring-red-500"
                 />
                 I understand this action is permanent
               </label>
@@ -1708,17 +1813,17 @@ export function AdminSuppliersPage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE to confirm"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => {
                   setDeleteOpen(false)
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1729,7 +1834,7 @@ export function AdminSuppliersPage() {
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-600/20"
               >
                 Delete Account
               </button>

@@ -471,22 +471,24 @@ export function AdminUsersPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
               User Management
             </h1>
-            <p className="text-sm text-slate-500">Total: {totalUsers} buyers</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              Total: {totalUsers} buyers
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
               disabled={!canEdit}
-              className="inline-flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
               <UserPlus size={16} />+ Add User
             </button>
             <div className="relative">
               <button
                 onClick={() => setExportOpen((prev) => !prev)}
-                className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-all"
               >
                 <Download size={16} />
                 Export
@@ -498,34 +500,34 @@ export function AdminUsersPage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setExportOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg z-20 overflow-hidden">
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg z-20 overflow-hidden transition-colors">
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase">
                       Export Scope
                     </div>
                     <button
                       onClick={() => exportUsers('all', 'csv')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export All (CSV)
                     </button>
                     <button
                       onClick={() => exportUsers('all', 'excel')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export All (Excel)
                     </button>
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase border-t border-slate-100 dark:border-slate-800">
                       Filtered
                     </div>
                     <button
                       onClick={() => exportUsers('filtered', 'csv')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export Filtered (CSV)
                     </button>
                     <button
                       onClick={() => exportUsers('filtered', 'excel')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Export Filtered (Excel)
                     </button>
@@ -538,46 +540,54 @@ export function AdminUsersPage() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Total Users</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Total Users
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
               {totalUsers.toLocaleString()}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Active Today</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Active Today
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
               {activeToday.toLocaleString()}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">New Users This Month</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              New Users This Month
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
               {newThisMonth.toLocaleString()}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">Suspended Accounts</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Suspended Accounts
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
               {suspendedCount.toLocaleString()}
             </p>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, email, phone"
-                className="w-full rounded-lg border border-slate-200 py-2.5 pl-9 pr-3 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600">
+              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <Filter size={16} />
                 Filters
               </div>
@@ -586,10 +596,14 @@ export function AdminUsersPage() {
                 onChange={(e) =>
                   setStatusFilter(e.target.value as UserStatus | 'all')
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {STATUS_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Status: {option.label}
                   </option>
                 ))}
@@ -601,10 +615,14 @@ export function AdminUsersPage() {
                     e.target.value as 'all' | 'verified' | 'unverified',
                   )
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {VERIFICATION_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Verification: {option.label}
                   </option>
                 ))}
@@ -614,10 +632,14 @@ export function AdminUsersPage() {
                 onChange={(e) =>
                   setOrderCountFilter(e.target.value as OrderCountFilter)
                 }
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {ORDER_COUNT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Orders: {option.label}
                   </option>
                 ))}
@@ -625,10 +647,14 @@ export function AdminUsersPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {SORT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="dark:bg-slate-900"
+                  >
                     Sort by: {option.label}
                   </option>
                 ))}
@@ -636,55 +662,55 @@ export function AdminUsersPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
               Registration Date
             </div>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
             <span className="text-sm text-slate-400">to</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Bulk Actions */}
         {selectedCount > 0 && (
-          <div className="rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-orange-800">
+          <div className="rounded-xl border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between transition-colors">
+            <p className="text-sm text-orange-800 dark:text-orange-400">
               {selectedCount} user{selectedCount === 1 ? '' : 's'} selected
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setBulkSuspendOpen(true)}
                 disabled={!canEdit}
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200"
+                className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <Ban size={14} />
                 Bulk Suspend
               </button>
               <button
                 disabled={!canEdit}
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
               >
                 <CheckCircle size={14} />
                 Bulk Unsuspend
               </button>
-              <button className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm border border-slate-200">
+              <button className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-sm border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                 <Download size={14} />
                 Bulk Export
               </button>
               <button
                 onClick={() => setBulkDeleteOpen(true)}
                 disabled={!canDelete}
-                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm text-white disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm text-white disabled:opacity-50 hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20"
               >
                 <Trash2 size={14} />
                 Bulk Delete
@@ -694,10 +720,10 @@ export function AdminUsersPage() {
         )}
 
         {/* Users Table */}
-        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
+              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                 <tr>
                   <th className="px-4 py-3 text-left">
                     <input
@@ -707,6 +733,7 @@ export function AdminUsersPage() {
                         pageUsers.every((u) => selectedIds.includes(u.id))
                       }
                       onChange={toggleSelectAll}
+                      className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                     />
                   </th>
                   <th className="px-4 py-3 text-left">User ID</th>
@@ -720,22 +747,26 @@ export function AdminUsersPage() {
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                 {pageUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-slate-50">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(user.id)}
                         onChange={() => toggleSelectOne(user.id)}
+                        className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                       />
                     </td>
-                    <td className="px-4 py-3 font-medium text-slate-900">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
                       {user.id}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-slate-900">
+                        <span className="font-medium text-slate-900 dark:text-slate-100 transition-colors">
                           {user.name}
                         </span>
                         {user.verified && (
@@ -743,15 +774,19 @@ export function AdminUsersPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{user.email}</td>
-                    <td className="px-4 py-3 text-slate-600">{user.phone}</td>
-                    <td className="px-4 py-3 text-slate-600">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                      {user.email}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                      {user.phone}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
                       {user.joinedAt}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-600">
+                    <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                       {user.orders}
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-600">
+                    <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
                       {formatCurrency(user.totalSpent)}
                     </td>
                     <td className="px-4 py-3">{statusBadge(user.status)}</td>
@@ -763,7 +798,7 @@ export function AdminUsersPage() {
                               openMenuId === user.id ? null : user.id,
                             )
                           }
-                          className="rounded-lg p-2 hover:bg-slate-100"
+                          className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
                         >
                           <MoreVertical size={16} />
                         </button>
@@ -773,7 +808,7 @@ export function AdminUsersPage() {
                               className="fixed inset-0 z-10"
                               onClick={() => setOpenMenuId(null)}
                             />
-                            <div className="absolute right-0 z-20 mt-2 w-52 rounded-lg border border-slate-200 bg-white shadow-lg">
+                            <div className="absolute right-0 z-20 mt-2 w-52 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg transition-colors overflow-hidden">
                               <button
                                 onClick={() => {
                                   setDetailUser(user)
@@ -781,13 +816,13 @@ export function AdminUsersPage() {
                                   setOpenMenuId(null)
                                 }}
                                 disabled={!canView}
-                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                               >
                                 <Eye size={14} />
                                 View Profile
                               </button>
                               <button
-                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 disabled={!canView}
                               >
                                 <FileText size={14} />
@@ -795,7 +830,7 @@ export function AdminUsersPage() {
                               </button>
                               {user.status === 'suspended' ? (
                                 <button
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                   disabled={!canEdit}
                                 >
                                   <CheckCircle size={14} />
@@ -808,7 +843,7 @@ export function AdminUsersPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canEdit}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Account
@@ -816,14 +851,14 @@ export function AdminUsersPage() {
                               )}
                               <button
                                 disabled={!canEdit}
-                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                               >
                                 <Mail size={14} />
                                 Reset Password
                               </button>
                               <button
                                 disabled={!canEdit}
-                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm hover:bg-slate-50"
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                               >
                                 <Bell size={14} />
                                 Send Notification
@@ -834,7 +869,7 @@ export function AdminUsersPage() {
                                   setOpenMenuId(null)
                                 }}
                                 disabled={!canDelete}
-                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+                                className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors disabled:opacity-50"
                               >
                                 <Trash2 size={14} />
                                 Delete Account
@@ -850,7 +885,7 @@ export function AdminUsersPage() {
                   <tr>
                     <td
                       colSpan={10}
-                      className="px-4 py-10 text-center text-slate-500"
+                      className="px-4 py-10 text-center text-slate-500 dark:text-slate-400"
                     >
                       No users found.
                     </td>
@@ -859,7 +894,7 @@ export function AdminUsersPage() {
               </tbody>
             </table>
           </div>
-          <div className="flex flex-col gap-3 border-t border-slate-200 px-4 py-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-t border-slate-200 dark:border-slate-800 px-4 py-3 text-sm text-slate-600 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between transition-colors">
             <p>
               Showing {pageUsers.length} of {sortedUsers.length} users
             </p>
@@ -867,11 +902,11 @@ export function AdminUsersPage() {
               <button
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Prev
               </button>
-              <span>
+              <span className="text-slate-600 dark:text-slate-400">
                 Page {currentPage} of {totalPages}
               </span>
               <button
@@ -879,11 +914,13 @@ export function AdminUsersPage() {
                   setPage((prev) => Math.min(totalPages, prev + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Next
               </button>
-              <span className="ml-2 text-xs text-slate-400">50 per page</span>
+              <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">
+                50 per page
+              </span>
             </div>
           </div>
         </div>
@@ -891,33 +928,35 @@ export function AdminUsersPage() {
 
       {/* User Detail Modal */}
       {detailUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   {detailUser.name}
                 </h2>
-                <p className="text-sm text-slate-500">{detailUser.email}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {detailUser.email}
+                </p>
               </div>
               <button
                 onClick={() => setDetailUser(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="border-b border-slate-200 px-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 px-6 transition-colors">
               <div className="flex gap-6 text-sm">
                 {(['profile', 'orders', 'activity'] as Array<DetailTab>).map(
                   (tab) => (
                     <button
                       key={tab}
                       onClick={() => setDetailTab(tab)}
-                      className={`py-3 border-b-2 ${
+                      className={`py-3 border-b-2 transition-colors ${
                         detailTab === tab
                           ? 'border-orange-600 text-orange-600'
-                          : 'border-transparent text-slate-500'
+                          : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                     >
                       {tab === 'profile'
@@ -935,43 +974,47 @@ export function AdminUsersPage() {
                 <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Full Name
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                         {detailUser.name}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Email</p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                        Email
+                      </p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                         {detailUser.email}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">Phone</p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                        Phone
+                      </p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                         {detailUser.phone}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Registration Date
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                         {detailUser.joinedAt}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Last Login
                       </p>
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                         {detailUser.lastLogin}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Account Status
                       </p>
                       <div className="mt-1">
@@ -980,14 +1023,14 @@ export function AdminUsersPage() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400">
+                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                       Saved Addresses
                     </p>
-                    <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                    <ul className="mt-2 space-y-1 text-sm text-slate-700 dark:text-slate-300">
                       {detailUser.addresses.map((address) => (
                         <li
                           key={address}
-                          className="rounded-lg border border-slate-200 px-3 py-2"
+                          className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
                         >
                           {address}
                         </li>
@@ -996,20 +1039,20 @@ export function AdminUsersPage() {
                   </div>
                   {detailUser.businessInfo && (
                     <div>
-                      <p className="text-xs uppercase text-slate-400">
+                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
                         Business Information
                       </p>
-                      <div className="mt-2 rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-700">
-                        <p className="font-medium text-slate-900">
+                      <div className="mt-2 rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                        <p className="font-medium text-slate-900 dark:text-slate-100">
                           {detailUser.businessInfo.company}
                         </p>
-                        <p className="text-slate-500">
+                        <p className="text-slate-500 dark:text-slate-400">
                           {detailUser.businessInfo.type}
                         </p>
                       </div>
                     </div>
                   )}
-                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
+                  <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     <Edit3 size={14} />
                     Edit User Info
                   </button>
@@ -1019,21 +1062,27 @@ export function AdminUsersPage() {
               {detailTab === 'orders' && (
                 <div className="space-y-4">
                   <div className="grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Total Orders</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Total Orders
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {detailUser.orders}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Total Spent</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Total Spent
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {formatCurrency(detailUser.totalSpent)}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 px-4 py-3">
-                      <p className="text-xs text-slate-400">Avg Order Value</p>
-                      <p className="text-lg font-semibold text-slate-900">
+                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                        Avg Order Value
+                      </p>
+                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                         {formatCurrency(
                           detailUser.orders
                             ? Math.round(
@@ -1044,9 +1093,9 @@ export function AdminUsersPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="rounded-lg border border-slate-200 overflow-hidden">
+                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
                     <table className="min-w-full text-sm">
-                      <thead className="bg-slate-50 text-slate-600">
+                      <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
                         <tr>
                           <th className="px-4 py-2 text-left">Order ID</th>
                           <th className="px-4 py-2 text-left">Date</th>
@@ -1054,19 +1103,22 @@ export function AdminUsersPage() {
                           <th className="px-4 py-2 text-right">Total</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200">
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
                         {detailUser.orderHistory.map((order) => (
-                          <tr key={order.id} className="hover:bg-slate-50">
-                            <td className="px-4 py-2 font-medium text-slate-900">
+                          <tr
+                            key={order.id}
+                            className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          >
+                            <td className="px-4 py-2 font-medium text-slate-900 dark:text-slate-100">
                               {order.id}
                             </td>
-                            <td className="px-4 py-2 text-slate-600">
+                            <td className="px-4 py-2 text-slate-600 dark:text-slate-400">
                               {order.date}
                             </td>
-                            <td className="px-4 py-2 text-slate-600">
+                            <td className="px-4 py-2 text-slate-600 dark:text-slate-400">
                               {order.status}
                             </td>
-                            <td className="px-4 py-2 text-right text-slate-600">
+                            <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-400">
                               {formatCurrency(order.total)}
                             </td>
                           </tr>
@@ -1075,7 +1127,7 @@ export function AdminUsersPage() {
                           <tr>
                             <td
                               colSpan={4}
-                              className="px-4 py-6 text-center text-slate-500"
+                              className="px-4 py-6 text-center text-slate-500 dark:text-slate-400"
                             >
                               No orders yet.
                             </td>
@@ -1092,23 +1144,23 @@ export function AdminUsersPage() {
                   {detailUser.activityLog.map((activity) => (
                     <div
                       key={activity.id}
-                      className="flex items-start justify-between rounded-lg border border-slate-200 px-4 py-3"
+                      className="flex items-start justify-between rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-3 transition-colors"
                     >
                       <div>
-                        <p className="text-sm font-medium text-slate-900">
+                        <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
                           {activity.message}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-500">
                           {activity.type}
                         </p>
                       </div>
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-400 dark:text-slate-500">
                         {activity.time}
                       </span>
                     </div>
                   ))}
                   {detailUser.activityLog.length === 0 && (
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       No activity logged.
                     </p>
                   )}
@@ -1121,48 +1173,57 @@ export function AdminUsersPage() {
 
       {/* Suspend Account Modal */}
       {suspendUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <ShieldAlert className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <ShieldAlert
+                  className="text-orange-600 dark:text-orange-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Suspend {suspendUser.name}?
                 </h2>
               </div>
               <button
                 onClick={() => setSuspendUser(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Reason
                 </label>
                 <select
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}
-                  className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors"
                 >
-                  <option>Fraudulent activity</option>
-                  <option>Abusive behavior</option>
-                  <option>Policy violation</option>
-                  <option>Other</option>
+                  <option className="dark:bg-slate-900">
+                    Fraudulent activity
+                  </option>
+                  <option className="dark:bg-slate-900">
+                    Abusive behavior
+                  </option>
+                  <option className="dark:bg-slate-900">
+                    Policy violation
+                  </option>
+                  <option className="dark:bg-slate-900">Other</option>
                 </select>
                 {suspendReason === 'Other' && (
                   <input
                     value={suspendOtherReason}
                     onChange={(e) => setSuspendOtherReason(e.target.value)}
                     placeholder="Provide details"
-                    className="mt-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                    className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
                   />
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors">
                   Suspension duration
                 </label>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -1170,10 +1231,10 @@ export function AdminUsersPage() {
                     <button
                       key={duration}
                       onClick={() => setSuspendDuration(duration)}
-                      className={`rounded-lg border px-3 py-2 text-sm ${
+                      className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
                         suspendDuration === duration
-                          ? 'border-orange-500 bg-orange-50 text-orange-700'
-                          : 'border-slate-200 text-slate-700'
+                          ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                          : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       {duration}
@@ -1181,30 +1242,30 @@ export function AdminUsersPage() {
                   ))}
                 </div>
               </div>
-              <label className="flex items-center gap-2 text-sm text-slate-600">
+              <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <input
                   type="checkbox"
                   checked={suspendNotify}
                   onChange={(e) => setSuspendNotify(e.target.checked)}
-                  className="rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                  className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                 />
                 Send email notification
               </label>
-              <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
+              <div className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 text-sm text-orange-700 dark:text-orange-400 transition-colors">
                 User will be logged out immediately and receive an email
                 notification.
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setSuspendUser(null)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setSuspendUser(null)}
-                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
               >
                 Confirm Suspension
               </button>
@@ -1215,12 +1276,15 @@ export function AdminUsersPage() {
 
       {/* Delete Account Modal */}
       {deleteUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <AlertTriangle
+                  className="text-red-600 dark:text-red-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Delete {deleteUser.name}?
                 </h2>
               </div>
@@ -1229,26 +1293,26 @@ export function AdminUsersPage() {
                   setDeleteUser(null)
                   setDeleteConfirm(false)
                 }}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <p className="text-sm text-red-600 font-medium">
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium transition-colors">
                 This action cannot be undone.
               </p>
-              <ul className="space-y-2 text-sm text-slate-600">
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <li>All user data will be deleted</li>
                 <li>Order history will be anonymized</li>
                 <li>Reviews will remain (anonymized)</li>
               </ul>
-              <label className="flex items-center gap-2 text-sm text-slate-600">
+              <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <input
                   type="checkbox"
                   checked={deleteConfirm}
                   onChange={(e) => setDeleteConfirm(e.target.checked)}
-                  className="rounded border-slate-300 text-red-600 focus:ring-red-500"
+                  className="rounded border-slate-300 dark:border-slate-700 text-red-600 focus:ring-red-500 dark:bg-slate-950 transition-colors"
                 />
                 I understand this action is permanent
               </label>
@@ -1256,17 +1320,17 @@ export function AdminUsersPage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE to confirm"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => {
                   setDeleteUser(null)
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1277,7 +1341,7 @@ export function AdminUsersPage() {
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-600/20"
               >
                 Delete Account
               </button>
@@ -1288,39 +1352,42 @@ export function AdminUsersPage() {
 
       {/* Bulk Suspend Modal */}
       {bulkSuspendOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <ShieldAlert className="text-orange-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <ShieldAlert
+                  className="text-orange-600 dark:text-orange-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Suspend {selectedCount} selected user
                   {selectedCount === 1 ? '' : 's'}?
                 </h2>
               </div>
               <button
                 onClick={() => setBulkSuspendOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700">
+              <div className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 text-sm text-orange-700 dark:text-orange-400 transition-colors">
                 Selected users will be logged out immediately and receive email
                 notifications.
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setBulkSuspendOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setBulkSuspendOpen(false)}
-                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+                className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/20"
               >
                 Confirm Suspension
               </button>
@@ -1331,28 +1398,31 @@ export function AdminUsersPage() {
 
       {/* Bulk Delete Modal */}
       {bulkDeleteOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <AlertTriangle
+                  className="text-red-600 dark:text-red-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
                   Delete {selectedCount} selected user
                   {selectedCount === 1 ? '' : 's'}?
                 </h2>
               </div>
               <button
                 onClick={() => setBulkDeleteOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-3">
-              <p className="text-sm text-red-600 font-medium">
+              <p className="text-sm text-red-600 dark:text-red-400 font-medium transition-colors">
                 This action cannot be undone.
               </p>
-              <ul className="space-y-2 text-sm text-slate-600">
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                 <li>All user data will be deleted</li>
                 <li>Order history will be anonymized</li>
                 <li>Reviews will remain (anonymized)</li>
@@ -1361,16 +1431,16 @@ export function AdminUsersPage() {
                 value={bulkDeleteText}
                 onChange={(e) => setBulkDeleteText(e.target.value)}
                 placeholder="Type DELETE to confirm"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => {
                   setBulkDeleteOpen(false)
                   setBulkDeleteText('')
                 }}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1380,7 +1450,7 @@ export function AdminUsersPage() {
                   setBulkDeleteOpen(false)
                   setBulkDeleteText('')
                 }}
-                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-600/20"
               >
                 Delete Accounts
               </button>

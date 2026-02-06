@@ -26,30 +26,56 @@ export function ThemeProvider({
   storageKey = 'borobepari-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return defaultTheme
+    try {
+      const stored = localStorage.getItem(storageKey)
+      if (stored === 'dark' || stored === 'light' || stored === 'system') {
+        return stored
+      }
+    } catch (e) {
+      console.error('Failed to access localStorage:', e)
+    }
+    return defaultTheme
+  })
 
   useEffect(() => {
     const root = window.document.documentElement
 
-    root.classList.remove('light', 'dark')
+    const resolved =
+      theme === 'system'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : theme
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light'
-
-      root.classList.add(systemTheme)
-      return
+    // Only update if needed to avoid unnecessary repaints
+    if (!root.classList.contains(resolved)) {
+      root.classList.remove('light', 'dark')
+      root.classList.add(resolved)
     }
 
-    root.classList.add(theme)
-  }, [theme])
+    if (root.style.colorScheme !== resolved) {
+      root.style.colorScheme = resolved
+    }
+
+    // Clear the temporary background color set by the early script
+    if (root.style.backgroundColor) {
+      root.style.backgroundColor = ''
+    }
+
+    // Set cookie for SSR support
+    document.cookie = `${storageKey}=${theme}; path=/; max-age=31536000; SameSite=Lax`
+  }, [theme, storageKey])
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme)
+      try {
+        localStorage.setItem(storageKey, newTheme)
+      } catch (e) {
+        console.error('Failed to set localStorage:', e)
+      }
       setTheme(newTheme)
     },
   }
