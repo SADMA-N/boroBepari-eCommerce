@@ -237,21 +237,42 @@ export function AddProductPage() {
   ])
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id)
-          }
+    const computeActive = () => {
+      // If scrolled to the bottom, activate the last section
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40
+      if (atBottom) return SECTION_IDS[SECTION_IDS.length - 1].id
+
+      const threshold = window.innerHeight * 0.35
+      let current = 'basic'
+      for (const s of SECTION_IDS) {
+        const el = document.getElementById(s.id)
+        if (el && el.getBoundingClientRect().top <= threshold) {
+          current = s.id
+        }
+      }
+      return current
+    }
+
+    let ticking = false
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(() => {
+          setActiveSection(computeActive())
+          ticking = false
         })
-      },
-      { rootMargin: '-40% 0px -50% 0px' },
-    )
-    SECTION_IDS.forEach((section) => {
-      const element = document.getElementById(section.id)
-      if (element) observer.observe(element)
-    })
-    return () => observer.disconnect()
+      }
+    }
+
+    // Run once immediately
+    setActiveSection(computeActive())
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    document.addEventListener('scroll', onScroll, { passive: true, capture: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.removeEventListener('scroll', onScroll, { capture: true })
+    }
   }, [])
 
   useEffect(() => {
@@ -606,19 +627,24 @@ export function AddProductPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="lg:w-64 shrink-0">
             <div className="sticky top-20 space-y-4">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">
+              <div className="rounded-xl p-4 border border-transparent dark:border-slate-700 dark:bg-slate-900">
+                <p className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-400">
                   Form Sections
                 </p>
-                <nav className="mt-3 space-y-2">
+                <nav className="mt-3 space-y-1">
                   {SECTION_IDS.map((section) => (
                     <a
                       key={section.id}
                       href={`#${section.id}`}
-                      className={`block rounded-lg px-3 py-2 text-sm font-medium ${
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setActiveSection(section.id)
+                        document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
+                      className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                         activeSection === section.id
-                          ? 'bg-orange-50 text-orange-700'
-                          : 'text-slate-600 hover:bg-slate-50'
+                          ? 'bg-orange-50 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-500/30'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent'
                       }`}
                     >
                       {section.label}
@@ -626,17 +652,17 @@ export function AddProductPage() {
                   ))}
                 </nav>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
-                <p className="text-sm font-semibold text-slate-700">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4">
+                <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
                   Auto-save
                 </p>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-slate-500 dark:text-gray-400">
                   {savingStatus === 'saving'
                     ? 'Saving...'
                     : 'All changes saved'}
                 </p>
                 {lastSavedAt && (
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-xs text-slate-400 dark:text-gray-500">
                     Last saved at {lastSavedAt.toLocaleTimeString()}
                   </p>
                 )}
@@ -647,10 +673,10 @@ export function AddProductPage() {
           <main className="flex-1 space-y-8">
             <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
                   Add New Product
                 </h1>
-                <p className="text-slate-500 mt-1">
+                <p className="text-slate-500 dark:text-gray-400 mt-1">
                   Provide complete details to increase buyer confidence.
                 </p>
               </div>
@@ -658,7 +684,7 @@ export function AddProductPage() {
                 <button
                   type="button"
                   onClick={() => handleSubmit('draft')}
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <Save size={16} />
                   Save as Draft
@@ -666,7 +692,7 @@ export function AddProductPage() {
                 <button
                   type="button"
                   onClick={handlePreview}
-                  className="inline-flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-100"
+                  className="inline-flex items-center gap-2 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/30 px-4 py-2 text-sm font-semibold text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/50"
                 >
                   <Sparkles size={16} />
                   Preview
@@ -683,7 +709,7 @@ export function AddProductPage() {
             </header>
 
             {submitError && (
-              <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+              <div className="rounded-xl border border-red-100 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-600 dark:text-red-400">
                 {submitError}{' '}
                 <button
                   type="button"
@@ -696,7 +722,7 @@ export function AddProductPage() {
             )}
 
             {errorSummary.length > 0 && (
-              <div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+              <div className="rounded-xl border border-red-100 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-600 dark:text-red-400">
                 <p className="font-semibold">
                   Please fix the following errors:
                 </p>
@@ -710,13 +736,13 @@ export function AddProductPage() {
 
             <section
               id="basic"
-              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Basic Information
                 </h2>
-                <span className="text-xs text-slate-400">Section 1</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">Section 1</span>
               </div>
               <Field
                 label="Product Title"
@@ -754,10 +780,10 @@ export function AddProductPage() {
                 onChange={(value) => setBrand(value)}
               />
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
                   Product Description <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center gap-2 rounded-t-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                <div className="flex items-center gap-2 rounded-t-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2">
                   <ToolbarButton
                     label="B"
                     onClick={() => document.execCommand('bold')}
@@ -774,7 +800,7 @@ export function AddProductPage() {
                 <div
                   ref={contentRef}
                   contentEditable
-                  className="min-h-[140px] rounded-b-lg border border-t-0 border-slate-200 px-3 py-2 text-sm text-slate-700 focus:outline-none"
+                  className="min-h-[140px] rounded-b-lg border border-t-0 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 focus:outline-none"
                   onInput={(event) => {
                     const html = sanitizeHtml(
                       (event.target as HTMLDivElement).innerHTML,
@@ -787,13 +813,13 @@ export function AddProductPage() {
                   }}
                   dangerouslySetInnerHTML={{ __html: descriptionHtml }}
                 />
-                <div className="flex items-center justify-between text-xs text-slate-400 mt-1">
+                <div className="flex items-center justify-between text-xs text-slate-400 dark:text-gray-500 mt-1">
                   <span>{errors.description}</span>
                   <span>{descriptionRemaining} characters left</span>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
                   Product Tags
                 </label>
                 <input
@@ -806,13 +832,13 @@ export function AddProductPage() {
                     }
                   }}
                   placeholder="Type and press comma"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                  className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20"
                 />
                 <div className="mt-2 flex flex-wrap gap-2">
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
+                      className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs text-slate-600 dark:text-gray-300"
                     >
                       {tag}
                       <button type="button" onClick={() => removeTag(tag)}>
@@ -826,14 +852,14 @@ export function AddProductPage() {
 
             <section
               id="images"
-              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">Images</h2>
-                <span className="text-xs text-slate-400">Section 2</span>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Images</h2>
+                <span className="text-xs text-slate-400 dark:text-gray-500">Section 2</span>
               </div>
               <div
-                className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4"
+                className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 p-4"
                 onDragOver={(event) => event.preventDefault()}
                 onDrop={(event) => {
                   event.preventDefault()
@@ -841,22 +867,22 @@ export function AddProductPage() {
                 }}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <div className="h-12 w-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+                  <div className="h-12 w-12 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-gray-500">
                     <ImagePlus size={20} />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-slate-600 dark:text-gray-300">
                       Drag & drop or{' '}
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="font-semibold text-orange-600 hover:text-orange-700"
+                        className="font-semibold text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
                       >
                         browse
                       </button>{' '}
                       to upload
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-400 dark:text-gray-500">
                       JPEG/PNG, max 5MB each · Minimum 800x800px recommended ·
                       White background preferred
                     </p>
@@ -879,7 +905,7 @@ export function AddProductPage() {
                 {images.map((image) => (
                   <div
                     key={image.id}
-                    className="relative rounded-xl border border-slate-200 bg-white p-2"
+                    className="relative rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2"
                     draggable
                     onDragStart={(event) => onDragStart(event, image.id)}
                     onDragOver={(event) => event.preventDefault()}
@@ -890,7 +916,7 @@ export function AddProductPage() {
                       alt="preview"
                       className="h-28 w-full rounded-lg object-cover"
                     />
-                    <div className="mt-2 h-1 rounded-full bg-slate-100">
+                    <div className="mt-2 h-1 rounded-full bg-slate-100 dark:bg-slate-700">
                       <div
                         className="h-1 rounded-full bg-orange-500"
                         style={{ width: `${image.progress}%` }}
@@ -902,8 +928,8 @@ export function AddProductPage() {
                         onClick={() => setPrimaryImage(image.id)}
                         className={`text-xs font-semibold ${
                           image.isPrimary
-                            ? 'text-green-600'
-                            : 'text-slate-500 hover:text-slate-700'
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200'
                         }`}
                       >
                         {image.isPrimary ? 'Primary' : 'Set as primary'}
@@ -923,20 +949,20 @@ export function AddProductPage() {
 
             <section
               id="pricing"
-              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Pricing & Inventory
                 </h2>
-                <span className="text-xs text-slate-400">Section 3</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">Section 3</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
+              <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">
+                  <p className="text-sm font-medium text-slate-700 dark:text-gray-200">
                     Enable Tiered Pricing
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-400 dark:text-gray-500">
                     Offer volume discounts with pricing tiers
                   </p>
                 </div>
@@ -948,7 +974,7 @@ export function AddProductPage() {
                     onChange={(event) => setTieredPricing(event.target.checked)}
                   />
                   <div
-                    className={`h-6 w-11 rounded-full ${tieredPricing ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                    className={`h-6 w-11 rounded-full ${tieredPricing ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-700'} relative`}
                   >
                     <div
                       className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${tieredPricing ? 'translate-x-5' : 'translate-x-1'}`}
@@ -992,7 +1018,7 @@ export function AddProductPage() {
                         type="button"
                         onClick={() => removeTier(tier.id)}
                         disabled={pricingTiers.length <= 2}
-                        className="text-xs text-slate-400 hover:text-red-500"
+                        className="text-xs text-slate-400 dark:text-gray-500 hover:text-red-500"
                       >
                         Remove
                       </button>
@@ -1060,13 +1086,13 @@ export function AddProductPage() {
 
             <section
               id="specs"
-              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Specifications
                 </h2>
-                <span className="text-xs text-slate-400">Section 4</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">Section 4</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {specSuggestions.map((spec) => (
@@ -1123,13 +1149,13 @@ export function AddProductPage() {
 
             <section
               id="shipping"
-              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Shipping & Delivery
                 </h2>
-                <span className="text-xs text-slate-400">Section 5</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">Section 5</span>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <Field
@@ -1140,7 +1166,7 @@ export function AddProductPage() {
                   error={errors.weight}
                 />
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
                     Package Dimensions (cm)
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -1153,7 +1179,7 @@ export function AddProductPage() {
                         }))
                       }
                       placeholder="L"
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100"
                     />
                     <input
                       value={dimensions.width}
@@ -1164,7 +1190,7 @@ export function AddProductPage() {
                         }))
                       }
                       placeholder="W"
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100"
                     />
                     <input
                       value={dimensions.height}
@@ -1175,7 +1201,7 @@ export function AddProductPage() {
                         }))
                       }
                       placeholder="H"
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100"
                     />
                   </div>
                 </div>
@@ -1208,20 +1234,20 @@ export function AddProductPage() {
 
             <section
               id="samples"
-              className="rounded-2xl border border-slate-200 bg-white p-6 space-y-5"
+              className="scroll-mt-24 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-5"
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                   Sample Orders
                 </h2>
-                <span className="text-xs text-slate-400">Section 6</span>
+                <span className="text-xs text-slate-400 dark:text-gray-500">Section 6</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3">
+              <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium text-slate-700">
+                  <p className="text-sm font-medium text-slate-700 dark:text-gray-200">
                     Enable Sample Orders
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-400 dark:text-gray-500">
                     Offer samples to build buyer trust
                   </p>
                 </div>
@@ -1233,7 +1259,7 @@ export function AddProductPage() {
                     onChange={(event) => setSampleEnabled(event.target.checked)}
                   />
                   <div
-                    className={`h-6 w-11 rounded-full ${sampleEnabled ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                    className={`h-6 w-11 rounded-full ${sampleEnabled ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-700'} relative`}
                   >
                     <div
                       className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${sampleEnabled ? 'translate-x-5' : 'translate-x-1'}`}
@@ -1268,7 +1294,7 @@ export function AddProductPage() {
             </section>
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-gray-400">
                 <Info size={16} />
                 All fields marked with * are required.
               </div>
@@ -1276,14 +1302,14 @@ export function AddProductPage() {
                 <button
                   type="button"
                   onClick={() => handleSubmit('draft')}
-                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   Save as Draft
                 </button>
                 <button
                   type="button"
                   onClick={handlePreview}
-                  className="inline-flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-100"
+                  className="inline-flex items-center gap-2 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/30 px-4 py-2 text-sm font-semibold text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/50"
                 >
                   Preview
                 </button>
@@ -1303,10 +1329,10 @@ export function AddProductPage() {
       {showPreview && (
         <Modal onClose={() => setShowPreview(false)} title="Product Preview">
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-slate-900">
+            <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
               {title || 'Untitled Product'}
             </h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-gray-400">
               {mainCategory} · {subCategory}
             </p>
             {images[0] && (
@@ -1317,7 +1343,7 @@ export function AddProductPage() {
               />
             )}
             <div
-              className="prose prose-sm max-w-none text-slate-700"
+              className="prose prose-sm max-w-none text-slate-700 dark:text-gray-300"
               dangerouslySetInnerHTML={{
                 __html: descriptionHtml || '<p>No description yet.</p>',
               }}
@@ -1326,7 +1352,7 @@ export function AddProductPage() {
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600"
+                  className="rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs text-slate-600 dark:text-gray-300"
                 >
                   {tag}
                 </span>
@@ -1342,10 +1368,10 @@ export function AddProductPage() {
           title="Product Added Successfully!"
         >
           <div className="space-y-4 text-center">
-            <div className="mx-auto h-14 w-14 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+            <div className="mx-auto h-14 w-14 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
               <CheckCircle2 size={28} />
             </div>
-            <p className="text-slate-600">
+            <p className="text-slate-600 dark:text-gray-300">
               Your product has been{' '}
               {submitMode === 'publish' ? 'published' : 'saved as draft'}.
             </p>
@@ -1353,7 +1379,7 @@ export function AddProductPage() {
               <button
                 type="button"
                 onClick={() => navigate({ to: '/' })}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 View Product
               </button>
@@ -1363,7 +1389,7 @@ export function AddProductPage() {
                   setShowSuccess(false)
                   navigate({ to: '/seller/products/add' })
                 }}
-                className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-100"
+                className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/30 px-4 py-2 text-sm font-semibold text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/50"
               >
                 Add Another Product
               </button>
@@ -1399,16 +1425,16 @@ function Field({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-slate-700 mb-2">
+        <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+        className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20"
       />
-      {helper && <p className="mt-1 text-xs text-slate-400">{helper}</p>}
+      {helper && <p className="mt-1 text-xs text-slate-400 dark:text-gray-500">{helper}</p>}
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
   )
@@ -1433,7 +1459,7 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 mb-2">
+      <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
@@ -1441,7 +1467,7 @@ function SelectField({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           disabled={disabled}
-          className="w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 disabled:bg-slate-50"
+          className="w-full appearance-none rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 disabled:bg-slate-50 dark:disabled:bg-slate-800"
         >
           <option value="">Select</option>
           {options.map((option) => (
@@ -1471,7 +1497,7 @@ function ToolbarButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+      className="rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1 text-xs font-semibold text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-700"
     >
       {label}
     </button>
@@ -1493,12 +1519,12 @@ function Modal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-slate-400 hover:text-slate-600 dark:text-gray-500 dark:hover:text-gray-300"
             aria-label="Close modal"
             autoFocus
           >
