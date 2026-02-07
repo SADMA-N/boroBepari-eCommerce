@@ -6,7 +6,7 @@ import QuoteResponseModal from '@/components/QuoteResponseModal'
 import { getAuthSession } from '@/lib/auth-server'
 
 export const Route = createFileRoute('/supplier/dashboard')({
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async () => {
     // Basic auth check, ideally check for supplier role too
     const session: any = await getAuthSession()
     if (!session?.user) {
@@ -75,19 +75,19 @@ function SupplierDashboard() {
                       {new Date(rfq.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900">
-                      {rfq.product.name}
+                      {rfq.product?.name ?? '-'}
                     </td>
-                    <td className="px-6 py-4 text-gray-600">{rfq.user.name}</td>
+                    <td className="px-6 py-4 text-gray-600">{rfq.buyer?.name ?? '-'}</td>
                     <td className="px-6 py-4 text-gray-600">{rfq.quantity}</td>
                     <td className="px-6 py-4 text-gray-600">
-                      {rfq.targetPrice ? formatBDT(rfq.targetPrice) : '-'}
+                      {rfq.targetPrice ? formatBDT(Number(rfq.targetPrice)) : '-'}
                     </td>
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           rfq.status === 'pending'
                             ? 'bg-yellow-100 text-yellow-800'
-                            : rfq.status === 'responded'
+                            : rfq.status === 'quoted'
                               ? 'bg-green-100 text-green-800'
                               : 'bg-gray-100 text-gray-800'
                         }`}
@@ -105,7 +105,7 @@ function SupplierDashboard() {
                           Send Quote
                         </button>
                       )}
-                      {rfq.status === 'responded' && (
+                      {rfq.status === 'quoted' && (
                         <span className="text-gray-400">Quote Sent</span>
                       )}
                     </td>

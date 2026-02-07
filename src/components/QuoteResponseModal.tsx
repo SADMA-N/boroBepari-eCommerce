@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, CheckCircle, FileText } from 'lucide-react'
+import { X, CheckCircle } from 'lucide-react'
 import { respondToRfq } from '@/lib/supplier-server'
 import { formatBDT } from '@/data/mock-products'
 
@@ -37,8 +37,8 @@ export default function QuoteResponseModal({
         data: {
           rfqId: rfq.id,
           unitPrice,
-          totalPrice: totalPrice || undefined,
-          validityDate: validity || undefined,
+          totalPrice,
+          validityPeriod: validity,
           terms,
         },
       })

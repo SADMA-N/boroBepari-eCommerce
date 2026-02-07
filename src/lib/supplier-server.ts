@@ -9,8 +9,8 @@ import { z } from 'zod'
 const quoteSchema = z.object({
   rfqId: z.number(),
   unitPrice: z.string().min(1, 'Unit price is required'),
-  totalPrice: z.string().optional(),
-  validityDate: z.string().optional(), // ISO date string
+  totalPrice: z.string().min(1, 'Total price is required'),
+  validityPeriod: z.string().min(1, 'Validity period is required'), // ISO date string
   terms: z.string().optional(),
 })
 
@@ -44,7 +44,7 @@ export const getSupplierRfqs = createServerFn({ method: 'GET' })
             supplier: true,
           },
         },
-        user: true, // Buyer info
+        buyer: true, // Buyer info
       },
       where: (rfqs, { exists }) =>
         exists(
@@ -80,12 +80,12 @@ export const respondToRfq = createServerFn({ method: 'POST' })
       },
     })
 
-    if (!rfq) throw new Error('RFQ not found')
+    if (!rfq || !rfq.product?.supplierId) throw new Error('RFQ not found')
 
     // 2. Check if user owns the supplier
     const supplier = await db.query.suppliers.findFirst({
       where: and(
-        eq(suppliers.id, rfq.product.supplierId!), // product.supplierId can be null in schema but logically shouldn't
+        eq(suppliers.id, rfq.product.supplierId),
         eq(suppliers.ownerId, session.user.id),
       ),
     })
@@ -98,7 +98,7 @@ export const respondToRfq = createServerFn({ method: 'POST' })
       supplierId: supplier.id,
       unitPrice: data.unitPrice,
       totalPrice: data.totalPrice,
-      validityDate: data.validityDate ? new Date(data.validityDate) : null,
+      validityPeriod: new Date(data.validityPeriod),
       terms: data.terms,
       status: 'pending',
     })
@@ -106,14 +106,14 @@ export const respondToRfq = createServerFn({ method: 'POST' })
     // 4. Update RFQ status
     await db
       .update(rfqs)
-      .set({ status: 'responded' })
+      .set({ status: 'quoted' })
       .where(eq(rfqs.id, data.rfqId))
 
     // 5. Notify Buyer
     await db.insert(notifications).values({
-      userId: rfq.userId,
+      userId: rfq.buyerId,
       title: 'New Quote Received',
-      message: `You have received a quote from ${supplier.name} for ${rfq.product.name}.`,
+      message: `You have received a quote from ${supplier.name} for ${rfq.product?.name ?? 'a product'}.`,
       type: 'quote_received',
       link: `/dashboard/rfqs/${rfq.id}`, // Placeholder link
     })
