@@ -55,6 +55,34 @@ async function hashPassword(password: string): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
 }
 
+function mapSellerToUser(seller: any): SellerUser {
+  return {
+    id: seller.id,
+    businessName: seller.businessName,
+    businessType: seller.businessType,
+    tradeLicenseNumber: seller.tradeLicenseNumber,
+    businessCategory: seller.businessCategory,
+    yearsInBusiness: seller.yearsInBusiness,
+    fullName: seller.fullName,
+    email: seller.email,
+    phone: seller.phone,
+    address: seller.address,
+    city: seller.city,
+    postalCode: seller.postalCode,
+    bankName: seller.bankName,
+    accountHolderName: seller.accountHolderName,
+    accountNumber: seller.accountNumber,
+    branchName: seller.branchName,
+    routingNumber: seller.routingNumber,
+    kycStatus: seller.kycStatus,
+    kycSubmittedAt: seller.kycSubmittedAt
+      ? seller.kycSubmittedAt.toISOString()
+      : null,
+    kycRejectionReason: seller.kycRejectionReason,
+    verificationBadge: seller.verificationBadge,
+  }
+}
+
 async function verifyPassword(
   password: string,
   hash: string,
@@ -80,31 +108,7 @@ export const sellerAuthMiddleware = createMiddleware().server(
           })
 
           if (seller) {
-            sellerUser = {
-              id: seller.id,
-              businessName: seller.businessName,
-              businessType: seller.businessType,
-              tradeLicenseNumber: seller.tradeLicenseNumber,
-              businessCategory: seller.businessCategory,
-              yearsInBusiness: seller.yearsInBusiness,
-              fullName: seller.fullName,
-              email: seller.email,
-              phone: seller.phone,
-              address: seller.address,
-              city: seller.city,
-              postalCode: seller.postalCode,
-              bankName: seller.bankName,
-              accountHolderName: seller.accountHolderName,
-              accountNumber: seller.accountNumber,
-              branchName: seller.branchName,
-              routingNumber: seller.routingNumber,
-              kycStatus: seller.kycStatus,
-              kycSubmittedAt: seller.kycSubmittedAt
-                ? seller.kycSubmittedAt.toISOString()
-                : null,
-              kycRejectionReason: seller.kycRejectionReason,
-              verificationBadge: seller.verificationBadge,
-            }
+            sellerUser = mapSellerToUser(seller)
           }
         }
       }
@@ -257,31 +261,7 @@ export const setSellerPassword = createServerFn({ method: 'POST' })
     // Generate session token
     const authToken = generateToken(updatedSeller.id)
 
-    const sellerUser: SellerUser = {
-      id: updatedSeller.id,
-      businessName: updatedSeller.businessName,
-      businessType: updatedSeller.businessType,
-      tradeLicenseNumber: updatedSeller.tradeLicenseNumber,
-      businessCategory: updatedSeller.businessCategory,
-      yearsInBusiness: updatedSeller.yearsInBusiness,
-      fullName: updatedSeller.fullName,
-      email: updatedSeller.email,
-      phone: updatedSeller.phone,
-      address: updatedSeller.address,
-      city: updatedSeller.city,
-      postalCode: updatedSeller.postalCode,
-      bankName: updatedSeller.bankName,
-      accountHolderName: updatedSeller.accountHolderName,
-      accountNumber: updatedSeller.accountNumber,
-      branchName: updatedSeller.branchName,
-      routingNumber: updatedSeller.routingNumber,
-      kycStatus: updatedSeller.kycStatus,
-      kycSubmittedAt: updatedSeller.kycSubmittedAt
-        ? updatedSeller.kycSubmittedAt.toISOString()
-        : null,
-      kycRejectionReason: updatedSeller.kycRejectionReason,
-      verificationBadge: updatedSeller.verificationBadge,
-    }
+    const sellerUser = mapSellerToUser(updatedSeller)
 
     return { seller: sellerUser, token: authToken }
   })
@@ -322,31 +302,7 @@ export const updateSellerProfile = createServerFn({ method: 'POST' })
       .where(eq(schema.sellers.id, context.seller.id))
       .returning()
 
-    const sellerUser: SellerUser = {
-      id: updated.id,
-      businessName: updated.businessName,
-      businessType: updated.businessType,
-      tradeLicenseNumber: updated.tradeLicenseNumber,
-      businessCategory: updated.businessCategory,
-      yearsInBusiness: updated.yearsInBusiness,
-      fullName: updated.fullName,
-      email: updated.email,
-      phone: updated.phone,
-      address: updated.address,
-      city: updated.city,
-      postalCode: updated.postalCode,
-      bankName: updated.bankName,
-      accountHolderName: updated.accountHolderName,
-      accountNumber: updated.accountNumber,
-      branchName: updated.branchName,
-      routingNumber: updated.routingNumber,
-      kycStatus: updated.kycStatus,
-      kycSubmittedAt: updated.kycSubmittedAt
-        ? updated.kycSubmittedAt.toISOString()
-        : null,
-      kycRejectionReason: updated.kycRejectionReason,
-      verificationBadge: updated.verificationBadge,
-    }
+    const sellerUser = mapSellerToUser(updated)
 
     return { seller: sellerUser }
   })
@@ -464,31 +420,7 @@ export const sellerGoogleLogin = createServerFn({ method: 'POST' })
     // Generate token
     const token = generateToken(seller.id)
 
-    const sellerUser: SellerUser = {
-      id: seller.id,
-      businessName: seller.businessName,
-      businessType: seller.businessType,
-      tradeLicenseNumber: seller.tradeLicenseNumber,
-      businessCategory: seller.businessCategory,
-      yearsInBusiness: seller.yearsInBusiness,
-      fullName: seller.fullName,
-      email: seller.email,
-      phone: seller.phone,
-      address: seller.address,
-      city: seller.city,
-      postalCode: seller.postalCode,
-      bankName: seller.bankName,
-      accountHolderName: seller.accountHolderName,
-      accountNumber: seller.accountNumber,
-      branchName: seller.branchName,
-      routingNumber: seller.routingNumber,
-      kycStatus: seller.kycStatus,
-      kycSubmittedAt: seller.kycSubmittedAt
-        ? seller.kycSubmittedAt.toISOString()
-        : null,
-      kycRejectionReason: seller.kycRejectionReason,
-      verificationBadge: seller.verificationBadge,
-    }
+    const sellerUser = mapSellerToUser(seller)
 
     return { seller: sellerUser, token }
   })
@@ -526,18 +458,7 @@ export const sellerLogin = createServerFn({ method: 'POST' })
     // Generate token
     const token = generateToken(seller.id)
 
-    const sellerUser: SellerUser = {
-      id: seller.id,
-      businessName: seller.businessName,
-      email: seller.email,
-      phone: seller.phone,
-      kycStatus: seller.kycStatus,
-      kycSubmittedAt: seller.kycSubmittedAt
-        ? seller.kycSubmittedAt.toISOString()
-        : null,
-      kycRejectionReason: seller.kycRejectionReason,
-      verificationBadge: seller.verificationBadge,
-    }
+    const sellerUser = mapSellerToUser(seller)
 
     return { seller: sellerUser, token }
   })
@@ -568,18 +489,7 @@ export const validateSellerToken = createServerFn({ method: 'POST' })
       return { valid: false, seller: null }
     }
 
-    const sellerUser: SellerUser = {
-      id: seller.id,
-      businessName: seller.businessName,
-      email: seller.email,
-      phone: seller.phone,
-      kycStatus: seller.kycStatus,
-      kycSubmittedAt: seller.kycSubmittedAt
-        ? seller.kycSubmittedAt.toISOString()
-        : null,
-      kycRejectionReason: seller.kycRejectionReason,
-      verificationBadge: seller.verificationBadge,
-    }
+    const sellerUser = mapSellerToUser(seller)
 
     return { valid: true, seller: sellerUser }
   })

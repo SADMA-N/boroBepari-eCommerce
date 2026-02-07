@@ -9,6 +9,7 @@ import {
   Smartphone,
 } from 'lucide-react'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
+import type { SellerRegisterData } from '@/types/seller'
 
 type Step = 1 | 2 | 3
 
@@ -87,7 +88,7 @@ export function SellerRegistrationPage() {
   }, [step])
 
   const updateField = (name: keyof SellerRegisterData, value: string) => {
-    setForm((prev) => ({ ...prev, [name]: value }))
+    setForm((prev: SellerRegisterData) => ({ ...prev, [name]: value }))
   }
 
   const validateStep1 = () => {
@@ -270,7 +271,7 @@ export function SellerRegistrationPage() {
                       <Field
                         label="Years in business"
                         type="number"
-                        value={form.yearsInBusiness}
+                        value={form.yearsInBusiness || ''}
                         onChange={(value) =>
                           updateField('yearsInBusiness', value)
                         }
@@ -393,7 +394,7 @@ export function SellerRegistrationPage() {
                       />
                       <Field
                         label="Routing number (optional)"
-                        value={form.routingNumber}
+                        value={form.routingNumber || ''}
                         onChange={(value) =>
                           updateField('routingNumber', value)
                         }

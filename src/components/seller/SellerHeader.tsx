@@ -69,7 +69,7 @@ export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
               </div>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate max-w-[120px]">
-                  {seller?.businessName || 'Seller'}
+                  {seller?.fullName || seller?.businessName || 'Seller'}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[120px]">
                   {seller?.email}
@@ -86,7 +86,7 @@ export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
               <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-gray-200 dark:border-slate-800 py-1 z-50 transition-colors">
                 <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-800">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {seller?.businessName}
+                    {seller?.fullName || seller?.businessName}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     {seller?.email}

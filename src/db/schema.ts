@@ -53,7 +53,7 @@ export const categories = pgTable('categories', {
   parentId: integer('parent_id'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
   parent: one(categories, {
