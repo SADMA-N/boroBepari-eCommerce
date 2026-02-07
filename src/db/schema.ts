@@ -509,6 +509,8 @@ export const quotes = pgTable('quotes', {
   validityPeriod: timestamp('validity_period').notNull(),
   terms: text('terms'),
   status: quoteStatusEnum('status').default('pending').notNull(),
+  counterPrice: decimal('counter_price', { precision: 12, scale: 2 }),
+  counterNote: text('counter_note'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })

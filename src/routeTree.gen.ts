@@ -23,6 +23,7 @@ import { Route as CheckoutRouteRouteImport } from './routes/checkout/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellerIndexRouteImport } from './routes/seller/index'
+import { Route as QuotesIndexRouteImport } from './routes/quotes/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
@@ -173,6 +174,11 @@ const SellerIndexRoute = SellerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SellerRouteRoute,
+} as any)
+const QuotesIndexRoute = QuotesIndexRouteImport.update({
+  id: '/quotes/',
+  path: '/quotes/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
   id: '/',
@@ -635,6 +641,7 @@ export interface FileRoutesByFullPath {
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
+  '/quotes/': typeof QuotesIndexRoute
   '/seller/': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
@@ -727,6 +734,7 @@ export interface FileRoutesByTo {
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
+  '/quotes': typeof QuotesIndexRoute
   '/seller': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
@@ -824,6 +832,7 @@ export interface FileRoutesById {
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
+  '/quotes/': typeof QuotesIndexRoute
   '/seller/': typeof SellerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cart/$userId': typeof ApiCartUserIdRoute
@@ -922,6 +931,7 @@ export interface FileRouteTypes {
     | '/supplier/rfqs'
     | '/admin/'
     | '/checkout/'
+    | '/quotes/'
     | '/seller/'
     | '/api/auth/$'
     | '/api/cart/$userId'
@@ -1014,6 +1024,7 @@ export interface FileRouteTypes {
     | '/supplier/rfqs'
     | '/admin'
     | '/checkout'
+    | '/quotes'
     | '/seller'
     | '/api/auth/$'
     | '/api/cart/$userId'
@@ -1110,6 +1121,7 @@ export interface FileRouteTypes {
     | '/supplier/rfqs'
     | '/admin/'
     | '/checkout/'
+    | '/quotes/'
     | '/seller/'
     | '/api/auth/$'
     | '/api/cart/$userId'
@@ -1184,6 +1196,7 @@ export interface RootRouteChildren {
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
   SupplierDashboardRoute: typeof SupplierDashboardRoute
   SupplierRfqsRoute: typeof SupplierRfqsRoute
+  QuotesIndexRoute: typeof QuotesIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCartUserIdRoute: typeof ApiCartUserIdRoute
   ApiCartAddRoute: typeof ApiCartAddRoute
@@ -1310,6 +1323,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/seller/'
       preLoaderRoute: typeof SellerIndexRouteImport
       parentRoute: typeof SellerRouteRoute
+    }
+    '/quotes/': {
+      id: '/quotes/'
+      path: '/quotes'
+      fullPath: '/quotes/'
+      preLoaderRoute: typeof QuotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/checkout/': {
       id: '/checkout/'
@@ -2050,6 +2070,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsProductSlugRoute: ProductsProductSlugRoute,
   SupplierDashboardRoute: SupplierDashboardRoute,
   SupplierRfqsRoute: SupplierRfqsRoute,
+  QuotesIndexRoute: QuotesIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCartUserIdRoute: ApiCartUserIdRoute,
   ApiCartAddRoute: ApiCartAddRoute,
