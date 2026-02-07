@@ -29,7 +29,7 @@ export const getBuyerQuotes = createServerFn({ method: 'GET' })
             .select()
             .from(rfqs)
             .where(
-              and(eq(rfqs.id, quotes.rfqId), eq(rfqs.userId, session.user.id)),
+              and(eq(rfqs.id, quotes.rfqId), eq(rfqs.buyerId, session.user.id)),
             ),
         ),
       orderBy: [desc(quotes.createdAt)],
@@ -61,14 +61,14 @@ export const updateQuoteStatus = createServerFn({ method: 'POST' })
     })
 
     if (!quote) throw new Error('Quote not found')
-    if (quote.rfq.userId !== session.user.id)
+    if (quote.rfq.buyerId !== session.user.id)
       throw new Error('Unauthorized access to quote')
 
     // Check if expired (for acceptance)
     if (
       data.status === 'accepted' &&
-      quote.validityDate &&
-      new Date(quote.validityDate) < new Date()
+      quote.validityPeriod &&
+      new Date(quote.validityPeriod) < new Date()
     ) {
       throw new Error('Quote has expired')
     }

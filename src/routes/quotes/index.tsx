@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 export const Route = createFileRoute('/quotes/')({
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async () => {
     const session: any = await getAuthSession()
     if (!session?.user) {
       throw redirect({ to: '/login' })
@@ -81,7 +81,7 @@ function QuotesPage() {
         ) : (
           quotes.map((quote) => {
             const isExpired =
-              quote.validityDate && new Date(quote.validityDate) < new Date()
+              quote.validityPeriod && new Date(quote.validityPeriod) < new Date()
             const canAction = quote.status === 'pending' && !isExpired
 
             return (
@@ -123,12 +123,12 @@ function QuotesPage() {
 
                   <div className="text-right">
                     <div className="text-2xl font-bold text-blue-600">
-                      {formatBDT(quote.unitPrice)}
+                      {formatBDT(Number(quote.unitPrice))}
                     </div>
                     <span className="text-xs text-gray-500">per unit</span>
                     {quote.totalPrice && (
                       <div className="text-sm font-medium text-gray-700 mt-1">
-                        Total: {formatBDT(quote.totalPrice)}
+                        Total: {formatBDT(Number(quote.totalPrice))}
                       </div>
                     )}
                   </div>
@@ -136,13 +136,13 @@ function QuotesPage() {
 
                 <div className="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="text-sm text-gray-600 space-y-1">
-                    {quote.validityDate && (
+                    {quote.validityPeriod && (
                       <div
                         className={`flex items-center ${isExpired ? 'text-red-500 font-medium' : ''}`}
                       >
                         <Clock size={16} className="mr-2" />
                         Valid until:{' '}
-                        {new Date(quote.validityDate).toLocaleDateString()}
+                        {new Date(quote.validityPeriod).toLocaleDateString()}
                       </div>
                     )}
                     {quote.terms && (
@@ -193,7 +193,7 @@ function QuotesPage() {
                         onClick={() =>
                           alert(
                             'Proceeding to checkout with price: ' +
-                              formatBDT(quote.unitPrice),
+                              formatBDT(Number(quote.unitPrice)),
                           )
                         }
                       >
