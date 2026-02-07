@@ -1,8 +1,0 @@
-$ vite dev --port 3000 --host
-9:53:23 PM [vite] (client) Re-optimizing dependencies because vite config has changed
-
-  VITE v7.3.1  ready in 3589 ms
-
-  ➜  Local:   http://localhost:3000/
-  ➜  Network: http://10.0.0.7:3000/
-  ➜  press h + enter to show help

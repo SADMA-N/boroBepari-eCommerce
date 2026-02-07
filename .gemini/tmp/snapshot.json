@@ -1,4 +1,0 @@
-uid=1_0 RootWebArea url="http://localhost:3000/"
-  uid=1_1 StaticText "Something went wrong!"
-  uid=1_2 button "Hide Error"
-  uid=1_3 StaticText "(0 , __vite_ssr_import_2__.getWebRequest) is not a function"
