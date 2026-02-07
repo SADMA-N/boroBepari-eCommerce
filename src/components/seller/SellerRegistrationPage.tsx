@@ -8,8 +8,8 @@ import {
   ShieldCheck,
   Smartphone,
 } from 'lucide-react'
-import { useSellerAuth } from '@/contexts/SellerAuthContext'
 import type { SellerRegisterData } from '@/types/seller'
+import { useSellerAuth } from '@/contexts/SellerAuthContext'
 
 type Step = 1 | 2 | 3
 
