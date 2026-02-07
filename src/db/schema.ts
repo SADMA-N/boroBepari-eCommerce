@@ -80,7 +80,7 @@ export const suppliers = pgTable('suppliers', {
   description: text(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const suppliersRelations = relations(suppliers, ({ one, many }) => ({
   owner: one(user, {
@@ -130,7 +130,7 @@ export const sellers = pgTable('sellers', {
   supplierId: integer('supplier_id').references(() => suppliers.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const sellersRelations = relations(sellers, ({ one, many }) => ({
   supplier: one(suppliers, {
@@ -152,7 +152,7 @@ export const sellerDocuments = pgTable('seller_documents', {
   fileSize: integer('file_size').notNull(),
   status: sellerDocumentStatusEnum('status').default('pending').notNull(),
   uploadedAt: timestamp('uploaded_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const sellerDocumentsRelations = relations(
   sellerDocuments,
@@ -192,7 +192,7 @@ export const products = pgTable('products', {
   tags: jsonb().$type<Array<string>>().default([]),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const productsRelations = relations(products, ({ one }) => ({
   category: one(categories, {
@@ -210,7 +210,7 @@ export const todos = pgTable('todos', {
   id: serial().primaryKey(),
   title: text().notNull(),
   createdAt: timestamp('created_at').defaultNow(),
-})
+}).enableRLS()
 
 // Type exports
 export type Category = typeof categories.$inferSelect
@@ -231,7 +231,7 @@ export const user = pgTable('user', {
   phoneNumber: text('phone_number'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const userRelations = relations(user, ({ many }) => ({
   addresses: many(addresses),
@@ -251,7 +251,7 @@ export const addresses = pgTable('addresses', {
   isDefault: boolean('is_default').default(false),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const addressesRelations = relations(addresses, ({ one }) => ({
   user: one(user, {
@@ -289,7 +289,7 @@ export const orders = pgTable('orders', {
   cancelledAt: timestamp('cancelled_at'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const orderItems = pgTable('order_items', {
   id: serial().primaryKey(),
@@ -309,7 +309,7 @@ export const orderItems = pgTable('order_items', {
     .notNull()
 
     .references(() => orders.id),
-})
+}).enableRLS()
 
 export const stockAlerts = pgTable('stock_alerts', {
   id: serial().primaryKey(),
@@ -326,7 +326,7 @@ export const stockAlerts = pgTable('stock_alerts', {
   expiresAt: timestamp('expires_at'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const stockAlertsRelations = relations(stockAlerts, ({ one }) => ({
   user: one(user, {
@@ -374,7 +374,7 @@ export const session = pgTable('session', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id),
-})
+}).enableRLS()
 
 export const account = pgTable('account', {
   id: text('id').primaryKey(),
@@ -392,7 +392,7 @@ export const account = pgTable('account', {
   password: text('password'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const verification = pgTable('verification', {
   id: text('id').primaryKey(),
@@ -401,7 +401,7 @@ export const verification = pgTable('verification', {
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
-})
+}).enableRLS()
 
 export const loginEvents = pgTable('login_events', {
   id: serial().primaryKey(),
@@ -411,7 +411,7 @@ export const loginEvents = pgTable('login_events', {
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const loginEventsRelations = relations(loginEvents, ({ one }) => ({
   user: one(user, {
@@ -428,7 +428,7 @@ export const passwordResetOtps = pgTable('password_reset_otps', {
   used: boolean('used').default(false).notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export type LoginEvent = typeof loginEvents.$inferSelect
 export type NewLoginEvent = typeof loginEvents.$inferInsert
@@ -477,7 +477,7 @@ export const rfqs = pgTable('rfqs', {
   expiresAt: timestamp('expires_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const rfqsRelations = relations(rfqs, ({ one, many }) => ({
   buyer: one(user, {
@@ -513,7 +513,7 @@ export const quotes = pgTable('quotes', {
   counterNote: text('counter_note'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export const quotesRelations = relations(quotes, ({ one }) => ({
   rfq: one(rfqs, {
@@ -538,7 +538,7 @@ export const notifications = pgTable('notifications', {
   link: text('link'),
   read: boolean('read').default(false),
   createdAt: timestamp('created_at').defaultNow(),
-})
+}).enableRLS()
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(user, {
@@ -566,7 +566,7 @@ export const admins = pgTable('admins', {
   lastLoginAt: timestamp('last_login_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
-})
+}).enableRLS()
 
 export type Admin = typeof admins.$inferSelect
 export type NewAdmin = typeof admins.$inferInsert
