@@ -70,6 +70,7 @@ export const suppliers = pgTable('suppliers', {
   id: serial().primaryKey(),
   name: text().notNull(),
   slug: text().notNull().unique(),
+  ownerId: text('owner_id').references(() => user.id), // Link supplier to a user
   logo: text(),
   verified: boolean().default(false),
   location: text(),
@@ -81,7 +82,11 @@ export const suppliers = pgTable('suppliers', {
   updatedAt: timestamp('updated_at').defaultNow(),
 })
 
-export const suppliersRelations = relations(suppliers, ({ many }) => ({
+export const suppliersRelations = relations(suppliers, ({ one, many }) => ({
+  owner: one(user, {
+    fields: [suppliers.ownerId],
+    references: [user.id],
+  }),
   products: many(products),
 }))
 
@@ -519,10 +524,33 @@ export const quotesRelations = relations(quotes, ({ one }) => ({
   }),
 }))
 
+// Notifications table
+export const notifications = pgTable('notifications', {
+  id: serial().primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id),
+  title: text('title').notNull(),
+  message: text('message').notNull(),
+  type: text('type').notNull(), // rfq_received, quote_received, etc.
+  link: text('link'),
+  read: boolean('read').default(false),
+  createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(user, {
+    fields: [notifications.userId],
+    references: [user.id],
+  }),
+}))
+
 export type Rfq = typeof rfqs.$inferSelect
 export type NewRfq = typeof rfqs.$inferInsert
 export type Quote = typeof quotes.$inferSelect
 export type NewQuote = typeof quotes.$inferInsert
+export type Notification = typeof notifications.$inferSelect
+export type NewNotification = typeof notifications.$inferInsert
 
 // Admin table for admin portal
 export const admins = pgTable('admins', {

@@ -26,6 +26,7 @@ import { Route as SellerIndexRouteImport } from './routes/seller/index'
 import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
+import { Route as SupplierDashboardRouteImport } from './routes/supplier/dashboard'
 import { Route as SellerRegisterRouteImport } from './routes/seller/register'
 import { Route as SellerProfileRouteImport } from './routes/seller/profile'
 import { Route as SellerLoginRouteImport } from './routes/seller/login'
@@ -186,6 +187,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
   id: '/supplier/rfqs',
   path: '/supplier/rfqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupplierDashboardRoute = SupplierDashboardRouteImport.update({
+  id: '/supplier/dashboard',
+  path: '/supplier/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellerRegisterRoute = SellerRegisterRouteImport.update({
@@ -625,6 +631,7 @@ export interface FileRoutesByFullPath {
   '/seller/login': typeof SellerLoginRoute
   '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
+  '/supplier/dashboard': typeof SupplierDashboardRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -716,6 +723,7 @@ export interface FileRoutesByTo {
   '/seller/login': typeof SellerLoginRoute
   '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
+  '/supplier/dashboard': typeof SupplierDashboardRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/admin': typeof AdminIndexRoute
   '/checkout': typeof CheckoutIndexRoute
@@ -812,6 +820,7 @@ export interface FileRoutesById {
   '/seller/login': typeof SellerLoginRoute
   '/seller/profile': typeof SellerProfileRoute
   '/seller/register': typeof SellerRegisterRoute
+  '/supplier/dashboard': typeof SupplierDashboardRoute
   '/supplier/rfqs': typeof SupplierRfqsRoute
   '/admin/': typeof AdminIndexRoute
   '/checkout/': typeof CheckoutIndexRoute
@@ -909,6 +918,7 @@ export interface FileRouteTypes {
     | '/seller/login'
     | '/seller/profile'
     | '/seller/register'
+    | '/supplier/dashboard'
     | '/supplier/rfqs'
     | '/admin/'
     | '/checkout/'
@@ -1000,6 +1010,7 @@ export interface FileRouteTypes {
     | '/seller/login'
     | '/seller/profile'
     | '/seller/register'
+    | '/supplier/dashboard'
     | '/supplier/rfqs'
     | '/admin'
     | '/checkout'
@@ -1095,6 +1106,7 @@ export interface FileRouteTypes {
     | '/seller/login'
     | '/seller/profile'
     | '/seller/register'
+    | '/supplier/dashboard'
     | '/supplier/rfqs'
     | '/admin/'
     | '/checkout/'
@@ -1170,6 +1182,7 @@ export interface RootRouteChildren {
   MockPaymentBkashRoute: typeof MockPaymentBkashRoute
   OrderConfirmationOrderIdRoute: typeof OrderConfirmationOrderIdRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
+  SupplierDashboardRoute: typeof SupplierDashboardRoute
   SupplierRfqsRoute: typeof SupplierRfqsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCartUserIdRoute: typeof ApiCartUserIdRoute
@@ -1317,6 +1330,13 @@ declare module '@tanstack/react-router' {
       path: '/supplier/rfqs'
       fullPath: '/supplier/rfqs'
       preLoaderRoute: typeof SupplierRfqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/supplier/dashboard': {
+      id: '/supplier/dashboard'
+      path: '/supplier/dashboard'
+      fullPath: '/supplier/dashboard'
+      preLoaderRoute: typeof SupplierDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/seller/register': {
@@ -2028,6 +2048,7 @@ const rootRouteChildren: RootRouteChildren = {
   MockPaymentBkashRoute: MockPaymentBkashRoute,
   OrderConfirmationOrderIdRoute: OrderConfirmationOrderIdRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
+  SupplierDashboardRoute: SupplierDashboardRoute,
   SupplierRfqsRoute: SupplierRfqsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCartUserIdRoute: ApiCartUserIdRoute,

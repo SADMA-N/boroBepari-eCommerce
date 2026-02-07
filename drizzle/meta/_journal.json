@@ -36,6 +36,13 @@
       "when": 1770141703832,
       "tag": "0004_broad_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1769704347240,
+      "tag": "0003_lethal_hydra",
+      "breakpoints": true
     }
   ]
 }
