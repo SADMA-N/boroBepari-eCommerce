@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { getSupplierRfqs } from '@/lib/supplier-server'
 import { useState } from 'react'
+import { getSupplierRfqs } from '@/lib/supplier-server'
 import { formatBDT } from '@/data/mock-products'
 import QuoteResponseModal from '@/components/QuoteResponseModal'
 import { getAuthSession } from '@/lib/auth-server'
@@ -75,9 +75,9 @@ function SupplierDashboard() {
                       {new Date(rfq.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 font-medium text-gray-900">
-                      {rfq.product?.name ?? '-'}
+                      {rfq.product.name}
                     </td>
-                    <td className="px-6 py-4 text-gray-600">{rfq.buyer?.name ?? '-'}</td>
+                    <td className="px-6 py-4 text-gray-600">{rfq.buyer.name}</td>
                     <td className="px-6 py-4 text-gray-600">{rfq.quantity}</td>
                     <td className="px-6 py-4 text-gray-600">
                       {rfq.targetPrice ? formatBDT(Number(rfq.targetPrice)) : '-'}

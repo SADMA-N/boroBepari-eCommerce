@@ -1,16 +1,16 @@
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
-import { getBuyerQuotes, updateQuoteStatus } from '@/lib/quote-server'
 import { useState } from 'react'
+import {
+  AlertTriangle,
+  Check,
+  Clock,
+  MessageSquare,
+  ShoppingCart,
+  X,
+} from 'lucide-react'
+import { getBuyerQuotes, updateQuoteStatus } from '@/lib/quote-server'
 import { formatBDT } from '@/data/mock-products'
 import { getAuthSession } from '@/lib/auth-server'
-import {
-  Check,
-  X,
-  MessageSquare,
-  Clock,
-  ShoppingCart,
-  AlertTriangle,
-} from 'lucide-react'
 
 export const Route = createFileRoute('/quotes/')({
   beforeLoad: async () => {
@@ -81,7 +81,7 @@ function QuotesPage() {
         ) : (
           quotes.map((quote) => {
             const isExpired =
-              quote.validityPeriod && new Date(quote.validityPeriod) < new Date()
+              new Date(quote.validityPeriod) < new Date()
             const canAction = quote.status === 'pending' && !isExpired
 
             return (
@@ -136,15 +136,13 @@ function QuotesPage() {
 
                 <div className="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="text-sm text-gray-600 space-y-1">
-                    {quote.validityPeriod && (
-                      <div
-                        className={`flex items-center ${isExpired ? 'text-red-500 font-medium' : ''}`}
-                      >
-                        <Clock size={16} className="mr-2" />
-                        Valid until:{' '}
-                        {new Date(quote.validityPeriod).toLocaleDateString()}
-                      </div>
-                    )}
+                    <div
+                      className={`flex items-center ${isExpired ? 'text-red-500 font-medium' : ''}`}
+                    >
+                      <Clock size={16} className="mr-2" />
+                      Valid until:{' '}
+                      {new Date(quote.validityPeriod).toLocaleDateString()}
+                    </div>
                     {quote.terms && (
                       <div className="flex items-start">
                         <FileTextIcon className="mr-2 mt-0.5 flex-shrink-0" />

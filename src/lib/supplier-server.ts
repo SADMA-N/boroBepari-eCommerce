@@ -1,9 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
+import { and, desc, eq } from 'drizzle-orm'
+import { z } from 'zod'
 import { authMiddleware } from './auth-server'
 import { db } from '@/db'
-import { rfqs, quotes, notifications, products, suppliers } from '@/db/schema'
-import { eq, and, desc } from 'drizzle-orm'
-import { z } from 'zod'
+import { notifications, products, quotes, rfqs, suppliers } from '@/db/schema'
 
 // Schema for quote response
 const quoteSchema = z.object({
@@ -46,7 +46,7 @@ export const getSupplierRfqs = createServerFn({ method: 'GET' })
         },
         buyer: true, // Buyer info
       },
-      where: (rfqs, { exists }) =>
+      where: (_rfqs, { exists }) =>
         exists(
           db
             .select()
@@ -80,7 +80,7 @@ export const respondToRfq = createServerFn({ method: 'POST' })
       },
     })
 
-    if (!rfq || !rfq.product?.supplierId) throw new Error('RFQ not found')
+    if (!rfq || !rfq.product.supplierId) throw new Error('RFQ not found')
 
     // 2. Check if user owns the supplier
     const supplier = await db.query.suppliers.findFirst({
@@ -113,7 +113,7 @@ export const respondToRfq = createServerFn({ method: 'POST' })
     await db.insert(notifications).values({
       userId: rfq.buyerId,
       title: 'New Quote Received',
-      message: `You have received a quote from ${supplier.name} for ${rfq.product?.name ?? 'a product'}.`,
+      message: `You have received a quote from ${supplier.name} for ${rfq.product.name}.`,
       type: 'quote_received',
       link: `/dashboard/rfqs/${rfq.id}`, // Placeholder link
     })

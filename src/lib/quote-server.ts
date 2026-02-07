@@ -1,9 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
+import { and, desc, eq } from 'drizzle-orm'
+import { z } from 'zod'
 import { authMiddleware } from './auth-server'
 import { db } from '@/db'
-import { rfqs, quotes, notifications, suppliers } from '@/db/schema'
-import { eq, and, desc } from 'drizzle-orm'
-import { z } from 'zod'
+import { notifications, quotes, rfqs, suppliers } from '@/db/schema'
 
 export const getBuyerQuotes = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
@@ -23,7 +23,7 @@ export const getBuyerQuotes = createServerFn({ method: 'GET' })
         },
         supplier: true,
       },
-      where: (quotes, { exists }) =>
+      where: (_quotes, { exists }) =>
         exists(
           db
             .select()
@@ -67,7 +67,6 @@ export const updateQuoteStatus = createServerFn({ method: 'POST' })
     // Check if expired (for acceptance)
     if (
       data.status === 'accepted' &&
-      quote.validityPeriod &&
       new Date(quote.validityPeriod) < new Date()
     ) {
       throw new Error('Quote has expired')

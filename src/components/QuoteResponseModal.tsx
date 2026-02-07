@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, CheckCircle } from 'lucide-react'
+import { CheckCircle, X } from 'lucide-react'
 import { respondToRfq } from '@/lib/supplier-server'
 import { formatBDT } from '@/data/mock-products'
 
