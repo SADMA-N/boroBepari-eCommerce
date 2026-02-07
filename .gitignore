@@ -31,3 +31,8 @@ curl_output.txt
 # Scripts
 get-docker.sh
 prompt.txt
+
+# Local Tooling & Data
+.gemini/
+public/uploads/
+supabase/snippets/
