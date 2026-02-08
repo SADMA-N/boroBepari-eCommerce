@@ -1,15 +1,14 @@
 import { BadgeCheck, ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { getVerifiedSuppliers } from '../data/mock-products'
-import type { MockSupplier } from '../data/mock-products'
+import type { SupplierDisplay } from '@/lib/product-server'
 
 interface PopularSuppliersProps {
-  suppliers?: Array<MockSupplier>
+  suppliers: Array<SupplierDisplay>
   title?: string
 }
 
 export default function PopularSuppliers({
-  suppliers = getVerifiedSuppliers(),
+  suppliers,
   title = 'Popular Suppliers',
 }: PopularSuppliersProps) {
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -88,7 +87,7 @@ export default function PopularSuppliers({
   )
 }
 
-function SupplierCard({ supplier }: { supplier: MockSupplier }) {
+function SupplierCard({ supplier }: { supplier: SupplierDisplay }) {
   return (
     <a
       href={`/suppliers/${supplier.slug}`}

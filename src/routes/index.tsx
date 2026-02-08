@@ -11,14 +11,14 @@ import PromoBanners, {
 import Footer from '../components/Footer'
 import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
+import { frequentlySearched, mockCategories } from '../data/mock-products'
 import {
-  frequentlySearched,
   getFeaturedProducts,
   getNewArrivals,
   getTopRanking,
-  mockCategories,
-} from '../data/mock-products'
-import type { MockProduct } from '../data/mock-products'
+  getVerifiedSuppliersList,
+} from '@/lib/product-server'
+import type { ProductWithSupplier } from '@/lib/product-server'
 import { checkUserPasswordStatus } from '@/lib/auth-server'
 
 export const Route = createFileRoute('/')({
@@ -26,44 +26,43 @@ export const Route = createFileRoute('/')({
     try {
       const status = await checkUserPasswordStatus()
       if (status.needsPassword) {
-        // Check for skip cookie (manual check since we are in server context potentially)
-        // On client side, document.cookie is available.
-        // On server side, we'd need headers, but checkUserPasswordStatus is safe to run.
-        // For now, let's trigger the redirect and let the target page handle skip logic if needed,
-        // or better, just rely on client-side redirect for 'skip' support.
-
-        // Actually, let's keep it simple: if the server says they need it,
-        // and we don't have a skip cookie, redirect.
         throw redirect({ to: '/auth/set-password' })
       }
     } catch (e) {
       if ((e as any).status === 307 || (e as any).status === 302) throw e
     }
   },
+  loader: async () => {
+    const [featured, newArrivals, topRanking, verifiedSuppliers] =
+      await Promise.all([
+        getFeaturedProducts({ data: 12 }),
+        getNewArrivals({ data: 12 }),
+        getTopRanking({ data: 12 }),
+        getVerifiedSuppliersList(),
+      ])
+    return { featured, newArrivals, topRanking, verifiedSuppliers }
+  },
   component: HomePage,
 })
 
 function HomePage() {
-  const featuredProducts = getFeaturedProducts()
-  const newArrivals = getNewArrivals()
-  const topRanking = getTopRanking()
+  const { featured, newArrivals, topRanking, verifiedSuppliers } =
+    Route.useLoaderData()
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
   // Quick View & Toast State
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(
-    null,
-  )
+  const [quickViewProduct, setQuickViewProduct] =
+    useState<ProductWithSupplier | null>(null)
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
   })
 
-  const handleQuickView = (product: MockProduct) => {
+  const handleQuickView = (product: ProductWithSupplier) => {
     setQuickViewProduct(product)
   }
 
-  const handleAddToCart = (product: MockProduct, quantity: number) => {
-    // In a real app, this would dispatch to a cart store
+  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
     console.log(`Added ${quantity} of ${product.name} to cart`)
 
     setQuickViewProduct(null)
@@ -105,7 +104,7 @@ function HomePage() {
 
       {/* Popular Suppliers */}
       <section className="max-w-[1440px] mx-auto px-6">
-        <PopularSuppliers />
+        <PopularSuppliers suppliers={verifiedSuppliers} />
       </section>
 
       {/* Promo Banner Strip */}
@@ -126,7 +125,7 @@ function HomePage() {
       {/* Featured Products */}
       <section className="max-w-[1440px] mx-auto px-6">
         <FeaturedProductsGrid
-          products={featuredProducts.slice(0, 12)}
+          products={featured}
           title="Recommended for Business"
           subtitle="Products selected based on trending wholesale demands"
           showViewAll

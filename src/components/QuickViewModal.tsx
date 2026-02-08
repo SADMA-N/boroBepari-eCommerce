@@ -10,17 +10,17 @@ import {
   ShoppingCart,
   X,
 } from 'lucide-react'
-import { formatBDT } from '../data/mock-products'
+import { formatBDT } from '@/lib/product-server'
 import { useAuth } from '../contexts/AuthContext'
 import RFQFormModal from './RFQFormModal'
 import AuthModal from './AuthModal'
-import type { MockProduct } from '../data/mock-products'
+import type { ProductWithSupplier } from '@/lib/product-server'
 
 interface QuickViewModalProps {
-  product: MockProduct | null
+  product: ProductWithSupplier | null
   isOpen: boolean
   onClose: () => void
-  onAddToCart: (product: MockProduct, quantity: number) => void
+  onAddToCart: (product: ProductWithSupplier, quantity: number) => void
 }
 
 export default function QuickViewModal({
@@ -31,7 +31,6 @@ export default function QuickViewModal({
 }: QuickViewModalProps) {
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState('')
-  const [isSample, setIsSample] = useState(false)
 
   const { isAuthenticated } = useAuth()
   const [isRfqOpen, setIsRfqOpen] = useState(false)
@@ -42,26 +41,18 @@ export default function QuickViewModal({
     if (product) {
       setQuantity(product.moq)
       setSelectedImage(product.images[0])
-      setIsSample(false)
     }
   }, [product])
 
   if (!isOpen || !product) return null
 
   const isOutOfStock = product.stock === 0
-  const maxQuantity = isSample ? 5 : product.stock
-
-  // Calculate price
-  const currentPrice = isSample
-    ? product.samplePrice || product.price
-    : (product.tieredPricing.find(
-        (t) =>
-          quantity >= t.minQty && (t.maxQty === null || quantity <= t.maxQty),
-      )?.price ?? product.price)
+  const maxQuantity = product.stock
+  const currentPrice = product.price
 
   const handleQuantityChange = (val: number) => {
     let newQty = val
-    const minQty = isSample ? 1 : product.moq
+    const minQty = product.moq
     if (newQty < minQty) newQty = minQty
     if (newQty > maxQuantity) newQty = maxQuantity
     setQuantity(newQty)
@@ -173,27 +164,6 @@ export default function QuickViewModal({
 
               {/* Options */}
               <div className="space-y-6">
-                {/* Sample Toggle */}
-                {product.hasSample && !isOutOfStock && (
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      Order Sample
-                    </span>
-                    <button
-                      onClick={() => {
-                        const newVal = !isSample
-                        setIsSample(newVal)
-                        setQuantity(newVal ? 1 : product.moq)
-                      }}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isSample ? 'bg-orange-500' : 'bg-gray-200 dark:bg-slate-700'}`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isSample ? 'translate-x-6' : 'translate-x-1'}`}
-                      />
-                    </button>
-                  </div>
-                )}
-
                 {/* Quantity Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors">
@@ -203,7 +173,7 @@ export default function QuickViewModal({
                     <button
                       onClick={() => handleQuantityChange(quantity - 1)}
                       disabled={
-                        quantity <= (isSample ? 1 : product.moq) || isOutOfStock
+                        quantity <= product.moq || isOutOfStock
                       }
                       className="p-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 disabled:opacity-50 transition-colors"
                     >
@@ -228,7 +198,7 @@ export default function QuickViewModal({
                   </div>
                   {!isOutOfStock && (
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Min. Order: {isSample ? 1 : product.moq} {product.unit}s
+                      Min. Order: {product.moq} {product.unit}s
                     </p>
                   )}
                 </div>

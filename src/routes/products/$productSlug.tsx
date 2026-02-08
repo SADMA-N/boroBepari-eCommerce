@@ -14,11 +14,10 @@ import {
   Truck,
 } from 'lucide-react'
 import {
-  MockProduct,
   formatBDT,
-  getSupplierById,
-  mockProducts,
-} from '../../data/mock-products'
+  getProductBySlug,
+} from '@/lib/product-server'
+import type { ProductDetailWithSupplier } from '@/lib/product-server'
 import { useWishlist } from '../../contexts/WishlistContext'
 import { useCart } from '../../contexts/CartContext'
 import { useAuth } from '../../contexts/AuthContext'
@@ -28,19 +27,20 @@ import AuthModal from '../../components/AuthModal'
 import { useNotifications } from '@/contexts/NotificationContext'
 
 export const Route = createFileRoute('/products/$productSlug')({
-  loader: ({ params }) => {
-    const product = mockProducts.find((p) => p.slug === params.productSlug)
+  gcTime: 0,
+  loader: async ({ params }) => {
+    const product = await getProductBySlug({ data: params.productSlug })
     if (!product) {
       throw notFound()
     }
-    const supplier = getSupplierById(product.supplierId)
-    return { product, supplier }
+    return { product }
   },
   component: ProductDetailPage,
 })
 
 function ProductDetailPage() {
-  const { product, supplier } = Route.useLoaderData()
+  const { product } = Route.useLoaderData()
+  const supplier = product.supplier
   const { toggleWishlist, isInWishlist } = useWishlist()
   const { addItem } = useCart()
   const { isAuthenticated, user } = useAuth()

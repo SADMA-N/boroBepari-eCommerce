@@ -1,13 +1,13 @@
 import ProductCard from './ProductCard'
-import type { MockProduct } from '../data/mock-products'
+import type { ProductWithSupplier } from '@/lib/product-server'
 
 interface FeaturedProductsGridProps {
-  products: Array<MockProduct>
+  products: Array<ProductWithSupplier>
   title?: string
   subtitle?: string
   showViewAll?: boolean
   viewAllLink?: string
-  onQuickView?: (product: MockProduct) => void
+  onQuickView?: (product: ProductWithSupplier) => void
 }
 
 export default function FeaturedProductsGrid({

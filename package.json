@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
+    "db:dump": "bash scripts/dump-db.sh",
     "lint": "eslint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix"

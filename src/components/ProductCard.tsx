@@ -1,13 +1,13 @@
 import { BadgeCheck, Eye, Heart, Package } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { formatBDT, getSupplierById } from '../data/mock-products'
+import { formatBDT } from '@/lib/product-server'
 import { useWishlist } from '../contexts/WishlistContext'
-import type { MockProduct } from '../data/mock-products'
+import type { ProductWithSupplier } from '@/lib/product-server'
 
 interface ProductCardProps {
-  product: MockProduct
-  onQuickView?: (product: MockProduct) => void
+  product: ProductWithSupplier
+  onQuickView?: (product: ProductWithSupplier) => void
 }
 
 export default function ProductCard({
@@ -15,15 +15,17 @@ export default function ProductCard({
   onQuickView,
 }: ProductCardProps) {
   const { toggleWishlist, isInWishlist } = useWishlist()
+  const [activeIndex, setActiveIndex] = useState(0)
   const [imageLoaded, setImageLoaded] = useState(false)
 
   const isWishlisted = isInWishlist(product.id)
-  const supplier = getSupplierById(product.supplierId)
   const discount = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100,
       )
     : null
+  const images = product.images
+  const hasMultipleImages = images.length > 1
 
   return (
     <div className="group relative bg-white dark:bg-slate-900 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 dark:border-slate-800">
@@ -38,7 +40,7 @@ export default function ProductCard({
             <div className="absolute inset-0 bg-gray-200 dark:bg-slate-700 animate-pulse" />
           )}
           <img
-            src={product.images[0]}
+            src={images[activeIndex]}
             alt={product.name}
             className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
@@ -91,6 +93,28 @@ export default function ProductCard({
           </button>
         </div>
 
+        {/* Image Dots - visible on hover when multiple images */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={(e) => {
+                  e.preventDefault()
+                  setActiveIndex(idx)
+                  setImageLoaded(false)
+                }}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  idx === activeIndex
+                    ? 'bg-white scale-110 shadow-md'
+                    : 'bg-white/60 hover:bg-white/80'
+                }`}
+                aria-label={`View image ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
+
         {/* MOQ Badge */}
         <div className="absolute bottom-2 left-2">
           <span className="inline-flex items-center gap-1 bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-xs font-medium px-2 py-1 rounded transition-colors">
@@ -103,16 +127,14 @@ export default function ProductCard({
       {/* Content */}
       <div className="p-3 transition-colors">
         {/* Supplier Info */}
-        {supplier && (
-          <div className="flex items-center gap-1 mb-1">
-            {supplier.verified && (
-              <BadgeCheck size={14} className="text-blue-500" />
-            )}
-            <span className="text-xs text-gray-500 dark:text-gray-400 truncate transition-colors">
-              {supplier.name}
-            </span>
-          </div>
-        )}
+        <div className="flex items-center gap-1 mb-1">
+          {product.supplierVerified && (
+            <BadgeCheck size={14} className="text-blue-500" />
+          )}
+          <span className="text-xs text-gray-500 dark:text-gray-400 truncate transition-colors">
+            {product.supplierName}
+          </span>
+        </div>
 
         {/* Product Name */}
         <Link

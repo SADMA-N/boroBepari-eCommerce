@@ -190,6 +190,14 @@ export const products = pgTable('products', {
   reviewCount: integer('review_count').default(0),
   soldCount: integer('sold_count').default(0),
   tags: jsonb().$type<Array<string>>().default([]),
+  tieredPricing: jsonb('tiered_pricing')
+    .$type<Array<{ minQty: number; maxQty: number | null; price: number }>>()
+    .default([]),
+  specifications: jsonb()
+    .$type<Array<{ key: string; value: string }>>()
+    .default([]),
+  hasSample: boolean('has_sample').default(false),
+  samplePrice: decimal('sample_price', { precision: 12, scale: 2 }),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 }).enableRLS()

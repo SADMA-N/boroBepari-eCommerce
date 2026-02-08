@@ -81,6 +81,10 @@ async function seed() {
           reviewCount: p.reviewCount,
           soldCount: p.soldCount,
           tags: p.tags,
+          tieredPricing: p.tieredPricing,
+          specifications: p.specifications,
+          hasSample: p.hasSample,
+          samplePrice: p.samplePrice?.toString() ?? null,
         })),
       )
     }
