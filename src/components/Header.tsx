@@ -7,6 +7,7 @@ import {
   LogIn,
   LogOut,
   Menu,
+  MessageSquare,
   Package,
   ShoppingCart,
   Store,
@@ -243,6 +244,14 @@ export default function Header() {
                             <Package size={16} />
                             My Orders
                           </Link>
+                          <Link
+                            to="/buyer/rfqs"
+                            onClick={() => setShowUserDropdown(false)}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
+                          >
+                            <MessageSquare size={16} />
+                            My RFQs
+                          </Link>
                         </div>
                         <hr className="border-gray-100 dark:border-slate-800" />
                         <div className="py-1">
@@ -300,6 +309,17 @@ export default function Header() {
                           >
                             <Package size={16} />
                             My Orders
+                          </Link>
+                          <Link
+                            to="/buyer/rfqs"
+                            onClick={(e) => {
+                              handleAuthRequired(e, '/buyer/rfqs')
+                              setShowUserDropdown(false)
+                            }}
+                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
+                          >
+                            <MessageSquare size={16} />
+                            My RFQs
                           </Link>
                         </div>
                       </>
@@ -394,6 +414,18 @@ export default function Header() {
             >
               <Package size={20} className="dark:text-gray-400" />
               My Orders
+            </a>
+
+            <a
+              href="/buyer/rfqs"
+              onClick={(e) => {
+                handleAuthRequired(e, '/buyer/rfqs')
+                if (isAuthenticated) setIsMobileMenuOpen(false)
+              }}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/20 text-gray-700 dark:text-gray-300 transition-colors"
+            >
+              <MessageSquare size={20} className="dark:text-gray-400" />
+              My RFQs
             </a>
 
             <a

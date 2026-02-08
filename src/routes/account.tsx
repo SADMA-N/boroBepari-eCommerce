@@ -10,6 +10,7 @@ import {
   EyeOff,
   Loader2,
   MapPin,
+  MessageSquare,
   Package,
   Phone,
   Plus,
@@ -22,6 +23,7 @@ import { addresses, user as userTable } from '@/db/schema'
 import { db } from '@/db'
 import { authMiddleware, updateUserPassword } from '@/lib/auth-server'
 import { useAuth } from '@/contexts/AuthContext'
+import BuyerRFQsSection from '@/components/buyer/BuyerRFQsSection'
 
 // --- Server Functions ---
 
@@ -187,6 +189,7 @@ export const Route = createFileRoute('/account')({
           | 'profile'
           | 'address'
           | 'orders'
+          | 'rfqs'
           | 'security'
           | undefined) ?? 'profile',
     }
@@ -201,7 +204,7 @@ function AccountPage() {
   const activeTab = tab
 
   const setActiveTab = (
-    newTab: 'profile' | 'address' | 'orders' | 'security',
+    newTab: 'profile' | 'address' | 'orders' | 'rfqs' | 'security',
   ) => {
     navigate({ search: { tab: newTab } })
   }
@@ -252,6 +255,17 @@ function AccountPage() {
                   My Orders
                 </button>
                 <button
+                  onClick={() => setActiveTab('rfqs')}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-colors ${
+                    activeTab === 'rfqs'
+                      ? 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-500'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <MessageSquare size={20} />
+                  My RFQs
+                </button>
+                <button
                   onClick={() => setActiveTab('security')}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left font-medium transition-colors ${
                     activeTab === 'security'
@@ -275,6 +289,7 @@ function AccountPage() {
             {activeTab === 'orders' && (
               <OrdersSection orders={userData.orders} />
             )}
+            {activeTab === 'rfqs' && <BuyerRFQsSection />}
             {activeTab === 'security' && <SecuritySection />}
           </div>
         </div>
