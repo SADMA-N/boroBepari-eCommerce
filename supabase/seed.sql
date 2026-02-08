@@ -4,7 +4,7 @@ SET session_replication_role = replica;
 -- PostgreSQL database dump
 --
 
--- \restrict H1bNAZ6HCkA0WOkhgv6iKk3E5GrTU3152W3U9ZiHLLQSkdFgDoMHNXcKtoiK8X5
+-- \restrict ZvoMQiMhpN35XDQyzYkaDe9ADrW8zvVKrQiM0pJzdq66XNgxseLQQYrTL1huX6j
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -168,7 +168,7 @@ INSERT INTO "public"."addresses" ("id", "user_id", "name", "address", "city", "p
 --
 
 INSERT INTO "public"."admins" ("id", "email", "password", "name", "role", "avatar", "is_active", "last_login_at", "created_at", "updated_at") VALUES
-	('9862ce75-5d76-46b5-9077-ca5b12b1aa4a', 'admin@borobepari.com', '27dc1f5c67bdf1d2bf661095e1cc5a22123348588da2e2160a8ca0af138ab7a5', 'Super Admin', 'super_admin', NULL, true, '2026-02-08 13:29:21.872', '2026-02-05 19:28:04.373971', '2026-02-05 19:28:04.373971');
+	('9862ce75-5d76-46b5-9077-ca5b12b1aa4a', 'admin@borobepari.com', '27dc1f5c67bdf1d2bf661095e1cc5a22123348588da2e2160a8ca0af138ab7a5', 'Super Admin', 'super_admin', NULL, true, '2026-02-08 18:36:50.592', '2026-02-05 19:28:04.373971', '2026-02-05 19:28:04.373971');
 
 
 --
@@ -210,7 +210,8 @@ INSERT INTO "public"."login_events" ("id", "user_id", "ip_address", "user_agent"
 	(24, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:09:34.60727'),
 	(25, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:09:52.007549'),
 	(26, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 11:19:33.181075'),
-	(27, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 11:21:31.117409');
+	(27, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 11:21:31.117409'),
+	(28, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 17:39:25.717996');
 
 
 --
@@ -233,7 +234,8 @@ INSERT INTO "public"."orders" ("id", "user_id", "total_amount", "status", "payme
 	(10, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 129800.00, 'pending', 'pending', NULL, 'deposit', 38940.00, 90860.00, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2026-02-07 13:14:37.280431', '2026-02-07 13:14:37.280431'),
 	(11, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 107.00, 'pending', 'pending', NULL, 'cod', 0.00, 107.00, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2026-02-08 01:27:01.861745', '2026-02-08 01:27:01.861745'),
 	(12, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 25500.00, 'pending', 'pending', NULL, 'deposit', 7650.00, 17850.00, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2026-02-08 01:27:34.712218', '2026-02-08 01:27:34.712218'),
-	(13, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 25500.00, 'pending', 'pending', NULL, 'full', 0.00, 25500.00, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2026-02-08 01:27:43.661934', '2026-02-08 01:27:43.661934');
+	(13, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 25500.00, 'pending', 'pending', NULL, 'full', 0.00, 25500.00, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2026-02-08 01:27:43.661934', '2026-02-08 01:27:43.661934'),
+	(14, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 2400.00, 'pending', 'pending', NULL, 'cod', 0.00, 2400.00, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, '2026-02-08 18:25:51.665657', '2026-02-08 18:25:51.665657');
 
 
 --
@@ -260,7 +262,8 @@ INSERT INTO "public"."suppliers" ("id", "name", "slug", "logo", "verified", "loc
 	(17, 'Gutkowski - Wuckert', 'murazik-group', 'https://picsum.photos/seed/supplier17/200/200', true, 'Mymensingh', 81.20, 81.90, 10, 'Versatile executive project', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
 	(18, 'Durgan, Kihn and Rau', 'dicki-and-sons', 'https://picsum.photos/seed/supplier18/200/200', true, 'Rangpur', 70.70, 85.30, 11, 'Business-focused zero trust contingency', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
 	(19, 'Emard Group', 'gutkowski---nicolas', 'https://picsum.photos/seed/supplier19/200/200', true, 'Narayanganj', 70.10, 87.30, 11, 'Devolved methodical definition', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
-	(20, 'Balistreri and Sons', 'champlin---sanford', 'https://picsum.photos/seed/supplier20/200/200', true, 'Khulna', 99.20, 97.50, 15, 'User-friendly high-level strategy', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL);
+	(20, 'Balistreri and Sons', 'champlin---sanford', 'https://picsum.photos/seed/supplier20/200/200', true, 'Khulna', 99.20, 97.50, 15, 'User-friendly high-level strategy', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
+	(21, 'ayojon', 'ayojon-f62eda30', NULL, true, 'Ctg', 0.00, 0.00, 2, 'Hello', '2026-02-08 18:17:48.905499', '2026-02-08 18:17:48.905499', NULL);
 
 
 --
@@ -388,13 +391,16 @@ INSERT INTO "public"."products" ("id", "name", "slug", "description", "images", 
 	(119, 'Licensed Earbuds', 'licensed-earbuds-119', 'The Matt Chair is the latest in a series of anguished products from Grady - Rice', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/119/f6f5102d-101e-4ddd-9e19-49ddea2d1e10.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/119/4c36c6c9-55cc-4d56-a6a7-663adc57c7e1.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/119/38c3f8b9-febb-487e-ac97-b5ec610aea20.jpg"]', 3411.00, 5000.00, 1, 7973, 'pack', 2, 12, false, false, 3.60, 59, 6972, '[]', '2026-02-08 06:22:26.189691', '2026-02-08 06:22:26.189691', '[{"price": 3411, "maxQty": 2, "minQty": 1}, {"price": 3240, "maxQty": 5, "minQty": 3}, {"price": 3070, "maxQty": null, "minQty": 6}]', '[{"key": "Material", "value": "Gold"}, {"key": "Color", "value": "purple"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "534g"}, {"key": "Brand", "value": "Runolfsson - Kreiger"}]', true, 5117.00),
 	(106, 'Tasty Shirt', 'tasty-shirt-106', 'Discover the political new Sausages with an exciting mix of Steel ingredients', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/106/82b46b85-55be-4097-9a55-d97d84dbb1b5.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/106/5314259b-afa0-447f-867f-c9d5df352838.jpg"]', 2275.00, NULL, 1, 3741, 'dozen', 1, 5, false, false, 4.90, 154, 6340, '["top-rated"]', '2026-02-08 06:22:26.189691', '2026-02-08 06:22:26.189691', '[{"price": 2275, "maxQty": 2, "minQty": 1}, {"price": 2161, "maxQty": 5, "minQty": 3}, {"price": 2048, "maxQty": null, "minQty": 6}]', '[{"key": "Material", "value": "Steel"}, {"key": "Color", "value": "ivory"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "105g"}, {"key": "Brand", "value": "Kunde - Hauck"}]', false, NULL),
 	(116, 'Fantastic Fan', 'fantastic-fan-116', 'New Tuna model with 53 GB RAM, 794 GB storage, and bruised features', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/116/9f44ac2b-de6c-4727-a547-3d401bfcc6e0.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/116/492fd5a8-ff1b-4674-a0a5-38b3e7657a5c.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/116/3c64b8d2-2da7-4c43-be97-a04944bcd833.jpg"]', 4004.00, 5240.00, 50, 3854, 'set', 7, 12, false, true, 4.30, 272, 7375, '["top-rated", "bestseller", "bulk-deal"]', '2026-02-08 06:22:26.189691', '2026-02-08 06:22:26.189691', '[{"price": 4004, "maxQty": 100, "minQty": 50}, {"price": 3804, "maxQty": 250, "minQty": 101}, {"price": 3604, "maxQty": null, "minQty": 251}]', '[{"key": "Material", "value": "Metal"}, {"key": "Color", "value": "gold"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "824g"}, {"key": "Brand", "value": "Goldner - Maggio"}]', false, NULL),
-	(1, 'Ergonomic Mask', 'ergonomic-mask-1', 'Professional-grade Bacon perfect for acidic training and recreational use', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/1/48e7da51-ada1-48fb-95d2-d6f31d93da45.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/1/image%20(2).png"]', 1415.00, NULL, 100, 2255, 'pack', 4, 8, false, false, 3.80, 286, 6610, '["limited"]', '2026-02-08 06:22:26.169163', '2026-02-08 06:22:26.169163', '[{"price": 1415, "maxQty": 200, "minQty": 100}, {"price": 1344, "maxQty": 500, "minQty": 201}, {"price": 1274, "maxQty": null, "minQty": 501}]', '[{"key": "Material", "value": "Gold"}, {"key": "Color", "value": "violet"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "629g"}, {"key": "Brand", "value": "Lynch, Kutch and Abernathy"}]', true, 2123.00);
+	(122, 'Watch', 'watch-59cfebb3', 'Product details of<ul style="margin-left: 16px; list-style-type: disc; overflow: hidden;"><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Imported</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Digital sport watch in rectangle case featuring alarm, chronograph functions, and night light</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">33 mm resin case with mineral dial window, Quartz movement with digital display</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Water Resistant and stainless steel.</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Measuring modes include net time, split time, and first and second place times</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Functions include 1/100-second digital stopwatch, hourly time signal, auto calendar, and day/date. Accuracy of +/- 30 seconds per month</li></ul>', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/70dfb713-28e1-4906-8fc1-ab3cbf54813c.jpg"]', 2000.00, 2222.22, 10, 1000, 'piece', 2, 21, false, true, NULL, 0, 0, '["watch", "men", "style"]', '2026-02-08 18:17:48.935481', '2026-02-08 18:17:48.935481', '[]', '[{"key": "Warranty", "value": "1  Year International Warranty"}, {"key": " Voltage", "value": "Not Applicable (Battery Powered Quartz Movement)  "}, {"key": "Material", "value": "Stainless Steel Case with Leather Strap"}]', true, 1000.00),
+	(1, 'Ergonomic Mask', 'ergonomic-mask-1', 'Professional-grade Bacon perfect for acidic training and recreational use', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/1/48e7da51-ada1-48fb-95d2-d6f31d93da45.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/1/image%20(2).png", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/1/image%20(3).png"]', 1415.00, NULL, 100, 2255, 'pack', 4, 8, false, false, 3.80, 286, 6610, '["limited"]', '2026-02-08 06:22:26.169163', '2026-02-08 06:22:26.169163', '[{"price": 1415, "maxQty": 200, "minQty": 100}, {"price": 1344, "maxQty": 500, "minQty": 201}, {"price": 1274, "maxQty": null, "minQty": 501}]', '[{"key": "Material", "value": "Gold"}, {"key": "Color", "value": "violet"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "629g"}, {"key": "Brand", "value": "Lynch, Kutch and Abernathy"}]', true, 2123.00);
 
 
 --
 -- Data for Name: order_items; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."order_items" ("id", "product_id", "supplier_id", "quantity", "price", "order_id") VALUES
+	(1, 14, NULL, 20, 2400.00, 14);
 
 
 --
@@ -410,6 +416,9 @@ INSERT INTO "public"."password_reset_otps" ("id", "email", "code", "token", "use
 -- Data for Name: rfqs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."rfqs" ("id", "buyer_id", "supplier_id", "product_id", "quantity", "target_price", "delivery_location", "notes", "attachments", "status", "expires_at", "created_at", "updated_at") VALUES
+	(1, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 10500.00, 'Dhaka', 'Logo chg kro', '["pexels-ferarcosn-190819.jpg"]', 'pending', '2026-03-10 19:45:38.536', '2026-02-08 19:45:38.536694', '2026-02-08 19:45:38.536694'),
+	(2, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 10000.00, 'Dhaka', 'dfsdfsdfsd', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770580281322-gx1z6.jpg"]', 'pending', '2026-03-10 19:51:21.382', '2026-02-08 19:51:21.388063', '2026-02-08 19:51:21.388063');
 
 
 --
@@ -423,7 +432,7 @@ INSERT INTO "public"."password_reset_otps" ("id", "email", "code", "token", "use
 --
 
 INSERT INTO "public"."sellers" ("id", "email", "password", "business_name", "business_type", "trade_license_number", "business_category", "years_in_business", "full_name", "phone", "address", "city", "postal_code", "bank_name", "account_holder_name", "account_number", "branch_name", "routing_number", "email_verified", "kyc_status", "kyc_submitted_at", "kyc_rejection_reason", "kyc_documents", "kyc_additional_info", "verification_badge", "supplier_id", "created_at", "updated_at") VALUES
-	('983ad445-c185-4e8b-a91b-e0095bb38928', 'pubgmerabeta10@gmail.com', '5a20bf129b331b46cd9771dcfde7bd70571250821b89cac7f813d5dd9ffda0fd', 'ayojon', 'Wholesaler', '0101010101001', 'Industrial Supplies', 2, 'KamaL', '01724324560', 'Kotowali', 'Ctg', '4000', 'Eastern Bank', 'Kamal', '0101010101010', 'Dhaka', '2', true, 'approved', '2026-02-08 11:23:52.339', NULL, '{}', '{"categories": ["Home & Kitchen", "Industrial Supplies"], "description": "Hello", "inventoryRange": "Below ৳50,000"}', 'verified', NULL, '2026-02-08 11:22:45.417364', '2026-02-08 11:24:35.711');
+	('983ad445-c185-4e8b-a91b-e0095bb38928', 'pubgmerabeta10@gmail.com', '5a20bf129b331b46cd9771dcfde7bd70571250821b89cac7f813d5dd9ffda0fd', 'ayojon', 'Wholesaler', '0101010101001', 'Industrial Supplies', 2, 'KamaL', '01724324560', 'Kotowali', 'Ctg', '4000', 'Eastern Bank', 'Kamal', '0101010101010', 'Dhaka', '2', true, 'approved', '2026-02-08 11:23:52.339', NULL, '{}', '{"categories": ["Home & Kitchen", "Industrial Supplies"], "description": "Hello", "inventoryRange": "Below ৳50,000"}', 'verified', 21, '2026-02-08 11:22:45.417364', '2026-02-08 18:17:48.915');
 
 
 --
@@ -443,7 +452,11 @@ INSERT INTO "public"."seller_documents" ("id", "seller_id", "document_type", "s3
 --
 
 INSERT INTO "public"."seller_products" ("id", "seller_id", "name", "slug", "brand", "main_category", "sub_category", "description", "tags", "images", "price", "original_price", "tiered_pricing", "moq", "stock", "sku", "unit", "low_stock_threshold", "specifications", "weight", "dimensions", "ship_from", "delivery_time", "return_policy", "has_sample", "sample_price", "sample_max_qty", "sample_delivery", "status", "admin_notes", "reviewed_by", "reviewed_at", "published_product_id", "created_at", "updated_at") VALUES
-	(1, '983ad445-c185-4e8b-a91b-e0095bb38928', 'bicycle', 'bicycle-1b36664d', 'MyBrand', 'Industrial Supplies', 'Tools', 'Hello enjoy with my first product . Buy it and enjoy .', '[]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/add01ba2-9af3-4d1a-935c-e26f7ebeccb6.png"]', 8000.00, 8888.89, '[]', 10, 50, NULL, 'piece', 10, '[{"key": "Lightweight , High Grade , Racing Usage", "value": "Weight: 8.2 kg | Frame: Carbon Fiber | Groupset: Shimano 105 | Tires: 700x25c | Geometry: Race | Use: Road Racing"}]', '7kg', '{"width": "10", "height": "50", "length": "300"}', 'Chittagong Warehouse', '3-5 days', '7 days', false, NULL, 5, NULL, 'accepted', NULL, '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 13:28:56.082', 121, '2026-02-08 13:26:55.117333', '2026-02-08 13:28:56.082');
+	(1, '983ad445-c185-4e8b-a91b-e0095bb38928', 'bicycle', 'bicycle-1b36664d', 'MyBrand', 'Industrial Supplies', 'Tools', 'Hello enjoy with my first product . Buy it and enjoy .', '[]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/add01ba2-9af3-4d1a-935c-e26f7ebeccb6.png"]', 8000.00, 8888.89, '[]', 10, 50, NULL, 'piece', 10, '[{"key": "Lightweight , High Grade , Racing Usage", "value": "Weight: 8.2 kg | Frame: Carbon Fiber | Groupset: Shimano 105 | Tires: 700x25c | Geometry: Race | Use: Road Racing"}]', '7kg', '{"width": "10", "height": "50", "length": "300"}', 'Chittagong Warehouse', '3-5 days', '7 days', false, NULL, 5, NULL, 'accepted', NULL, '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 13:28:56.082', 121, '2026-02-08 13:26:55.117333', '2026-02-08 13:28:56.082'),
+	(4, '983ad445-c185-4e8b-a91b-e0095bb38928', 'Watch', 'watch-82b54726', 'Zues', 'Electronics', 'Electrical Components', 'Product details of<ul style="margin-left: 16px; list-style-type: disc; overflow: hidden;"><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Imported</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Digital sport watch in rectangle case featuring alarm, chronograph functions, and night light</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">33 mm resin case with mineral dial window, Quartz movement with digital display</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Water Resistant and stainless steel.</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Measuring modes include net time, split time, and first and second place times</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Functions include 1/100-second digital stopwatch, hourly time signal, auto calendar, and day/date. Accuracy of +/- 30 seconds per month</li></ul>', '["watch", "men", "style"]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/07a2334a-5ecf-41d1-ae3d-e5aa2ff3ba1a.jpg"]', 2000.00, 2222.22, '[]', 10, 1000, NULL, 'piece', 10, '[{"key": "Warranty", "value": "1  Year International Warranty"}, {"key": " Voltage", "value": "Not Applicable (Battery Powered Quartz Movement)  "}, {"key": "Material", "value": "Stainless Steel Case with Leather Strap"}]', '200gm', '{"width": "5", "height": "5", "length": "20"}', 'Chittagong Warehouse', '3-5 days', '15 days', true, 1000.00, 5, '3-5 days', 'declined', 'illigel', '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 18:18:44.784', NULL, '2026-02-08 18:15:47.031859', '2026-02-08 18:18:44.784'),
+	(3, '983ad445-c185-4e8b-a91b-e0095bb38928', 'Watch', 'watch-365aa9c8', 'Zues', 'Electronics', 'Electrical Components', 'Product details of<ul style="margin-left: 16px; list-style-type: disc; overflow: hidden;"><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Imported</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Digital sport watch in rectangle case featuring alarm, chronograph functions, and night light</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">33 mm resin case with mineral dial window, Quartz movement with digital display</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Water Resistant and stainless steel.</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Measuring modes include net time, split time, and first and second place times</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Functions include 1/100-second digital stopwatch, hourly time signal, auto calendar, and day/date. Accuracy of +/- 30 seconds per month</li></ul>', '["watch", "men", "style"]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/d211c1cb-efd8-4fd4-8fe5-3948f27b80bc.jpg"]', 2000.00, 2222.22, '[]', 10, 1000, NULL, 'piece', 10, '[{"key": "Warranty", "value": "1  Year International Warranty"}, {"key": " Voltage", "value": "Not Applicable (Battery Powered Quartz Movement)  "}, {"key": "Material", "value": "Stainless Steel Case with Leather Strap"}]', '200gm', '{"width": "5", "height": "5", "length": "20"}', 'Chittagong Warehouse', '3-5 days', '15 days', true, 1000.00, 5, '3-5 days', 'declined', 'illigel', '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 18:19:01.454', NULL, '2026-02-08 18:15:39.389614', '2026-02-08 18:19:01.454'),
+	(2, '983ad445-c185-4e8b-a91b-e0095bb38928', 'Watch', 'watch-3c3063f2', 'Zues', 'Electronics', 'Electrical Components', 'Product details of<ul style="margin-left: 16px; list-style-type: disc; overflow: hidden;"><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Imported</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Digital sport watch in rectangle case featuring alarm, chronograph functions, and night light</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">33 mm resin case with mineral dial window, Quartz movement with digital display</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Water Resistant and stainless steel.</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Measuring modes include net time, split time, and first and second place times</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Functions include 1/100-second digital stopwatch, hourly time signal, auto calendar, and day/date. Accuracy of +/- 30 seconds per month</li></ul>', '["watch", "men", "style"]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/0a8741f4-03fe-45e4-b231-f341ad24251f.jpg"]', 2000.00, 2222.22, '[]', 10, 1000, NULL, 'piece', 10, '[{"key": "Warranty", "value": "1  Year International Warranty"}, {"key": " Voltage", "value": "Not Applicable (Battery Powered Quartz Movement)  "}, {"key": "Material", "value": "Stainless Steel Case with Leather Strap"}]', '200gm', '{"width": "5", "height": "5", "length": "20"}', 'Chittagong Warehouse', '3-5 days', '15 days', true, 1000.00, 5, '3-5 days', 'declined', 'illigel', '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 18:19:05.904', NULL, '2026-02-08 18:15:27.278548', '2026-02-08 18:19:05.904'),
+	(5, '983ad445-c185-4e8b-a91b-e0095bb38928', 'Watch', 'watch-e0d7d672', 'Zues', 'Electronics', 'Electrical Components', 'Product details of<ul style="margin-left: 16px; list-style-type: disc; overflow: hidden;"><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Imported</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Digital sport watch in rectangle case featuring alarm, chronograph functions, and night light</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">33 mm resin case with mineral dial window, Quartz movement with digital display</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Water Resistant and stainless steel.</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Measuring modes include net time, split time, and first and second place times</li><li style="padding-left: 15px; position: relative; font-size: 14px; line-height: 18px; list-style: none; word-break: break-word; break-inside: avoid;">-Functions include 1/100-second digital stopwatch, hourly time signal, auto calendar, and day/date. Accuracy of +/- 30 seconds per month</li></ul>', '["watch", "men", "style"]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/70dfb713-28e1-4906-8fc1-ab3cbf54813c.jpg"]', 2000.00, 2222.22, '[]', 10, 1000, NULL, 'piece', 10, '[{"key": "Warranty", "value": "1  Year International Warranty"}, {"key": " Voltage", "value": "Not Applicable (Battery Powered Quartz Movement)  "}, {"key": "Material", "value": "Stainless Steel Case with Leather Strap"}]', '200gm', '{"width": "5", "height": "5", "length": "20"}', 'Chittagong Warehouse', '3-5 days', '15 days', true, 1000.00, 5, '3-5 days', 'accepted', NULL, '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 18:17:48.952', 122, '2026-02-08 18:16:13.081605', '2026-02-08 18:17:48.952');
 
 
 --
@@ -452,9 +465,10 @@ INSERT INTO "public"."seller_products" ("id", "seller_id", "name", "slug", "bran
 
 INSERT INTO "public"."session" ("id", "expires_at", "token", "created_at", "updated_at", "ip_address", "user_agent", "user_id") VALUES
 	('hwb79rcpzjULnp3vrPTFa08Jakz7nFYg', '2026-02-13 18:05:01.63', 'dSzpPNNGvCYVpAUgN3GezQ3axWrRnoBh', '2026-02-06 18:05:01.63', '2026-02-06 18:05:01.63', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
-	('DS68GKwEWlP9mgYLjV0yYgRjdxY3L9Y8', '2026-02-14 12:42:06.175', 'ARaD3uCvMgFFiZ5nk6zlXWq49unGgrUW', '2026-02-07 12:42:06.175', '2026-02-07 12:42:06.175', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
 	('O0knU2kz4wDgvMP0D7Fbj7CJlX7FhybK', '2026-02-15 05:09:34.6', '5SgdPrHpdYGmRaBuwZbqHz9nTTyraE0O', '2026-02-08 05:09:34.6', '2026-02-08 05:09:34.6', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
-	('VIpB8gMyUKsM3AtXsVKW1ma2wxqRb8UH', '2026-02-15 11:19:33.166', 'U9i65BbS5SFfBMS9KHvbx3al13HHQWnO', '2026-02-08 11:19:33.167', '2026-02-08 11:19:33.167', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ');
+	('VIpB8gMyUKsM3AtXsVKW1ma2wxqRb8UH', '2026-02-15 11:19:33.166', 'U9i65BbS5SFfBMS9KHvbx3al13HHQWnO', '2026-02-08 11:19:33.167', '2026-02-08 11:19:33.167', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
+	('9s8Oocq4OSLe8UzmR4RwWkBMnDlIJxig', '2026-02-15 17:39:25.705', 'wB3xE5Nmsdg2KwcFQaGIM3YmrUjmyIeq', '2026-02-08 17:39:25.706', '2026-02-08 17:39:25.706', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
+	('DS68GKwEWlP9mgYLjV0yYgRjdxY3L9Y8', '2026-02-15 19:54:03.24', 'ARaD3uCvMgFFiZ5nk6zlXWq49unGgrUW', '2026-02-07 12:42:06.175', '2026-02-08 19:54:03.24', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ');
 
 
 --
@@ -861,6 +875,7 @@ INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at
 	('52b3fb20-6efe-4363-8458-9b55af4d441c', 'product-images', 'products/13/249b76ce-43d3-43ae-82b9-3d31b5db507d.jpg', NULL, '2026-02-08 06:22:41.772307+00', '2026-02-08 06:22:41.772307+00', '2026-02-08 06:22:41.772307+00', '{"eTag": "\"03d802235f470622e30ba549bda80c8b\"", "size": 44204, "mimetype": "image/jpeg", "cacheControl": "no-cache", "lastModified": "2026-02-08T06:22:41.767Z", "contentLength": 44204, "httpStatusCode": 200}', 'bccc883d-0b82-40a1-9b2e-7579191d170d', NULL, '{}'),
 	('dd30a86e-09d0-4584-9101-03bb70244028', 'product-images', 'products/70/d0f0573b-f3b2-4e83-bbac-cc7349413b2d.jpg', NULL, '2026-02-08 06:22:50.501625+00', '2026-02-08 06:22:50.501625+00', '2026-02-08 06:22:50.501625+00', '{"eTag": "\"061ea8eeaff9116488f65a503fbc3472\"", "size": 150272, "mimetype": "image/jpeg", "cacheControl": "no-cache", "lastModified": "2026-02-08T06:22:50.495Z", "contentLength": 150272, "httpStatusCode": 200}', '18f26b30-3f0c-4a9e-9eee-eb0e63b05dde', NULL, '{}'),
 	('ba25739a-e2c3-4a08-84b8-0fa27a92a92c', 'product-images', 'products/19/b08f9f19-bbcd-4693-847c-7019dd903c02.jpg', NULL, '2026-02-08 06:22:41.786775+00', '2026-02-08 06:22:41.786775+00', '2026-02-08 06:22:41.786775+00', '{"eTag": "\"9046c4a99565a672575d35193bbffb3b\"", "size": 124442, "mimetype": "image/jpeg", "cacheControl": "no-cache", "lastModified": "2026-02-08T06:22:41.779Z", "contentLength": 124442, "httpStatusCode": 200}', '5ad0c510-b451-4649-a17a-2ca80aa2adb1', NULL, '{}'),
+	('920d45e5-8865-4eb5-8e99-b5215966895a', 'product-images', 'products/1/image (3).png', NULL, '2026-02-08 18:21:52.232558+00', '2026-02-08 18:21:52.232558+00', '2026-02-08 18:21:52.232558+00', '{"eTag": "\"2fec3decee88f177530597c55f6bf4df\"", "size": 488188, "mimetype": "image/png", "cacheControl": "max-age=3600", "lastModified": "2026-02-08T18:21:52.195Z", "contentLength": 488188, "httpStatusCode": 200}', 'da2eed50-8f2f-44b7-ab6e-fac23a6f96cf', NULL, NULL),
 	('af7254d0-aae5-49c2-9ef8-f465b6648931', 'product-images', 'products/11/c1ae2861-f01d-463d-93b1-ee1ca53e4183.jpg', NULL, '2026-02-08 06:22:41.791522+00', '2026-02-08 06:22:41.791522+00', '2026-02-08 06:22:41.791522+00', '{"eTag": "\"bdbb265563a6d8ac9b61665b89b1be49\"", "size": 50501, "mimetype": "image/jpeg", "cacheControl": "no-cache", "lastModified": "2026-02-08T06:22:41.787Z", "contentLength": 50501, "httpStatusCode": 200}', 'b130433e-8218-445b-a459-5e53f91c2896', NULL, '{}'),
 	('b9663a1c-ff46-49c0-b1c5-12cc7182895e', 'product-images', 'products/62/e614f0f9-cd69-4543-9f6f-f534ec832667.jpg', NULL, '2026-02-08 06:22:50.546935+00', '2026-02-08 06:22:50.546935+00', '2026-02-08 06:22:50.546935+00', '{"eTag": "\"c255b703e74ab66e9cd26aa76f0f7d0f\"", "size": 119147, "mimetype": "image/jpeg", "cacheControl": "no-cache", "lastModified": "2026-02-08T06:22:50.539Z", "contentLength": 119147, "httpStatusCode": 200}', '38f115d0-1c5a-48c2-a336-af83c1cae640', NULL, '{}'),
 	('d8945fd3-d028-4178-9917-6b3dbc8f8a92', 'product-images', 'products/17/ae532be7-e0de-4824-be6c-babf6dc00925.jpg', NULL, '2026-02-08 06:22:41.833171+00', '2026-02-08 06:22:41.833171+00', '2026-02-08 06:22:41.833171+00', '{"eTag": "\"928fb3b05a2cf9bdf9952622eb8dcb89\"", "size": 67896, "mimetype": "image/jpeg", "cacheControl": "no-cache", "lastModified": "2026-02-08T06:22:41.827Z", "contentLength": 67896, "httpStatusCode": 200}', 'c7fe8e83-ba02-488f-8528-b19634e73916', NULL, '{}'),
@@ -1180,7 +1195,7 @@ SELECT pg_catalog.setval('"public"."categories_id_seq"', 16, true);
 -- Name: login_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."login_events_id_seq"', 27, true);
+SELECT pg_catalog.setval('"public"."login_events_id_seq"', 28, true);
 
 
 --
@@ -1194,14 +1209,14 @@ SELECT pg_catalog.setval('"public"."notifications_id_seq"', 1, false);
 -- Name: order_items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."order_items_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."order_items_id_seq"', 1, true);
 
 
 --
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."orders_id_seq"', 13, true);
+SELECT pg_catalog.setval('"public"."orders_id_seq"', 14, true);
 
 
 --
@@ -1215,7 +1230,7 @@ SELECT pg_catalog.setval('"public"."password_reset_otps_id_seq"', 3, true);
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."products_id_seq"', 121, true);
+SELECT pg_catalog.setval('"public"."products_id_seq"', 122, true);
 
 
 --
@@ -1229,14 +1244,14 @@ SELECT pg_catalog.setval('"public"."quotes_id_seq"', 1, false);
 -- Name: rfqs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rfqs_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."rfqs_id_seq"', 2, true);
 
 
 --
 -- Name: seller_products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."seller_products_id_seq"', 1, true);
+SELECT pg_catalog.setval('"public"."seller_products_id_seq"', 5, true);
 
 
 --
@@ -1250,7 +1265,7 @@ SELECT pg_catalog.setval('"public"."stock_alerts_id_seq"', 1, false);
 -- Name: suppliers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."suppliers_id_seq"', 20, true);
+SELECT pg_catalog.setval('"public"."suppliers_id_seq"', 21, true);
 
 
 --
@@ -1271,6 +1286,6 @@ SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
 -- PostgreSQL database dump complete
 --
 
--- \unrestrict H1bNAZ6HCkA0WOkhgv6iKk3E5GrTU3152W3U9ZiHLLQSkdFgDoMHNXcKtoiK8X5
+-- \unrestrict ZvoMQiMhpN35XDQyzYkaDe9ADrW8zvVKrQiM0pJzdq66XNgxseLQQYrTL1huX6j
 
 RESET ALL;

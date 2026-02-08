@@ -56,6 +56,24 @@ interface StockAlertEmailParams {
   productLink: string
 }
 
+interface RfqEmailParams {
+  email: string
+  name: string
+  rfqId: string | number
+  productName: string
+  quantity: string | number
+  link: string
+}
+
+interface QuoteEmailParams {
+  email: string
+  name: string
+  rfqId: string | number
+  productName: string
+  unitPrice: string
+  link: string
+}
+
 export async function sendVerificationEmail({
   email,
   url,
@@ -342,6 +360,102 @@ export async function sendStockAlertEmail({
     return { success: true, data: info }
   } catch (err) {
     console.error('Unexpected error sending stock alert email:', err)
+    return { success: false, error: err }
+  }
+}
+
+export async function sendRfqEmail({
+  email,
+  name,
+  rfqId,
+  productName,
+  quantity,
+  link,
+}: RfqEmailParams) {
+  const subject = `New RFQ Received: #${rfqId} for ${productName}`
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('--- EMAIL DEBUG ---')
+    console.log(`To: ${email}`)
+    console.log(`Subject: ${subject}`)
+    console.log('-------------------')
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
+      subject,
+      html: `
+        <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #ea580c;">New Request for Quotation</h2>
+          <p>Hi ${name},</p>
+          <p>You have received a new RFQ for <strong>${productName}</strong>.</p>
+          <div style="background-color: #f9fafb; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin:0 0 8px 0;"><strong>RFQ ID:</strong> #${rfqId}</p>
+            <p style="margin:0 0 8px 0;"><strong>Product:</strong> ${productName}</p>
+            <p style="margin:0;"><strong>Quantity:</strong> ${quantity}</p>
+          </div>
+          <div style="margin: 24px 0; text-align: center;">
+            <a href="${link}" style="background-color: #ea580c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              Respond to RFQ
+            </a>
+          </div>
+          <p style="color: #999; font-size: 12px;">Thank you for using BoroBepari.</p>
+        </div>
+      `,
+    })
+    return { success: true, data: info }
+  } catch (err) {
+    console.error('Unexpected error sending RFQ email:', err)
+    return { success: false, error: err }
+  }
+}
+
+export async function sendQuoteEmail({
+  email,
+  name,
+  rfqId,
+  productName,
+  unitPrice,
+  link,
+}: QuoteEmailParams) {
+  const subject = `New Quote Received for RFQ #${rfqId}`
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('--- EMAIL DEBUG ---')
+    console.log(`To: ${email}`)
+    console.log(`Subject: ${subject}`)
+    console.log('-------------------')
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: env.SMTP_FROM,
+      to: email,
+      subject,
+      html: `
+        <div style="font-family: sans-serif; max-width: 640px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #2563eb;">New Quote Received</h2>
+          <p>Hi ${name},</p>
+          <p>A supplier has sent a quote for your RFQ <strong>#${rfqId}</strong> (${productName}).</p>
+          <div style="background-color: #f9fafb; padding: 16px; border-radius: 8px; margin: 16px 0;">
+            <p style="margin:0 0 8px 0;"><strong>RFQ ID:</strong> #${rfqId}</p>
+            <p style="margin:0 0 8px 0;"><strong>Product:</strong> ${productName}</p>
+            <p style="margin:0;"><strong>Quoted Price:</strong> ${unitPrice} per unit</p>
+          </div>
+          <div style="margin: 24px 0; text-align: center;">
+            <a href="${link}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              View Quote
+            </a>
+          </div>
+          <p style="color: #999; font-size: 12px;">Thank you for shopping with BoroBepari.</p>
+        </div>
+      `,
+    })
+    return { success: true, data: info }
+  } catch (err) {
+    console.error('Unexpected error sending Quote email:', err)
     return { success: false, error: err }
   }
 }

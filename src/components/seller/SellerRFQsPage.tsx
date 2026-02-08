@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ChevronDown, FileText, Filter, Search, Timer, X } from 'lucide-react'
+import { format } from 'date-fns'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
+import { getSellerRfqs, sendQuote } from '@/lib/quote-server'
 
 type RFQStatus =
-  | 'New'
-  | 'Quoted'
-  | 'Accepted'
-  | 'Rejected'
-  | 'Expired'
-  | 'Converted'
+  | 'pending'
+  | 'quoted'
+  | 'accepted'
+  | 'rejected'
+  | 'expired'
+  | 'converted'
 
 type RFQ = {
   id: string
@@ -103,12 +105,12 @@ const RFQS: Array<RFQ> = [
 ]
 
 const STATUS_TABS: Array<RFQStatus> = [
-  'New',
-  'Quoted',
-  'Accepted',
-  'Rejected',
-  'Expired',
-  'Converted',
+  'pending',
+  'quoted',
+  'accepted',
+  'rejected',
+  'expired',
+  'converted',
 ]
 
 const PAYMENT_TERMS = ['Full payment', '30% deposit', '50% deposit']
@@ -116,8 +118,8 @@ const DELIVERY_TIMES = ['2-3 days', '5-7 days', '7-10 days']
 
 export function SellerRFQsPage() {
   const { pushToast } = useSellerToast()
-  const [rfqs, setRfqs] = useState<Array<RFQ>>(RFQS)
-  const [tab, setTab] = useState<RFQStatus>('New')
+  const [rfqs, setRfqs] = useState<Array<any>>([])
+  const [tab, setTab] = useState<RFQStatus>('pending')
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')
   const [sortBy, setSortBy] = useState('Date')
@@ -129,8 +131,17 @@ export function SellerRFQsPage() {
   const perPage = 8
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), 600)
-    return () => window.clearTimeout(timer)
+    const fetchRfqs = async () => {
+      try {
+        const data = await getSellerRfqs()
+        setRfqs(data)
+      } catch (error) {
+        console.error('Failed to fetch seller RFQs:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRfqs()
   }, [])
 
   useEffect(() => {
@@ -155,14 +166,14 @@ export function SellerRFQsPage() {
       .filter((rfq) => rfq.status === tab)
       .filter(
         (rfq) =>
-          rfq.product.toLowerCase().includes(query.toLowerCase()) ||
-          rfq.id.toLowerCase().includes(query.toLowerCase()),
+          rfq.product?.name?.toLowerCase().includes(query.toLowerCase()) ||
+          rfq.id.toString().includes(query.toLowerCase()),
       )
-      .filter((rfq) => (category ? rfq.category === category : true))
+      .filter((rfq) => (category ? rfq.product?.category === category : true))
       .sort((a, b) => {
         if (sortBy === 'Quantity') return b.quantity - a.quantity
-        if (sortBy === 'Target Price') return b.targetPrice - a.targetPrice
-        return a.id.localeCompare(b.id)
+        if (sortBy === 'Target Price') return Number(b.targetPrice) - Number(a.targetPrice)
+        return b.id - a.id
       })
   }, [rfqs, tab, query, category, sortBy])
 
@@ -310,19 +321,19 @@ export function SellerRFQsPage() {
                   <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={rfq.productImage}
-                        alt={rfq.product}
+                        src={rfq.product?.images?.[0]}
+                        alt={rfq.product?.name}
                         className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                       />
                       <div>
                         <p className="text-sm text-slate-400 dark:text-gray-500">
-                          {rfq.id}
+                          RFQ #{rfq.id}
                         </p>
                         <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
-                          {rfq.product}
+                          {rfq.product?.name}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-gray-400">
-                          {rfq.buyer}
+                          {rfq.buyer?.name}
                         </p>
                       </div>
                     </div>
@@ -335,17 +346,19 @@ export function SellerRFQsPage() {
                         label="Target Price"
                         value={`৳${rfq.targetPrice}`}
                       />
-                      <InfoItem label="Location" value={rfq.location} />
-                      <InfoItem label="Time left" value={`${rfq.hoursLeft}h`} />
+                      <InfoItem label="Location" value={rfq.deliveryLocation} />
+                      <InfoItem 
+                        label="Date" 
+                        value={format(new Date(rfq.createdAt), 'MMM d')} 
+                      />
                     </div>
                     <div className="ml-auto flex items-center gap-3">
-                      <UrgencyBadge hoursLeft={rfq.hoursLeft} />
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${statusBadge(rfq.status)}`}
                       >
                         {rfq.status}
                       </span>
-                      {rfq.status === 'New' && (
+                      {rfq.status === 'pending' && (
                         <button
                           type="button"
                           onClick={() => setQuoteModal(rfq)}
@@ -408,16 +421,26 @@ export function SellerRFQsPage() {
           <SendQuoteModal
             rfq={quoteModal}
             onClose={() => setQuoteModal(null)}
-            onSend={(quote) => {
-              setRfqs((prev) =>
-                prev.map((item) =>
-                  item.id === quoteModal.id
-                    ? { ...item, status: 'Quoted', quote }
-                    : item,
-                ),
-              )
-              setQuoteModal(null)
-              pushToast(`Quote sent for ${quoteModal.id}`, 'success')
+            onSend={async (quoteData) => {
+              try {
+                await sendQuote({
+                  data: {
+                    rfqId: quoteModal.id,
+                    unitPrice: quoteData.unitPrice,
+                    validityPeriod: quoteData.validityPeriod,
+                    notes: quoteData.notes,
+                  },
+                })
+                
+                // Refresh list
+                const updated = await getSellerRfqs()
+                setRfqs(updated)
+                
+                setQuoteModal(null)
+                pushToast(`Quote sent for RFQ #${quoteModal.id}`, 'success')
+              } catch (error: any) {
+                pushToast(error.message || 'Failed to send quote', 'error')
+              }
             }}
           />
         )}
@@ -637,15 +660,16 @@ function SendQuoteModal({
   onClose,
   onSend,
 }: {
-  rfq: RFQ
+  rfq: any
   onClose: () => void
-  onSend: (quote: RFQ['quote']) => void
+  onSend: (quote: any) => Promise<void>
 }) {
   const [unitPrice, setUnitPrice] = useState('')
   const [validity, setValidity] = useState('14 days')
   const [paymentTerms, setPaymentTerms] = useState('30% deposit')
   const [deliveryTime, setDeliveryTime] = useState('5-7 days')
   const [notes, setNotes] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const total = unitPrice ? Number(unitPrice) * rfq.quantity : 0
   const diff = unitPrice ? Number(unitPrice) - rfq.targetPrice : 0
@@ -718,22 +742,27 @@ function SendQuoteModal({
         <div className="flex flex-wrap gap-3">
           <button
             type="button"
-            onClick={() =>
-              onSend({
+            disabled={!unitPrice || isSubmitting}
+            onClick={async () => {
+              setIsSubmitting(true)
+              const expiryDate = new Date()
+              const days = parseInt(validity) || 14
+              expiryDate.setDate(expiryDate.getDate() + days)
+
+              await onSend({
                 unitPrice: Number(unitPrice),
-                totalPrice: total,
-                validity,
-                paymentTerms,
-                deliveryTime,
+                validityPeriod: expiryDate.toISOString(),
                 notes,
               })
-            }
-            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
+              setIsSubmitting(false)
+            }}
+            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10 disabled:opacity-50"
           >
-            Send Quote
+            {isSubmitting ? 'Sending...' : 'Send Quote'}
           </button>
           <button
             type="button"
+            disabled={isSubmitting}
             className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-semibold dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             Save as Draft

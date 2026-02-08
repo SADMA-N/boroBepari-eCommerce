@@ -11,23 +11,24 @@ import {
   Search,
 } from 'lucide-react'
 import { differenceInDays, format } from 'date-fns'
-import type { MockRfq } from '@/data/mock-rfqs'
-import { mockRfqs } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
 
 type RfqStatus = 'all' | 'pending' | 'quoted' | 'accepted' | 'expired'
 type SortField = 'date' | 'expiry'
 
-export default function BuyerRFQsSection() {
+interface BuyerRFQsSectionProps {
+  rfqs: Array<any>
+}
+
+export default function BuyerRFQsSection({ rfqs }: BuyerRFQsSectionProps) {
   const [activeTab, setActiveTab] = useState<RfqStatus>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<SortField>('date')
   const [sortAsc, setSortAsc] = useState(false)
-  const [selectedRfq, setSelectedRfq] = useState<MockRfq | null>(null)
 
   // Filter and Sort Logic
   const filteredRfqs = useMemo(() => {
-    let result = mockRfqs
+    let result = rfqs || []
 
     // Filter by Tab
     if (activeTab !== 'all') {
@@ -39,8 +40,8 @@ export default function BuyerRFQsSection() {
       const q = searchQuery.toLowerCase()
       result = result.filter(
         (rfq) =>
-          rfq.rfqNumber.toLowerCase().includes(q) ||
-          rfq.product.name.toLowerCase().includes(q),
+          (rfq.rfqNumber?.toLowerCase() || '').includes(q) ||
+          (rfq.product?.name?.toLowerCase() || '').includes(q),
       )
     }
 
@@ -49,19 +50,19 @@ export default function BuyerRFQsSection() {
       let valA, valB
 
       if (sortField === 'date') {
-        valA = a.createdAt!.getTime()
-        valB = b.createdAt!.getTime()
+        valA = new Date(a.createdAt).getTime()
+        valB = new Date(b.createdAt).getTime()
       } else {
         // Expiry
-        valA = a.expiresAt?.getTime() ?? 0
-        valB = b.expiresAt?.getTime() ?? 0
+        valA = a.expiresAt ? new Date(a.expiresAt).getTime() : 0
+        valB = b.expiresAt ? new Date(b.expiresAt).getTime() : 0
       }
 
       return sortAsc ? valA - valB : valB - valA
     })
 
     return result
-  }, [activeTab, searchQuery, sortField, sortAsc])
+  }, [rfqs, activeTab, searchQuery, sortField, sortAsc])
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -124,8 +125,8 @@ export default function BuyerRFQsSection() {
                   }`}
                 >
                   {tab === 'all'
-                    ? mockRfqs.length
-                    : mockRfqs.filter((r) => r.status === tab).length}
+                    ? rfqs.length
+                    : rfqs.filter((r) => r.status === tab).length}
                 </span>
               </button>
             ))}
@@ -201,10 +202,10 @@ export default function BuyerRFQsSection() {
                   <div>
                     <div className="flex items-center gap-3 mb-1">
                       <span className="text-xs font-mono font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded transition-colors">
-                        {rfq.rfqNumber}
+                        RFQ #{rfq.id}
                       </span>
                       <span className="text-sm text-gray-400">
-                        {format(rfq.createdAt!, 'MMM d, yyyy')}
+                        {format(new Date(rfq.createdAt), 'MMM d, yyyy')}
                       </span>
                       <StatusBadge status={rfq.status} />
                     </div>
@@ -240,12 +241,12 @@ export default function BuyerRFQsSection() {
                           className="text-blue-500 dark:text-blue-400"
                         />
                         <span className="text-xl font-bold text-gray-900 dark:text-white transition-colors">
-                          {rfq.quoteCount}
+                          {rfq.quotes?.length || 0}
                         </span>
                       </div>
                     </div>
 
-                    {['pending', 'quoted'].includes(rfq.status || '') && (
+                    {['pending', 'quoted'].includes(rfq.status || '') && rfq.expiresAt && (
                       <div className="border-l dark:border-slate-700 pl-6 transition-colors">
                         <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 transition-colors">
                           Expires In
@@ -254,12 +255,12 @@ export default function BuyerRFQsSection() {
                           <Clock size={18} className="text-orange-500" />
                           <span
                             className={`text-xl font-bold transition-colors ${
-                              differenceInDays(rfq.expiresAt!, new Date()) < 2
+                              differenceInDays(new Date(rfq.expiresAt), new Date()) < 2
                                 ? 'text-red-600 dark:text-red-400'
                                 : 'text-gray-900 dark:text-white'
                             }`}
                           >
-                            {differenceInDays(rfq.expiresAt!, new Date())} Days
+                            {differenceInDays(new Date(rfq.expiresAt), new Date())} Days
                           </span>
                         </div>
                       </div>

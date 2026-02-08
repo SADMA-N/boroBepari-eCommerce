@@ -13,6 +13,7 @@ import { z } from 'zod'
 
 import Toast from './Toast'
 import { createRfqSchema } from '@/lib/rfq-validation'
+import { submitRFQ, uploadRfqAttachment } from '@/lib/quote-server'
 
 // Schema for the form fields only (subset of createRfqSchema or modified for UI)
 // We need to handle file uploads separately or as part of the form state if we convert them.
@@ -62,32 +63,66 @@ export default function RFQFormModal({
         return
       }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      try {
+        // Upload files first
+        const attachmentUrls: Array<string> = []
+        
+        if (files.length > 0) {
+          const uploadPromises = files.map(async (file) => {
+            const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader()
+              reader.readAsDataURL(file)
+              reader.onload = () => resolve(reader.result as string)
+              reader.onerror = (error) => reject(error)
+            })
 
-      // In a real app, we would upload files and send data to the API
-      console.log('Submitting RFQ:', {
-        ...value,
-        productId,
-        attachments: files.map((f) => f.name), // Placeholder
-      })
+            const result = await uploadRfqAttachment({
+              data: {
+                filename: file.name,
+                mimeType: file.type,
+                data: base64,
+              }
+            })
+            return result.url
+          })
 
-      // Success handling
-      const newRfqNumber = `RFQ-${Math.floor(Math.random() * 10000)}`
-      setRfqNumber(newRfqNumber)
-      setToastMessage('RFQ submitted successfully!')
-      setIsToastVisible(true)
+          const uploaded = await Promise.all(uploadPromises)
+          attachmentUrls.push(...uploaded)
+        }
 
-      // Auto close after 2 seconds
-      setTimeout(() => {
-        onClose()
-        // Reset state after close
-        setTimeout(() => {
-          setRfqNumber(null)
-          setFiles([])
-          form.reset()
-        }, 300)
-      }, 2000)
+        const result = await submitRFQ({
+          data: {
+            productId,
+            quantity: value.quantity,
+            targetPrice: value.targetPrice,
+            deliveryLocation: value.deliveryLocation,
+            notes: value.notes,
+            attachments: attachmentUrls,
+          },
+        })
+
+        if (result.success) {
+          // Success handling
+          const newRfqNumber = `RFQ-${result.rfqId || Math.floor(Math.random() * 10000)}`
+          setRfqNumber(newRfqNumber)
+          setToastMessage('RFQ submitted successfully!')
+          setIsToastVisible(true)
+
+          // Auto close after 2 seconds
+          setTimeout(() => {
+            onClose()
+            // Reset state after close
+            setTimeout(() => {
+              setRfqNumber(null)
+              setFiles([])
+              form.reset()
+            }, 300)
+          }, 2000)
+        }
+      } catch (error: any) {
+        setToastMessage(error.message || 'Failed to submit RFQ')
+        setIsToastVisible(true)
+      }
     },
   })
 

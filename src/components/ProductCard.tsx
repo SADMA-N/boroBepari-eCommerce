@@ -1,9 +1,12 @@
-import { BadgeCheck, Eye, Heart, Package } from 'lucide-react'
+import { BadgeCheck, Eye, Heart, MessageSquare, Package } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { formatBDT } from '@/lib/product-server'
 import { useWishlist } from '../contexts/WishlistContext'
+import { useAuth } from '../contexts/AuthContext'
 import type { ProductWithSupplier } from '@/lib/product-server'
+import AuthModal from './AuthModal'
+import RFQFormModal from './RFQFormModal'
 
 interface ProductCardProps {
   product: ProductWithSupplier
@@ -15,8 +18,21 @@ export default function ProductCard({
   onQuickView,
 }: ProductCardProps) {
   const { toggleWishlist, isInWishlist } = useWishlist()
+  const { isAuthenticated } = useAuth()
   const [activeIndex, setActiveIndex] = useState(0)
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [isRfqOpen, setIsRfqOpen] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
+  const handleRequestQuote = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!isAuthenticated) {
+      setIsAuthModalOpen(true)
+      return
+    }
+    setIsRfqOpen(true)
+  }
 
   const isWishlisted = isInWishlist(product.id)
   const discount = product.originalPrice
@@ -184,6 +200,17 @@ export default function ProductCard({
           )}
         </div>
 
+        {/* Action Buttons */}
+        <div className="mt-3 grid grid-cols-1 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={handleRequestQuote}
+            className="flex items-center justify-center gap-2 w-full py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
+          >
+            <MessageSquare size={16} />
+            Request Quote
+          </button>
+        </div>
+
         {/* Sold Count */}
         {product.soldCount > 0 && (
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 transition-colors">
@@ -191,6 +218,17 @@ export default function ProductCard({
           </p>
         )}
       </div>
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
+      <RFQFormModal
+        isOpen={isRfqOpen}
+        onClose={() => setIsRfqOpen(false)}
+        productId={product.id}
+        productName={product.name}
+      />
     </div>
   )
 }

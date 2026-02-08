@@ -312,6 +312,7 @@ export const user = pgTable('user', {
 export const userRelations = relations(user, ({ many }) => ({
   addresses: many(addresses),
   orders: many(orders),
+  rfqs: many(rfqs),
 }))
 
 export const addresses = pgTable('addresses', {

@@ -40,6 +40,17 @@ const getAccountData = createServerFn({ method: 'GET' })
       where: eq(userTable.id, userId),
       with: {
         addresses: true,
+        rfqs: {
+          orderBy: (rfqs, { desc: descFn }) => [descFn(rfqs.createdAt)],
+          with: {
+            product: true,
+            quotes: {
+              with: {
+                supplier: true,
+              },
+            },
+          },
+        },
         orders: {
           orderBy: (orders, { desc: descFn }) => [descFn(orders.createdAt)],
           with: {
@@ -289,7 +300,9 @@ function AccountPage() {
             {activeTab === 'orders' && (
               <OrdersSection orders={userData.orders} />
             )}
-            {activeTab === 'rfqs' && <BuyerRFQsSection />}
+            {activeTab === 'rfqs' && (
+              <BuyerRFQsSection rfqs={userData.rfqs || []} />
+            )}
             {activeTab === 'security' && <SecuritySection />}
           </div>
         </div>

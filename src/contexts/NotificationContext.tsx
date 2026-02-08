@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { subMinutes } from 'date-fns'
-import { useAuth } from './AuthContext'
+import { AuthContext } from './AuthContext'
 import Toast from '@/components/Toast'
 
 export interface Notification {
@@ -143,7 +143,10 @@ export function NotificationProvider({
       return defaultPreferences
     },
   )
-  const { isAuthenticated, user } = useAuth()
+  const auth = useContext(AuthContext)
+  const isAuthenticated = auth?.isAuthenticated ?? false
+  const user = auth?.user ?? null
+
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,

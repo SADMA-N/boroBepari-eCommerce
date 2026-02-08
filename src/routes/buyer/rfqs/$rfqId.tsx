@@ -24,8 +24,6 @@ import {
   XCircle,
 } from 'lucide-react'
 import { differenceInDays, format } from 'date-fns'
-import type { MockQuote } from '@/data/mock-rfqs'
-import { MockRfq, mockRfqs } from '@/data/mock-rfqs'
 import { formatBDT } from '@/data/mock-products'
 import {
   AcceptQuoteModal,
@@ -34,17 +32,19 @@ import {
 } from '@/components/QuoteActionModals'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
+import { getRfqById, updateQuoteStatus } from '@/lib/quote-server'
 
 export const Route = createFileRoute('/buyer/rfqs/$rfqId')({
-  loader: ({ params }) => {
-    // In a real app, this would be an API call
-    const rfq =
-      mockRfqs.find((r) => r.id === Number(params.rfqId)) ||
-      mockRfqs.find((r) => r.rfqNumber === params.rfqId)
-    if (!rfq) {
+  loader: async ({ params }) => {
+    const rfqId = parseInt(params.rfqId)
+    if (isNaN(rfqId)) throw notFound()
+    
+    try {
+      const rfq = await getRfqById({ data: rfqId })
+      return { rfq }
+    } catch (error) {
       throw notFound()
     }
-    return { rfq }
   },
   component: RFQDetailPage,
 })
@@ -54,7 +54,7 @@ type SortOption = 'price-asc' | 'price-desc' | 'date'
 
 function RFQDetailPage() {
   const { rfq: initialRfq } = Route.useLoaderData()
-  const [rfq, setRfq] = useState(initialRfq)
+  const [rfq, setRfq] = useState<any>(initialRfq)
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
   const [sortOption, setSortOption] = useState<SortOption>('price-asc')
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -63,7 +63,7 @@ function RFQDetailPage() {
   const router = useRouter()
 
   // Modal State
-  const [selectedQuote, setSelectedQuote] = useState<MockQuote | null>(null)
+  const [selectedQuote, setSelectedQuote] = useState<any | null>(null)
   const [actionType, setActionType] = useState<
     'accept' | 'reject' | 'counter' | null
   >(null)
@@ -73,27 +73,32 @@ function RFQDetailPage() {
   const [toast, setToast] = useState({ message: '', isVisible: false })
 
   const isExpired =
-    differenceInDays(rfq.expiresAt!, new Date()) < 0 || rfq.status === 'expired'
+    differenceInDays(new Date(rfq.expiresAt), new Date()) < 0 || rfq.status === 'expired'
   const isAccepted = rfq.status === 'accepted'
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true)
-    setTimeout(() => setIsRefreshing(false), 1000)
+    try {
+      const updated = await getRfqById({ data: rfq.id })
+      setRfq(updated)
+    } finally {
+      setIsRefreshing(false)
+    }
   }
 
   const sortedQuotes = useMemo(() => {
-    const quotes = [...rfq.quotes]
+    const quotes = [...(rfq.quotes || [])]
     return quotes.sort((a, b) => {
       if (sortOption === 'price-asc')
         return Number(a.unitPrice) - Number(b.unitPrice)
       if (sortOption === 'price-desc')
         return Number(b.unitPrice) - Number(a.unitPrice)
-      return a.createdAt!.getTime() - b.createdAt!.getTime()
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     })
   }, [rfq.quotes, sortOption])
 
   const openActionModal = (
-    quote: MockQuote,
+    quote: any,
     action: 'accept' | 'reject' | 'counter',
   ) => {
     setSelectedQuote(quote)
@@ -110,59 +115,71 @@ function RFQDetailPage() {
     if (!selectedQuote) return
     setIsLoading(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      await updateQuoteStatus({
+        data: {
+          quoteId: selectedQuote.id,
+          status: 'accepted',
+        },
+      })
 
-    // Update local state
-    const updatedQuotes = rfq.quotes.map(
-      (q) =>
-        q.id === selectedQuote.id
-          ? { ...q, status: 'accepted' }
-          : { ...q, status: 'rejected' }, // Auto reject others? Usually yes or keep pending. Let's keep pending for now or reject.
-    ) as Array<MockQuote>
-
-    setRfq((prev) => ({
-      ...prev,
-      status: 'accepted',
-      quotes: updatedQuotes,
-    }))
-
-    setToast({ message: 'Quote accepted successfully!', isVisible: true })
-    closeActionModal()
+      await handleRefresh()
+      setToast({ message: 'Quote accepted successfully!', isVisible: true })
+      closeActionModal()
+    } catch (error: any) {
+      setToast({ message: error.message || 'Failed to accept quote', isVisible: true })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleConfirmReject = async (reason: string) => {
     if (!selectedQuote) return
     setIsLoading(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      await updateQuoteStatus({
+        data: {
+          quoteId: selectedQuote.id,
+          status: 'rejected',
+        },
+      })
 
-    const updatedQuotes = rfq.quotes.map((q) =>
-      q.id === selectedQuote.id ? { ...q, status: 'rejected' } : q,
-    )
-
-    setRfq((prev) => ({ ...prev, quotes: updatedQuotes }))
-    setToast({ message: 'Quote rejected.', isVisible: true })
-    closeActionModal()
+      await handleRefresh()
+      setToast({ message: 'Quote rejected.', isVisible: true })
+      closeActionModal()
+    } catch (error: any) {
+      setToast({ message: error.message || 'Failed to reject quote', isVisible: true })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleConfirmCounter = async (price: number, notes: string) => {
     if (!selectedQuote) return
     setIsLoading(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    try {
+      await updateQuoteStatus({
+        data: {
+          quoteId: selectedQuote.id,
+          status: 'countered',
+          counterPrice: price.toString(),
+          counterNote: notes,
+        },
+      })
 
-    // In real app, this might create a new quote entry or update status
-    const updatedQuotes = rfq.quotes.map((q) =>
-      q.id === selectedQuote.id ? { ...q, status: 'countered' } : q,
-    )
-
-    setRfq((prev) => ({ ...prev, quotes: updatedQuotes }))
-    setToast({ message: 'Counter offer sent successfully!', isVisible: true })
-    closeActionModal()
+      await handleRefresh()
+      setToast({ message: 'Counter offer sent successfully!', isVisible: true })
+      closeActionModal()
+    } catch (error: any) {
+      setToast({ message: error.message || 'Failed to send counter offer', isVisible: true })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleCheckout = (quote: MockQuote) => {
+  const handleCheckout = (quote: any) => {
     addItem({
       productId: rfq.productId!,
       quantity: rfq.quantity!,
@@ -250,7 +267,7 @@ function RFQDetailPage() {
                 <span>
                   Expires in{' '}
                   <span className="font-bold text-gray-900">
-                    {differenceInDays(rfq.expiresAt!, new Date())} days
+                    {differenceInDays(new Date(rfq.expiresAt), new Date())} days
                   </span>
                 </span>
               </div>
@@ -259,7 +276,7 @@ function RFQDetailPage() {
             <div className="text-sm text-gray-500 flex justify-between border-t pt-4">
               <span>Created</span>
               <span className="font-medium text-gray-900">
-                {format(rfq.createdAt!, 'PPP')}
+                {format(new Date(rfq.createdAt), 'PPP')}
               </span>
             </div>
           </div>
@@ -268,8 +285,8 @@ function RFQDetailPage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
             <div className="aspect-video bg-gray-50 p-4 flex items-center justify-center">
               <img
-                src={rfq.product.images[0]}
-                alt={rfq.product.name}
+                src={rfq.product?.images?.[0]}
+                alt={rfq.product?.name}
                 className="max-h-full object-contain"
               />
             </div>
@@ -303,10 +320,24 @@ function RFQDetailPage() {
                 <h4 className="text-xs font-semibold uppercase text-gray-500 mb-3">
                   Attachments
                 </h4>
-                <button className="w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50 transition">
-                  <FileText size={16} /> Technical Spec.pdf
-                  <Download size={14} className="ml-auto text-gray-400" />
-                </button>
+                {rfq.attachments && rfq.attachments.length > 0 ? (
+                  <div className="space-y-2">
+                    {rfq.attachments.map((url: string, idx: number) => (
+                      <a
+                        key={idx}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50 transition"
+                      >
+                        <FileText size={16} /> File {idx + 1}
+                        <Download size={14} className="ml-auto text-gray-400" />
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400">No attachments provided</p>
+                )}
               </div>
             </div>
           </div>
@@ -415,12 +446,12 @@ function RFQDetailPage() {
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
                                 <img
-                                  src={quote.supplierLogo}
+                                  src={quote.supplier?.logo}
                                   className="w-8 h-8 rounded-full bg-gray-200"
                                   alt=""
                                 />
                                 <span className="font-medium text-gray-900">
-                                  {quote.supplierName}
+                                  {quote.supplier?.name}
                                 </span>
                               </div>
                             </td>
@@ -431,7 +462,7 @@ function RFQDetailPage() {
                               {formatBDT(Number(quote.totalPrice))}
                             </td>
                             <td className="px-6 py-4 text-gray-500">
-                              {format(quote.validityPeriod!, 'MMM d')}
+                              {format(new Date(quote.validityPeriod), 'MMM d')}
                             </td>
                             <td className="px-6 py-4 text-right">
                               <div className="flex justify-end gap-2">
@@ -489,12 +520,12 @@ function QuoteCard({
   onAction,
   onCheckout,
 }: {
-  quote: MockQuote
+  quote: any
   isExpired: boolean
   onAction: (id: number, action: 'accept' | 'reject' | 'counter') => void
   onCheckout: () => void
 }) {
-  const daysValid = differenceInDays(quote.validityPeriod!, new Date())
+  const daysValid = differenceInDays(new Date(quote.validityPeriod), new Date())
 
   return (
     <div
@@ -508,14 +539,14 @@ function QuoteCard({
         {/* Supplier Info */}
         <div className="flex items-start gap-4">
           <img
-            src={quote.supplierLogo}
-            alt={quote.supplierName}
+            src={quote.supplier?.logo}
+            alt={quote.supplier?.name}
             className="w-12 h-12 rounded-full border bg-gray-50"
           />
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-gray-900 text-lg">
-                {quote.supplierName}
+                {quote.supplier?.name}
               </h3>
               <BadgeCheck size={16} className="text-blue-500" />
               {quote.status && quote.status !== 'pending' && (
@@ -560,7 +591,7 @@ function QuoteCard({
             <Calendar size={16} className="text-gray-400" />
             <span className="text-gray-600">Received:</span>
             <span className="font-medium text-gray-900">
-              {format(quote.createdAt!, 'MMM d, yyyy')}
+              {format(new Date(quote.createdAt), 'MMM d, yyyy')}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -572,8 +603,7 @@ function QuoteCard({
         {quote.terms && (
           <div className="mt-3 text-sm text-gray-600 border-t border-gray-200 pt-2">
             <span className="font-medium text-gray-900 mr-2">Note:</span>
-            {quote.terms ||
-              'Standard payment terms apply. Delivery within 7 days of order confirmation.'}
+            {quote.terms}
           </div>
         )}
       </div>
