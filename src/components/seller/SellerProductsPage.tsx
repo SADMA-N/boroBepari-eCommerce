@@ -9,79 +9,26 @@ import {
 } from 'lucide-react'
 import { BulkImportModal } from './BulkImportModal'
 import { SellerProtectedRoute } from '@/components/seller'
+import { getSellerProducts } from '@/lib/seller-product-server'
 
-type ProductStatus = 'Published' | 'Draft'
+type ProductStatus = 'draft' | 'pending' | 'accepted' | 'declined'
 type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock'
 
 type Product = {
-  id: string
-  title: string
+  id: number
+  name: string
   sku: string
   price: number
   moq: number
   stock: number
   lowStockThreshold: number
   status: ProductStatus
-  orders: number
-  image: string
+  images: string[]
+  adminNotes: string | null
+  createdAt: string
 }
 
-const PRODUCTS: Array<Product> = [
-  {
-    id: 'p1',
-    title: 'Industrial Safety Gloves',
-    sku: 'GLV-204',
-    price: 120,
-    moq: 50,
-    stock: 145,
-    lowStockThreshold: 20,
-    status: 'Published',
-    orders: 38,
-    image:
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=500&auto=format&fit=crop',
-  },
-  {
-    id: 'p2',
-    title: 'HDPE Packaging Bags',
-    sku: 'PKG-810',
-    price: 18,
-    moq: 500,
-    stock: 60,
-    lowStockThreshold: 80,
-    status: 'Published',
-    orders: 22,
-    image:
-      'https://images.unsplash.com/photo-1531498860502-7c67cf02f657?q=80&w=500&auto=format&fit=crop',
-  },
-  {
-    id: 'p3',
-    title: 'Cotton T-Shirts Bulk Pack',
-    sku: 'TSH-532',
-    price: 210,
-    moq: 100,
-    stock: 0,
-    lowStockThreshold: 30,
-    status: 'Draft',
-    orders: 0,
-    image:
-      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=500&auto=format&fit=crop',
-  },
-  {
-    id: 'p4',
-    title: 'Stainless Steel Cookware Set',
-    sku: 'CKW-119',
-    price: 1250,
-    moq: 10,
-    stock: 22,
-    lowStockThreshold: 15,
-    status: 'Published',
-    orders: 12,
-    image:
-      'https://images.unsplash.com/photo-1506368249639-73a05d6f6488?q=80&w=500&auto=format&fit=crop',
-  },
-]
-
-type FilterTab = 'All' | 'Published' | 'Draft' | 'Out of Stock' | 'Low Stock'
+type FilterTab = 'All' | 'Pending' | 'Accepted' | 'Draft' | 'Declined' | 'Out of Stock' | 'Low Stock'
 type SortOption =
   | 'Newest First'
   | 'Oldest First'
@@ -94,30 +41,41 @@ export function SellerProductsPage() {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterTab>('All')
   const [sort, setSort] = useState<SortOption>('Newest First')
-  const [selected, setSelected] = useState<Array<string>>([])
+  const [selected, setSelected] = useState<Array<number>>([])
   const [editing, setEditing] = useState<{
-    id: string
+    id: number
     field: 'price' | 'stock'
   } | null>(null)
-  const [loadingEdit, setLoadingEdit] = useState<string | null>(null)
-  const [products, setProducts] = useState<Array<Product>>(PRODUCTS)
+  const [loadingEdit, setLoadingEdit] = useState<number | null>(null)
+  const [products, setProducts] = useState<Array<Product>>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [showImport, setShowImport] = useState(false)
   const perPage = 20
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), 600)
-    return () => window.clearTimeout(timer)
+    const token = localStorage.getItem('seller_token') || ''
+    getSellerProducts({
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((data) => {
+        setProducts(data as Array<Product>)
+      })
+      .catch((err) => {
+        console.error('Failed to load seller products:', err)
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const filtered = useMemo(() => {
     const matchesQuery = (product: Product) =>
-      product.title.toLowerCase().includes(query.toLowerCase()) ||
+      product.name.toLowerCase().includes(query.toLowerCase()) ||
       product.sku.toLowerCase().includes(query.toLowerCase())
     const filteredByTab = products.filter((product) => {
-      if (filter === 'Published') return product.status === 'Published'
-      if (filter === 'Draft') return product.status === 'Draft'
+      if (filter === 'Pending') return product.status === 'pending'
+      if (filter === 'Accepted') return product.status === 'accepted'
+      if (filter === 'Draft') return product.status === 'draft'
+      if (filter === 'Declined') return product.status === 'declined'
       if (filter === 'Out of Stock') return product.stock === 0
       if (filter === 'Low Stock')
         return product.stock > 0 && product.stock < product.lowStockThreshold
@@ -127,15 +85,15 @@ export function SellerProductsPage() {
     const sorted = [...result].sort((a, b) => {
       switch (sort) {
         case 'Oldest First':
-          return a.id.localeCompare(b.id)
+          return a.id - b.id
         case 'Price: Low to High':
           return a.price - b.price
         case 'Price: High to Low':
           return b.price - a.price
         case 'Most Orders':
-          return b.orders - a.orders
+          return 0
         default:
-          return b.id.localeCompare(a.id)
+          return b.id - a.id
       }
     })
     return sorted
@@ -150,7 +108,7 @@ export function SellerProductsPage() {
     return 'In Stock'
   }
 
-  const toggleSelection = (id: string) => {
+  const toggleSelection = (id: number) => {
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     )
@@ -165,7 +123,7 @@ export function SellerProductsPage() {
   }
 
   const updateInline = (
-    id: string,
+    id: number,
     field: 'price' | 'stock',
     value: string,
   ) => {
@@ -190,43 +148,13 @@ export function SellerProductsPage() {
       setSelected([])
       return
     }
-    setProducts((prev) =>
-      prev.map((product) =>
-        selected.includes(product.id)
-          ? { ...product, status: action === 'publish' ? 'Published' : 'Draft' }
-          : product,
-      ),
-    )
   }
 
-  const handleAction = (id: string, action: string) => {
+  const handleAction = (id: number, action: string) => {
     if (action === 'delete') {
       if (!window.confirm('Delete this product?')) return
       setProducts((prev) => prev.filter((product) => product.id !== id))
       return
-    }
-    if (action === 'duplicate') {
-      setProducts((prev) => [
-        {
-          ...prev.find((product) => product.id === id)!,
-          id: `copy-${crypto.randomUUID()}`,
-          title: `${prev.find((product) => product.id === id)!.title} (Copy)`,
-        },
-        ...prev,
-      ])
-      return
-    }
-    if (action === 'toggle') {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === id
-            ? {
-                ...product,
-                status: product.status === 'Published' ? 'Draft' : 'Published',
-              }
-            : product,
-        ),
-      )
     }
   }
 
@@ -286,8 +214,10 @@ export function SellerProductsPage() {
               {(
                 [
                   'All',
-                  'Published',
+                  'Pending',
+                  'Accepted',
                   'Draft',
+                  'Declined',
                   'Out of Stock',
                   'Low Stock',
                 ] as Array<FilterTab>
@@ -366,7 +296,6 @@ export function SellerProductsPage() {
                     <th className="p-4">Price / MOQ</th>
                     <th className="p-4">Stock</th>
                     <th className="p-4">Status</th>
-                    <th className="p-4">Orders</th>
                     <th className="p-4">Actions</th>
                   </tr>
                 </thead>
@@ -386,18 +315,29 @@ export function SellerProductsPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={product.image}
-                            alt={product.title}
-                            className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
-                          />
+                          {product.images[0] ? (
+                            <img
+                              src={product.images[0]}
+                              alt={product.name}
+                              className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                            />
+                          ) : (
+                            <div className="h-12 w-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                              <PackagePlus size={16} />
+                            </div>
+                          )}
                           <div>
                             <p className="font-semibold text-slate-800 dark:text-gray-100">
-                              {product.title}
+                              {product.name}
                             </p>
                             <p className="text-xs text-slate-400 dark:text-gray-500">
                               ID: {product.id}
                             </p>
+                            {product.status === 'declined' && product.adminNotes && (
+                              <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">
+                                Reason: {product.adminNotes}
+                              </p>
+                            )}
                           </div>
                         </div>
                       </td>
@@ -467,13 +407,12 @@ export function SellerProductsPage() {
                           {product.status}
                         </span>
                       </td>
-                      <td className="p-4">{product.orders}</td>
                       <td className="p-4">
                         <RowActions
                           onAction={(action) =>
                             handleAction(product.id, action)
                           }
-                          isPublished={product.status === 'Published'}
+                          status={product.status}
                         />
                       </td>
                     </tr>
@@ -489,14 +428,20 @@ export function SellerProductsPage() {
                   className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors"
                 >
                   <div className="flex gap-4">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="h-20 w-20 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
-                    />
+                    {product.images[0] ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="h-20 w-20 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                      />
+                    ) : (
+                      <div className="h-20 w-20 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                        <PackagePlus size={24} />
+                      </div>
+                    )}
                     <div className="flex-1">
                       <p className="font-semibold text-slate-800 dark:text-gray-100">
-                        {product.title}
+                        {product.name}
                       </p>
                       <p className="text-xs text-slate-400 dark:text-gray-500">
                         {product.sku}
@@ -505,10 +450,15 @@ export function SellerProductsPage() {
                         ৳{product.price} · MOQ {product.moq}
                       </p>
                       <span
-                        className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold transition-colors ${stockBadge(product)}`}
+                        className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-xs font-semibold transition-colors ${statusBadge(product.status)}`}
                       >
-                        {stockStatus(product)}
+                        {product.status}
                       </span>
+                      {product.status === 'declined' && product.adminNotes && (
+                        <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                          Reason: {product.adminNotes}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
@@ -627,16 +577,13 @@ function ExportMenu({
 
 function RowActions({
   onAction,
-  isPublished,
+  status,
 }: {
   onAction: (action: string) => void
-  isPublished: boolean
+  status: ProductStatus
 }) {
   return (
     <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
-      <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-2 py-1 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-        View
-      </button>
       <div className="relative">
         <select
           className="appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-gray-300 transition-colors"
@@ -645,18 +592,11 @@ function RowActions({
           <option value="" className="dark:bg-slate-900">
             More
           </option>
-          <option value="view" className="dark:bg-slate-900">
-            View on marketplace
-          </option>
-          <option value="edit" className="dark:bg-slate-900">
-            Edit product
-          </option>
-          <option value="duplicate" className="dark:bg-slate-900">
-            Duplicate product
-          </option>
-          <option value="toggle" className="dark:bg-slate-900">
-            {isPublished ? 'Unpublish' : 'Publish'}
-          </option>
+          {status === 'accepted' && (
+            <option value="view" className="dark:bg-slate-900">
+              View on marketplace
+            </option>
+          )}
           <option value="delete" className="dark:bg-slate-900">
             Delete product
           </option>
@@ -671,9 +611,16 @@ function RowActions({
 }
 
 function statusBadge(status: ProductStatus) {
-  return status === 'Published'
-    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-gray-400'
+  switch (status) {
+    case 'accepted':
+      return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+    case 'pending':
+      return 'bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400'
+    case 'declined':
+      return 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+    default:
+      return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-gray-400'
+  }
 }
 
 function stockBadge(product: Product) {

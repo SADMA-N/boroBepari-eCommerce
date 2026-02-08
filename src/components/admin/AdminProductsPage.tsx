@@ -29,6 +29,11 @@ import {
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import {
+  getAdminSellerProducts,
+  approveSellerProduct,
+  declineSellerProduct,
+} from '@/lib/admin-product-server'
 
 type ProductStatus =
   | 'published'
@@ -36,6 +41,9 @@ type ProductStatus =
   | 'flagged'
   | 'out_of_stock'
   | 'suspended'
+  | 'pending'
+  | 'declined'
+  | 'accepted'
 type StockFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
 type SortKey = 'name' | 'price' | 'date' | 'orders' | 'flags'
 type DetailTab = 'info' | 'pricing' | 'reports' | 'analytics'
@@ -77,6 +85,9 @@ type Product = {
     conversionRate: number
     revenue: number
   }
+  sellerProductId?: number
+  sellerBusinessName?: string
+  adminNotes?: string
 }
 
 const CATEGORIES = [
@@ -285,7 +296,10 @@ const PRODUCTS: Array<Product> = [
 
 const STATUS_TABS: Array<{ label: string; value: ProductStatus | 'all' }> = [
   { label: 'All Products', value: 'all' },
+  { label: 'Pending Review', value: 'pending' },
   { label: 'Published', value: 'published' },
+  { label: 'Accepted', value: 'accepted' },
+  { label: 'Declined', value: 'declined' },
   { label: 'Draft', value: 'draft' },
   { label: 'Flagged', value: 'flagged' },
   { label: 'Out of Stock', value: 'out_of_stock' },
@@ -315,31 +329,49 @@ function statusBadge(status: ProductStatus) {
   switch (status) {
     case 'published':
       return (
-        <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-700">
+        <span className="rounded-full bg-green-100 dark:bg-green-900/20 px-2.5 py-1 text-xs text-green-700 dark:text-green-400">
           Published
+        </span>
+      )
+    case 'accepted':
+      return (
+        <span className="rounded-full bg-green-100 dark:bg-green-900/20 px-2.5 py-1 text-xs text-green-700 dark:text-green-400">
+          Accepted
+        </span>
+      )
+    case 'pending':
+      return (
+        <span className="rounded-full bg-amber-100 dark:bg-amber-900/20 px-2.5 py-1 text-xs text-amber-700 dark:text-amber-400">
+          Pending Review
+        </span>
+      )
+    case 'declined':
+      return (
+        <span className="rounded-full bg-red-100 dark:bg-red-900/20 px-2.5 py-1 text-xs text-red-700 dark:text-red-400">
+          Declined
         </span>
       )
     case 'draft':
       return (
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs text-slate-600 dark:text-slate-400">
           Draft
         </span>
       )
     case 'flagged':
       return (
-        <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-xs text-yellow-700">
+        <span className="rounded-full bg-yellow-100 dark:bg-yellow-900/20 px-2.5 py-1 text-xs text-yellow-700 dark:text-yellow-400">
           Flagged
         </span>
       )
     case 'out_of_stock':
       return (
-        <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs text-orange-700">
+        <span className="rounded-full bg-orange-100 dark:bg-orange-900/20 px-2.5 py-1 text-xs text-orange-700 dark:text-orange-400">
           Out of Stock
         </span>
       )
     case 'suspended':
       return (
-        <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-700">
+        <span className="rounded-full bg-red-100 dark:bg-red-900/20 px-2.5 py-1 text-xs text-red-700 dark:text-red-400">
           Suspended
         </span>
       )
@@ -380,13 +412,65 @@ export function AdminProductsPage() {
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
+  const [sellerProducts, setSellerProducts] = useState<Array<Product>>([])
+  const [declineModalProduct, setDeclineModalProduct] = useState<Product | null>(null)
+  const [declineReason, setDeclineReason] = useState('')
+  const [actionLoading, setActionLoading] = useState(false)
+
+  const refreshSellerProducts = () => {
+    const token = localStorage.getItem('admin_token') || ''
+    getAdminSellerProducts({
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((data) => {
+        const mapped: Array<Product> = data.map((sp) => ({
+          id: `SP-${sp.id}`,
+          name: sp.name,
+          sku: sp.sku,
+          supplier: sp.sellerBusinessName,
+          category: sp.subCategory || sp.mainCategory || 'Uncategorized',
+          price: sp.price,
+          moq: sp.moq,
+          stock: sp.stock,
+          status: sp.status as ProductStatus,
+          orders: 0,
+          flags: 0,
+          addedAt: sp.createdAt.split('T')[0],
+          images: sp.images,
+          description: sp.description || '',
+          specs: sp.specifications?.map((s) => `${s.key}: ${s.value}`) || [],
+          tieredPricing: sp.tieredPricing?.map((t) => ({ min: t.minQty, price: t.price })) || [],
+          stockHistory: [],
+          priceHistory: [],
+          reports: [],
+          analytics: { views: 0, wishlists: 0, carts: 0, orders: 0, conversionRate: 0, revenue: 0 },
+          sellerProductId: sp.id,
+          sellerBusinessName: sp.sellerBusinessName,
+          adminNotes: sp.adminNotes ?? undefined,
+        }))
+        setSellerProducts(mapped)
+      })
+      .catch((err) => {
+        console.error('Failed to load seller products:', err)
+      })
+  }
+
+  useEffect(() => {
+    refreshSellerProducts()
+  }, [])
+
   useEffect(() => {
     setSelectedIds([])
   }, [activeTab])
 
+  // Merge PRODUCTS (mock existing) with seller products from DB
+  const allProducts = useMemo(() => {
+    return [...PRODUCTS, ...sellerProducts]
+  }, [sellerProducts])
+
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    return PRODUCTS.filter((product) => {
+    return allProducts.filter((product) => {
       const matchesTab = activeTab === 'all' || product.status === activeTab
       const matchesSearch =
         !query ||
@@ -446,15 +530,16 @@ export function AdminProductsPage() {
     return copy
   }, [filtered, sortBy])
 
-  const totalProducts = PRODUCTS.length
-  const publishedCount = PRODUCTS.filter((p) => p.status === 'published').length
-  const flaggedCount = PRODUCTS.filter((p) => p.flags > 0).length
-  const suspendedCount = PRODUCTS.filter((p) => p.status === 'suspended').length
-  const outOfStockCount = PRODUCTS.filter((p) => p.stock === 0).length
+  const totalProducts = allProducts.length
+  const publishedCount = allProducts.filter((p) => p.status === 'published').length
+  const pendingCount = allProducts.filter((p) => p.status === 'pending').length
+  const flaggedCount = allProducts.filter((p) => p.flags > 0).length
+  const suspendedCount = allProducts.filter((p) => p.status === 'suspended').length
+  const outOfStockCount = allProducts.filter((p) => p.stock === 0).length
 
   const categoryBreakdown = CATEGORIES.map((category) => ({
     category,
-    count: PRODUCTS.filter((p) => p.category === category).length,
+    count: allProducts.filter((p) => p.category === category).length,
   }))
 
   const popularCategories = [...categoryBreakdown]
@@ -485,7 +570,7 @@ export function AdminProductsPage() {
     scope: 'all' | 'filtered',
     format: 'csv' | 'excel',
   ) => {
-    const exportData = scope === 'all' ? PRODUCTS : sortedProducts
+    const exportData = scope === 'all' ? allProducts : sortedProducts
     const header = [
       'Product ID',
       'Name',
@@ -532,6 +617,11 @@ export function AdminProductsPage() {
             </h1>
             <div className="mt-2 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
               <span>Total: {totalProducts} products</span>
+              {pendingCount > 0 && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 dark:bg-amber-900/20 px-3 py-1 text-xs font-medium text-amber-700 dark:text-amber-400 transition-colors">
+                  {pendingCount} pending review
+                </span>
+              )}
               <span className="inline-flex items-center gap-2 rounded-full bg-red-100 dark:bg-red-900/20 px-3 py-1 text-xs font-medium text-red-700 dark:text-red-400 transition-colors">
                 <Flag size={12} />
                 {flaggedCount} flagged
@@ -647,6 +737,13 @@ export function AdminProductsPage() {
               }`}
             >
               {tab.label}
+              {tab.value === 'pending' && pendingCount > 0 && (
+                <span
+                  className={`ml-2 rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400'}`}
+                >
+                  {pendingCount}
+                </span>
+              )}
               {tab.value === 'flagged' && (
                 <span
                   className={`ml-2 rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'}`}
@@ -862,9 +959,17 @@ export function AdminProductsPage() {
                           disabled={!canView}
                           className="flex items-center gap-3 text-left disabled:opacity-50"
                         >
-                          <div className="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors">
-                            <Image size={16} />
-                          </div>
+                          {product.images[0] && (product.images[0].startsWith('http') || product.images[0].startsWith('/uploads')) ? (
+                            <img
+                              src={product.images[0]}
+                              alt={product.name}
+                              className="h-10 w-10 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors">
+                              <Image size={16} />
+                            </div>
+                          )}
                           <div>
                             <p className="font-medium text-slate-900 dark:text-slate-100 transition-colors">
                               {product.name}
@@ -872,6 +977,11 @@ export function AdminProductsPage() {
                             <p className="text-xs text-slate-500 dark:text-slate-500">
                               {product.id}
                             </p>
+                            {product.sellerBusinessName && (
+                              <p className="text-xs text-orange-500 dark:text-orange-400">
+                                Seller: {product.sellerBusinessName}
+                              </p>
+                            )}
                           </div>
                         </button>
                       </td>
@@ -945,7 +1055,46 @@ export function AdminProductsPage() {
                                   <Edit3 size={14} />
                                   Edit Product
                                 </button>
-                                {product.status !== 'published' && (
+                                {product.status === 'pending' && product.sellerProductId && (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        setOpenMenuId(null)
+                                        setActionLoading(true)
+                                        const token = localStorage.getItem('admin_token') || ''
+                                        approveSellerProduct({
+                                          data: { sellerProductId: product.sellerProductId! },
+                                          headers: { Authorization: `Bearer ${token}` },
+                                        })
+                                          .then(() => {
+                                            refreshSellerProducts()
+                                          })
+                                          .catch((err) => {
+                                            console.error('Approve failed:', err)
+                                          })
+                                          .finally(() => setActionLoading(false))
+                                      }}
+                                      disabled={!canModerate || actionLoading}
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors disabled:opacity-50"
+                                    >
+                                      <CheckCircle size={14} />
+                                      Approve Product
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setOpenMenuId(null)
+                                        setDeclineModalProduct(product)
+                                        setDeclineReason('')
+                                      }}
+                                      disabled={!canModerate}
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors disabled:opacity-50"
+                                    >
+                                      <Ban size={14} />
+                                      Decline Product
+                                    </button>
+                                  </>
+                                )}
+                                {product.status !== 'published' && product.status !== 'pending' && (
                                   <button
                                     onClick={() => setOpenMenuId(null)}
                                     disabled={!canModerate}
@@ -1180,15 +1329,58 @@ export function AdminProductsPage() {
                     </p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-3">
                       {detailProduct.images.map((image) => (
-                        <div
-                          key={image}
-                          className="flex h-24 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors"
-                        >
-                          <Image size={20} />
-                        </div>
+                        (image.startsWith('http') || image.startsWith('/uploads')) ? (
+                          <img
+                            key={image}
+                            src={image}
+                            alt={detailProduct.name}
+                            className="h-24 w-full rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                          />
+                        ) : (
+                          <div
+                            key={image}
+                            className="flex h-24 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors"
+                          >
+                            <Image size={20} />
+                          </div>
+                        )
                       ))}
                     </div>
                   </div>
+                  {detailProduct.status === 'pending' && detailProduct.sellerProductId && (
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        onClick={() => {
+                          setActionLoading(true)
+                          const token = localStorage.getItem('admin_token') || ''
+                          approveSellerProduct({
+                            data: { sellerProductId: detailProduct.sellerProductId! },
+                            headers: { Authorization: `Bearer ${token}` },
+                          })
+                            .then(() => {
+                              refreshSellerProducts()
+                              setDetailProduct(null)
+                            })
+                            .catch((err) => console.error('Approve failed:', err))
+                            .finally(() => setActionLoading(false))
+                        }}
+                        disabled={actionLoading}
+                        className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/20 disabled:opacity-50"
+                      >
+                        Approve Product
+                      </button>
+                      <button
+                        onClick={() => {
+                          setDeclineModalProduct(detailProduct)
+                          setDeclineReason('')
+                          setDetailProduct(null)
+                        }}
+                        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition-all shadow-lg shadow-red-600/20"
+                      >
+                        Decline Product
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1666,6 +1858,72 @@ export function AdminProductsPage() {
                 className="rounded-lg bg-slate-900 dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors shadow-lg"
               >
                 Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {declineModalProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
+          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+              <div className="flex items-center gap-2">
+                <Ban
+                  className="text-red-600 dark:text-red-500"
+                  size={20}
+                />
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                  Decline {declineModalProduct.name}?
+                </h2>
+              </div>
+              <button
+                onClick={() => setDeclineModalProduct(null)}
+                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="px-6 py-5 space-y-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              <p>Please provide a reason for declining this product submission.</p>
+              <textarea
+                value={declineReason}
+                onChange={(e) => setDeclineReason(e.target.value)}
+                placeholder="Reason for declining..."
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
+                rows={3}
+              />
+            </div>
+            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+              <button
+                onClick={() => setDeclineModalProduct(null)}
+                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={!declineReason.trim() || actionLoading}
+                onClick={() => {
+                  if (!declineModalProduct.sellerProductId) return
+                  setActionLoading(true)
+                  const token = localStorage.getItem('admin_token') || ''
+                  declineSellerProduct({
+                    data: {
+                      sellerProductId: declineModalProduct.sellerProductId!,
+                      reason: declineReason,
+                    },
+                    headers: { Authorization: `Bearer ${token}` },
+                  })
+                    .then(() => {
+                      refreshSellerProducts()
+                      setDeclineModalProduct(null)
+                    })
+                    .catch((err) => console.error('Decline failed:', err))
+                    .finally(() => setActionLoading(false))
+                }}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 transition-colors shadow-lg shadow-red-600/20"
+              >
+                Confirm Decline
               </button>
             </div>
           </div>

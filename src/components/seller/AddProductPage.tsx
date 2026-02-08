@@ -13,6 +13,10 @@ import {
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
+import {
+  uploadSellerProductImage,
+  submitSellerProduct,
+} from '@/lib/seller-product-server'
 
 type PricingTier = { id: string; minQty: string; maxQty: string; price: string }
 type SpecRow = { id: string; key: string; value: string }
@@ -605,17 +609,100 @@ export function AddProductPage() {
     setSubmitMode(mode)
     setSubmitError('')
     if (!validateAll()) return
-    void submitProduct(mode)
+
+    const token = localStorage.getItem('seller_token') || ''
+
+    const doSubmit = async () => {
+      // Upload images first
+      const imageUrls: string[] = []
+      for (const img of images) {
+        const arrayBuf = await img.file.arrayBuffer()
+        const base64 = btoa(
+          new Uint8Array(arrayBuf).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            '',
+          ),
+        )
+        const result = await uploadSellerProductImage({
+          data: {
+            fileBase64: base64,
+            mimeType: img.file.type || 'image/jpeg',
+            fileName: img.file.name,
+          },
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        imageUrls.push(result.url)
+      }
+
+      // Calculate original price from discount percentage
+      let computedOriginalPrice: string | undefined
+      if (discount && price) {
+        const discountNum = parseFloat(discount.replace('%', ''))
+        const priceNum = parseFloat(price)
+        if (!isNaN(discountNum) && discountNum > 0 && discountNum < 100) {
+          computedOriginalPrice = (priceNum / (1 - discountNum / 100)).toFixed(2)
+        }
+      }
+
+      // Build the payload
+      const payload = {
+        name: title,
+        brand,
+        mainCategory,
+        subCategory,
+        description: descriptionHtml,
+        tags,
+        images: imageUrls,
+        price,
+        originalPrice: computedOriginalPrice,
+        tieredPricingEnabled: tieredPricing,
+        tieredPricing: pricingTiers.map((t) => ({
+          minQty: t.minQty,
+          maxQty: t.maxQty,
+          price: t.price,
+        })),
+        moq,
+        stock,
+        sku: sku || undefined,
+        unit: 'piece',
+        lowStockThreshold,
+        specifications: specs
+          .filter((s) => s.key && s.value)
+          .map((s) => ({ key: s.key, value: s.value })),
+        weight,
+        dimensions,
+        shipFrom,
+        deliveryTime,
+        returnPolicy,
+        hasSample: sampleEnabled,
+        samplePrice: samplePrice || undefined,
+        sampleMaxQty: sampleMaxQty || undefined,
+        sampleDelivery: sampleDelivery || undefined,
+        mode,
+      }
+
+      await submitSellerProduct({
+        data: payload,
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    }
+
+    void doSubmit()
       .then(() => {
+        localStorage.removeItem('seller_product_draft')
         setShowSuccess(true)
         pushToast(
-          mode === 'publish' ? 'Product published' : 'Draft saved',
+          mode === 'publish'
+            ? 'Product submitted for review'
+            : 'Draft saved',
           'success',
         )
       })
-      .catch(() => {
-        setSubmitError('Failed to save product. Please retry.')
-        pushToast('Failed to save product. Please retry.', 'error')
+      .catch((err) => {
+        const msg =
+          err instanceof Error ? err.message : 'Failed to save product.'
+        setSubmitError(msg)
+        pushToast(msg, 'error')
       })
   }
 
@@ -1563,11 +1650,6 @@ function Modal({
       </div>
     </div>
   )
-}
-
-async function submitProduct(mode: SubmitMode) {
-  await new Promise((resolve) => setTimeout(resolve, 800))
-  return { status: mode }
 }
 
 function sanitizeHtml(input: string) {

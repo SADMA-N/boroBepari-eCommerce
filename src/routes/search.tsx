@@ -15,11 +15,12 @@ import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import { FeaturedProductsGridSkeleton } from '../components/FeaturedProductsGrid'
 import {
-  filterProducts,
-  getFeaturedProducts,
-  mockCategories,
-} from '../data/mock-products'
-import type { MockProduct, ProductFilters } from '../data/mock-products'
+  searchProducts,
+  getFeaturedProducts as getDbFeaturedProducts,
+} from '../lib/product-server'
+import type { ProductWithSupplier } from '../lib/product-server'
+import { mockCategories } from '../data/mock-products'
+import type { ProductFilters } from '../data/mock-products'
 
 interface SearchParams {
   q?: string
@@ -57,31 +58,32 @@ function SearchPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [isLoading, setIsLoading] = useState(false)
-  const [products, setProducts] = useState<Array<MockProduct>>([])
+  const [products, setProducts] = useState<Array<ProductWithSupplier>>([])
 
   // Recommendations state
-  const [recommendations, setRecommendations] = useState<Array<MockProduct>>([])
+  const [recommendations, setRecommendations] = useState<
+    Array<ProductWithSupplier>
+  >([])
 
   // Quick View & Toast State
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(
-    null,
-  )
+  const [quickViewProduct, setQuickViewProduct] =
+    useState<ProductWithSupplier | null>(null)
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
   })
 
-  const handleQuickView = (product: MockProduct) => {
+  const handleQuickView = (product: ProductWithSupplier) => {
     setQuickViewProduct(product)
   }
 
-  const handleAddToCart = (product: MockProduct, quantity: number) => {
+  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
     // In a real app, this would dispatch to a cart store
     console.log(`Added ${quantity} of ${product.name} to cart`)
 
     setQuickViewProduct(null)
     setToast({
-      message: `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+      message: `Added ${quantity} of "${product.name}" to cart`,
       isVisible: true,
     })
   }
@@ -102,19 +104,33 @@ function SearchPage() {
     [search],
   )
 
-  // Debounced filter update
+  // Debounced filter update using real DB search
   useEffect(() => {
     setIsLoading(true)
     const timer = setTimeout(() => {
-      const filtered = filterProducts(filters)
-      setProducts(filtered)
-
-      // Load recommendations if no results
-      if (filtered.length === 0) {
-        setRecommendations(getFeaturedProducts().slice(0, 8))
-      }
-
-      setIsLoading(false)
+      searchProducts({
+        data: {
+          query: filters.search || undefined,
+          categoryId: filters.categoryId,
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          sortBy: filters.sortBy,
+          limit: 50,
+        },
+      })
+        .then((results) => {
+          setProducts(results)
+          if (results.length === 0) {
+            getDbFeaturedProducts({ data: 8 }).then((featured) => {
+              setRecommendations(featured)
+            })
+          }
+        })
+        .catch((err) => {
+          console.error('Search error:', err)
+          setProducts([])
+        })
+        .finally(() => setIsLoading(false))
     }, 300)
 
     return () => clearTimeout(timer)

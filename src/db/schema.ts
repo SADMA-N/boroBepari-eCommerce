@@ -30,6 +30,13 @@ export const verificationBadgeEnum = pgEnum('verification_badge', [
   'verified',
   'premium',
 ])
+export const sellerProductStatusEnum = pgEnum('seller_product_status', [
+  'draft',
+  'pending',
+  'accepted',
+  'declined',
+])
+
 export const sellerDocumentTypeEnum = pgEnum('seller_document_type', [
   'nid_front',
   'nid_back',
@@ -138,6 +145,7 @@ export const sellersRelations = relations(sellers, ({ one, many }) => ({
     references: [suppliers.id],
   }),
   documents: many(sellerDocuments),
+  sellerProducts: many(sellerProducts),
 }))
 
 export const sellerDocuments = pgTable('seller_documents', {
@@ -212,6 +220,66 @@ export const productsRelations = relations(products, ({ one }) => ({
     references: [suppliers.id],
   }),
 }))
+
+// Seller Products table (seller submission workflow)
+export const sellerProducts = pgTable('seller_products', {
+  id: serial().primaryKey(),
+  sellerId: text('seller_id')
+    .notNull()
+    .references(() => sellers.id),
+  name: text('name').notNull(),
+  slug: text('slug').notNull(),
+  brand: text('brand'),
+  mainCategory: text('main_category'),
+  subCategory: text('sub_category'),
+  description: text('description'),
+  tags: jsonb('tags').$type<Array<string>>().default([]),
+  images: jsonb('images').$type<Array<string>>().default([]),
+  price: decimal('price', { precision: 12, scale: 2 }).notNull(),
+  originalPrice: decimal('original_price', { precision: 12, scale: 2 }),
+  tieredPricing: jsonb('tiered_pricing')
+    .$type<Array<{ minQty: number; maxQty: number | null; price: number }>>()
+    .default([]),
+  moq: integer('moq').notNull().default(1),
+  stock: integer('stock').default(0),
+  sku: text('sku'),
+  unit: text('unit').default('piece'),
+  lowStockThreshold: integer('low_stock_threshold').default(10),
+  specifications: jsonb('specifications')
+    .$type<Array<{ key: string; value: string }>>()
+    .default([]),
+  weight: text('weight'),
+  dimensions: jsonb('dimensions')
+    .$type<{ length: string; width: string; height: string }>(),
+  shipFrom: text('ship_from'),
+  deliveryTime: text('delivery_time'),
+  returnPolicy: text('return_policy'),
+  hasSample: boolean('has_sample').default(false),
+  samplePrice: decimal('sample_price', { precision: 12, scale: 2 }),
+  sampleMaxQty: integer('sample_max_qty'),
+  sampleDelivery: text('sample_delivery'),
+  status: sellerProductStatusEnum('status').default('draft').notNull(),
+  adminNotes: text('admin_notes'),
+  reviewedBy: text('reviewed_by'),
+  reviewedAt: timestamp('reviewed_at'),
+  publishedProductId: integer('published_product_id').references(() => products.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}).enableRLS()
+
+export const sellerProductsRelations = relations(sellerProducts, ({ one }) => ({
+  seller: one(sellers, {
+    fields: [sellerProducts.sellerId],
+    references: [sellers.id],
+  }),
+  publishedProduct: one(products, {
+    fields: [sellerProducts.publishedProductId],
+    references: [products.id],
+  }),
+}))
+
+export type SellerProduct = typeof sellerProducts.$inferSelect
+export type NewSellerProduct = typeof sellerProducts.$inferInsert
 
 // Todos table (existing)
 export const todos = pgTable('todos', {

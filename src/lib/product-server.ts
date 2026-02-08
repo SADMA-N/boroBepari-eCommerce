@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq, ilike, sql } from 'drizzle-orm'
+import { z } from 'zod'
 import { db } from '@/db'
 import { products, suppliers } from '@/db/schema'
 
@@ -253,6 +254,48 @@ export const getProductBySlug = createServerFn({ method: 'POST' })
     })
     if (!row) return null
     return mapProductDetail(row)
+  })
+
+export const searchProducts = createServerFn({ method: 'POST' })
+  .inputValidator(
+    z.object({
+      query: z.string().optional(),
+      categoryId: z.number().optional(),
+      minPrice: z.number().optional(),
+      maxPrice: z.number().optional(),
+      sortBy: z.string().optional(),
+      limit: z.number().optional(),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const conditions = []
+
+    if (data.query) {
+      conditions.push(ilike(products.name, `%${data.query}%`))
+    }
+    if (data.categoryId) {
+      conditions.push(eq(products.categoryId, data.categoryId))
+    }
+
+    const whereClause =
+      conditions.length > 0 ? and(...conditions) : undefined
+
+    const rows = await db.query.products.findMany({
+      where: whereClause,
+      with: { supplier: true },
+      limit: data.limit || 50,
+      orderBy: data.sortBy === 'price-asc'
+        ? [sql`${products.price} ASC`]
+        : data.sortBy === 'price-desc'
+          ? [desc(products.price)]
+          : data.sortBy === 'newest'
+            ? [desc(products.createdAt)]
+            : data.sortBy === 'popularity'
+              ? [desc(products.soldCount)]
+              : [desc(products.createdAt)],
+    })
+
+    return rows.map(mapProduct)
   })
 
 export const formatBDT = (price: number): string => {

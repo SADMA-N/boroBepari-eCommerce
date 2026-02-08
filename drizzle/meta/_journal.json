@@ -57,6 +57,13 @@
       "when": 1770470692466,
       "tag": "0007_boring_betty_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1770555968009,
+      "tag": "0008_quick_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }
