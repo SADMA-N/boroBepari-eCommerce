@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "Dumping local database data to supabase/seed.sql..."
-bunx supabase db dump --local --data-only -f supabase/seed.sql
-echo "Done. Commit supabase/seed.sql to share this data with collaborators."
+SEED_FILE="supabase/seed.sql"
+
+echo "Dumping local database data to $SEED_FILE..."
+bunx supabase db dump --local --data-only -f "$SEED_FILE"
+
+echo "Sanitizing OAuth tokens from account table..."
+sed -i -E \
+  "s/'ya29\.[^']*'/NULL/g; s/'eyJhbG[^']*'/NULL/g" \
+  "$SEED_FILE"
+
+echo "Done. Commit $SEED_FILE to share this data with collaborators."
