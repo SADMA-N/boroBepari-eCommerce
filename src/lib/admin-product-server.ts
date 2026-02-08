@@ -5,6 +5,47 @@ import { adminAuthMiddleware } from './admin-auth-server'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
 
+/**
+ * Returns an existing supplierId for a seller, or creates a new suppliers record
+ * from the seller's data and links it back.
+ */
+async function getOrCreateSupplierForSeller(
+  seller: typeof schema.sellers.$inferSelect,
+): Promise<number> {
+  if (seller.supplierId) {
+    return seller.supplierId
+  }
+
+  const shortId = crypto.randomUUID().slice(0, 8)
+  const slug = `${seller.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}-${shortId}`
+
+  const kycInfo = seller.kycAdditionalInfo as { description?: string } | null
+
+  const [newSupplier] = await db
+    .insert(schema.suppliers)
+    .values({
+      name: seller.businessName,
+      slug,
+      location: seller.city ?? seller.address ?? '',
+      verified:
+        seller.verificationBadge === 'verified' ||
+        seller.verificationBadge === 'premium',
+      yearsInBusiness: seller.yearsInBusiness ?? 0,
+      description: kycInfo?.description ?? '',
+      responseRate: '0',
+      onTimeDelivery: '0',
+    })
+    .returning({ id: schema.suppliers.id })
+
+  // Link the seller to the newly created supplier
+  await db
+    .update(schema.sellers)
+    .set({ supplierId: newSupplier.id, updatedAt: new Date() })
+    .where(eq(schema.sellers.id, seller.id))
+
+  return newSupplier.id
+}
+
 export const getAdminSellerProducts = createServerFn({ method: 'GET' })
   .middleware([adminAuthMiddleware])
   .handler(async ({ context }) => {
@@ -92,8 +133,10 @@ export const approveSellerProduct = createServerFn({ method: 'POST' })
       if (cat) categoryId = cat.id
     }
 
-    // Get the supplierId from the seller's record
-    const supplierId = sp.seller?.supplierId ?? null
+    // Get or create a supplier record for this seller
+    const supplierId = sp.seller
+      ? await getOrCreateSupplierForSeller(sp.seller)
+      : null
 
     // Generate a unique slug for the products table
     const shortId = crypto.randomUUID().slice(0, 8)

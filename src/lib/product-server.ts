@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { and, desc, eq, ilike, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '@/db'
-import { products, suppliers } from '@/db/schema'
+import { products, sellerProducts, suppliers } from '@/db/schema'
 
 export interface ProductWithSupplier {
   id: number
@@ -253,7 +253,35 @@ export const getProductBySlug = createServerFn({ method: 'POST' })
       with: { supplier: true },
     })
     if (!row) return null
-    return mapProductDetail(row)
+    const product = mapProductDetail(row)
+
+    // Fallback: if no supplier, look up seller info via seller_products → sellers
+    if (!product.supplier) {
+      const sp = await db.query.sellerProducts.findFirst({
+        where: eq(sellerProducts.publishedProductId, row.id),
+        with: { seller: true },
+      })
+      if (sp?.seller) {
+        const seller = sp.seller
+        const kycInfo = seller.kycAdditionalInfo as { description?: string } | null
+        product.supplier = {
+          id: 0,
+          name: seller.businessName,
+          slug: '',
+          logo: '',
+          verified:
+            seller.verificationBadge === 'verified' ||
+            seller.verificationBadge === 'premium',
+          location: seller.city ?? seller.address ?? '',
+          responseRate: 0,
+          onTimeDelivery: 0,
+          yearsInBusiness: seller.yearsInBusiness ?? 0,
+          description: kycInfo?.description ?? '',
+        }
+      }
+    }
+
+    return product
   })
 
 export const searchProducts = createServerFn({ method: 'POST' })
