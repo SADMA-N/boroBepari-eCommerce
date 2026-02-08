@@ -4,7 +4,7 @@ SET session_replication_role = replica;
 -- PostgreSQL database dump
 --
 
--- \restrict n9rufHBs9ZVOuUzayyzorst6gIi1xvtE0Qk2wXwslDJw6QEUpkATa7tun29hQeU
+-- \restrict H1bNAZ6HCkA0WOkhgv6iKk3E5GrTU3152W3U9ZiHLLQSkdFgDoMHNXcKtoiK8X5
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -150,9 +150,9 @@ INSERT INTO "public"."user" ("id", "name", "email", "email_verified", "image", "
 
 INSERT INTO "public"."account" ("id", "account_id", "provider_id", "user_id", "access_token", "refresh_token", "id_token", "access_token_expires_at", "refresh_token_expires_at", "scope", "password", "created_at", "updated_at") VALUES
 	('qGVuQubY4PJ2QVAVpFbGxPgf6sDfu9h4', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'credential', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', NULL, NULL, NULL, NULL, NULL, NULL, '1d02c18399319208a5642c47076d1cc4:afc5682f0bb515fbbabe1bef61601310e08890fac8bd0b458ad74580d4668cc5faee13b5e1d994ca0c00a4255766d5e70f9bfba6cd90285e4d2394ff45616958', '2026-02-06 18:04:57.308', '2026-02-08 05:09:30.048'),
-	('HJvwWWyNjGUeBelynAnek6JVjMMiYznp', '110918080862616859941', 'google', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', NULL, NULL, NULL, '2026-02-08 06:09:50.984', NULL, 'openid,https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/userinfo.email', NULL, '2026-02-07 12:44:24.843', '2026-02-08 05:09:51.993'),
 	('jrJvf1gr3oR72V3PyWwfvlFFTAXTn1S8', '113858997067097717345', 'google', 'LJFesUizlJcF4IntcYMzQLRqxPioRQwt', NULL, NULL, NULL, '2026-02-07 13:45:29.275', NULL, 'openid,https://www.googleapis.com/auth/userinfo.profile,https://www.googleapis.com/auth/userinfo.email', NULL, '2026-02-07 12:45:31.287', '2026-02-07 12:45:31.287'),
-	('9cgoCsNdfd3yX9QiYK6KNiFDjSU8NDUb', 'LJFesUizlJcF4IntcYMzQLRqxPioRQwt', 'credential', 'LJFesUizlJcF4IntcYMzQLRqxPioRQwt', NULL, NULL, NULL, NULL, NULL, NULL, '21b129f8efed85a9b8989c995ec24d12:6ff2dd7b806b50c9d124e1261560aee96d295a1ea32cea05fec0f3bcb90a4329c6a450ce03f95291ce73f16af847106d2eab004b443495c636f5521580d9ee99', '2026-02-07 12:45:43.318', '2026-02-07 12:45:43.318');
+	('9cgoCsNdfd3yX9QiYK6KNiFDjSU8NDUb', 'LJFesUizlJcF4IntcYMzQLRqxPioRQwt', 'credential', 'LJFesUizlJcF4IntcYMzQLRqxPioRQwt', NULL, NULL, NULL, NULL, NULL, NULL, '21b129f8efed85a9b8989c995ec24d12:6ff2dd7b806b50c9d124e1261560aee96d295a1ea32cea05fec0f3bcb90a4329c6a450ce03f95291ce73f16af847106d2eab004b443495c636f5521580d9ee99', '2026-02-07 12:45:43.318', '2026-02-07 12:45:43.318'),
+	('HJvwWWyNjGUeBelynAnek6JVjMMiYznp', '110918080862616859941', 'google', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', NULL, NULL, NULL, '2026-02-08 12:21:29.092', NULL, 'https://www.googleapis.com/auth/userinfo.profile,openid,https://www.googleapis.com/auth/userinfo.email', NULL, '2026-02-07 12:44:24.843', '2026-02-08 11:21:31.104');
 
 
 --
@@ -168,7 +168,7 @@ INSERT INTO "public"."addresses" ("id", "user_id", "name", "address", "city", "p
 --
 
 INSERT INTO "public"."admins" ("id", "email", "password", "name", "role", "avatar", "is_active", "last_login_at", "created_at", "updated_at") VALUES
-	('9862ce75-5d76-46b5-9077-ca5b12b1aa4a', 'admin@borobepari.com', '27dc1f5c67bdf1d2bf661095e1cc5a22123348588da2e2160a8ca0af138ab7a5', 'Super Admin', 'super_admin', NULL, true, '2026-02-08 05:13:37.01', '2026-02-05 19:28:04.373971', '2026-02-05 19:28:04.373971');
+	('9862ce75-5d76-46b5-9077-ca5b12b1aa4a', 'admin@borobepari.com', '27dc1f5c67bdf1d2bf661095e1cc5a22123348588da2e2160a8ca0af138ab7a5', 'Super Admin', 'super_admin', NULL, true, '2026-02-08 13:29:21.872', '2026-02-05 19:28:04.373971', '2026-02-05 19:28:04.373971');
 
 
 --
@@ -208,7 +208,9 @@ INSERT INTO "public"."login_events" ("id", "user_id", "ip_address", "user_agent"
 	(22, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:08:25.478349'),
 	(23, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:08:39.939657'),
 	(24, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:09:34.60727'),
-	(25, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:09:52.007549');
+	(25, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 05:09:52.007549'),
+	(26, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 11:19:33.181075'),
+	(27, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', '2026-02-08 11:21:31.117409');
 
 
 --
@@ -315,6 +317,7 @@ INSERT INTO "public"."products" ("id", "name", "slug", "description", "images", 
 	(57, 'Fantastic Sunscreen', 'fantastic-sunscreen-57', 'Discover the bear-like agility of our Bacon, perfect for prestigious users', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/57/e3cf3565-85f2-4ab2-83ce-71874098e63f.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/57/7b09a3d7-b3e8-483b-8eec-f9858ea48cce.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/57/204d5894-0787-4e85-bb19-18cd210ab18a.jpg"]', 1120.00, 1600.00, 50, 3761, 'piece', 4, 9, true, false, 4.90, 150, 173, '[]', '2026-02-08 06:22:26.181601', '2026-02-08 06:22:26.181601', '[{"price": 1120, "maxQty": 100, "minQty": 50}, {"price": 1064, "maxQty": 250, "minQty": 101}, {"price": 1008, "maxQty": null, "minQty": 251}]', '[{"key": "Material", "value": "Granite"}, {"key": "Color", "value": "tan"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "408g"}, {"key": "Brand", "value": "Stiedemann LLC"}]', false, NULL),
 	(62, 'Handmade Earbuds', 'handmade-earbuds-62', 'Our zesty-inspired Chicken brings a taste of luxury to your cheap lifestyle', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/62/e614f0f9-cd69-4543-9f6f-f534ec832667.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/62/b3601bc6-902d-40b5-99f4-11ac70ca1b9d.jpg"]', 3844.00, NULL, 1, 1231, 'box', 2, 19, false, false, 4.00, 462, 6194, '["limited", "new-arrival"]', '2026-02-08 06:22:26.181601', '2026-02-08 06:22:26.181601', '[{"price": 3844, "maxQty": 2, "minQty": 1}, {"price": 3652, "maxQty": 5, "minQty": 3}, {"price": 3460, "maxQty": null, "minQty": 6}]', '[{"key": "Material", "value": "Ceramic"}, {"key": "Color", "value": "grey"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "347g"}, {"key": "Brand", "value": "Funk - Moore"}]', true, 5766.00),
 	(61, 'Generic Stand', 'generic-stand-61', 'Introducing the Cayman Islands-inspired Car, blending trained style with local craftsmanship', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/61/4e03838a-d9f9-48a9-a8b1-38c5fadcfc10.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/61/59d07f49-949f-4461-9851-c6ab6f45b758.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/61/110651f2-5b5e-4a0e-9743-4e7c75c12fb3.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/61/bb6bd96b-6105-44a8-910b-95f231846631.jpg"]', 715.00, 905.00, 5, 4934, 'piece', 2, 7, false, false, 4.00, 148, 5494, '["top-rated", "limited"]', '2026-02-08 06:22:26.181601', '2026-02-08 06:22:26.181601', '[{"price": 715, "maxQty": 10, "minQty": 5}, {"price": 679, "maxQty": 25, "minQty": 11}, {"price": 644, "maxQty": null, "minQty": 26}]', '[{"key": "Material", "value": "Ceramic"}, {"key": "Color", "value": "gold"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "281g"}, {"key": "Brand", "value": "West - Will"}]', true, 1073.00),
+	(121, 'bicycle', 'bicycle-ee3c204a', 'Hello enjoy with my first product . Buy it and enjoy .', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/add01ba2-9af3-4d1a-935c-e26f7ebeccb6.png"]', 8000.00, 8888.89, 10, 50, 'piece', 7, NULL, false, true, NULL, 0, 0, '[]', '2026-02-08 13:28:56.078412', '2026-02-08 13:28:56.078412', '[]', '[{"key": "Lightweight , High Grade , Racing Usage", "value": "Weight: 8.2 kg | Frame: Carbon Fiber | Groupset: Shimano 105 | Tires: 700x25c | Geometry: Race | Use: Road Racing"}]', false, NULL),
 	(68, 'Frozen Cushion', 'frozen-cushion-68', 'Savor the sweet essence in our Bike, designed for pleased culinary adventures', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/68/eb84dfa8-0f7f-4af9-b52e-4546be5f4025.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/68/569c177a-43c3-41f0-a63a-214e78c1348b.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/68/6dcceabf-8640-4067-8203-4bfe7bce62cd.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/68/8c61871a-adb6-41b4-842d-3f3a89c3f30a.jpg"]', 4212.00, 6062.00, 50, 2881, 'pack', 3, 13, true, true, 4.40, 47, 7479, '["limited", "bulk-deal", "trending"]', '2026-02-08 06:22:26.181601', '2026-02-08 06:22:26.181601', '[{"price": 4212, "maxQty": 100, "minQty": 50}, {"price": 4001, "maxQty": 250, "minQty": 101}, {"price": 3791, "maxQty": null, "minQty": 251}]', '[{"key": "Material", "value": "Ceramic"}, {"key": "Color", "value": "red"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "326g"}, {"key": "Brand", "value": "Hyatt, Kunze and Okuneva"}]', true, 6318.00),
 	(65, 'Gorgeous Cream', 'gorgeous-cream-65', 'New gold Salad with ergonomic design for prickly comfort', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/65/a8d84b18-ed00-4fbf-bd7f-cb390d3052fb.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/65/dcba0998-09cd-40ca-b4e3-2234ea8f15cf.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/65/0a31b4e8-d8e7-4e34-96f6-f26e4f53f5fe.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/65/75034dc1-319f-412d-9640-5379ef0aef89.jpg"]', 1191.00, 1458.00, 100, 1307, 'piece', 4, 6, false, true, 4.70, 465, 5608, '["top-rated", "new-arrival", "bulk-deal", "trending"]', '2026-02-08 06:22:26.181601', '2026-02-08 06:22:26.181601', '[{"price": 1191, "maxQty": 200, "minQty": 100}, {"price": 1131, "maxQty": 500, "minQty": 201}, {"price": 1072, "maxQty": null, "minQty": 501}]', '[{"key": "Material", "value": "Metal"}, {"key": "Color", "value": "blue"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "348g"}, {"key": "Brand", "value": "Fisher - Trantow"}]', true, 1787.00),
 	(69, 'Oriental Bags', 'oriental-bags-69', 'Ergonomic Pants made with Plastic for all-day overdue support', '["http://127.0.0.1:54321/storage/v1/object/public/product-images/products/69/e8d15913-9454-4187-87be-e116bd7683aa.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/69/2f3f55e8-8f8e-45f7-9ce6-5710ebcd1c91.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/69/5ca489f0-af26-4d06-b021-f8aef0c61374.jpg", "http://127.0.0.1:54321/storage/v1/object/public/product-images/products/69/48d8fbc3-574d-4878-9afb-2c613aa1bf30.jpg"]', 123.00, 166.00, 1, 3599, 'piece', 9, 17, false, false, 4.80, 131, 3267, '[]', '2026-02-08 06:22:26.181601', '2026-02-08 06:22:26.181601', '[{"price": 123, "maxQty": 2, "minQty": 1}, {"price": 117, "maxQty": 5, "minQty": 3}, {"price": 111, "maxQty": null, "minQty": 6}]', '[{"key": "Material", "value": "Plastic"}, {"key": "Color", "value": "green"}, {"key": "Origin", "value": "Bangladesh"}, {"key": "Weight", "value": "868g"}, {"key": "Brand", "value": "Veum Group"}]', true, 185.00),
@@ -419,12 +422,28 @@ INSERT INTO "public"."password_reset_otps" ("id", "email", "code", "token", "use
 -- Data for Name: sellers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."sellers" ("id", "email", "password", "business_name", "business_type", "trade_license_number", "business_category", "years_in_business", "full_name", "phone", "address", "city", "postal_code", "bank_name", "account_holder_name", "account_number", "branch_name", "routing_number", "email_verified", "kyc_status", "kyc_submitted_at", "kyc_rejection_reason", "kyc_documents", "kyc_additional_info", "verification_badge", "supplier_id", "created_at", "updated_at") VALUES
+	('983ad445-c185-4e8b-a91b-e0095bb38928', 'pubgmerabeta10@gmail.com', '5a20bf129b331b46cd9771dcfde7bd70571250821b89cac7f813d5dd9ffda0fd', 'ayojon', 'Wholesaler', '0101010101001', 'Industrial Supplies', 2, 'KamaL', '01724324560', 'Kotowali', 'Ctg', '4000', 'Eastern Bank', 'Kamal', '0101010101010', 'Dhaka', '2', true, 'approved', '2026-02-08 11:23:52.339', NULL, '{}', '{"categories": ["Home & Kitchen", "Industrial Supplies"], "description": "Hello", "inventoryRange": "Below ৳50,000"}', 'verified', NULL, '2026-02-08 11:22:45.417364', '2026-02-08 11:24:35.711');
 
 
 --
 -- Data for Name: seller_documents; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."seller_documents" ("id", "seller_id", "document_type", "s3_bucket", "s3_key", "mime_type", "file_size", "status", "uploaded_at") VALUES
+	('cde61e34-dbc2-438e-82fa-546e60c3454b', '983ad445-c185-4e8b-a91b-e0095bb38928', 'trade_license', 'local-fs', 'kyc/seller/983ad445-c185-4e8b-a91b-e0095bb38928/trade_license/1770549832333-odv80.png', 'image/png', 78954, 'approved', '2026-02-08 11:23:52.339'),
+	('0ba5ab32-9872-4c62-acf7-3ea00cb1ed7c', '983ad445-c185-4e8b-a91b-e0095bb38928', 'nid_front', 'local-fs', 'kyc/seller/983ad445-c185-4e8b-a91b-e0095bb38928/nid_front/1770549832333-qszpd.png', 'image/png', 78954, 'approved', '2026-02-08 11:23:52.339'),
+	('3d9770e6-bf95-4d69-bf05-06d9d7ddf25f', '983ad445-c185-4e8b-a91b-e0095bb38928', 'nid_back', 'local-fs', 'kyc/seller/983ad445-c185-4e8b-a91b-e0095bb38928/nid_back/1770549832333-q7v4l.png', 'image/png', 116071, 'approved', '2026-02-08 11:23:52.339'),
+	('dd0e3d6e-dd0c-4249-b066-7880058057d8', '983ad445-c185-4e8b-a91b-e0095bb38928', 'selfie', 'local-fs', 'kyc/seller/983ad445-c185-4e8b-a91b-e0095bb38928/selfie/1770549832334-az9o1.png', 'image/png', 116071, 'approved', '2026-02-08 11:23:52.339'),
+	('1ddcacc2-f287-4f86-a406-81da26627e02', '983ad445-c185-4e8b-a91b-e0095bb38928', 'bank_proof', 'local-fs', 'kyc/seller/983ad445-c185-4e8b-a91b-e0095bb38928/bank_proof/1770549832334-maj4k.png', 'image/png', 78954, 'approved', '2026-02-08 11:23:52.339');
+
+
+--
+-- Data for Name: seller_products; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."seller_products" ("id", "seller_id", "name", "slug", "brand", "main_category", "sub_category", "description", "tags", "images", "price", "original_price", "tiered_pricing", "moq", "stock", "sku", "unit", "low_stock_threshold", "specifications", "weight", "dimensions", "ship_from", "delivery_time", "return_policy", "has_sample", "sample_price", "sample_max_qty", "sample_delivery", "status", "admin_notes", "reviewed_by", "reviewed_at", "published_product_id", "created_at", "updated_at") VALUES
+	(1, '983ad445-c185-4e8b-a91b-e0095bb38928', 'bicycle', 'bicycle-1b36664d', 'MyBrand', 'Industrial Supplies', 'Tools', 'Hello enjoy with my first product . Buy it and enjoy .', '[]', '["/uploads/product-images/seller/983ad445-c185-4e8b-a91b-e0095bb38928/add01ba2-9af3-4d1a-935c-e26f7ebeccb6.png"]', 8000.00, 8888.89, '[]', 10, 50, NULL, 'piece', 10, '[{"key": "Lightweight , High Grade , Racing Usage", "value": "Weight: 8.2 kg | Frame: Carbon Fiber | Groupset: Shimano 105 | Tires: 700x25c | Geometry: Race | Use: Road Racing"}]', '7kg', '{"width": "10", "height": "50", "length": "300"}', 'Chittagong Warehouse', '3-5 days', '7 days', false, NULL, 5, NULL, 'accepted', NULL, '9862ce75-5d76-46b5-9077-ca5b12b1aa4a', '2026-02-08 13:28:56.082', 121, '2026-02-08 13:26:55.117333', '2026-02-08 13:28:56.082');
 
 
 --
@@ -434,7 +453,8 @@ INSERT INTO "public"."password_reset_otps" ("id", "email", "code", "token", "use
 INSERT INTO "public"."session" ("id", "expires_at", "token", "created_at", "updated_at", "ip_address", "user_agent", "user_id") VALUES
 	('hwb79rcpzjULnp3vrPTFa08Jakz7nFYg', '2026-02-13 18:05:01.63', 'dSzpPNNGvCYVpAUgN3GezQ3axWrRnoBh', '2026-02-06 18:05:01.63', '2026-02-06 18:05:01.63', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
 	('DS68GKwEWlP9mgYLjV0yYgRjdxY3L9Y8', '2026-02-14 12:42:06.175', 'ARaD3uCvMgFFiZ5nk6zlXWq49unGgrUW', '2026-02-07 12:42:06.175', '2026-02-07 12:42:06.175', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
-	('O0knU2kz4wDgvMP0D7Fbj7CJlX7FhybK', '2026-02-15 05:09:34.6', '5SgdPrHpdYGmRaBuwZbqHz9nTTyraE0O', '2026-02-08 05:09:34.6', '2026-02-08 05:09:34.6', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ');
+	('O0knU2kz4wDgvMP0D7Fbj7CJlX7FhybK', '2026-02-15 05:09:34.6', '5SgdPrHpdYGmRaBuwZbqHz9nTTyraE0O', '2026-02-08 05:09:34.6', '2026-02-08 05:09:34.6', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ'),
+	('VIpB8gMyUKsM3AtXsVKW1ma2wxqRb8UH', '2026-02-15 11:19:33.166', 'U9i65BbS5SFfBMS9KHvbx3al13HHQWnO', '2026-02-08 11:19:33.167', '2026-02-08 11:19:33.167', '127.0.0.1', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ');
 
 
 --
@@ -1160,7 +1180,7 @@ SELECT pg_catalog.setval('"public"."categories_id_seq"', 16, true);
 -- Name: login_events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."login_events_id_seq"', 25, true);
+SELECT pg_catalog.setval('"public"."login_events_id_seq"', 27, true);
 
 
 --
@@ -1195,7 +1215,7 @@ SELECT pg_catalog.setval('"public"."password_reset_otps_id_seq"', 3, true);
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."products_id_seq"', 120, true);
+SELECT pg_catalog.setval('"public"."products_id_seq"', 121, true);
 
 
 --
@@ -1210,6 +1230,13 @@ SELECT pg_catalog.setval('"public"."quotes_id_seq"', 1, false);
 --
 
 SELECT pg_catalog.setval('"public"."rfqs_id_seq"', 1, false);
+
+
+--
+-- Name: seller_products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."seller_products_id_seq"', 1, true);
 
 
 --
@@ -1244,6 +1271,6 @@ SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
 -- PostgreSQL database dump complete
 --
 
--- \unrestrict n9rufHBs9ZVOuUzayyzorst6gIi1xvtE0Qk2wXwslDJw6QEUpkATa7tun29hQeU
+-- \unrestrict H1bNAZ6HCkA0WOkhgv6iKk3E5GrTU3152W3U9ZiHLLQSkdFgDoMHNXcKtoiK8X5
 
 RESET ALL;
