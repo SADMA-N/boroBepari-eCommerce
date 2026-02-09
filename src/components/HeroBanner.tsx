@@ -152,17 +152,17 @@ export default function HeroBanner({
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1.5 sm:p-2 rounded-full shadow-lg transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 p-1.5 sm:p-2 rounded-full shadow-lg transition-colors"
         aria-label="Previous slide"
       >
-        <ChevronLeft size={20} className="sm:w-6 sm:h-6 text-gray-800" />
+        <ChevronLeft size={20} className="sm:w-6 sm:h-6 text-gray-800 dark:text-white" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1.5 sm:p-2 rounded-full shadow-lg transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 p-1.5 sm:p-2 rounded-full shadow-lg transition-colors"
         aria-label="Next slide"
       >
-        <ChevronRight size={20} className="sm:w-6 sm:h-6 text-gray-800" />
+        <ChevronRight size={20} className="sm:w-6 sm:h-6 text-gray-800 dark:text-white" />
       </button>
 
       {/* Dot Indicators */}

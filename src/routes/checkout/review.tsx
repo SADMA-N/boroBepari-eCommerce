@@ -204,12 +204,12 @@ function ReviewPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-xl font-bold text-gray-900">Review Your Order</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Review Your Order</h2>
 
           {/* Shipping Info */}
-          <div className="bg-white border rounded-xl p-5">
+          <div className="bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl p-5">
             <div className="flex justify-between items-start mb-3">
-              <h3 className="font-semibold flex items-center gap-2 text-gray-900">
+              <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
                 <MapPin size={18} className="text-orange-500" />
                 Shipping Address
               </h3>
@@ -221,8 +221,8 @@ function ReviewPage() {
               </Link>
             </div>
             {shippingAddress ? (
-              <div className="text-sm text-gray-600 ml-6">
-                <p className="font-medium text-gray-900">
+              <div className="text-sm text-gray-600 dark:text-gray-400 ml-6">
+                <p className="font-medium text-gray-900 dark:text-white">
                   {shippingAddress.name}
                 </p>
                 <p>{shippingAddress.address}</p>
@@ -237,9 +237,9 @@ function ReviewPage() {
           </div>
 
           {/* Payment Info */}
-          <div className="bg-white border rounded-xl p-5">
+          <div className="bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl p-5">
             <div className="flex justify-between items-start mb-3">
-              <h3 className="font-semibold flex items-center gap-2 text-gray-900">
+              <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
                 <CreditCard size={18} className="text-orange-500" />
                 Payment Method
               </h3>
@@ -251,11 +251,11 @@ function ReviewPage() {
               </Link>
             </div>
             <div className="ml-6">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {getPaymentMethodLabel(state.paymentMethod)}
               </p>
               {(state.paymentMethod === 'deposit' || cart.items.some(i => (i.depositPercentage ?? 0) > 0)) && (
-                <div className="mt-2 p-3 bg-orange-50 rounded-lg border border-orange-100 max-w-sm">
+                <div className="mt-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-100 dark:border-orange-900/30 max-w-sm">
                   <p className="text-xs text-orange-800 font-bold">Advance Payment Details</p>
                   <p className="text-[11px] text-orange-700 mt-1">
                     Order Total: {formatCurrency(cart.total)}
@@ -266,12 +266,12 @@ function ReviewPage() {
                 </div>
               )}
               {state.poNumber && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   PO Number: {state.poNumber}
                 </p>
               )}
               {state.notes && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Notes: {state.notes}
                 </p>
               )}
@@ -279,15 +279,15 @@ function ReviewPage() {
           </div>
 
           {/* Items */}
-          <div className="bg-white border rounded-xl p-5">
-            <h3 className="font-semibold flex items-center gap-2 text-gray-900 mb-4">
+          <div className="bg-white dark:bg-slate-900 border dark:border-slate-800 rounded-xl p-5">
+            <h3 className="font-semibold flex items-center gap-2 text-gray-900 dark:text-white mb-4">
               <ShoppingBag size={18} className="text-orange-500" />
               Items ({cart.items.length})
             </h3>
             <div className="divide-y">
               {cart.items.map((item) => (
                 <div key={item.id} className="py-3 flex gap-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-md overflow-hidden flex-shrink-0">
                     <img
                       src={item.image}
                       alt={item.productName}
@@ -295,15 +295,15 @@ function ReviewPage() {
                     />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
                       {item.productName}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Qty: {item.quantity}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
                       {formatCurrency(item.lineTotal)}
                     </p>
                   </div>
@@ -315,16 +315,16 @@ function ReviewPage() {
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border p-6 sticky top-24">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border dark:border-slate-800 p-6 sticky top-24">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Order Summary
             </h3>
-            <div className="space-y-3 text-sm pb-4 border-b">
-              <div className="flex justify-between text-gray-600">
+            <div className="space-y-3 text-sm pb-4 border-b dark:border-slate-800">
+              <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Subtotal</span>
                 <span>{formatCurrency(cart.subtotal)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Delivery</span>
                 <span>
                   {cart.deliveryFee === 0
@@ -340,7 +340,7 @@ function ReviewPage() {
               )}
             </div>
 
-            <div className="flex justify-between items-center py-4 font-bold text-lg text-gray-900 border-b">
+            <div className="flex justify-between items-center py-4 font-bold text-lg text-gray-900 dark:text-white border-b dark:border-slate-800">
               <span>Total</span>
               <span className="text-orange-600">
                 {formatCurrency(cart.total)}
@@ -366,12 +366,12 @@ function ReviewPage() {
             </button>
 
             {debugStep && (
-              <p className="text-[11px] text-gray-400 mt-2 text-center">
+              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-2 text-center">
                 Debug: {debugStep}
               </p>
             )}
 
-            <p className="text-xs text-center text-gray-500 mt-3">
+            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
               By placing this order, you agree to our Terms and Conditions.
             </p>
           </div>

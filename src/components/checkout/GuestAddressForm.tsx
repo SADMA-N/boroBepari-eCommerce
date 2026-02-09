@@ -38,8 +38,8 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
   })
 
   return (
-    <div className="bg-white rounded-xl border p-6">
-      <h2 className="text-lg font-bold text-gray-900 mb-4">Shipping Address</h2>
+    <div className="bg-white dark:bg-slate-900 rounded-xl border dark:border-slate-800 p-6">
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Shipping Address</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -53,14 +53,14 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
           <form.Field name="fullName">
             {(field) => (
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                   Full Name
                 </label>
                 <input
                   type="text"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 />
                 {field.state.meta.errors[0] && (
                   <p className="text-red-500 text-xs mt-1">
@@ -74,14 +74,14 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
           <form.Field name="email">
             {(field) => (
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                   Email
                 </label>
                 <input
                   type="email"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 />
                 {field.state.meta.errors[0] && (
                   <p className="text-red-500 text-xs mt-1">
@@ -97,7 +97,7 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
         <form.Field name="address">
           {(field) => (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                 Full Address
               </label>
               <textarea
@@ -105,7 +105,7 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Street, House No, Flat No"
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm resize-none border-gray-300"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm resize-none border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
               {field.state.meta.errors[0] && (
                 <p className="text-red-500 text-xs mt-1">
@@ -121,14 +121,14 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
           <form.Field name="city">
             {(field) => (
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                   City
                 </label>
                 <input
                   type="text"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 />
                 {field.state.meta.errors[0] && (
                   <p className="text-red-500 text-xs mt-1">
@@ -143,14 +143,14 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
           <form.Field name="postcode">
             {(field) => (
               <div>
-                <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                   Postal Code
                 </label>
                 <input
                   type="text"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 />
                 {field.state.meta.errors[0] && (
                   <p className="text-red-500 text-xs mt-1">
@@ -166,14 +166,14 @@ export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
         <form.Field name="phone">
           {(field) => (
             <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                 Phone Number
               </label>
               <input
                 type="tel"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
               {field.state.meta.errors[0] && (
                 <p className="text-red-500 text-xs mt-1">

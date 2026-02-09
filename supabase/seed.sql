@@ -4,7 +4,7 @@ SET session_replication_role = replica;
 -- PostgreSQL database dump
 --
 
--- \restrict ZvoMQiMhpN35XDQyzYkaDe9ADrW8zvVKrQiM0pJzdq66XNgxseLQQYrTL1huX6j
+-- \restrict t2CrKvPLmt4nCifsPGF7kMIHwFlRmnHXT23BeUa6KAKacy9YExOaurKhrWrFnzA
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -218,6 +218,33 @@ INSERT INTO "public"."login_events" ("id", "user_id", "ip_address", "user_agent"
 -- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."notifications" ("id", "user_id", "title", "message", "type", "link", "read", "created_at") VALUES
+	(1, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #2 (Watch)', 'quote_received', '/buyer/rfqs/2', false, '2026-02-08 20:00:34.094918'),
+	(2, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 10)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 08:37:15.107436'),
+	(3, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #3 (Watch)', 'quote_received', '/buyer/rfqs/3', false, '2026-02-09 08:39:30.381478'),
+	(4, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 10)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 09:40:25.568535'),
+	(5, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 1000)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 09:41:47.575969'),
+	(6, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #5 (Watch)', 'quote_received', '/buyer/rfqs/5', false, '2026-02-09 09:42:56.888225'),
+	(7, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Countered', 'Your quote for RFQ #5 has been countered by the buyer.', 'quote_countered', '/supplier/dashboard', false, '2026-02-09 09:51:15.93074'),
+	(8, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Countered', 'The buyer has sent a counter offer of ৳1,800 for RFQ #5.', 'quote_countered', '/seller/rfqs', false, '2026-02-09 10:10:22.357089'),
+	(9, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #5 (Watch)', 'quote_received', '/buyer/rfqs/5', false, '2026-02-09 10:12:01.313635'),
+	(10, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Declined', 'The buyer has declined your quote for RFQ #5. They won''t agree to the terms and do not wish to proceed with this request from you.', 'quote_rejected', '/seller/rfqs', false, '2026-02-09 10:12:29.079747'),
+	(11, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 100)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 10:24:47.563164'),
+	(12, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #6 (Watch)', 'quote_received', '/buyer/rfqs/6', false, '2026-02-09 10:25:20.377755'),
+	(13, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Declined', 'The buyer has declined your quote for RFQ #6. They won''t agree to the terms and do not wish to proceed with this request from you.', 'quote_rejected', '/seller/rfqs', false, '2026-02-09 10:25:40.609168'),
+	(14, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 30)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 10:52:32.017967'),
+	(15, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #7 (Watch)', 'quote_received', '/buyer/rfqs/7', false, '2026-02-09 10:54:13.175212'),
+	(16, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Countered', 'The buyer has sent a counter offer of ৳800 for RFQ #7.', 'quote_countered', '/seller/rfqs', false, '2026-02-09 10:55:04.672441'),
+	(17, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #7 (Watch)', 'quote_received', '/buyer/rfqs/7', false, '2026-02-09 10:56:18.885225'),
+	(18, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Accepted', 'Your quote for RFQ #7 has been accepted by the buyer.', 'quote_accepted', '/seller/rfqs', false, '2026-02-09 10:56:37.949513'),
+	(19, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 50)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 11:32:10.923187'),
+	(20, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 18)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 11:40:57.620023'),
+	(21, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 19)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 11:51:28.887838'),
+	(22, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New RFQ Received', 'You have received a new RFQ for Watch (Qty: 50)', 'rfq_received', '/seller/rfqs', false, '2026-02-09 12:23:08.326971'),
+	(23, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #11 (Watch)', 'quote_received', '/buyer/rfqs/11', false, '2026-02-09 12:46:23.210812'),
+	(24, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Countered', 'The buyer has sent a counter offer of ৳8,800 for RFQ #11.', 'quote_countered', '/seller/rfqs', false, '2026-02-09 12:58:04.760393'),
+	(25, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'New Quote Received', 'A supplier has sent a quote for your RFQ #11 (Watch)', 'quote_received', '/buyer/rfqs/11', false, '2026-02-09 13:03:43.643543'),
+	(26, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 'Quote Accepted', 'Your quote for RFQ #11 has been accepted by the buyer.', 'quote_accepted', '/seller/rfqs', false, '2026-02-09 13:04:02.392727');
 
 
 --
@@ -263,7 +290,7 @@ INSERT INTO "public"."suppliers" ("id", "name", "slug", "logo", "verified", "loc
 	(18, 'Durgan, Kihn and Rau', 'dicki-and-sons', 'https://picsum.photos/seed/supplier18/200/200', true, 'Rangpur', 70.70, 85.30, 11, 'Business-focused zero trust contingency', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
 	(19, 'Emard Group', 'gutkowski---nicolas', 'https://picsum.photos/seed/supplier19/200/200', true, 'Narayanganj', 70.10, 87.30, 11, 'Devolved methodical definition', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
 	(20, 'Balistreri and Sons', 'champlin---sanford', 'https://picsum.photos/seed/supplier20/200/200', true, 'Khulna', 99.20, 97.50, 15, 'User-friendly high-level strategy', '2026-02-08 06:22:26.150767', '2026-02-08 06:22:26.150767', NULL),
-	(21, 'ayojon', 'ayojon-f62eda30', NULL, true, 'Ctg', 0.00, 0.00, 2, 'Hello', '2026-02-08 18:17:48.905499', '2026-02-08 18:17:48.905499', NULL);
+	(21, 'ayojon', 'ayojon-f62eda30', NULL, true, 'Ctg', 0.00, 0.00, 2, 'Hello', '2026-02-08 18:17:48.905499', '2026-02-08 18:17:48.905499', 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ');
 
 
 --
@@ -418,13 +445,29 @@ INSERT INTO "public"."password_reset_otps" ("id", "email", "code", "token", "use
 
 INSERT INTO "public"."rfqs" ("id", "buyer_id", "supplier_id", "product_id", "quantity", "target_price", "delivery_location", "notes", "attachments", "status", "expires_at", "created_at", "updated_at") VALUES
 	(1, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 10500.00, 'Dhaka', 'Logo chg kro', '["pexels-ferarcosn-190819.jpg"]', 'pending', '2026-03-10 19:45:38.536', '2026-02-08 19:45:38.536694', '2026-02-08 19:45:38.536694'),
-	(2, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 10000.00, 'Dhaka', 'dfsdfsdfsd', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770580281322-gx1z6.jpg"]', 'pending', '2026-03-10 19:51:21.382', '2026-02-08 19:51:21.388063', '2026-02-08 19:51:21.388063');
+	(2, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 10000.00, 'Dhaka', 'dfsdfsdfsd', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770580281322-gx1z6.jpg"]', 'quoted', '2026-03-10 19:51:21.382', '2026-02-08 19:51:21.388063', '2026-02-08 19:51:21.388063'),
+	(3, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 10000.00, 'Dhaka', 'Logo', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770626235040-4b70x.jpg"]', 'quoted', '2026-03-11 08:37:15.093', '2026-02-09 08:37:15.096057', '2026-02-09 08:37:15.096057'),
+	(4, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 10, 1000.00, 'Dhaka', 'fsdfsdfsdf', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770630025452-eo9ka.jpg"]', 'pending', '2026-03-11 09:40:25.545', '2026-02-09 09:40:25.548177', '2026-02-09 09:40:25.548177'),
+	(5, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 1000, 1050.00, 'Dhaka', 'hjhjkjhjhhjhj', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770630107478-bjyuu.jpg"]', 'quoted', '2026-03-11 09:41:47.541', '2026-02-09 09:41:47.544017', '2026-02-09 09:41:47.544017'),
+	(6, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 100, 1060.00, 'Dhaka', 'dfsdf', '[]', 'rejected', '2026-03-11 10:24:47.544', '2026-02-09 10:24:47.545785', '2026-02-09 10:24:47.545785'),
+	(7, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 30, 700.00, 'Dhaka', 'Change the logo also ', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770634351969-0mvwt.jpg"]', 'accepted', '2026-03-11 10:52:32.004', '2026-02-09 10:52:32.006924', '2026-02-09 10:52:32.006924'),
+	(8, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 50, 4000.00, 'Dhaka', 'logo ', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770636730838-qkzzd.jpg"]', 'pending', '2026-03-11 11:32:10.894', '2026-02-09 11:32:10.908055', '2026-02-09 11:32:10.908055'),
+	(9, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 18, 600.00, 'Dhaka', 'jhhmkmjm', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770637257541-leq3y.jpg"]', 'pending', '2026-03-11 11:40:57.594', '2026-02-09 11:40:57.598334', '2026-02-09 11:40:57.598334'),
+	(10, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 19, 1000.00, 'Dhaka', 'gyyuuy', '[]', 'pending', '2026-03-11 11:51:28.879', '2026-02-09 11:51:28.880534', '2026-02-09 11:51:28.880534'),
+	(11, 'Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ', 21, 122, 50, 8787.00, 'Dhaka', 'ihijk', '["/uploads/rfqs/attachments/Kc9KgU8b0Rl5xFZRs1u5ItQ8Hm4wXnNQ/1770639788266-mydff.jpg"]', 'accepted', '2026-03-11 12:23:08.314', '2026-02-09 12:23:08.314811', '2026-02-09 12:23:08.314811');
 
 
 --
 -- Data for Name: quotes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."quotes" ("id", "rfq_id", "supplier_id", "unit_price", "total_price", "validity_period", "terms", "status", "created_at", "updated_at", "counter_price", "counter_note", "agreed_quantity", "deposit_percentage", "delivery_time") VALUES
+	(1, 2, 21, 15000.00, 150000.00, '2026-02-15 20:00:34.028', 'do you agreee ? ', 'pending', '2026-02-08 20:00:34.079156', '2026-02-08 20:00:34.079156', NULL, NULL, NULL, 0, NULL),
+	(2, 3, 21, 15000.00, 150000.00, '2026-02-23 08:39:30.347', '', 'pending', '2026-02-09 08:39:30.369998', '2026-02-09 08:39:30.369998', NULL, NULL, NULL, 0, NULL),
+	(3, 5, 21, 1900.00, 1900000.00, '2026-03-11 10:12:01.23', 'chutiyapa kam kar ', 'rejected', '2026-02-09 09:42:56.878103', '2026-02-09 10:12:01.304', 1800.00, 'jada magega , gali khayega', NULL, 0, NULL),
+	(4, 6, 21, 1700.00, 170000.00, '2026-02-23 10:25:20.315', '', 'rejected', '2026-02-09 10:25:20.369042', '2026-02-09 10:25:20.369042', NULL, NULL, NULL, 0, NULL),
+	(5, 7, 21, 800.00, 24000.00, '2026-02-23 10:56:18.82', 'Ok i agree with you ', 'accepted', '2026-02-09 10:54:13.164766', '2026-02-09 10:56:18.875', 800.00, 'itna nehi hoga hamarese ', NULL, 0, NULL),
+	(6, 11, 21, 8900.00, 445000.00, '2026-02-23 13:03:43.597', 'final ', 'accepted', '2026-02-09 12:46:23.203729', '2026-02-09 13:03:43.636', 8800.00, 'Last', 50, 0, NULL);
 
 
 --
@@ -1202,7 +1245,7 @@ SELECT pg_catalog.setval('"public"."login_events_id_seq"', 28, true);
 -- Name: notifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."notifications_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."notifications_id_seq"', 26, true);
 
 
 --
@@ -1237,14 +1280,14 @@ SELECT pg_catalog.setval('"public"."products_id_seq"', 122, true);
 -- Name: quotes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."quotes_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."quotes_id_seq"', 6, true);
 
 
 --
 -- Name: rfqs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."rfqs_id_seq"', 2, true);
+SELECT pg_catalog.setval('"public"."rfqs_id_seq"', 11, true);
 
 
 --
@@ -1286,6 +1329,6 @@ SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
 -- PostgreSQL database dump complete
 --
 
--- \unrestrict ZvoMQiMhpN35XDQyzYkaDe9ADrW8zvVKrQiM0pJzdq66XNgxseLQQYrTL1huX6j
+-- \unrestrict t2CrKvPLmt4nCifsPGF7kMIHwFlRmnHXT23BeUa6KAKacy9YExOaurKhrWrFnzA
 
 RESET ALL;

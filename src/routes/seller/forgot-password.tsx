@@ -65,29 +65,29 @@ function SellerForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link to="/" className="text-2xl font-bold text-orange-600">
             BoroBepari
           </Link>
-          <p className="mt-2 text-sm text-slate-500">Seller Central</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Seller Central</p>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-8">
           {step === 'email' ? (
             <>
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
                 Forgot Password?
               </h1>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 Enter your registered email address and we'll send you a 6-digit
                 code to reset your password.
               </p>
 
               <form onSubmit={handleSubmitEmail} className="mt-6 space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Email address
                   </label>
                   <div className="relative">
@@ -100,7 +100,7 @@ function SellerForgotPasswordPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 pl-10 pr-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white pl-10 pr-3 py-2 text-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                       placeholder="you@business.com"
                     />
                   </div>
@@ -117,13 +117,13 @@ function SellerForgotPasswordPage() {
             </>
           ) : (
             <div className="text-center py-2">
-              <div className="mx-auto w-16 h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center mb-4">
                 <KeyRound className="text-orange-600" size={28} />
               </div>
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
                 Enter Verification Code
               </h1>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
                 A 6-digit code has been sent to{' '}
                 <span className="font-semibold">{email}</span>.
               </p>
@@ -140,7 +140,7 @@ function SellerForgotPasswordPage() {
                       onChange={(e) =>
                         setCode(e.target.value.replace(/\D/g, ''))
                       }
-                      className="w-full text-center tracking-[1em] font-bold text-2xl rounded-lg border border-slate-200 py-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+                      className="w-full text-center tracking-[1em] font-bold text-2xl rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white py-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                       placeholder="000000"
                     />
                   </div>
@@ -155,7 +155,7 @@ function SellerForgotPasswordPage() {
                 </button>
               </form>
 
-              <p className="mt-6 text-sm text-slate-500">
+              <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
                 Didn't receive the email? Check your spam folder or{' '}
                 <button
                   type="button"
@@ -168,10 +168,10 @@ function SellerForgotPasswordPage() {
             </div>
           )}
 
-          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+          <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
             <Link
               to="/seller/login"
-              className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-orange-600"
+              className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-orange-600"
             >
               <ArrowLeft size={16} />
               Back to Sign In

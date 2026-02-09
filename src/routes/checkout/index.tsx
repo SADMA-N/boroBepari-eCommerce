@@ -206,7 +206,7 @@ function CheckoutPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
             Select Delivery Address
           </h2>
 
@@ -226,9 +226,9 @@ function CheckoutPage() {
 
                 <button
                   onClick={() => setIsAddModalOpen(true)}
-                  className="flex flex-col items-center justify-center gap-2 p-6 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50 transition-all min-h-[160px]"
+                  className="flex flex-col items-center justify-center gap-2 p-6 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl text-gray-500 dark:text-gray-400 hover:border-orange-500 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-all min-h-[160px]"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-white transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-white transition-colors">
                     <Plus size={20} />
                   </div>
                   <span className="font-medium">Add New Address</span>
@@ -242,7 +242,7 @@ function CheckoutPage() {
           <div className="mt-8 flex items-center justify-between">
             <Link
               to="/cart"
-              className="flex items-center text-gray-500 hover:text-gray-900 font-medium transition-colors"
+              className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
             >
               <ArrowLeft size={18} className="mr-2" />
               Back to Cart
@@ -262,18 +262,18 @@ function CheckoutPage() {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border p-6 sticky top-24">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border dark:border-slate-800 p-6 sticky top-24">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Order Summary
             </h3>
-            <div className="space-y-3 text-sm pb-4 border-b">
-              <div className="flex justify-between text-gray-600">
+            <div className="space-y-3 text-sm pb-4 border-b dark:border-slate-800">
+              <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>
                   Items ({cart.items.reduce((acc, i) => acc + i.quantity, 0)})
                 </span>
                 <span>৳{cart.subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span>Delivery</span>
                 <span>
                   {cart.deliveryFee === 0
@@ -290,7 +290,7 @@ function CheckoutPage() {
             </div>
             
             {/* Total Section */}
-            <div className="flex justify-between items-center py-4 font-bold text-lg text-gray-900">
+            <div className="flex justify-between items-center py-4 font-bold text-lg text-gray-900 dark:text-white">
               <span>Total</span>
               <span className="text-orange-600">
                 ৳{cart.total.toLocaleString()}
@@ -299,7 +299,7 @@ function CheckoutPage() {
 
             {/* Deposit Info */}
             {cart.items.some(i => (i.depositPercentage ?? 0) > 0) && (
-              <div className="mt-2 p-4 bg-orange-50 rounded-xl border border-orange-100">
+              <div className="mt-2 p-4 bg-orange-50 dark:bg-orange-950/20 rounded-xl border border-orange-100 dark:border-orange-900/30">
                 <div className="flex justify-between items-center text-sm font-bold text-orange-800 mb-2">
                   <span>Advance Payment (Deposit)</span>
                   <span>৳{cart.items.reduce((acc, i) => acc + (i.lineTotal * (i.depositPercentage || 0) / 100), 0).toLocaleString()}</span>
@@ -310,7 +310,7 @@ function CheckoutPage() {
               </div>
             )}
 
-            <div className="bg-gray-50 p-3 mt-4 rounded-lg text-xs text-gray-500">
+            <div className="bg-gray-50 dark:bg-slate-800 p-3 mt-4 rounded-lg text-xs text-gray-500 dark:text-gray-400">
               Review items and delivery details in the next step.
             </div>
           </div>
