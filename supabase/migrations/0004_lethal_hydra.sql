@@ -1,0 +1,2 @@
+-- Duplicate migration removed to fix merge conflict. 
+-- Tables 'quotes' and 'notifications' are handled in 0004_broad_thanos and 0007_boring_betty_ross respectively.

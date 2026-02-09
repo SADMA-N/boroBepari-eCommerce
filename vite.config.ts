@@ -16,7 +16,7 @@ const config = defineConfig({
   plugins: [
     devtools({
       eventBusConfig: {
-        port: 42070,
+        port: Number(process.env.TANSTACK_DEVTOOLS_PORT || 42071),
       },
     }),
     // this is the plugin that enables path aliases

@@ -58,8 +58,6 @@ ALTER TABLE "suppliers" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "todos" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "user" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
 ALTER TABLE "verification" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
-ALTER TABLE "quotes" ADD COLUMN "counter_price" numeric(12, 2);--> statement-breakpoint
-ALTER TABLE "quotes" ADD COLUMN "counter_note" text;--> statement-breakpoint
 ALTER TABLE "sellers" ADD COLUMN "business_type" text;--> statement-breakpoint
 ALTER TABLE "sellers" ADD COLUMN "trade_license_number" text;--> statement-breakpoint
 ALTER TABLE "sellers" ADD COLUMN "business_category" text;--> statement-breakpoint
