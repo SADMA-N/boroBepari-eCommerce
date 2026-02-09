@@ -313,84 +313,90 @@ export function SellerRFQsPage() {
             <EmptyState />
           ) : (
             <div className="grid gap-4">
-              {paged.map((rfq) => (
-                <div
-                  key={rfq.id}
-                  className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 transition-colors hover:border-orange-200 dark:hover:border-orange-900/50"
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={rfq.product?.images?.[0]}
-                        alt={rfq.product?.name}
-                        className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
-                      />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm text-slate-400 dark:text-gray-500">
-                            RFQ #{rfq.id}
-                          </p>
-                          {rfq.quotes?.some((q: any) => q.status === 'countered') && (
-                            <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
-                              Counter Received
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
-                          {rfq.product?.name}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-gray-400">
-                          {rfq.buyer?.name}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-gray-300">
-                      <InfoItem
-                        label="Quantity"
-                        value={`${rfq.quantity} units`}
-                      />
-                      <InfoItem
-                        label="Target Price"
-                        value={`৳${rfq.targetPrice}`}
-                      />
-                      {rfq.quotes?.find((q: any) => q.status === 'countered') && (
-                        <InfoItem
-                          label="Buyer's Counter"
-                          value={`৳${rfq.quotes.find((q: any) => q.status === 'countered').counterPrice}`}
+              {paged.map((rfq) => {
+                const acceptedQuote = rfq.status === 'accepted' ? rfq.quotes?.find((q: any) => q.status === 'accepted') : null
+                const displayQuantity = acceptedQuote?.agreedQuantity || rfq.quantity
+                const displayPrice = acceptedQuote?.unitPrice || rfq.targetPrice
+
+                return (
+                  <div
+                    key={rfq.id}
+                    className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 transition-colors hover:border-orange-200 dark:hover:border-orange-900/50"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={rfq.product?.images?.[0]}
+                          alt={rfq.product?.name}
+                          className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                         />
-                      )}
-                      <InfoItem label="Location" value={rfq.deliveryLocation} />
-                      <InfoItem 
-                        label="Date" 
-                        value={format(new Date(rfq.createdAt), 'MMM d')} 
-                      />
-                    </div>
-                    <div className="ml-auto flex items-center gap-3">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${statusBadge(rfq.status)}`}
-                      >
-                        {rfq.status}
-                      </span>
-                      {(rfq.status === 'pending' || rfq.quotes?.some((q: any) => q.status === 'countered')) && (
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-slate-400 dark:text-gray-500">
+                              RFQ #{rfq.id}
+                            </p>
+                            {rfq.quotes?.some((q: any) => q.status === 'countered') && (
+                              <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
+                                Counter Received
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
+                            {rfq.product?.name}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-gray-400">
+                            {rfq.buyer?.name}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-gray-300">
+                        <InfoItem
+                          label={acceptedQuote ? "Agreed Qty" : "Quantity"}
+                          value={`${displayQuantity} units`}
+                        />
+                        <InfoItem
+                          label={acceptedQuote ? "Accepted Price" : "Target Price"}
+                          value={`৳${displayPrice}`}
+                        />
+                        {rfq.quotes?.find((q: any) => q.status === 'countered') && (
+                          <InfoItem
+                            label="Buyer's Counter"
+                            value={`৳${rfq.quotes.find((q: any) => q.status === 'countered').counterPrice}`}
+                          />
+                        )}
+                        <InfoItem label="Location" value={rfq.deliveryLocation} />
+                        <InfoItem 
+                          label="Date" 
+                          value={format(new Date(rfq.createdAt), 'MMM d')} 
+                        />
+                      </div>
+                      <div className="ml-auto flex items-center gap-3">
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors ${statusBadge(rfq.status)}`}
+                        >
+                          {rfq.status}
+                        </span>
+                        {(rfq.status === 'pending' || rfq.quotes?.some((q: any) => q.status === 'countered')) && (
+                          <button
+                            type="button"
+                            onClick={() => setQuoteModal(rfq)}
+                            className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
+                          >
+                            {rfq.status === 'pending' ? 'Send Quote' : 'Respond to Counter'}
+                          </button>
+                        )}
                         <button
                           type="button"
-                          onClick={() => setQuoteModal(rfq)}
-                          className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
+                          onClick={() => setDetail(rfq)}
+                          className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                         >
-                          {rfq.status === 'pending' ? 'Send Quote' : 'Respond to Counter'}
+                          View Details
                         </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => setDetail(rfq)}
-                        className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                      >
-                        View Details
-                      </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>
@@ -559,6 +565,10 @@ function RFQDetailPanel({
 
   if (!rfq) return null
 
+  const acceptedQuote = rfq.status === 'accepted' ? rfq.quotes?.find((q: any) => q.status === 'accepted') : null
+  const displayQuantity = acceptedQuote?.agreedQuantity || rfq.quantity
+  const displayPrice = acceptedQuote?.unitPrice || rfq.targetPrice
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-all"
@@ -567,9 +577,16 @@ function RFQDetailPanel({
     >
       <div className="w-full max-w-xl bg-white dark:bg-slate-900 p-6 overflow-y-auto border-l border-slate-200 dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
-            RFQ #{rfq.id}
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
+              RFQ #{rfq.id}
+            </h2>
+            <span
+              className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase transition-colors ${statusBadge(rfq.status)}`}
+            >
+              {rfq.status}
+            </span>
+          </div>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
@@ -596,11 +613,30 @@ function RFQDetailPanel({
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 dark:text-gray-300">
-            <InfoItem label="Quantity" value={`${rfq.quantity} ${rfq.product?.unit || 'units'}`} />
-            <InfoItem label="Target Price" value={`৳${rfq.targetPrice}`} />
+            <InfoItem 
+              label={acceptedQuote ? "Agreed Quantity" : "Quantity"} 
+              value={`${displayQuantity} ${rfq.product?.unit || 'units'}`} 
+            />
+            <InfoItem 
+              label={acceptedQuote ? "Accepted Price" : "Target Price"} 
+              value={`৳${displayPrice}`} 
+            />
             <InfoItem label="Delivery Location" value={rfq.deliveryLocation} />
             <InfoItem label="Time remaining" value={`${hoursLeft} hours`} />
           </div>
+
+          {acceptedQuote && (
+            <div className="rounded-xl border border-green-100 dark:border-green-900/30 bg-green-50 dark:bg-green-900/10 p-4 text-sm transition-colors">
+              <p className="font-bold text-green-800 dark:text-green-400 mb-2 uppercase text-[10px]">Negotiated Terms</p>
+              <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+                <InfoItem label="Unit Price" value={`৳${acceptedQuote.unitPrice}`} />
+                <InfoItem label="Delivery Time" value={acceptedQuote.deliveryTime || 'N/A'} />
+                <InfoItem label="Deposit" value={`${acceptedQuote.depositPercentage}%`} />
+                <InfoItem label="Total Contract" value={`৳${(Number(acceptedQuote.unitPrice) * acceptedQuote.agreedQuantity).toLocaleString()}`} />
+              </div>
+            </div>
+          )}
+
           <div>
             <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
               Additional Notes

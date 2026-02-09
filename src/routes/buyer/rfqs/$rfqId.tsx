@@ -59,7 +59,7 @@ function RFQDetailPage() {
   const [sortOption, setSortOption] = React.useState<SortOption>('price-asc')
   const [isRefreshing, setIsRefreshing] = React.useState(false)
 
-  const { addItem } = useCart()
+  const { addItem, clearCart } = useCart()
   const router = useRouter()
 
   // Modal State
@@ -180,6 +180,9 @@ function RFQDetailPage() {
   }
 
   const handleCheckout = (quote: any) => {
+    // Clear cart first to ensure only the negotiated RFQ item is in the checkout
+    clearCart()
+
     const result = addItem({
       productId: rfq.productId!,
       quantity: quote.agreedQuantity || rfq.quantity!,
