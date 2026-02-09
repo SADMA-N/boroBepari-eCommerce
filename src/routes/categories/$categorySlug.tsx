@@ -1,17 +1,16 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { ChevronRight, SlidersHorizontal, Grid3X3, List, X } from 'lucide-react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChevronRight, Grid3X3, List, SlidersHorizontal, X } from 'lucide-react'
 import ProductCard from '../../components/ProductCard'
 import FilterSidebar from '../../components/FilterSidebar'
 import Footer from '../../components/Footer'
 import { FeaturedProductsGridSkeleton } from '../../components/FeaturedProductsGrid'
 import {
-  getCategoryBySlug,
   filterProducts,
+  getCategoryBySlug,
   mockCategories,
-  type ProductFilters,
-  type MockProduct,
 } from '../../data/mock-products'
+import type { MockProduct, ProductFilters } from '../../data/mock-products'
 
 interface SearchParams {
   minPrice?: string
@@ -57,19 +56,22 @@ function CategoryPage() {
   })
 
   // Parse filters from URL search params
-  const filters: ProductFilters = useMemo(() => ({
-    categoryId: category?.id,
-    minPrice: search.minPrice ? Number(search.minPrice) : undefined,
-    maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
-    minMoq: search.minMoq ? Number(search.minMoq) : undefined,
-    maxMoq: search.maxMoq ? Number(search.maxMoq) : undefined,
-    locations: search.locations ? search.locations.split(',') : undefined,
-    verifiedOnly: search.verifiedOnly === 'true',
-    sortBy: search.sortBy as ProductFilters['sortBy'],
-  }), [category?.id, search])
+  const filters: ProductFilters = useMemo(
+    () => ({
+      categoryId: category?.id,
+      minPrice: search.minPrice ? Number(search.minPrice) : undefined,
+      maxPrice: search.maxPrice ? Number(search.maxPrice) : undefined,
+      minMoq: search.minMoq ? Number(search.minMoq) : undefined,
+      maxMoq: search.maxMoq ? Number(search.maxMoq) : undefined,
+      locations: search.locations ? search.locations.split(',') : undefined,
+      verifiedOnly: search.verifiedOnly === 'true',
+      sortBy: search.sortBy as ProductFilters['sortBy'],
+    }),
+    [category?.id, search],
+  )
 
   // Filter products
-  const [products, setProducts] = useState<MockProduct[]>([])
+  const [products, setProducts] = useState<Array<MockProduct>>([])
 
   // Debounced filter update
   useEffect(() => {
@@ -84,24 +86,32 @@ function CategoryPage() {
   }, [filters])
 
   // Update URL when filters change
-  const handleFiltersChange = useCallback((newFilters: ProductFilters) => {
-    const newSearch: Record<string, string> = {}
+  const handleFiltersChange = useCallback(
+    (newFilters: ProductFilters) => {
+      const newSearch: Record<string, string> = {}
 
-    if (newFilters.minPrice !== undefined) newSearch.minPrice = String(newFilters.minPrice)
-    if (newFilters.maxPrice !== undefined) newSearch.maxPrice = String(newFilters.maxPrice)
-    if (newFilters.minMoq !== undefined) newSearch.minMoq = String(newFilters.minMoq)
-    if (newFilters.maxMoq !== undefined) newSearch.maxMoq = String(newFilters.maxMoq)
-    if (newFilters.locations?.length) newSearch.locations = newFilters.locations.join(',')
-    if (newFilters.verifiedOnly) newSearch.verifiedOnly = 'true'
-    if (newFilters.sortBy) newSearch.sortBy = newFilters.sortBy
+      if (newFilters.minPrice !== undefined)
+        newSearch.minPrice = String(newFilters.minPrice)
+      if (newFilters.maxPrice !== undefined)
+        newSearch.maxPrice = String(newFilters.maxPrice)
+      if (newFilters.minMoq !== undefined)
+        newSearch.minMoq = String(newFilters.minMoq)
+      if (newFilters.maxMoq !== undefined)
+        newSearch.maxMoq = String(newFilters.maxMoq)
+      if (newFilters.locations?.length)
+        newSearch.locations = newFilters.locations.join(',')
+      if (newFilters.verifiedOnly) newSearch.verifiedOnly = 'true'
+      if (newFilters.sortBy) newSearch.sortBy = newFilters.sortBy
 
-    navigate({
-      to: '/categories/$categorySlug',
-      params: { categorySlug },
-      search: newSearch,
-      replace: true,
-    })
-  }, [navigate, categorySlug])
+      navigate({
+        to: '/categories/$categorySlug',
+        params: { categorySlug },
+        search: newSearch,
+        replace: true,
+      })
+    },
+    [navigate, categorySlug],
+  )
 
   // Pagination
   const page = search.page ? Number(search.page) : 1
@@ -109,7 +119,7 @@ function CategoryPage() {
   const totalPages = Math.ceil(products.length / productsPerPage)
   const paginatedProducts = products.slice(
     (page - 1) * productsPerPage,
-    page * productsPerPage
+    page * productsPerPage,
   )
 
   const handlePageChange = (newPage: number) => {
@@ -143,19 +153,25 @@ function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors">
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-500 hover:text-orange-500">
+            <Link
+              to="/"
+              className="text-gray-500 dark:text-gray-400 hover:text-orange-500 transition-colors"
+            >
               Home
             </Link>
-            <ChevronRight size={14} className="text-gray-400" />
+            <ChevronRight
+              size={14}
+              className="text-gray-400 dark:text-gray-600"
+            />
             <Link
               to="/categories/$categorySlug"
               params={{ categorySlug }}
-              className="text-gray-800 font-medium"
+              className="text-gray-800 dark:text-gray-200 font-medium hover:text-orange-500 transition-colors"
             >
               {category.name}
             </Link>
@@ -164,10 +180,12 @@ function CategoryPage() {
       </div>
 
       {/* Category Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-6">
-          <h1 className="text-2xl font-bold text-gray-800">{category.name}</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white transition-colors">
+            {category.name}
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors">
             Discover wholesale {category.name.toLowerCase()} products from
             verified suppliers
           </p>
@@ -180,7 +198,7 @@ function CategoryPage() {
                   key={sub.id}
                   to="/categories/$categorySlug"
                   params={{ categorySlug: sub.slug }}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-orange-100 hover:text-orange-600 text-gray-700 text-sm rounded-full transition-colors"
+                  className="px-3 py-1.5 bg-gray-100 dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-400 text-gray-700 dark:text-gray-300 text-sm rounded-full transition-all"
                 >
                   {sub.name}
                 </Link>
@@ -206,42 +224,44 @@ function CategoryPage() {
           {/* Product Grid */}
           <div className="flex-1">
             {/* Toolbar */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-4">
+            <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-4 mb-4 transition-colors">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 {/* Results count */}
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">{products.length}</span> products
-                  found
+                <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {products.length}
+                  </span>{' '}
+                  products found
                 </p>
 
                 <div className="flex items-center gap-4">
                   {/* Mobile Filter Button */}
                   <button
                     onClick={() => setIsFilterOpen(true)}
-                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 transition-all"
                   >
                     <SlidersHorizontal size={18} />
                     Filters
                   </button>
 
                   {/* View Mode Toggle */}
-                  <div className="flex items-center gap-1 border border-gray-200 rounded-lg p-1">
+                  <div className="flex items-center gap-1 border border-gray-200 dark:border-slate-700 rounded-lg p-1 transition-colors">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-1.5 rounded ${
+                      className={`p-1.5 rounded transition-all ${
                         viewMode === 'grid'
-                          ? 'bg-orange-500 text-white'
-                          : 'text-gray-500 hover:bg-gray-100'
+                          ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/20'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <Grid3X3 size={18} />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-1.5 rounded ${
+                      className={`p-1.5 rounded transition-all ${
                         viewMode === 'list'
-                          ? 'bg-orange-500 text-white'
-                          : 'text-gray-500 hover:bg-gray-100'
+                          ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/20'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <List size={18} />
@@ -254,10 +274,12 @@ function CategoryPage() {
                     onChange={(e) =>
                       handleFiltersChange({
                         ...filters,
-                        sortBy: e.target.value as ProductFilters['sortBy'] || undefined,
+                        sortBy:
+                          (e.target.value as ProductFilters['sortBy']) ||
+                          undefined,
                       })
                     }
-                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all"
                   >
                     <option value="">Sort by: Default</option>
                     <option value="price-asc">Price: Low to High</option>
@@ -275,7 +297,7 @@ function CategoryPage() {
                 filters.maxMoq ||
                 filters.locations?.length ||
                 filters.verifiedOnly) && (
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-4 flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
                   {filters.minPrice && (
                     <FilterTag
                       label={`Min: ৳${filters.minPrice}`}
@@ -315,7 +337,9 @@ function CategoryPage() {
                       onRemove={() =>
                         handleFiltersChange({
                           ...filters,
-                          locations: filters.locations?.filter((l) => l !== location),
+                          locations: filters.locations?.filter(
+                            (l) => l !== location,
+                          ),
                         })
                       }
                     />
@@ -330,7 +354,7 @@ function CategoryPage() {
                   )}
                   <button
                     onClick={() => handleFiltersChange({})}
-                    className="text-sm text-orange-500 hover:text-orange-600"
+                    className="text-sm text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors"
                   >
                     Clear all
                   </button>
@@ -342,13 +366,13 @@ function CategoryPage() {
             {isLoading ? (
               <FeaturedProductsGridSkeleton count={12} />
             ) : products.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-12 text-center">
-                <p className="text-gray-500 text-lg">
+              <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-12 text-center transition-colors">
+                <p className="text-gray-500 dark:text-gray-400 text-lg transition-colors">
                   No products found matching your filters.
                 </p>
                 <button
                   onClick={() => handleFiltersChange({})}
-                  className="mt-4 text-orange-500 hover:text-orange-600 font-medium"
+                  className="mt-4 text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 font-medium transition-colors"
                 >
                   Clear all filters
                 </button>
@@ -373,7 +397,7 @@ function CategoryPage() {
                     <button
                       onClick={() => handlePageChange(page - 1)}
                       disabled={page === 1}
-                      className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 transition-all"
                     >
                       Previous
                     </button>
@@ -392,10 +416,10 @@ function CategoryPage() {
                         <button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          className={`w-10 h-10 rounded-lg ${
+                          className={`w-10 h-10 rounded-lg transition-all ${
                             page === pageNum
-                              ? 'bg-orange-500 text-white'
-                              : 'border border-gray-200 hover:bg-gray-50'
+                              ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/20'
+                              : 'border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300'
                           }`}
                         >
                           {pageNum}
@@ -405,7 +429,7 @@ function CategoryPage() {
                     <button
                       onClick={() => handlePageChange(page + 1)}
                       disabled={page === totalPages}
-                      className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 transition-all"
                     >
                       Next
                     </button>
@@ -439,9 +463,12 @@ function FilterTag({
   onRemove: () => void
 }) {
   return (
-    <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-sm rounded-full">
+    <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-sm rounded-full transition-colors">
       {label}
-      <button onClick={onRemove} className="hover:text-orange-900">
+      <button
+        onClick={onRemove}
+        className="hover:text-orange-900 dark:hover:text-orange-200 transition-colors"
+      >
         <X size={14} />
       </button>
     </span>

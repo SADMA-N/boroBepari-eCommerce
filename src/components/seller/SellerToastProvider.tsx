@@ -1,0 +1,73 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
+
+type Toast = {
+  id: string
+  message: string
+  tone?: 'success' | 'error' | 'info'
+}
+
+type ToastContextValue = {
+  pushToast: (message: string, tone?: Toast['tone']) => void
+}
+
+/** Toast context for lightweight seller portal notifications. */
+const ToastContext = createContext<ToastContextValue | undefined>(undefined)
+
+/**
+ * Provides a toast queue for seller pages.
+ */
+export function SellerToastProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const [toasts, setToasts] = useState<Array<Toast>>([])
+
+  const pushToast = useCallback(
+    (message: string, tone: Toast['tone'] = 'info') => {
+      const id = crypto.randomUUID()
+      setToasts((prev) => [...prev, { id, message, tone }])
+      window.setTimeout(() => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id))
+      }, 3000)
+    },
+    [],
+  )
+
+  const value = useMemo(() => ({ pushToast }), [pushToast])
+
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+      <div className="fixed bottom-6 right-6 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`rounded-xl px-4 py-3 text-sm text-white shadow-lg ${
+              toast.tone === 'success'
+                ? 'bg-green-600'
+                : toast.tone === 'error'
+                  ? 'bg-red-600'
+                  : 'bg-slate-900'
+            }`}
+          >
+            {toast.message}
+          </div>
+        ))}
+      </div>
+    </ToastContext.Provider>
+  )
+}
+
+export function useSellerToast() {
+  const context = useContext(ToastContext)
+  if (!context)
+    throw new Error('useSellerToast must be used within SellerToastProvider')
+  return context
+}

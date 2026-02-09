@@ -1,19 +1,24 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { mockProducts, type MockProduct } from '../data/mock-products'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { mockProducts } from '../data/mock-products'
+import { useAuth } from './AuthContext'
+import type { MockProduct } from '../data/mock-products'
 
 interface WishlistContextType {
-  wishlistIds: number[]
+  wishlistIds: Array<number>
   addToWishlist: (productId: number) => void
   removeFromWishlist: (productId: number) => void
   toggleWishlist: (productId: number) => void
   isInWishlist: (productId: number) => boolean
-  wishlistItems: MockProduct[]
+  wishlistItems: Array<MockProduct>
 }
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined,
+)
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const [wishlistIds, setWishlistIds] = useState<number[]>(() => {
+  const { user } = useAuth()
+  const [wishlistIds, setWishlistIds] = useState<Array<number>>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('wishlist')
       return saved ? JSON.parse(saved) : []
@@ -32,6 +37,21 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       }
       return prev
     })
+    const product = mockProducts.find((p) => p.id === productId)
+    if (product && product.stock === 0 && user?.email) {
+      fetch('/api/stock-alerts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId,
+          email: user.email,
+          userId: user.id,
+          source: 'wishlist',
+        }),
+      }).catch((error) =>
+        console.error('Failed to create wishlist stock alert', error),
+      )
+    }
   }
 
   const removeFromWishlist = (productId: number) => {
@@ -39,6 +59,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   }
 
   const toggleWishlist = (productId: number) => {
+    const wasInWishlist = wishlistIds.includes(productId)
     setWishlistIds((prev) => {
       if (prev.includes(productId)) {
         return prev.filter((id) => id !== productId)
@@ -46,6 +67,23 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         return [...prev, productId]
       }
     })
+    if (!wasInWishlist) {
+      const product = mockProducts.find((p) => p.id === productId)
+      if (product && product.stock === 0 && user?.email) {
+        fetch('/api/stock-alerts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productId,
+            email: user.email,
+            userId: user.id,
+            source: 'wishlist',
+          }),
+        }).catch((error) =>
+          console.error('Failed to create wishlist stock alert', error),
+        )
+      }
+    }
   }
 
   const isInWishlist = (productId: number) => {

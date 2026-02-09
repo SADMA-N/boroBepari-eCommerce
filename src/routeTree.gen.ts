@@ -11,29 +11,100 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OrdersRouteImport } from './routes/orders'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as SellerRouteRouteImport } from './routes/seller/route'
+import { Route as CheckoutRouteRouteImport } from './routes/checkout/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SellerIndexRouteImport } from './routes/seller/index'
+import { Route as QuotesIndexRouteImport } from './routes/quotes/index'
+import { Route as CheckoutIndexRouteImport } from './routes/checkout/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as SupplierRfqsRouteImport } from './routes/supplier/rfqs'
+import { Route as SupplierDashboardRouteImport } from './routes/supplier/dashboard'
+import { Route as SellerRegisterRouteImport } from './routes/seller/register'
+import { Route as SellerProfileRouteImport } from './routes/seller/profile'
+import { Route as SellerLoginRouteImport } from './routes/seller/login'
+import { Route as SellerKycRouteImport } from './routes/seller/kyc'
+import { Route as SellerHelpRouteImport } from './routes/seller/help'
+import { Route as SellerForgotPasswordRouteImport } from './routes/seller/forgot-password'
+import { Route as SellerFaqRouteImport } from './routes/seller/faq'
+import { Route as SellerDashboardRouteImport } from './routes/seller/dashboard'
+import { Route as SellerCallbackRouteImport } from './routes/seller/callback'
 import { Route as ProductsProductSlugRouteImport } from './routes/products/$productSlug'
+import { Route as OrderConfirmationOrderIdRouteImport } from './routes/order-confirmation/$orderId'
+import { Route as MockPaymentBkashRouteImport } from './routes/mock-payment/bkash'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
-import { Route as DemoOrpcTodoRouteImport } from './routes/demo/orpc-todo'
+import { Route as DemoHonoTodoRouteImport } from './routes/demo/hono-todo'
 import { Route as DemoDrizzleRouteImport } from './routes/demo/drizzle'
 import { Route as DemoDbChatApiRouteImport } from './routes/demo/db-chat-api'
 import { Route as DemoDbChatRouteImport } from './routes/demo/db-chat'
+import { Route as CheckoutReviewRouteImport } from './routes/checkout/review'
+import { Route as CheckoutPaymentCallbackRouteImport } from './routes/checkout/payment-callback'
+import { Route as CheckoutPaymentRouteImport } from './routes/checkout/payment'
 import { Route as CategoriesCategorySlugRouteImport } from './routes/categories/$categorySlug'
+import { Route as BuyerRfqsRouteImport } from './routes/buyer/rfqs'
+import { Route as BuyerNotificationsRouteImport } from './routes/buyer/notifications'
+import { Route as AuthSetPasswordRouteImport } from './routes/auth/set-password'
+import { Route as ApiStockAlertsRouteImport } from './routes/api/stock-alerts'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminSuppliersRouteImport } from './routes/admin/suppliers'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminKycRouteImport } from './routes/admin/kyc'
+import { Route as AdminDisputesRouteImport } from './routes/admin/disputes'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminAuditLogsRouteImport } from './routes/admin/audit-logs'
+import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
+import { Route as SellerRfqsIndexRouteImport } from './routes/seller/rfqs/index'
+import { Route as SellerProductsIndexRouteImport } from './routes/seller/products/index'
+import { Route as SellerPayoutsIndexRouteImport } from './routes/seller/payouts/index'
+import { Route as SellerOrdersIndexRouteImport } from './routes/seller/orders/index'
+import { Route as SellerAnalyticsIndexRouteImport } from './routes/seller/analytics/index'
+import { Route as BuyerRfqsIndexRouteImport } from './routes/buyer/rfqs/index'
+import { Route as BuyerOrdersIndexRouteImport } from './routes/buyer/orders/index'
+import { Route as SellerProductsAddRouteImport } from './routes/seller/products/add'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
 import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
-import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
+import { Route as BuyerRfqsRfqIdRouteImport } from './routes/buyer/rfqs/$rfqId'
+import { Route as BuyerOrdersOrderIdRouteImport } from './routes/buyer/orders/$orderId'
+import { Route as ApiStockAlertsTriggerRouteImport } from './routes/api/stock-alerts/trigger'
+import { Route as ApiRfqSubmitRouteImport } from './routes/api/rfq/submit'
+import { Route as ApiOrdersOrderIdRouteImport } from './routes/api/orders/$orderId'
+import { Route as ApiCartValidateCouponRouteImport } from './routes/api/cart/validate-coupon'
+import { Route as ApiCartAddRouteImport } from './routes/api/cart/add'
+import { Route as ApiCartUserIdRouteImport } from './routes/api/cart/$userId'
+import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as ApiRfqSupplierSupplierIdRouteImport } from './routes/api/rfq/supplier/$supplierId'
+import { Route as ApiRfqBuyerBuyerIdRouteImport } from './routes/api/rfq/buyer/$buyerId'
+import { Route as ApiRfqRfqIdQuotesRouteImport } from './routes/api/rfq/$rfqId.quotes'
+import { Route as ApiRfqRfqIdQuoteRouteImport } from './routes/api/rfq/$rfqId.quote'
+import { Route as ApiOrdersBuyerBuyerIdRouteImport } from './routes/api/orders/buyer/$buyerId'
+import { Route as ApiOrdersOrderIdTrackRouteImport } from './routes/api/orders/$orderId/track'
+import { Route as ApiOrdersOrderIdStatusRouteImport } from './routes/api/orders/$orderId/status'
+import { Route as ApiOrdersOrderIdReorderRouteImport } from './routes/api/orders/$orderId/reorder'
+import { Route as ApiOrdersOrderIdInvoiceRouteImport } from './routes/api/orders/$orderId/invoice'
+import { Route as ApiCartItemItemIdRouteImport } from './routes/api/cart/item/$itemId'
+import { Route as ApiRfqQuoteQuoteIdRejectRouteImport } from './routes/api/rfq/quote/$quoteId.reject'
+import { Route as ApiRfqQuoteQuoteIdCounterRouteImport } from './routes/api/rfq/quote/$quoteId.counter'
+import { Route as ApiRfqQuoteQuoteIdAcceptRouteImport } from './routes/api/rfq/quote/$quoteId.accept'
 
 const WishlistRoute = WishlistRouteImport.update({
   id: '/wishlist',
@@ -45,9 +116,29 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersRoute = OrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartRoute = CartRouteImport.update({
@@ -55,14 +146,120 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerRouteRoute = SellerRouteRouteImport.update({
+  id: '/seller',
+  path: '/seller',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRouteRoute = CheckoutRouteRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerIndexRoute = SellerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const QuotesIndexRoute = QuotesIndexRouteImport.update({
+  id: '/quotes/',
+  path: '/quotes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutIndexRoute = CheckoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CheckoutRouteRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const SupplierRfqsRoute = SupplierRfqsRouteImport.update({
+  id: '/supplier/rfqs',
+  path: '/supplier/rfqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupplierDashboardRoute = SupplierDashboardRouteImport.update({
+  id: '/supplier/dashboard',
+  path: '/supplier/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerRegisterRoute = SellerRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerProfileRoute = SellerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerLoginRoute = SellerLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerKycRoute = SellerKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerHelpRoute = SellerHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerForgotPasswordRoute = SellerForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerFaqRoute = SellerFaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerDashboardRoute = SellerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerCallbackRoute = SellerCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
 const ProductsProductSlugRoute = ProductsProductSlugRouteImport.update({
   id: '/products/$productSlug',
   path: '/products/$productSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderConfirmationOrderIdRoute =
+  OrderConfirmationOrderIdRouteImport.update({
+    id: '/order-confirmation/$orderId',
+    path: '/order-confirmation/$orderId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MockPaymentBkashRoute = MockPaymentBkashRouteImport.update({
+  id: '/mock-payment/bkash',
+  path: '/mock-payment/bkash',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
@@ -75,9 +272,9 @@ const DemoTableRoute = DemoTableRouteImport.update({
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoOrpcTodoRoute = DemoOrpcTodoRouteImport.update({
-  id: '/demo/orpc-todo',
-  path: '/demo/orpc-todo',
+const DemoHonoTodoRoute = DemoHonoTodoRouteImport.update({
+  id: '/demo/hono-todo',
+  path: '/demo/hono-todo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoDrizzleRoute = DemoDrizzleRouteImport.update({
@@ -95,15 +292,140 @@ const DemoDbChatRoute = DemoDbChatRouteImport.update({
   path: '/demo/db-chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutReviewRoute = CheckoutReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => CheckoutRouteRoute,
+} as any)
+const CheckoutPaymentCallbackRoute = CheckoutPaymentCallbackRouteImport.update({
+  id: '/payment-callback',
+  path: '/payment-callback',
+  getParentRoute: () => CheckoutRouteRoute,
+} as any)
+const CheckoutPaymentRoute = CheckoutPaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => CheckoutRouteRoute,
+} as any)
 const CategoriesCategorySlugRoute = CategoriesCategorySlugRouteImport.update({
   id: '/categories/$categorySlug',
   path: '/categories/$categorySlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerRfqsRoute = BuyerRfqsRouteImport.update({
+  id: '/buyer/rfqs',
+  path: '/buyer/rfqs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerNotificationsRoute = BuyerNotificationsRouteImport.update({
+  id: '/buyer/notifications',
+  path: '/buyer/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSetPasswordRoute = AuthSetPasswordRouteImport.update({
+  id: '/auth/set-password',
+  path: '/auth/set-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStockAlertsRoute = ApiStockAlertsRouteImport.update({
+  id: '/api/stock-alerts',
+  path: '/api/stock-alerts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSuppliersRoute = AdminSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminKycRoute = AdminKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDisputesRoute = AdminDisputesRouteImport.update({
+  id: '/disputes',
+  path: '/disputes',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const BuyerOrdersRouteRoute = BuyerOrdersRouteRouteImport.update({
+  id: '/buyer/orders',
+  path: '/buyer/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellerRfqsIndexRoute = SellerRfqsIndexRouteImport.update({
+  id: '/rfqs/',
+  path: '/rfqs/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerProductsIndexRoute = SellerProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerPayoutsIndexRoute = SellerPayoutsIndexRouteImport.update({
+  id: '/payouts/',
+  path: '/payouts/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerOrdersIndexRoute = SellerOrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const SellerAnalyticsIndexRoute = SellerAnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => SellerRouteRoute,
+} as any)
+const BuyerRfqsIndexRoute = BuyerRfqsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerRfqsRoute,
+} as any)
+const BuyerOrdersIndexRoute = BuyerOrdersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerOrdersRouteRoute,
+} as any)
+const SellerProductsAddRoute = SellerProductsAddRouteImport.update({
+  id: '/products/add',
+  path: '/products/add',
+  getParentRoute: () => SellerRouteRoute,
 } as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
@@ -135,9 +457,49 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
-  id: '/api/rpc/$',
-  path: '/api/rpc/$',
+const BuyerRfqsRfqIdRoute = BuyerRfqsRfqIdRouteImport.update({
+  id: '/$rfqId',
+  path: '/$rfqId',
+  getParentRoute: () => BuyerRfqsRoute,
+} as any)
+const BuyerOrdersOrderIdRoute = BuyerOrdersOrderIdRouteImport.update({
+  id: '/$orderId',
+  path: '/$orderId',
+  getParentRoute: () => BuyerOrdersRouteRoute,
+} as any)
+const ApiStockAlertsTriggerRoute = ApiStockAlertsTriggerRouteImport.update({
+  id: '/trigger',
+  path: '/trigger',
+  getParentRoute: () => ApiStockAlertsRoute,
+} as any)
+const ApiRfqSubmitRoute = ApiRfqSubmitRouteImport.update({
+  id: '/api/rfq/submit',
+  path: '/api/rfq/submit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrdersOrderIdRoute = ApiOrdersOrderIdRouteImport.update({
+  id: '/api/orders/$orderId',
+  path: '/api/orders/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartValidateCouponRoute = ApiCartValidateCouponRouteImport.update({
+  id: '/api/cart/validate-coupon',
+  path: '/api/cart/validate-coupon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartAddRoute = ApiCartAddRouteImport.update({
+  id: '/api/cart/add',
+  path: '/api/cart/add',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCartUserIdRoute = ApiCartUserIdRouteImport.update({
+  id: '/api/cart/$userId',
+  path: '/api/cart/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
@@ -160,199 +522,716 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
   path: '/demo/start/ssr/data-only',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRfqSupplierSupplierIdRoute =
+  ApiRfqSupplierSupplierIdRouteImport.update({
+    id: '/api/rfq/supplier/$supplierId',
+    path: '/api/rfq/supplier/$supplierId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRfqBuyerBuyerIdRoute = ApiRfqBuyerBuyerIdRouteImport.update({
+  id: '/api/rfq/buyer/$buyerId',
+  path: '/api/rfq/buyer/$buyerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRfqRfqIdQuotesRoute = ApiRfqRfqIdQuotesRouteImport.update({
+  id: '/api/rfq/$rfqId/quotes',
+  path: '/api/rfq/$rfqId/quotes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRfqRfqIdQuoteRoute = ApiRfqRfqIdQuoteRouteImport.update({
+  id: '/api/rfq/$rfqId/quote',
+  path: '/api/rfq/$rfqId/quote',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrdersBuyerBuyerIdRoute = ApiOrdersBuyerBuyerIdRouteImport.update({
+  id: '/api/orders/buyer/$buyerId',
+  path: '/api/orders/buyer/$buyerId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOrdersOrderIdTrackRoute = ApiOrdersOrderIdTrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiOrdersOrderIdStatusRoute = ApiOrdersOrderIdStatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiOrdersOrderIdReorderRoute = ApiOrdersOrderIdReorderRouteImport.update({
+  id: '/reorder',
+  path: '/reorder',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiOrdersOrderIdInvoiceRoute = ApiOrdersOrderIdInvoiceRouteImport.update({
+  id: '/invoice',
+  path: '/invoice',
+  getParentRoute: () => ApiOrdersOrderIdRoute,
+} as any)
+const ApiCartItemItemIdRoute = ApiCartItemItemIdRouteImport.update({
+  id: '/api/cart/item/$itemId',
+  path: '/api/cart/item/$itemId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRfqQuoteQuoteIdRejectRoute =
+  ApiRfqQuoteQuoteIdRejectRouteImport.update({
+    id: '/api/rfq/quote/$quoteId/reject',
+    path: '/api/rfq/quote/$quoteId/reject',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRfqQuoteQuoteIdCounterRoute =
+  ApiRfqQuoteQuoteIdCounterRouteImport.update({
+    id: '/api/rfq/quote/$quoteId/counter',
+    path: '/api/rfq/quote/$quoteId/counter',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRfqQuoteQuoteIdAcceptRoute =
+  ApiRfqQuoteQuoteIdAcceptRouteImport.update({
+    id: '/api/rfq/quote/$quoteId/accept',
+    path: '/api/rfq/quote/$quoteId/accept',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/checkout': typeof CheckoutRouteRouteWithChildren
+  '/seller': typeof SellerRouteRouteWithChildren
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/kyc': typeof AdminKycRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/suppliers': typeof AdminSuppliersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
+  '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
+  '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
+  '/checkout/payment': typeof CheckoutPaymentRoute
+  '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
+  '/checkout/review': typeof CheckoutReviewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/orpc-todo': typeof DemoOrpcTodoRoute
+  '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/mock-payment/bkash': typeof MockPaymentBkashRoute
+  '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/seller/callback': typeof SellerCallbackRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/faq': typeof SellerFaqRoute
+  '/seller/forgot-password': typeof SellerForgotPasswordRoute
+  '/seller/help': typeof SellerHelpRoute
+  '/seller/kyc': typeof SellerKycRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/profile': typeof SellerProfileRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/supplier/dashboard': typeof SupplierDashboardRoute
+  '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/checkout/': typeof CheckoutIndexRoute
+  '/quotes/': typeof QuotesIndexRoute
+  '/seller/': typeof SellerIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
+  '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/api/stock-alerts/trigger': typeof ApiStockAlertsTriggerRoute
+  '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
+  '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/seller/products/add': typeof SellerProductsAddRoute
+  '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/buyer/rfqs/': typeof BuyerRfqsIndexRoute
+  '/seller/analytics/': typeof SellerAnalyticsIndexRoute
+  '/seller/orders/': typeof SellerOrdersIndexRoute
+  '/seller/payouts/': typeof SellerPayoutsIndexRoute
+  '/seller/products/': typeof SellerProductsIndexRoute
+  '/seller/rfqs/': typeof SellerRfqsIndexRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
+  '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
+  '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
+  '/api/orders/$orderId/status': typeof ApiOrdersOrderIdStatusRoute
+  '/api/orders/$orderId/track': typeof ApiOrdersOrderIdTrackRoute
+  '/api/orders/buyer/$buyerId': typeof ApiOrdersBuyerBuyerIdRoute
+  '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
+  '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
+  '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
+  '/api/rfq/supplier/$supplierId': typeof ApiRfqSupplierSupplierIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
+  '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
+  '/api/rfq/quote/$quoteId/reject': typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/kyc': typeof AdminKycRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/suppliers': typeof AdminSuppliersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
+  '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
+  '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
+  '/checkout/payment': typeof CheckoutPaymentRoute
+  '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
+  '/checkout/review': typeof CheckoutReviewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/orpc-todo': typeof DemoOrpcTodoRoute
+  '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/mock-payment/bkash': typeof MockPaymentBkashRoute
+  '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/seller/callback': typeof SellerCallbackRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/faq': typeof SellerFaqRoute
+  '/seller/forgot-password': typeof SellerForgotPasswordRoute
+  '/seller/help': typeof SellerHelpRoute
+  '/seller/kyc': typeof SellerKycRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/profile': typeof SellerProfileRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/supplier/dashboard': typeof SupplierDashboardRoute
+  '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/admin': typeof AdminIndexRoute
+  '/checkout': typeof CheckoutIndexRoute
+  '/quotes': typeof QuotesIndexRoute
+  '/seller': typeof SellerIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
+  '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/api/stock-alerts/trigger': typeof ApiStockAlertsTriggerRoute
+  '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
+  '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/seller/products/add': typeof SellerProductsAddRoute
+  '/buyer/orders': typeof BuyerOrdersIndexRoute
+  '/buyer/rfqs': typeof BuyerRfqsIndexRoute
+  '/seller/analytics': typeof SellerAnalyticsIndexRoute
+  '/seller/orders': typeof SellerOrdersIndexRoute
+  '/seller/payouts': typeof SellerPayoutsIndexRoute
+  '/seller/products': typeof SellerProductsIndexRoute
+  '/seller/rfqs': typeof SellerRfqsIndexRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
+  '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
+  '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
+  '/api/orders/$orderId/status': typeof ApiOrdersOrderIdStatusRoute
+  '/api/orders/$orderId/track': typeof ApiOrdersOrderIdTrackRoute
+  '/api/orders/buyer/$buyerId': typeof ApiOrdersBuyerBuyerIdRoute
+  '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
+  '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
+  '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
+  '/api/rfq/supplier/$supplierId': typeof ApiRfqSupplierSupplierIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
+  '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
+  '/api/rfq/quote/$quoteId/reject': typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/checkout': typeof CheckoutRouteRouteWithChildren
+  '/seller': typeof SellerRouteRouteWithChildren
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/orders': typeof OrdersRoute
+  '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/audit-logs': typeof AdminAuditLogsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/disputes': typeof AdminDisputesRoute
+  '/admin/kyc': typeof AdminKycRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/suppliers': typeof AdminSuppliersRoute
+  '/admin/users': typeof AdminUsersRoute
   '/api/$': typeof ApiSplatRoute
+  '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
+  '/auth/set-password': typeof AuthSetPasswordRoute
+  '/buyer/notifications': typeof BuyerNotificationsRoute
+  '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
+  '/checkout/payment': typeof CheckoutPaymentRoute
+  '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
+  '/checkout/review': typeof CheckoutReviewRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
   '/demo/drizzle': typeof DemoDrizzleRoute
-  '/demo/orpc-todo': typeof DemoOrpcTodoRoute
+  '/demo/hono-todo': typeof DemoHonoTodoRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/mock-payment/bkash': typeof MockPaymentBkashRoute
+  '/order-confirmation/$orderId': typeof OrderConfirmationOrderIdRoute
   '/products/$productSlug': typeof ProductsProductSlugRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/seller/callback': typeof SellerCallbackRoute
+  '/seller/dashboard': typeof SellerDashboardRoute
+  '/seller/faq': typeof SellerFaqRoute
+  '/seller/forgot-password': typeof SellerForgotPasswordRoute
+  '/seller/help': typeof SellerHelpRoute
+  '/seller/kyc': typeof SellerKycRoute
+  '/seller/login': typeof SellerLoginRoute
+  '/seller/profile': typeof SellerProfileRoute
+  '/seller/register': typeof SellerRegisterRoute
+  '/supplier/dashboard': typeof SupplierDashboardRoute
+  '/supplier/rfqs': typeof SupplierRfqsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/checkout/': typeof CheckoutIndexRoute
+  '/quotes/': typeof QuotesIndexRoute
+  '/seller/': typeof SellerIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/cart/$userId': typeof ApiCartUserIdRoute
+  '/api/cart/add': typeof ApiCartAddRoute
+  '/api/cart/validate-coupon': typeof ApiCartValidateCouponRoute
+  '/api/orders/$orderId': typeof ApiOrdersOrderIdRouteWithChildren
+  '/api/rfq/submit': typeof ApiRfqSubmitRoute
+  '/api/stock-alerts/trigger': typeof ApiStockAlertsTriggerRoute
+  '/buyer/orders/$orderId': typeof BuyerOrdersOrderIdRoute
+  '/buyer/rfqs/$rfqId': typeof BuyerRfqsRfqIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
+  '/seller/products/add': typeof SellerProductsAddRoute
+  '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/buyer/rfqs/': typeof BuyerRfqsIndexRoute
+  '/seller/analytics/': typeof SellerAnalyticsIndexRoute
+  '/seller/orders/': typeof SellerOrdersIndexRoute
+  '/seller/payouts/': typeof SellerPayoutsIndexRoute
+  '/seller/products/': typeof SellerProductsIndexRoute
+  '/seller/rfqs/': typeof SellerRfqsIndexRoute
+  '/api/cart/item/$itemId': typeof ApiCartItemItemIdRoute
+  '/api/orders/$orderId/invoice': typeof ApiOrdersOrderIdInvoiceRoute
+  '/api/orders/$orderId/reorder': typeof ApiOrdersOrderIdReorderRoute
+  '/api/orders/$orderId/status': typeof ApiOrdersOrderIdStatusRoute
+  '/api/orders/$orderId/track': typeof ApiOrdersOrderIdTrackRoute
+  '/api/orders/buyer/$buyerId': typeof ApiOrdersBuyerBuyerIdRoute
+  '/api/rfq/$rfqId/quote': typeof ApiRfqRfqIdQuoteRoute
+  '/api/rfq/$rfqId/quotes': typeof ApiRfqRfqIdQuotesRoute
+  '/api/rfq/buyer/$buyerId': typeof ApiRfqBuyerBuyerIdRoute
+  '/api/rfq/supplier/$supplierId': typeof ApiRfqSupplierSupplierIdRoute
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
+  '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
+  '/api/rfq/quote/$quoteId/reject': typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/checkout'
+    | '/seller'
+    | '/account'
     | '/cart'
+    | '/forgot-password'
+    | '/login'
     | '/orders'
+    | '/register'
+    | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/buyer/orders'
+    | '/admin/audit-logs'
+    | '/admin/dashboard'
+    | '/admin/disputes'
+    | '/admin/kyc'
+    | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/suppliers'
+    | '/admin/users'
     | '/api/$'
+    | '/api/stock-alerts'
+    | '/auth/set-password'
+    | '/buyer/notifications'
+    | '/buyer/rfqs'
     | '/categories/$categorySlug'
+    | '/checkout/payment'
+    | '/checkout/payment-callback'
+    | '/checkout/review'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
-    | '/demo/orpc-todo'
+    | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/mock-payment/bkash'
+    | '/order-confirmation/$orderId'
     | '/products/$productSlug'
-    | '/api/rpc/$'
+    | '/seller/callback'
+    | '/seller/dashboard'
+    | '/seller/faq'
+    | '/seller/forgot-password'
+    | '/seller/help'
+    | '/seller/kyc'
+    | '/seller/login'
+    | '/seller/profile'
+    | '/seller/register'
+    | '/supplier/dashboard'
+    | '/supplier/rfqs'
+    | '/admin/'
+    | '/checkout/'
+    | '/quotes/'
+    | '/seller/'
+    | '/api/auth/$'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
+    | '/api/orders/$orderId'
+    | '/api/rfq/submit'
+    | '/api/stock-alerts/trigger'
+    | '/buyer/orders/$orderId'
+    | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/seller/products/add'
+    | '/buyer/orders/'
+    | '/buyer/rfqs/'
+    | '/seller/analytics/'
+    | '/seller/orders/'
+    | '/seller/payouts/'
+    | '/seller/products/'
+    | '/seller/rfqs/'
+    | '/api/cart/item/$itemId'
+    | '/api/orders/$orderId/invoice'
+    | '/api/orders/$orderId/reorder'
+    | '/api/orders/$orderId/status'
+    | '/api/orders/$orderId/track'
+    | '/api/orders/buyer/$buyerId'
+    | '/api/rfq/$rfqId/quote'
+    | '/api/rfq/$rfqId/quotes'
+    | '/api/rfq/buyer/$buyerId'
+    | '/api/rfq/supplier/$supplierId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr/'
+    | '/api/rfq/quote/$quoteId/accept'
+    | '/api/rfq/quote/$quoteId/counter'
+    | '/api/rfq/quote/$quoteId/reject'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/cart'
+    | '/forgot-password'
+    | '/login'
     | '/orders'
+    | '/register'
+    | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/admin/audit-logs'
+    | '/admin/dashboard'
+    | '/admin/disputes'
+    | '/admin/kyc'
+    | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/suppliers'
+    | '/admin/users'
     | '/api/$'
+    | '/api/stock-alerts'
+    | '/auth/set-password'
+    | '/buyer/notifications'
     | '/categories/$categorySlug'
+    | '/checkout/payment'
+    | '/checkout/payment-callback'
+    | '/checkout/review'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
-    | '/demo/orpc-todo'
+    | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/mock-payment/bkash'
+    | '/order-confirmation/$orderId'
     | '/products/$productSlug'
-    | '/api/rpc/$'
+    | '/seller/callback'
+    | '/seller/dashboard'
+    | '/seller/faq'
+    | '/seller/forgot-password'
+    | '/seller/help'
+    | '/seller/kyc'
+    | '/seller/login'
+    | '/seller/profile'
+    | '/seller/register'
+    | '/supplier/dashboard'
+    | '/supplier/rfqs'
+    | '/admin'
+    | '/checkout'
+    | '/quotes'
+    | '/seller'
+    | '/api/auth/$'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
+    | '/api/orders/$orderId'
+    | '/api/rfq/submit'
+    | '/api/stock-alerts/trigger'
+    | '/buyer/orders/$orderId'
+    | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/seller/products/add'
+    | '/buyer/orders'
+    | '/buyer/rfqs'
+    | '/seller/analytics'
+    | '/seller/orders'
+    | '/seller/payouts'
+    | '/seller/products'
+    | '/seller/rfqs'
+    | '/api/cart/item/$itemId'
+    | '/api/orders/$orderId/invoice'
+    | '/api/orders/$orderId/reorder'
+    | '/api/orders/$orderId/status'
+    | '/api/orders/$orderId/track'
+    | '/api/orders/buyer/$buyerId'
+    | '/api/rfq/$rfqId/quote'
+    | '/api/rfq/$rfqId/quotes'
+    | '/api/rfq/buyer/$buyerId'
+    | '/api/rfq/supplier/$supplierId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr'
+    | '/api/rfq/quote/$quoteId/accept'
+    | '/api/rfq/quote/$quoteId/counter'
+    | '/api/rfq/quote/$quoteId/reject'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/checkout'
+    | '/seller'
+    | '/account'
     | '/cart'
+    | '/forgot-password'
+    | '/login'
     | '/orders'
+    | '/register'
+    | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/buyer/orders'
+    | '/admin/audit-logs'
+    | '/admin/dashboard'
+    | '/admin/disputes'
+    | '/admin/kyc'
+    | '/admin/login'
+    | '/admin/products'
+    | '/admin/settings'
+    | '/admin/suppliers'
+    | '/admin/users'
     | '/api/$'
+    | '/api/stock-alerts'
+    | '/auth/set-password'
+    | '/buyer/notifications'
+    | '/buyer/rfqs'
     | '/categories/$categorySlug'
+    | '/checkout/payment'
+    | '/checkout/payment-callback'
+    | '/checkout/review'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
     | '/demo/drizzle'
-    | '/demo/orpc-todo'
+    | '/demo/hono-todo'
     | '/demo/table'
     | '/demo/tanstack-query'
+    | '/mock-payment/bkash'
+    | '/order-confirmation/$orderId'
     | '/products/$productSlug'
-    | '/api/rpc/$'
+    | '/seller/callback'
+    | '/seller/dashboard'
+    | '/seller/faq'
+    | '/seller/forgot-password'
+    | '/seller/help'
+    | '/seller/kyc'
+    | '/seller/login'
+    | '/seller/profile'
+    | '/seller/register'
+    | '/supplier/dashboard'
+    | '/supplier/rfqs'
+    | '/admin/'
+    | '/checkout/'
+    | '/quotes/'
+    | '/seller/'
+    | '/api/auth/$'
+    | '/api/cart/$userId'
+    | '/api/cart/add'
+    | '/api/cart/validate-coupon'
+    | '/api/orders/$orderId'
+    | '/api/rfq/submit'
+    | '/api/stock-alerts/trigger'
+    | '/buyer/orders/$orderId'
+    | '/buyer/rfqs/$rfqId'
     | '/demo/api/names'
     | '/demo/api/tq-todos'
     | '/demo/form/address'
     | '/demo/form/simple'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
+    | '/seller/products/add'
+    | '/buyer/orders/'
+    | '/buyer/rfqs/'
+    | '/seller/analytics/'
+    | '/seller/orders/'
+    | '/seller/payouts/'
+    | '/seller/products/'
+    | '/seller/rfqs/'
+    | '/api/cart/item/$itemId'
+    | '/api/orders/$orderId/invoice'
+    | '/api/orders/$orderId/reorder'
+    | '/api/orders/$orderId/status'
+    | '/api/orders/$orderId/track'
+    | '/api/orders/buyer/$buyerId'
+    | '/api/rfq/$rfqId/quote'
+    | '/api/rfq/$rfqId/quotes'
+    | '/api/rfq/buyer/$buyerId'
+    | '/api/rfq/supplier/$supplierId'
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
     | '/demo/start/ssr/'
+    | '/api/rfq/quote/$quoteId/accept'
+    | '/api/rfq/quote/$quoteId/counter'
+    | '/api/rfq/quote/$quoteId/reject'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  CheckoutRouteRoute: typeof CheckoutRouteRouteWithChildren
+  SellerRouteRoute: typeof SellerRouteRouteWithChildren
+  AccountRoute: typeof AccountRoute
   CartRoute: typeof CartRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
   OrdersRoute: typeof OrdersRoute
+  RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   WishlistRoute: typeof WishlistRoute
+  BuyerOrdersRouteRoute: typeof BuyerOrdersRouteRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
+  ApiStockAlertsRoute: typeof ApiStockAlertsRouteWithChildren
+  AuthSetPasswordRoute: typeof AuthSetPasswordRoute
+  BuyerNotificationsRoute: typeof BuyerNotificationsRoute
+  BuyerRfqsRoute: typeof BuyerRfqsRouteWithChildren
   CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
   DemoDbChatApiRoute: typeof DemoDbChatApiRoute
   DemoDrizzleRoute: typeof DemoDrizzleRoute
-  DemoOrpcTodoRoute: typeof DemoOrpcTodoRoute
+  DemoHonoTodoRoute: typeof DemoHonoTodoRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  MockPaymentBkashRoute: typeof MockPaymentBkashRoute
+  OrderConfirmationOrderIdRoute: typeof OrderConfirmationOrderIdRoute
   ProductsProductSlugRoute: typeof ProductsProductSlugRoute
-  ApiRpcSplatRoute: typeof ApiRpcSplatRoute
+  SupplierDashboardRoute: typeof SupplierDashboardRoute
+  SupplierRfqsRoute: typeof SupplierRfqsRoute
+  QuotesIndexRoute: typeof QuotesIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiCartUserIdRoute: typeof ApiCartUserIdRoute
+  ApiCartAddRoute: typeof ApiCartAddRoute
+  ApiCartValidateCouponRoute: typeof ApiCartValidateCouponRoute
+  ApiOrdersOrderIdRoute: typeof ApiOrdersOrderIdRouteWithChildren
+  ApiRfqSubmitRoute: typeof ApiRfqSubmitRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
+  ApiCartItemItemIdRoute: typeof ApiCartItemItemIdRoute
+  ApiOrdersBuyerBuyerIdRoute: typeof ApiOrdersBuyerBuyerIdRoute
+  ApiRfqRfqIdQuoteRoute: typeof ApiRfqRfqIdQuoteRoute
+  ApiRfqRfqIdQuotesRoute: typeof ApiRfqRfqIdQuotesRoute
+  ApiRfqBuyerBuyerIdRoute: typeof ApiRfqBuyerBuyerIdRoute
+  ApiRfqSupplierSupplierIdRoute: typeof ApiRfqSupplierSupplierIdRoute
   DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
   DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
   DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
   DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
+  ApiRfqQuoteQuoteIdAcceptRoute: typeof ApiRfqQuoteQuoteIdAcceptRoute
+  ApiRfqQuoteQuoteIdCounterRoute: typeof ApiRfqQuoteQuoteIdCounterRoute
+  ApiRfqQuoteQuoteIdRejectRoute: typeof ApiRfqQuoteQuoteIdRejectRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -371,11 +1250,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders': {
       id: '/orders'
       path: '/orders'
       fullPath: '/orders'
       preLoaderRoute: typeof OrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -385,6 +1292,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller': {
+      id: '/seller'
+      path: '/seller'
+      fullPath: '/seller'
+      preLoaderRoute: typeof SellerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -392,11 +1327,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller/': {
+      id: '/seller/'
+      path: '/'
+      fullPath: '/seller/'
+      preLoaderRoute: typeof SellerIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/quotes/': {
+      id: '/quotes/'
+      path: '/quotes'
+      fullPath: '/quotes/'
+      preLoaderRoute: typeof QuotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/': {
+      id: '/checkout/'
+      path: '/'
+      fullPath: '/checkout/'
+      preLoaderRoute: typeof CheckoutIndexRouteImport
+      parentRoute: typeof CheckoutRouteRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/supplier/rfqs': {
+      id: '/supplier/rfqs'
+      path: '/supplier/rfqs'
+      fullPath: '/supplier/rfqs'
+      preLoaderRoute: typeof SupplierRfqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/supplier/dashboard': {
+      id: '/supplier/dashboard'
+      path: '/supplier/dashboard'
+      fullPath: '/supplier/dashboard'
+      preLoaderRoute: typeof SupplierDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/register': {
+      id: '/seller/register'
+      path: '/register'
+      fullPath: '/seller/register'
+      preLoaderRoute: typeof SellerRegisterRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/profile': {
+      id: '/seller/profile'
+      path: '/profile'
+      fullPath: '/seller/profile'
+      preLoaderRoute: typeof SellerProfileRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/login': {
+      id: '/seller/login'
+      path: '/login'
+      fullPath: '/seller/login'
+      preLoaderRoute: typeof SellerLoginRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/kyc': {
+      id: '/seller/kyc'
+      path: '/kyc'
+      fullPath: '/seller/kyc'
+      preLoaderRoute: typeof SellerKycRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/help': {
+      id: '/seller/help'
+      path: '/help'
+      fullPath: '/seller/help'
+      preLoaderRoute: typeof SellerHelpRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/forgot-password': {
+      id: '/seller/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/seller/forgot-password'
+      preLoaderRoute: typeof SellerForgotPasswordRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/faq': {
+      id: '/seller/faq'
+      path: '/faq'
+      fullPath: '/seller/faq'
+      preLoaderRoute: typeof SellerFaqRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/dashboard': {
+      id: '/seller/dashboard'
+      path: '/dashboard'
+      fullPath: '/seller/dashboard'
+      preLoaderRoute: typeof SellerDashboardRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/callback': {
+      id: '/seller/callback'
+      path: '/callback'
+      fullPath: '/seller/callback'
+      preLoaderRoute: typeof SellerCallbackRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
     '/products/$productSlug': {
       id: '/products/$productSlug'
       path: '/products/$productSlug'
       fullPath: '/products/$productSlug'
       preLoaderRoute: typeof ProductsProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-confirmation/$orderId': {
+      id: '/order-confirmation/$orderId'
+      path: '/order-confirmation/$orderId'
+      fullPath: '/order-confirmation/$orderId'
+      preLoaderRoute: typeof OrderConfirmationOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-payment/bkash': {
+      id: '/mock-payment/bkash'
+      path: '/mock-payment/bkash'
+      fullPath: '/mock-payment/bkash'
+      preLoaderRoute: typeof MockPaymentBkashRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/tanstack-query': {
@@ -413,11 +1467,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/orpc-todo': {
-      id: '/demo/orpc-todo'
-      path: '/demo/orpc-todo'
-      fullPath: '/demo/orpc-todo'
-      preLoaderRoute: typeof DemoOrpcTodoRouteImport
+    '/demo/hono-todo': {
+      id: '/demo/hono-todo'
+      path: '/demo/hono-todo'
+      fullPath: '/demo/hono-todo'
+      preLoaderRoute: typeof DemoHonoTodoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/drizzle': {
@@ -441,11 +1495,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoDbChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/review': {
+      id: '/checkout/review'
+      path: '/review'
+      fullPath: '/checkout/review'
+      preLoaderRoute: typeof CheckoutReviewRouteImport
+      parentRoute: typeof CheckoutRouteRoute
+    }
+    '/checkout/payment-callback': {
+      id: '/checkout/payment-callback'
+      path: '/payment-callback'
+      fullPath: '/checkout/payment-callback'
+      preLoaderRoute: typeof CheckoutPaymentCallbackRouteImport
+      parentRoute: typeof CheckoutRouteRoute
+    }
+    '/checkout/payment': {
+      id: '/checkout/payment'
+      path: '/payment'
+      fullPath: '/checkout/payment'
+      preLoaderRoute: typeof CheckoutPaymentRouteImport
+      parentRoute: typeof CheckoutRouteRoute
+    }
     '/categories/$categorySlug': {
       id: '/categories/$categorySlug'
       path: '/categories/$categorySlug'
       fullPath: '/categories/$categorySlug'
       preLoaderRoute: typeof CategoriesCategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/rfqs': {
+      id: '/buyer/rfqs'
+      path: '/buyer/rfqs'
+      fullPath: '/buyer/rfqs'
+      preLoaderRoute: typeof BuyerRfqsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/notifications': {
+      id: '/buyer/notifications'
+      path: '/buyer/notifications'
+      fullPath: '/buyer/notifications'
+      preLoaderRoute: typeof BuyerNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/set-password': {
+      id: '/auth/set-password'
+      path: '/auth/set-password'
+      fullPath: '/auth/set-password'
+      preLoaderRoute: typeof AuthSetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/stock-alerts': {
+      id: '/api/stock-alerts'
+      path: '/api/stock-alerts'
+      fullPath: '/api/stock-alerts'
+      preLoaderRoute: typeof ApiStockAlertsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/$': {
@@ -454,6 +1557,132 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/suppliers': {
+      id: '/admin/suppliers'
+      path: '/suppliers'
+      fullPath: '/admin/suppliers'
+      preLoaderRoute: typeof AdminSuppliersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/kyc': {
+      id: '/admin/kyc'
+      path: '/kyc'
+      fullPath: '/admin/kyc'
+      preLoaderRoute: typeof AdminKycRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/disputes': {
+      id: '/admin/disputes'
+      path: '/disputes'
+      fullPath: '/admin/disputes'
+      preLoaderRoute: typeof AdminDisputesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/audit-logs': {
+      id: '/admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/buyer/orders': {
+      id: '/buyer/orders'
+      path: '/buyer/orders'
+      fullPath: '/buyer/orders'
+      preLoaderRoute: typeof BuyerOrdersRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seller/rfqs/': {
+      id: '/seller/rfqs/'
+      path: '/rfqs'
+      fullPath: '/seller/rfqs/'
+      preLoaderRoute: typeof SellerRfqsIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/products/': {
+      id: '/seller/products/'
+      path: '/products'
+      fullPath: '/seller/products/'
+      preLoaderRoute: typeof SellerProductsIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/payouts/': {
+      id: '/seller/payouts/'
+      path: '/payouts'
+      fullPath: '/seller/payouts/'
+      preLoaderRoute: typeof SellerPayoutsIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/orders/': {
+      id: '/seller/orders/'
+      path: '/orders'
+      fullPath: '/seller/orders/'
+      preLoaderRoute: typeof SellerOrdersIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/seller/analytics/': {
+      id: '/seller/analytics/'
+      path: '/analytics'
+      fullPath: '/seller/analytics/'
+      preLoaderRoute: typeof SellerAnalyticsIndexRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
+    '/buyer/rfqs/': {
+      id: '/buyer/rfqs/'
+      path: '/'
+      fullPath: '/buyer/rfqs/'
+      preLoaderRoute: typeof BuyerRfqsIndexRouteImport
+      parentRoute: typeof BuyerRfqsRoute
+    }
+    '/buyer/orders/': {
+      id: '/buyer/orders/'
+      path: '/'
+      fullPath: '/buyer/orders/'
+      preLoaderRoute: typeof BuyerOrdersIndexRouteImport
+      parentRoute: typeof BuyerOrdersRouteRoute
+    }
+    '/seller/products/add': {
+      id: '/seller/products/add'
+      path: '/products/add'
+      fullPath: '/seller/products/add'
+      preLoaderRoute: typeof SellerProductsAddRouteImport
+      parentRoute: typeof SellerRouteRoute
     }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
@@ -497,11 +1726,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/rpc/$': {
-      id: '/api/rpc/$'
-      path: '/api/rpc/$'
-      fullPath: '/api/rpc/$'
-      preLoaderRoute: typeof ApiRpcSplatRouteImport
+    '/buyer/rfqs/$rfqId': {
+      id: '/buyer/rfqs/$rfqId'
+      path: '/$rfqId'
+      fullPath: '/buyer/rfqs/$rfqId'
+      preLoaderRoute: typeof BuyerRfqsRfqIdRouteImport
+      parentRoute: typeof BuyerRfqsRoute
+    }
+    '/buyer/orders/$orderId': {
+      id: '/buyer/orders/$orderId'
+      path: '/$orderId'
+      fullPath: '/buyer/orders/$orderId'
+      preLoaderRoute: typeof BuyerOrdersOrderIdRouteImport
+      parentRoute: typeof BuyerOrdersRouteRoute
+    }
+    '/api/stock-alerts/trigger': {
+      id: '/api/stock-alerts/trigger'
+      path: '/trigger'
+      fullPath: '/api/stock-alerts/trigger'
+      preLoaderRoute: typeof ApiStockAlertsTriggerRouteImport
+      parentRoute: typeof ApiStockAlertsRoute
+    }
+    '/api/rfq/submit': {
+      id: '/api/rfq/submit'
+      path: '/api/rfq/submit'
+      fullPath: '/api/rfq/submit'
+      preLoaderRoute: typeof ApiRfqSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/orders/$orderId': {
+      id: '/api/orders/$orderId'
+      path: '/api/orders/$orderId'
+      fullPath: '/api/orders/$orderId'
+      preLoaderRoute: typeof ApiOrdersOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/validate-coupon': {
+      id: '/api/cart/validate-coupon'
+      path: '/api/cart/validate-coupon'
+      fullPath: '/api/cart/validate-coupon'
+      preLoaderRoute: typeof ApiCartValidateCouponRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/add': {
+      id: '/api/cart/add'
+      path: '/api/cart/add'
+      fullPath: '/api/cart/add'
+      preLoaderRoute: typeof ApiCartAddRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cart/$userId': {
+      id: '/api/cart/$userId'
+      path: '/api/cart/$userId'
+      fullPath: '/api/cart/$userId'
+      preLoaderRoute: typeof ApiCartUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/start/ssr/': {
@@ -532,35 +1817,304 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/rfq/supplier/$supplierId': {
+      id: '/api/rfq/supplier/$supplierId'
+      path: '/api/rfq/supplier/$supplierId'
+      fullPath: '/api/rfq/supplier/$supplierId'
+      preLoaderRoute: typeof ApiRfqSupplierSupplierIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/buyer/$buyerId': {
+      id: '/api/rfq/buyer/$buyerId'
+      path: '/api/rfq/buyer/$buyerId'
+      fullPath: '/api/rfq/buyer/$buyerId'
+      preLoaderRoute: typeof ApiRfqBuyerBuyerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/$rfqId/quotes': {
+      id: '/api/rfq/$rfqId/quotes'
+      path: '/api/rfq/$rfqId/quotes'
+      fullPath: '/api/rfq/$rfqId/quotes'
+      preLoaderRoute: typeof ApiRfqRfqIdQuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/$rfqId/quote': {
+      id: '/api/rfq/$rfqId/quote'
+      path: '/api/rfq/$rfqId/quote'
+      fullPath: '/api/rfq/$rfqId/quote'
+      preLoaderRoute: typeof ApiRfqRfqIdQuoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/orders/buyer/$buyerId': {
+      id: '/api/orders/buyer/$buyerId'
+      path: '/api/orders/buyer/$buyerId'
+      fullPath: '/api/orders/buyer/$buyerId'
+      preLoaderRoute: typeof ApiOrdersBuyerBuyerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/orders/$orderId/track': {
+      id: '/api/orders/$orderId/track'
+      path: '/track'
+      fullPath: '/api/orders/$orderId/track'
+      preLoaderRoute: typeof ApiOrdersOrderIdTrackRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/orders/$orderId/status': {
+      id: '/api/orders/$orderId/status'
+      path: '/status'
+      fullPath: '/api/orders/$orderId/status'
+      preLoaderRoute: typeof ApiOrdersOrderIdStatusRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/orders/$orderId/reorder': {
+      id: '/api/orders/$orderId/reorder'
+      path: '/reorder'
+      fullPath: '/api/orders/$orderId/reorder'
+      preLoaderRoute: typeof ApiOrdersOrderIdReorderRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/orders/$orderId/invoice': {
+      id: '/api/orders/$orderId/invoice'
+      path: '/invoice'
+      fullPath: '/api/orders/$orderId/invoice'
+      preLoaderRoute: typeof ApiOrdersOrderIdInvoiceRouteImport
+      parentRoute: typeof ApiOrdersOrderIdRoute
+    }
+    '/api/cart/item/$itemId': {
+      id: '/api/cart/item/$itemId'
+      path: '/api/cart/item/$itemId'
+      fullPath: '/api/cart/item/$itemId'
+      preLoaderRoute: typeof ApiCartItemItemIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/quote/$quoteId/reject': {
+      id: '/api/rfq/quote/$quoteId/reject'
+      path: '/api/rfq/quote/$quoteId/reject'
+      fullPath: '/api/rfq/quote/$quoteId/reject'
+      preLoaderRoute: typeof ApiRfqQuoteQuoteIdRejectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/quote/$quoteId/counter': {
+      id: '/api/rfq/quote/$quoteId/counter'
+      path: '/api/rfq/quote/$quoteId/counter'
+      fullPath: '/api/rfq/quote/$quoteId/counter'
+      preLoaderRoute: typeof ApiRfqQuoteQuoteIdCounterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rfq/quote/$quoteId/accept': {
+      id: '/api/rfq/quote/$quoteId/accept'
+      path: '/api/rfq/quote/$quoteId/accept'
+      fullPath: '/api/rfq/quote/$quoteId/accept'
+      preLoaderRoute: typeof ApiRfqQuoteQuoteIdAcceptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAuditLogsRoute: typeof AdminAuditLogsRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminDisputesRoute: typeof AdminDisputesRoute
+  AdminKycRoute: typeof AdminKycRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSuppliersRoute: typeof AdminSuppliersRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAuditLogsRoute: AdminAuditLogsRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminDisputesRoute: AdminDisputesRoute,
+  AdminKycRoute: AdminKycRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSuppliersRoute: AdminSuppliersRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
+interface CheckoutRouteRouteChildren {
+  CheckoutPaymentRoute: typeof CheckoutPaymentRoute
+  CheckoutPaymentCallbackRoute: typeof CheckoutPaymentCallbackRoute
+  CheckoutReviewRoute: typeof CheckoutReviewRoute
+  CheckoutIndexRoute: typeof CheckoutIndexRoute
+}
+
+const CheckoutRouteRouteChildren: CheckoutRouteRouteChildren = {
+  CheckoutPaymentRoute: CheckoutPaymentRoute,
+  CheckoutPaymentCallbackRoute: CheckoutPaymentCallbackRoute,
+  CheckoutReviewRoute: CheckoutReviewRoute,
+  CheckoutIndexRoute: CheckoutIndexRoute,
+}
+
+const CheckoutRouteRouteWithChildren = CheckoutRouteRoute._addFileChildren(
+  CheckoutRouteRouteChildren,
+)
+
+interface SellerRouteRouteChildren {
+  SellerCallbackRoute: typeof SellerCallbackRoute
+  SellerDashboardRoute: typeof SellerDashboardRoute
+  SellerFaqRoute: typeof SellerFaqRoute
+  SellerForgotPasswordRoute: typeof SellerForgotPasswordRoute
+  SellerHelpRoute: typeof SellerHelpRoute
+  SellerKycRoute: typeof SellerKycRoute
+  SellerLoginRoute: typeof SellerLoginRoute
+  SellerProfileRoute: typeof SellerProfileRoute
+  SellerRegisterRoute: typeof SellerRegisterRoute
+  SellerIndexRoute: typeof SellerIndexRoute
+  SellerProductsAddRoute: typeof SellerProductsAddRoute
+  SellerAnalyticsIndexRoute: typeof SellerAnalyticsIndexRoute
+  SellerOrdersIndexRoute: typeof SellerOrdersIndexRoute
+  SellerPayoutsIndexRoute: typeof SellerPayoutsIndexRoute
+  SellerProductsIndexRoute: typeof SellerProductsIndexRoute
+  SellerRfqsIndexRoute: typeof SellerRfqsIndexRoute
+}
+
+const SellerRouteRouteChildren: SellerRouteRouteChildren = {
+  SellerCallbackRoute: SellerCallbackRoute,
+  SellerDashboardRoute: SellerDashboardRoute,
+  SellerFaqRoute: SellerFaqRoute,
+  SellerForgotPasswordRoute: SellerForgotPasswordRoute,
+  SellerHelpRoute: SellerHelpRoute,
+  SellerKycRoute: SellerKycRoute,
+  SellerLoginRoute: SellerLoginRoute,
+  SellerProfileRoute: SellerProfileRoute,
+  SellerRegisterRoute: SellerRegisterRoute,
+  SellerIndexRoute: SellerIndexRoute,
+  SellerProductsAddRoute: SellerProductsAddRoute,
+  SellerAnalyticsIndexRoute: SellerAnalyticsIndexRoute,
+  SellerOrdersIndexRoute: SellerOrdersIndexRoute,
+  SellerPayoutsIndexRoute: SellerPayoutsIndexRoute,
+  SellerProductsIndexRoute: SellerProductsIndexRoute,
+  SellerRfqsIndexRoute: SellerRfqsIndexRoute,
+}
+
+const SellerRouteRouteWithChildren = SellerRouteRoute._addFileChildren(
+  SellerRouteRouteChildren,
+)
+
+interface BuyerOrdersRouteRouteChildren {
+  BuyerOrdersOrderIdRoute: typeof BuyerOrdersOrderIdRoute
+  BuyerOrdersIndexRoute: typeof BuyerOrdersIndexRoute
+}
+
+const BuyerOrdersRouteRouteChildren: BuyerOrdersRouteRouteChildren = {
+  BuyerOrdersOrderIdRoute: BuyerOrdersOrderIdRoute,
+  BuyerOrdersIndexRoute: BuyerOrdersIndexRoute,
+}
+
+const BuyerOrdersRouteRouteWithChildren =
+  BuyerOrdersRouteRoute._addFileChildren(BuyerOrdersRouteRouteChildren)
+
+interface ApiStockAlertsRouteChildren {
+  ApiStockAlertsTriggerRoute: typeof ApiStockAlertsTriggerRoute
+}
+
+const ApiStockAlertsRouteChildren: ApiStockAlertsRouteChildren = {
+  ApiStockAlertsTriggerRoute: ApiStockAlertsTriggerRoute,
+}
+
+const ApiStockAlertsRouteWithChildren = ApiStockAlertsRoute._addFileChildren(
+  ApiStockAlertsRouteChildren,
+)
+
+interface BuyerRfqsRouteChildren {
+  BuyerRfqsRfqIdRoute: typeof BuyerRfqsRfqIdRoute
+  BuyerRfqsIndexRoute: typeof BuyerRfqsIndexRoute
+}
+
+const BuyerRfqsRouteChildren: BuyerRfqsRouteChildren = {
+  BuyerRfqsRfqIdRoute: BuyerRfqsRfqIdRoute,
+  BuyerRfqsIndexRoute: BuyerRfqsIndexRoute,
+}
+
+const BuyerRfqsRouteWithChildren = BuyerRfqsRoute._addFileChildren(
+  BuyerRfqsRouteChildren,
+)
+
+interface ApiOrdersOrderIdRouteChildren {
+  ApiOrdersOrderIdInvoiceRoute: typeof ApiOrdersOrderIdInvoiceRoute
+  ApiOrdersOrderIdReorderRoute: typeof ApiOrdersOrderIdReorderRoute
+  ApiOrdersOrderIdStatusRoute: typeof ApiOrdersOrderIdStatusRoute
+  ApiOrdersOrderIdTrackRoute: typeof ApiOrdersOrderIdTrackRoute
+}
+
+const ApiOrdersOrderIdRouteChildren: ApiOrdersOrderIdRouteChildren = {
+  ApiOrdersOrderIdInvoiceRoute: ApiOrdersOrderIdInvoiceRoute,
+  ApiOrdersOrderIdReorderRoute: ApiOrdersOrderIdReorderRoute,
+  ApiOrdersOrderIdStatusRoute: ApiOrdersOrderIdStatusRoute,
+  ApiOrdersOrderIdTrackRoute: ApiOrdersOrderIdTrackRoute,
+}
+
+const ApiOrdersOrderIdRouteWithChildren =
+  ApiOrdersOrderIdRoute._addFileChildren(ApiOrdersOrderIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  CheckoutRouteRoute: CheckoutRouteRouteWithChildren,
+  SellerRouteRoute: SellerRouteRouteWithChildren,
+  AccountRoute: AccountRoute,
   CartRoute: CartRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
   OrdersRoute: OrdersRoute,
+  RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   WishlistRoute: WishlistRoute,
+  BuyerOrdersRouteRoute: BuyerOrdersRouteRouteWithChildren,
   ApiSplatRoute: ApiSplatRoute,
+  ApiStockAlertsRoute: ApiStockAlertsRouteWithChildren,
+  AuthSetPasswordRoute: AuthSetPasswordRoute,
+  BuyerNotificationsRoute: BuyerNotificationsRoute,
+  BuyerRfqsRoute: BuyerRfqsRouteWithChildren,
   CategoriesCategorySlugRoute: CategoriesCategorySlugRoute,
   DemoDbChatRoute: DemoDbChatRoute,
   DemoDbChatApiRoute: DemoDbChatApiRoute,
   DemoDrizzleRoute: DemoDrizzleRoute,
-  DemoOrpcTodoRoute: DemoOrpcTodoRoute,
+  DemoHonoTodoRoute: DemoHonoTodoRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  MockPaymentBkashRoute: MockPaymentBkashRoute,
+  OrderConfirmationOrderIdRoute: OrderConfirmationOrderIdRoute,
   ProductsProductSlugRoute: ProductsProductSlugRoute,
-  ApiRpcSplatRoute: ApiRpcSplatRoute,
+  SupplierDashboardRoute: SupplierDashboardRoute,
+  SupplierRfqsRoute: SupplierRfqsRoute,
+  QuotesIndexRoute: QuotesIndexRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiCartUserIdRoute: ApiCartUserIdRoute,
+  ApiCartAddRoute: ApiCartAddRoute,
+  ApiCartValidateCouponRoute: ApiCartValidateCouponRoute,
+  ApiOrdersOrderIdRoute: ApiOrdersOrderIdRouteWithChildren,
+  ApiRfqSubmitRoute: ApiRfqSubmitRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoApiTqTodosRoute: DemoApiTqTodosRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
+  ApiCartItemItemIdRoute: ApiCartItemItemIdRoute,
+  ApiOrdersBuyerBuyerIdRoute: ApiOrdersBuyerBuyerIdRoute,
+  ApiRfqRfqIdQuoteRoute: ApiRfqRfqIdQuoteRoute,
+  ApiRfqRfqIdQuotesRoute: ApiRfqRfqIdQuotesRoute,
+  ApiRfqBuyerBuyerIdRoute: ApiRfqBuyerBuyerIdRoute,
+  ApiRfqSupplierSupplierIdRoute: ApiRfqSupplierSupplierIdRoute,
   DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
   DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
   DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
   DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
+  ApiRfqQuoteQuoteIdAcceptRoute: ApiRfqQuoteQuoteIdAcceptRoute,
+  ApiRfqQuoteQuoteIdCounterRoute: ApiRfqQuoteQuoteIdCounterRoute,
+  ApiRfqQuoteQuoteIdRejectRoute: ApiRfqQuoteQuoteIdRejectRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

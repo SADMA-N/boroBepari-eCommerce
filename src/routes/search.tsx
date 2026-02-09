@@ -1,12 +1,12 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ChevronRight,
-  SlidersHorizontal,
   Grid3X3,
   List,
-  X,
   Search,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
 import FilterSidebar from '../components/FilterSidebar'
@@ -15,12 +15,12 @@ import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import { FeaturedProductsGridSkeleton } from '../components/FeaturedProductsGrid'
 import {
-  filterProducts,
-  mockCategories,
-  getFeaturedProducts,
-  type ProductFilters,
-  type MockProduct,
-} from '../data/mock-products'
+  searchProducts,
+  getFeaturedProducts as getDbFeaturedProducts,
+} from '../lib/product-server'
+import type { ProductWithSupplier } from '../lib/product-server'
+import { mockCategories } from '../data/mock-products'
+import type { ProductFilters } from '../data/mock-products'
 
 interface SearchParams {
   q?: string
@@ -58,29 +58,32 @@ function SearchPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [isLoading, setIsLoading] = useState(false)
-  const [products, setProducts] = useState<MockProduct[]>([])
-  
+  const [products, setProducts] = useState<Array<ProductWithSupplier>>([])
+
   // Recommendations state
-  const [recommendations, setRecommendations] = useState<MockProduct[]>([])
+  const [recommendations, setRecommendations] = useState<
+    Array<ProductWithSupplier>
+  >([])
 
   // Quick View & Toast State
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null)
+  const [quickViewProduct, setQuickViewProduct] =
+    useState<ProductWithSupplier | null>(null)
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
   })
 
-  const handleQuickView = (product: MockProduct) => {
+  const handleQuickView = (product: ProductWithSupplier) => {
     setQuickViewProduct(product)
   }
 
-  const handleAddToCart = (product: MockProduct, quantity: number) => {
+  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
     // In a real app, this would dispatch to a cart store
     console.log(`Added ${quantity} of ${product.name} to cart`)
-    
+
     setQuickViewProduct(null)
     setToast({
-      message: `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
+      message: `Added ${quantity} of "${product.name}" to cart`,
       isVisible: true,
     })
   }
@@ -98,22 +101,36 @@ function SearchPage() {
       verifiedOnly: search.verifiedOnly === 'true',
       sortBy: search.sortBy as ProductFilters['sortBy'],
     }),
-    [search]
+    [search],
   )
 
-  // Debounced filter update
+  // Debounced filter update using real DB search
   useEffect(() => {
     setIsLoading(true)
     const timer = setTimeout(() => {
-      const filtered = filterProducts(filters)
-      setProducts(filtered)
-      
-      // Load recommendations if no results
-      if (filtered.length === 0) {
-         setRecommendations(getFeaturedProducts().slice(0, 8))
-      }
-      
-      setIsLoading(false)
+      searchProducts({
+        data: {
+          query: filters.search || undefined,
+          categoryId: filters.categoryId,
+          minPrice: filters.minPrice,
+          maxPrice: filters.maxPrice,
+          sortBy: filters.sortBy,
+          limit: 50,
+        },
+      })
+        .then((results) => {
+          setProducts(results)
+          if (results.length === 0) {
+            getDbFeaturedProducts({ data: 8 }).then((featured) => {
+              setRecommendations(featured)
+            })
+          }
+        })
+        .catch((err) => {
+          console.error('Search error:', err)
+          setProducts([])
+        })
+        .finally(() => setIsLoading(false))
     }, 300)
 
     return () => clearTimeout(timer)
@@ -125,13 +142,16 @@ function SearchPage() {
       const newSearch: Record<string, string> = {}
 
       if (newFilters.search) newSearch.q = newFilters.search
-      if (newFilters.categoryId) newSearch.category = String(newFilters.categoryId)
+      if (newFilters.categoryId)
+        newSearch.category = String(newFilters.categoryId)
       if (newFilters.minPrice !== undefined)
         newSearch.minPrice = String(newFilters.minPrice)
       if (newFilters.maxPrice !== undefined)
         newSearch.maxPrice = String(newFilters.maxPrice)
-      if (newFilters.minMoq !== undefined) newSearch.minMoq = String(newFilters.minMoq)
-      if (newFilters.maxMoq !== undefined) newSearch.maxMoq = String(newFilters.maxMoq)
+      if (newFilters.minMoq !== undefined)
+        newSearch.minMoq = String(newFilters.minMoq)
+      if (newFilters.maxMoq !== undefined)
+        newSearch.maxMoq = String(newFilters.maxMoq)
       if (newFilters.locations?.length)
         newSearch.locations = newFilters.locations.join(',')
       if (newFilters.verifiedOnly) newSearch.verifiedOnly = 'true'
@@ -143,7 +163,7 @@ function SearchPage() {
         replace: true,
       })
     },
-    [navigate]
+    [navigate],
   )
 
   // Pagination
@@ -152,7 +172,7 @@ function SearchPage() {
   const totalPages = Math.ceil(products.length / productsPerPage)
   const paginatedProducts = products.slice(
     (page - 1) * productsPerPage,
-    page * productsPerPage
+    page * productsPerPage,
   )
 
   const handlePageChange = (newPage: number) => {
@@ -167,37 +187,39 @@ function SearchPage() {
   const mainCategories = mockCategories.filter((c) => c.parentId === null)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors">
       {/* Breadcrumb */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-3">
           <nav className="flex items-center gap-2 text-sm">
-            <Link to="/" className="text-gray-500 hover:text-orange-500">
+            <Link
+              to="/"
+              className="text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+            >
               Home
             </Link>
-            <ChevronRight size={14} className="text-gray-400" />
-            <span className="text-gray-800 font-medium">Search Results</span>
+            <ChevronRight
+              size={14}
+              className="text-gray-400 dark:text-gray-600"
+            />
+            <span className="text-gray-800 dark:text-gray-200 font-medium transition-colors">
+              Search Results
+            </span>
           </nav>
         </div>
       </div>
 
       {/* Search Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
         <div className="max-w-[1440px] mx-auto px-6 py-6">
           <div className="flex items-center gap-2">
-            <Search size={24} className="text-gray-400" />
-            <h1 className="text-2xl font-bold text-gray-800">
-              {search.q ? (
-                <>
-                  Search results for "{search.q}"
-                </>
-              ) : (
-                'All Products'
-              )}
+            <Search size={24} className="text-gray-400 dark:text-gray-500" />
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 transition-colors">
+              {search.q ? <>Search results for "{search.q}"</> : 'All Products'}
             </h1>
           </div>
           {products.length > 0 && (
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-600 dark:text-gray-400 mt-2 transition-colors">
               Found {products.length} product{products.length !== 1 ? 's' : ''}
             </p>
           )}
@@ -208,10 +230,10 @@ function SearchPage() {
               onClick={() =>
                 handleFiltersChange({ ...filters, categoryId: undefined })
               }
-              className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
+              className={`px-3 py-1.5 text-sm rounded-full transition-all ${
                 !filters.categoryId
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-orange-100 hover:text-orange-600'
+                  ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                  : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-400'
               }`}
             >
               All Categories
@@ -222,10 +244,10 @@ function SearchPage() {
                 onClick={() =>
                   handleFiltersChange({ ...filters, categoryId: category.id })
                 }
-                className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-full transition-all ${
                   filters.categoryId === category.id
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-orange-100 hover:text-orange-600'
+                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                    : 'bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-400'
                 }`}
               >
                 {category.name}
@@ -251,42 +273,44 @@ function SearchPage() {
           {/* Product Grid */}
           <div className="flex-1">
             {/* Toolbar */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-4">
+            <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-4 mb-4 transition-colors">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 {/* Results count */}
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">{products.length}</span> products
-                  found
+                <p className="text-sm text-gray-600 dark:text-gray-400 transition-colors">
+                  <span className="font-medium text-gray-900 dark:text-gray-200">
+                    {products.length}
+                  </span>{' '}
+                  products found
                 </p>
 
                 <div className="flex items-center gap-4">
                   {/* Mobile Filter Button */}
                   <button
                     onClick={() => setIsFilterOpen(true)}
-                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50"
+                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors text-gray-700 dark:text-gray-300"
                   >
                     <SlidersHorizontal size={18} />
                     Filters
                   </button>
 
                   {/* View Mode Toggle */}
-                  <div className="flex items-center gap-1 border border-gray-200 rounded-lg p-1">
+                  <div className="flex items-center gap-1 border border-gray-200 dark:border-slate-800 rounded-lg p-1">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-1.5 rounded ${
+                      className={`p-1.5 rounded transition-colors ${
                         viewMode === 'grid'
                           ? 'bg-orange-500 text-white'
-                          : 'text-gray-500 hover:bg-gray-100'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <Grid3X3 size={18} />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-1.5 rounded ${
+                      className={`p-1.5 rounded transition-colors ${
                         viewMode === 'list'
                           ? 'bg-orange-500 text-white'
-                          : 'text-gray-500 hover:bg-gray-100'
+                          : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <List size={18} />
@@ -299,10 +323,12 @@ function SearchPage() {
                     onChange={(e) =>
                       handleFiltersChange({
                         ...filters,
-                        sortBy: (e.target.value as ProductFilters['sortBy']) || undefined,
+                        sortBy:
+                          (e.target.value as ProductFilters['sortBy']) ||
+                          undefined,
                       })
                     }
-                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    className="px-3 py-2 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-lg text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-orange-500 transition-colors"
                   >
                     <option value="">Sort by: Default</option>
                     <option value="price-asc">Price: Low to High</option>
@@ -361,7 +387,7 @@ function SearchPage() {
                         handleFiltersChange({
                           ...filters,
                           locations: filters.locations?.filter(
-                            (l) => l !== location
+                            (l) => l !== location,
                           ),
                         })
                       }
@@ -379,7 +405,7 @@ function SearchPage() {
                     onClick={() =>
                       handleFiltersChange({ search: filters.search })
                     }
-                    className="text-sm text-orange-500 hover:text-orange-600"
+                    className="text-sm text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 transition-colors font-medium"
                   >
                     Clear all
                   </button>
@@ -392,13 +418,16 @@ function SearchPage() {
               <FeaturedProductsGridSkeleton count={12} />
             ) : products.length === 0 ? (
               <div className="space-y-12">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-12 text-center">
-                  <Search size={48} className="mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-500 text-lg mb-2">
+                <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-12 text-center transition-colors">
+                  <Search
+                    size={48}
+                    className="mx-auto text-gray-300 dark:text-gray-700 mb-4"
+                  />
+                  <p className="text-gray-500 dark:text-gray-400 text-lg mb-2 transition-colors">
                     No products found
                     {search.q && ` for "${search.q}"`}
                   </p>
-                  <p className="text-gray-400 text-sm mb-4">
+                  <p className="text-gray-400 dark:text-gray-500 text-sm mb-4 transition-colors">
                     Try adjusting your search or filters
                   </p>
                   {(filters.minPrice ||
@@ -409,7 +438,7 @@ function SearchPage() {
                       onClick={() =>
                         handleFiltersChange({ search: filters.search })
                       }
-                      className="text-orange-500 hover:text-orange-600 font-medium"
+                      className="text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 font-medium transition-colors"
                     >
                       Clear all filters
                     </button>
@@ -418,14 +447,20 @@ function SearchPage() {
 
                 {/* Recommendations */}
                 {recommendations.length > 0 && (
-                   <div>
-                     <h2 className="text-xl font-bold text-gray-800 mb-6">You Might Also Like</h2>
-                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                       {recommendations.map(product => (
-                         <ProductCard key={product.id} product={product} onQuickView={handleQuickView} />
-                       ))}
-                     </div>
-                   </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 transition-colors">
+                      You Might Also Like
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {recommendations.map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          onQuickView={handleQuickView}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
@@ -438,7 +473,11 @@ function SearchPage() {
                   }
                 >
                   {paginatedProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} onQuickView={handleQuickView} />
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onQuickView={handleQuickView}
+                    />
                   ))}
                 </div>
 
@@ -448,7 +487,7 @@ function SearchPage() {
                     <button
                       onClick={() => handlePageChange(page - 1)}
                       disabled={page === 1}
-                      className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Previous
                     </button>
@@ -467,10 +506,10 @@ function SearchPage() {
                         <button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          className={`w-10 h-10 rounded-lg ${
+                          className={`w-10 h-10 rounded-lg transition-all ${
                             page === pageNum
-                              ? 'bg-orange-500 text-white'
-                              : 'border border-gray-200 hover:bg-gray-50'
+                              ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
+                              : 'border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800'
                           }`}
                         >
                           {pageNum}
@@ -480,7 +519,7 @@ function SearchPage() {
                     <button
                       onClick={() => handlePageChange(page + 1)}
                       disabled={page === totalPages}
-                      className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                     >
                       Next
                     </button>
@@ -515,7 +554,7 @@ function SearchPage() {
       <Toast
         message={toast.message}
         isVisible={toast.isVisible}
-        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+        onClose={() => setToast((prev) => ({ ...prev, isVisible: false }))}
       />
     </div>
   )
@@ -529,9 +568,12 @@ function FilterTag({
   onRemove: () => void
 }) {
   return (
-    <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 text-sm rounded-full">
+    <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 text-sm rounded-full transition-colors border border-orange-200 dark:border-orange-900/50">
       {label}
-      <button onClick={onRemove} className="hover:text-orange-900">
+      <button
+        onClick={onRemove}
+        className="hover:text-orange-900 dark:hover:text-orange-200 transition-colors"
+      >
         <X size={14} />
       </button>
     </span>

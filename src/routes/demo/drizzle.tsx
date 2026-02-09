@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db/index'
 import { desc } from 'drizzle-orm'
+import { db } from '@/db/index'
 import { todos } from '@/db/schema'
 
 const getTodos = createServerFn({
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/demo/drizzle')({
 
 function DemoDrizzle() {
   const router = useRouter()
-  const todos = Route.useLoaderData()
+  const todoList = Route.useLoaderData()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -88,7 +88,7 @@ function DemoDrizzle() {
         <h2 className="text-2xl font-bold mb-4 text-indigo-200">Todos</h2>
 
         <ul className="space-y-3 mb-6">
-          {todos.map((todo) => (
+          {todoList.map((todo) => (
             <li
               key={todo.id}
               className="rounded-lg p-4 shadow-md border transition-all hover:scale-[1.02] cursor-pointer group"

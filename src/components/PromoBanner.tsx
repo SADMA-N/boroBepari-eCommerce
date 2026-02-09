@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
-import { promoBanners, type PromoBanner as PromoBannerType } from '../data/mock-products'
+import { promoBanners } from '../data/mock-products'
+import type { PromoBanner as PromoBannerType } from '../data/mock-products'
 
 interface PromoBannersProps {
-  banners?: PromoBannerType[]
+  banners?: Array<PromoBannerType>
 }
 
 export default function PromoBanners({
@@ -14,14 +15,14 @@ export default function PromoBanners({
         <Link
           key={banner.id}
           to={banner.link}
-          className="relative group overflow-hidden rounded-lg"
+          className="relative group overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all"
         >
           <img
             src={banner.image}
             alt={banner.title}
             className="w-full h-32 sm:h-40 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           <div className="absolute bottom-0 left-0 p-4">
             <h3 className="text-white font-bold text-lg">{banner.title}</h3>
           </div>
@@ -53,7 +54,9 @@ export function PromoStrip({
         <div className="text-center sm:text-left">
           <h3 className="text-white font-bold text-xl sm:text-2xl">{title}</h3>
           {subtitle && (
-            <p className="text-white/90 text-sm sm:text-base mt-1">{subtitle}</p>
+            <p className="text-white/90 text-sm sm:text-base mt-1">
+              {subtitle}
+            </p>
           )}
         </div>
         <Link
@@ -69,7 +72,7 @@ export function PromoStrip({
 
 // Frequently searched keywords
 interface FrequentlySearchedProps {
-  keywords: string[]
+  keywords: Array<string>
   title?: string
 }
 
@@ -78,15 +81,17 @@ export function FrequentlySearched({
   title = 'Frequently Searched',
 }: FrequentlySearchedProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-      <h3 className="font-semibold text-gray-800 mb-3">{title}</h3>
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-4 transition-colors">
+      <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-3 transition-colors">
+        {title}
+      </h3>
       <div className="flex flex-wrap gap-2">
         {keywords.map((keyword, index) => (
           <Link
             key={index}
             to="/search"
             search={{ q: keyword }}
-            className="px-3 py-1.5 bg-gray-100 hover:bg-orange-100 hover:text-orange-600 text-gray-700 text-sm rounded-full transition-colors"
+            className="px-3 py-1.5 bg-gray-100 dark:bg-slate-800 hover:bg-orange-100 dark:hover:bg-orange-950/20 hover:text-orange-600 dark:hover:text-orange-400 text-gray-700 dark:text-gray-300 text-sm rounded-full transition-all"
           >
             {keyword}
           </Link>

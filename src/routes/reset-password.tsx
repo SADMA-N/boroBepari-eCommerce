@@ -1,0 +1,300 @@
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import {
+  Check,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  RefreshCw,
+  Sparkles,
+  X,
+} from 'lucide-react'
+import { authClient } from '@/lib/auth-client'
+
+export const Route = createFileRoute('/reset-password')({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      token: search.token as string | undefined,
+      email: search.email as string | undefined,
+    }
+  },
+  component: ResetPasswordPage,
+})
+
+function ResetPasswordPage() {
+  const router = useRouter()
+  const { token, email } = Route.useSearch()
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [showGenerationMessage, setShowGenerationMessage] = useState(false)
+
+  // Validation states
+  const [valLength, setValLength] = useState(false)
+  const [valAlpha, setValAlpha] = useState(false)
+  const [valNum, setValNum] = useState(false)
+  const [valMatch, setValMatch] = useState(false)
+
+  useEffect(() => {
+    setValLength(password.length >= 8)
+    setValAlpha(/[a-zA-Z]/.test(password))
+    setValNum(/[0-9]/.test(password))
+    setValMatch(password === confirmPassword && password !== '')
+  }, [password, confirmPassword])
+
+  const isPasswordValid = valLength && valAlpha && valNum && valMatch
+
+  const generateStrongPassword = () => {
+    setIsGenerating(true)
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+'
+    let retVal = ''
+
+    retVal += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)]
+    retVal += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)]
+    retVal += '0123456789'[Math.floor(Math.random() * 10)]
+    retVal += '!@#$%^&*()_+'[Math.floor(Math.random() * 12)]
+
+    for (let i = 0; i < 8; i++) {
+      retVal += charset.charAt(Math.floor(Math.random() * charset.length))
+    }
+
+    retVal = retVal
+      .split('')
+      .sort(() => 0.5 - Math.random())
+      .join('')
+
+    setPassword(retVal)
+    setConfirmPassword(retVal)
+    setShowPassword(true)
+    setShowGenerationMessage(true)
+    setTimeout(() => setIsGenerating(false), 500)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!token) {
+      setError('Invalid or missing reset token.')
+      return
+    }
+
+    setIsLoading(true)
+    setError('')
+
+    const { error: resError } = await authClient.resetPassword({
+      newPassword: password,
+      token,
+    })
+
+    if (resError) {
+      setError(
+        resError.message ||
+          'Failed to reset password. The link may have expired.',
+      )
+      setIsLoading(false)
+    } else {
+      setIsSuccess(true)
+      setIsLoading(false)
+      setTimeout(() => {
+        router.navigate({ to: '/login' })
+      }, 3000)
+    }
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 transition-colors">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-10 text-center border border-gray-100 dark:border-slate-800 transition-colors">
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-6 transition-colors">
+            <Check className="h-10 w-10 text-green-600 dark:text-green-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
+            Password Reset Successful
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8 text-sm transition-colors">
+            Your password has been updated. You will be redirected to the login
+            page in a few seconds.
+          </p>
+          <button
+            onClick={() => router.navigate({ to: '/login' })}
+            className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-all shadow-sm shadow-orange-600/20"
+          >
+            Go to Login Now
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 px-4 py-12 transition-colors">
+      <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100 dark:border-slate-800 transition-colors">
+        <div className="text-center mb-8">
+          <div className="mx-auto h-12 w-12 bg-orange-100 dark:bg-orange-900/20 rounded-xl flex items-center justify-center mb-4 transition-colors">
+            <Lock className="h-6 w-6 text-orange-600 dark:text-orange-500" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white transition-colors">
+            Reset Password
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 transition-colors">
+            Create a new strong password for your account.
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-lg text-center font-medium animate-in fade-in slide-in-from-top-1 transition-colors">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {email && (
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 ml-1 transition-colors">
+                Email Address
+              </label>
+              <input
+                type="email"
+                readOnly
+                disabled
+                className="appearance-none block w-full px-4 py-3 bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-400 rounded-xl focus:outline-none cursor-not-allowed sm:text-sm font-medium transition-colors"
+                value={decodeURIComponent(email)}
+              />
+            </div>
+          )}
+
+          <div>
+            <div className="flex justify-between items-center mb-1 ml-1">
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors">
+                New Password
+              </label>
+              <button
+                type="button"
+                onClick={generateStrongPassword}
+                className="text-[10px] font-bold text-orange-600 dark:text-orange-500 hover:text-orange-700 dark:hover:text-orange-400 flex items-center gap-1 uppercase tracking-tight transition-colors"
+              >
+                {isGenerating ? (
+                  <RefreshCw className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3 w-3" />
+                )}
+                Skip & Auto-generate
+              </button>
+            </div>
+            <div className="relative group">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                className="appearance-none block w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm pr-12"
+                placeholder="Enter new password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  setShowGenerationMessage(false)
+                }}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-orange-600 dark:hover:text-orange-500 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {showGenerationMessage && (
+              <div className="mt-2 text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 px-3 py-2 rounded-lg animate-in fade-in zoom-in-95 duration-300 transition-colors">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-3 w-3" />
+                  <span>
+                    System generated strong password. Save it or edit it.
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 ml-1 transition-colors">
+              Confirm New Password
+            </label>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              required
+              className="appearance-none block w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all sm:text-sm"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
+          {/* Validation Checklist */}
+          <div className="p-4 bg-gray-50 dark:bg-slate-800/50 rounded-xl space-y-2 border border-gray-100 dark:border-slate-800 transition-colors">
+            <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 transition-colors">
+              Requirements
+            </p>
+            <div className="flex flex-col gap-2">
+              <RequirementItem
+                isValid={valLength}
+                text="At least 8 characters"
+              />
+              <RequirementItem
+                isValid={valAlpha}
+                text="Include at least one letter"
+              />
+              <RequirementItem
+                isValid={valNum}
+                text="Include at least one number"
+              />
+              <RequirementItem isValid={valMatch} text="Passwords must match" />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!isPasswordValid || isLoading}
+            className={`w-full py-3.5 rounded-xl text-white font-bold shadow-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 ${
+              isPasswordValid && !isLoading
+                ? 'bg-orange-600 hover:bg-orange-700 cursor-pointer shadow-orange-600/20'
+                : 'bg-gray-300 dark:bg-slate-800 text-gray-500 dark:text-gray-600 cursor-not-allowed'
+            }`}
+          >
+            {isLoading ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              'Save New Password'
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+function RequirementItem({
+  isValid,
+  text,
+}: {
+  isValid: boolean
+  text: string
+}) {
+  return (
+    <div className="flex items-center gap-2 transition-colors">
+      {isValid ? (
+        <Check className="h-3.5 w-3.5 text-green-500 dark:text-green-400 font-bold" />
+      ) : (
+        <div className="h-3.5 w-3.5 rounded-full border border-gray-300 dark:border-slate-700" />
+      )}
+      <span
+        className={`text-xs transition-colors ${isValid ? 'text-gray-900 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-600'}`}
+      >
+        {text}
+      </span>
+    </div>
+  )
+}

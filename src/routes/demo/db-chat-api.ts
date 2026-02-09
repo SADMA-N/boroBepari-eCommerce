@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
 
 import {
   createCollection,
@@ -76,7 +75,7 @@ export const Route = createFileRoute('/demo/db-chat-api')({
           return new Response(message.error.message, { status: 400 })
         }
         sendMessage(message.data)
-        return json(message.data)
+        return Response.json(message.data)
       },
     },
   },

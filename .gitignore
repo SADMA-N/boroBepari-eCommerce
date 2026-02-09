@@ -11,3 +11,29 @@ count.txt
 .output
 .vinxi
 todos.json
+img/
+CLAUDE.md
+GEMINI.md
+AGENTS.md
+.github/copilot-instructions.md
+# Chrome DevTools performance traces
+trace.json
+*.trace.json
+dist-check.png
+dev_output.log
+node_modules/
+
+# Logs
+*.log
+curl_output.txt
+.vscode/
+
+# Scripts
+get-docker.sh
+prompt.txt
+
+# Local Tooling & Data
+.gemini/
+public/uploads/
+supabase/snippets/
+docs/
