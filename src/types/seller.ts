@@ -39,7 +39,7 @@ export interface SellerRegisterData {
   yearsInBusiness?: string
   fullName: string
   email: string
-  phone: string
+  phone: string | null
   address: string
   city: string
   postalCode: string

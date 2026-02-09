@@ -101,10 +101,18 @@ function ReviewPage() {
 
       setDebugStep('Preparing order data')
       // 2. Prepare Order Data
-      const depositAmount =
-        state.paymentMethod === 'deposit' ? Math.ceil(cart.total * 0.3) : 0
-      const balanceDue =
-        state.paymentMethod === 'deposit' ? cart.total - depositAmount : 0
+      // Calculate deposit based on item-level deposit settings (from RFQs) or fallback to 30% if method is 'deposit'
+      const totalDeposit = cart.items.reduce((acc, item) => {
+        const itemDepositRate = (item.depositPercentage ?? 0) / 100
+        // If specific deposit percentage is set (from RFQ), use it. 
+        // If payment method is 'deposit' but item has 0 (standard product), assume 30%?
+        // Actually, if method is 'deposit', we apply it to everything.
+        const effectiveRate = itemDepositRate > 0 ? itemDepositRate : (state.paymentMethod === 'deposit' ? 0.3 : 0)
+        return acc + (item.lineTotal * effectiveRate)
+      }, 0)
+
+      const depositAmount = Math.ceil(totalDeposit)
+      const balanceDue = cart.total - depositAmount
 
       setDebugStep('Creating order')
       // 3. Create Order in DB
@@ -246,10 +254,16 @@ function ReviewPage() {
               <p className="text-sm font-medium text-gray-900">
                 {getPaymentMethodLabel(state.paymentMethod)}
               </p>
-              {state.paymentMethod === 'deposit' && (
-                <p className="text-xs text-orange-600 font-medium mt-1">
-                  Paying 30% Deposit Now
-                </p>
+              {(state.paymentMethod === 'deposit' || cart.items.some(i => (i.depositPercentage ?? 0) > 0)) && (
+                <div className="mt-2 p-3 bg-orange-50 rounded-lg border border-orange-100 max-w-sm">
+                  <p className="text-xs text-orange-800 font-bold">Advance Payment Details</p>
+                  <p className="text-[11px] text-orange-700 mt-1">
+                    Order Total: {formatCurrency(cart.total)}
+                  </p>
+                  <p className="text-sm text-orange-600 font-bold mt-0.5">
+                    Pay Now: {formatCurrency(cart.items.reduce((acc, i) => acc + (i.lineTotal * (i.depositPercentage || (state.paymentMethod === 'deposit' ? 30 : 0)) / 100), 0))}
+                  </p>
+                </div>
               )}
               {state.poNumber && (
                 <p className="text-xs text-gray-500 mt-1">

@@ -74,7 +74,8 @@ function PaymentPage() {
 
   // Calculations
   const total = cart.total
-  const depositAmount = Math.ceil(total * 0.3)
+  const rfqDepositRate = cart.items.find(i => (i.depositPercentage ?? 0) > 0)?.depositPercentage
+  const depositAmount = Math.ceil(total * (rfqDepositRate ? rfqDepositRate / 100 : 0.3))
   const balanceDue = total - depositAmount
 
   const paymentOptions = [
@@ -102,13 +103,13 @@ function PaymentPage() {
     },
     {
       id: 'deposit' as PaymentMethod,
-      title: '30% Deposit',
-      description: 'Pay 30% now, rest on delivery',
+      title: rfqDepositRate ? `${rfqDepositRate}% Deposit` : '30% Deposit',
+      description: `Pay ${rfqDepositRate || 30}% now, rest on delivery`,
       icon: Percent,
       details: (
         <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded border border-gray-100">
           <div className="flex justify-between mb-1">
-            <span>Deposit (30%):</span>
+            <span>Deposit ({rfqDepositRate || 30}%):</span>
             <span className="font-bold text-orange-600">
               {formatCurrency(depositAmount)}
             </span>
@@ -166,6 +167,11 @@ function PaymentPage() {
   } else if (selectedMethod === 'cod') {
     dueLater = total
   }
+
+  // Handle case where RFQ item already has a forced deposit requirement
+  // Even if user selects COD or Full, we should probably follow the quote terms?
+  // Usually, if a quote says 30% deposit, it MUST be paid. 
+  // Let's stick to the selected method for now but show the info correctly.
 
   return (
     <CheckoutLayout currentStep="payment">

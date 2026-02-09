@@ -61,12 +61,12 @@ export function AddressFormModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="px-6 py-4 border-b dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700"
           >
             <X size={20} />
           </button>
@@ -85,7 +85,7 @@ export function AddressFormModal({
             <form.Field name="name">
               {(field) => (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">
                     Address Label
                   </label>
                   <div className="grid grid-cols-4 gap-2">
@@ -98,8 +98,8 @@ export function AddressFormModal({
                           flex flex-col items-center justify-center gap-1 py-2 rounded-lg border text-xs font-medium transition-all
                           ${
                             field.state.value === value
-                              ? 'border-orange-500 bg-orange-50 text-orange-700 ring-1 ring-orange-500'
-                              : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:border-gray-300'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 ring-1 ring-orange-500'
+                              : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300'
                           }
                         `}
                       >
@@ -116,7 +116,7 @@ export function AddressFormModal({
             <form.Field name="address">
               {(field) => (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                     Full Address
                   </label>
                   <textarea
@@ -124,7 +124,7 @@ export function AddressFormModal({
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="Street, House No, Flat No"
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm resize-none border-gray-300"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm resize-none border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                   />
                   {field.state.meta.errors[0] && (
                     <p className="text-red-500 text-xs mt-1">
@@ -140,14 +140,14 @@ export function AddressFormModal({
               <form.Field name="city">
                 {(field) => (
                   <div>
-                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                       City
                     </label>
                     <input
                       type="text"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                     />
                     {field.state.meta.errors[0] && (
                       <p className="text-red-500 text-xs mt-1">
@@ -162,14 +162,14 @@ export function AddressFormModal({
               <form.Field name="postcode">
                 {(field) => (
                   <div>
-                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                    <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                       Postal Code
                     </label>
                     <input
                       type="text"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                     />
                     {field.state.meta.errors[0] && (
                       <p className="text-red-500 text-xs mt-1">
@@ -185,14 +185,14 @@ export function AddressFormModal({
             <form.Field name="phone">
               {(field) => (
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300"
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                   />
                   {field.state.meta.errors[0] && (
                     <p className="text-red-500 text-xs mt-1">
@@ -212,9 +212,9 @@ export function AddressFormModal({
                     id="isDefault"
                     checked={field.state.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
-                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                    className="w-4 h-4 text-orange-600 border-gray-300 dark:border-slate-700 rounded focus:ring-orange-500"
                   />
-                  <label htmlFor="isDefault" className="text-sm text-gray-700">
+                  <label htmlFor="isDefault" className="text-sm text-gray-700 dark:text-gray-300">
                     Set as default address
                   </label>
                 </div>

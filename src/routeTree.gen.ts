@@ -70,6 +70,7 @@ import { Route as SellerProductsIndexRouteImport } from './routes/seller/product
 import { Route as SellerPayoutsIndexRouteImport } from './routes/seller/payouts/index'
 import { Route as SellerOrdersIndexRouteImport } from './routes/seller/orders/index'
 import { Route as SellerAnalyticsIndexRouteImport } from './routes/seller/analytics/index'
+import { Route as BuyerRfqsIndexRouteImport } from './routes/buyer/rfqs/index'
 import { Route as BuyerOrdersIndexRouteImport } from './routes/buyer/orders/index'
 import { Route as SellerProductsAddRouteImport } from './routes/seller/products/add'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
@@ -411,6 +412,11 @@ const SellerAnalyticsIndexRoute = SellerAnalyticsIndexRouteImport.update({
   path: '/analytics/',
   getParentRoute: () => SellerRouteRoute,
 } as any)
+const BuyerRfqsIndexRoute = BuyerRfqsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerRfqsRoute,
+} as any)
 const BuyerOrdersIndexRoute = BuyerOrdersIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -660,6 +666,7 @@ export interface FileRoutesByFullPath {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/buyer/rfqs/': typeof BuyerRfqsIndexRoute
   '/seller/analytics/': typeof SellerAnalyticsIndexRoute
   '/seller/orders/': typeof SellerOrdersIndexRoute
   '/seller/payouts/': typeof SellerPayoutsIndexRoute
@@ -707,7 +714,6 @@ export interface FileRoutesByTo {
   '/api/stock-alerts': typeof ApiStockAlertsRouteWithChildren
   '/auth/set-password': typeof AuthSetPasswordRoute
   '/buyer/notifications': typeof BuyerNotificationsRoute
-  '/buyer/rfqs': typeof BuyerRfqsRouteWithChildren
   '/categories/$categorySlug': typeof CategoriesCategorySlugRoute
   '/checkout/payment': typeof CheckoutPaymentRoute
   '/checkout/payment-callback': typeof CheckoutPaymentCallbackRoute
@@ -753,6 +759,7 @@ export interface FileRoutesByTo {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders': typeof BuyerOrdersIndexRoute
+  '/buyer/rfqs': typeof BuyerRfqsIndexRoute
   '/seller/analytics': typeof SellerAnalyticsIndexRoute
   '/seller/orders': typeof SellerOrdersIndexRoute
   '/seller/payouts': typeof SellerPayoutsIndexRoute
@@ -851,6 +858,7 @@ export interface FileRoutesById {
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
   '/seller/products/add': typeof SellerProductsAddRoute
   '/buyer/orders/': typeof BuyerOrdersIndexRoute
+  '/buyer/rfqs/': typeof BuyerRfqsIndexRoute
   '/seller/analytics/': typeof SellerAnalyticsIndexRoute
   '/seller/orders/': typeof SellerOrdersIndexRoute
   '/seller/payouts/': typeof SellerPayoutsIndexRoute
@@ -950,6 +958,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders/'
+    | '/buyer/rfqs/'
     | '/seller/analytics/'
     | '/seller/orders/'
     | '/seller/payouts/'
@@ -997,7 +1006,6 @@ export interface FileRouteTypes {
     | '/api/stock-alerts'
     | '/auth/set-password'
     | '/buyer/notifications'
-    | '/buyer/rfqs'
     | '/categories/$categorySlug'
     | '/checkout/payment'
     | '/checkout/payment-callback'
@@ -1043,6 +1051,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders'
+    | '/buyer/rfqs'
     | '/seller/analytics'
     | '/seller/orders'
     | '/seller/payouts'
@@ -1140,6 +1149,7 @@ export interface FileRouteTypes {
     | '/demo/start/server-funcs'
     | '/seller/products/add'
     | '/buyer/orders/'
+    | '/buyer/rfqs/'
     | '/seller/analytics/'
     | '/seller/orders/'
     | '/seller/payouts/'
@@ -1653,6 +1663,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellerAnalyticsIndexRouteImport
       parentRoute: typeof SellerRouteRoute
     }
+    '/buyer/rfqs/': {
+      id: '/buyer/rfqs/'
+      path: '/'
+      fullPath: '/buyer/rfqs/'
+      preLoaderRoute: typeof BuyerRfqsIndexRouteImport
+      parentRoute: typeof BuyerRfqsRoute
+    }
     '/buyer/orders/': {
       id: '/buyer/orders/'
       path: '/'
@@ -2011,10 +2028,12 @@ const ApiStockAlertsRouteWithChildren = ApiStockAlertsRoute._addFileChildren(
 
 interface BuyerRfqsRouteChildren {
   BuyerRfqsRfqIdRoute: typeof BuyerRfqsRfqIdRoute
+  BuyerRfqsIndexRoute: typeof BuyerRfqsIndexRoute
 }
 
 const BuyerRfqsRouteChildren: BuyerRfqsRouteChildren = {
   BuyerRfqsRfqIdRoute: BuyerRfqsRfqIdRoute,
+  BuyerRfqsIndexRoute: BuyerRfqsIndexRoute,
 }
 
 const BuyerRfqsRouteWithChildren = BuyerRfqsRoute._addFileChildren(

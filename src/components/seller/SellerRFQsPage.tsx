@@ -183,9 +183,9 @@ export function SellerRFQsPage() {
   }, [filtered, page])
 
   const analytics = useMemo(() => {
-    const responded = rfqs.filter((rfq) => rfq.status !== 'New').length
+    const responded = rfqs.filter((rfq) => rfq.status !== 'pending').length
     const accepted = rfqs.filter(
-      (rfq) => rfq.status === 'Accepted' || rfq.status === 'Converted',
+      (rfq) => rfq.status === 'accepted' || rfq.status === 'converted',
     ).length
     const responseRate = Math.round((responded / rfqs.length) * 100) || 0
     const acceptanceRate = Math.round((accepted / rfqs.length) * 100) || 0
@@ -256,7 +256,7 @@ export function SellerRFQsPage() {
                   : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
-              {status}
+              {status.charAt(0).toUpperCase() + status.slice(1)}
               <span
                 className={`ml-2 rounded-full px-2 py-0.5 text-xs ${tab === status ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}
               >
@@ -326,9 +326,16 @@ export function SellerRFQsPage() {
                         className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
                       />
                       <div>
-                        <p className="text-sm text-slate-400 dark:text-gray-500">
-                          RFQ #{rfq.id}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm text-slate-400 dark:text-gray-500">
+                            RFQ #{rfq.id}
+                          </p>
+                          {rfq.quotes?.some((q: any) => q.status === 'countered') && (
+                            <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">
+                              Counter Received
+                            </span>
+                          )}
+                        </div>
                         <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
                           {rfq.product?.name}
                         </p>
@@ -346,6 +353,12 @@ export function SellerRFQsPage() {
                         label="Target Price"
                         value={`৳${rfq.targetPrice}`}
                       />
+                      {rfq.quotes?.find((q: any) => q.status === 'countered') && (
+                        <InfoItem
+                          label="Buyer's Counter"
+                          value={`৳${rfq.quotes.find((q: any) => q.status === 'countered').counterPrice}`}
+                        />
+                      )}
                       <InfoItem label="Location" value={rfq.deliveryLocation} />
                       <InfoItem 
                         label="Date" 
@@ -358,13 +371,13 @@ export function SellerRFQsPage() {
                       >
                         {rfq.status}
                       </span>
-                      {rfq.status === 'pending' && (
+                      {(rfq.status === 'pending' || rfq.quotes?.some((q: any) => q.status === 'countered')) && (
                         <button
                           type="button"
                           onClick={() => setQuoteModal(rfq)}
                           className="rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-lg shadow-orange-600/10"
                         >
-                          Send Quote
+                          {rfq.status === 'pending' ? 'Send Quote' : 'Respond to Counter'}
                         </button>
                       )}
                       <button
@@ -516,15 +529,15 @@ function SearchIcon() {
 }
 
 function statusBadge(status: RFQStatus) {
-  if (status === 'New')
+  if (status === 'pending')
     return 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
-  if (status === 'Quoted')
+  if (status === 'quoted')
     return 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
-  if (status === 'Accepted')
+  if (status === 'accepted')
     return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
-  if (status === 'Rejected')
+  if (status === 'rejected')
     return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-  if (status === 'Expired')
+  if (status === 'expired')
     return 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-gray-400'
   return 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
 }
@@ -534,10 +547,18 @@ function RFQDetailPanel({
   onClose,
   onSendQuote,
 }: {
-  rfq: RFQ
+  rfq: any
   onClose: () => void
   onSendQuote: () => void
 }) {
+  const hoursLeft = useMemo(() => {
+    if (!rfq?.expiresAt) return 0
+    const diff = new Date(rfq.expiresAt).getTime() - Date.now()
+    return Math.max(0, Math.floor(diff / (1000 * 60 * 60)))
+  }, [rfq?.expiresAt])
+
+  if (!rfq) return null
+
   return (
     <div
       className="fixed inset-0 z-50 flex justify-end bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-all"
@@ -547,7 +568,7 @@ function RFQDetailPanel({
       <div className="w-full max-w-xl bg-white dark:bg-slate-900 p-6 overflow-y-auto border-l border-slate-200 dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
-            {rfq.id}
+            RFQ #{rfq.id}
           </h2>
           <button
             onClick={onClose}
@@ -561,8 +582,8 @@ function RFQDetailPanel({
         <div className="mt-4 space-y-4">
           <div className="flex items-center gap-3">
             <img
-              src={rfq.productImage}
-              alt={rfq.product}
+              src={rfq.product?.images?.[0]}
+              alt={rfq.product?.name}
               className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
             />
             <div>
@@ -570,41 +591,43 @@ function RFQDetailPanel({
                 Product
               </p>
               <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
-                {rfq.product}
+                {rfq.product?.name}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 dark:text-gray-300">
-            <InfoItem label="Quantity" value={`${rfq.quantity}`} />
+            <InfoItem label="Quantity" value={`${rfq.quantity} ${rfq.product?.unit || 'units'}`} />
             <InfoItem label="Target Price" value={`৳${rfq.targetPrice}`} />
-            <InfoItem label="Delivery Location" value={rfq.location} />
-            <InfoItem label="Time remaining" value={`${rfq.hoursLeft} hours`} />
+            <InfoItem label="Delivery Location" value={rfq.deliveryLocation} />
+            <InfoItem label="Time remaining" value={`${hoursLeft} hours`} />
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
               Additional Notes
             </p>
             <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
-              {rfq.notes}
+              {rfq.notes || 'No additional notes provided.'}
             </p>
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
               Attachments
             </p>
-            {rfq.attachments.length === 0 ? (
+            {!rfq.attachments || rfq.attachments.length === 0 ? (
               <p className="text-sm text-slate-400 dark:text-gray-500 mt-1">
                 No attachments
               </p>
             ) : (
               <div className="mt-2 space-y-2">
-                {rfq.attachments.map((file) => (
+                {rfq.attachments.map((file: string) => (
                   <div
                     key={file}
                     className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300"
                   >
                     <FileText size={16} />
-                    {file}
+                    <a href={file} target="_blank" rel="noreferrer" className="hover:text-orange-600 underline">
+                      {file.split('/').pop()}
+                    </a>
                   </div>
                 ))}
               </div>
@@ -665,61 +688,104 @@ function SendQuoteModal({
   onSend: (quote: any) => Promise<void>
 }) {
   const [unitPrice, setUnitPrice] = useState('')
+  const [agreedQuantity, setAgreedQuantity] = useState(rfq.quantity.toString())
   const [validity, setValidity] = useState('14 days')
-  const [paymentTerms, setPaymentTerms] = useState('30% deposit')
+  const [paymentTerms, setPaymentTerms] = useState('Full payment')
   const [deliveryTime, setDeliveryTime] = useState('5-7 days')
   const [notes, setNotes] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const total = unitPrice ? Number(unitPrice) * rfq.quantity : 0
+  const total = unitPrice ? Number(unitPrice) * Number(agreedQuantity) : 0
   const diff = unitPrice ? Number(unitPrice) - rfq.targetPrice : 0
   const diffPercent = unitPrice ? Math.round((diff / rfq.targetPrice) * 100) : 0
 
+  const counterQuote = rfq.quotes?.find((q: any) => q.status === 'countered')
+
+  const getDepositPercentage = (terms: string) => {
+    if (terms.includes('30%')) return 30
+    if (terms.includes('50%')) return 50
+    return 0
+  }
+
   return (
-    <Modal onClose={onClose} title={`Send Quote for ${rfq.id}`}>
+    <Modal onClose={onClose} title={counterQuote ? `Respond to Counter for ${rfq.id}` : `Send Quote for ${rfq.id}`}>
       <div className="space-y-4 text-sm text-slate-600 dark:text-gray-300">
+        {counterQuote && (
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-100 dark:border-purple-900/30">
+            <p className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 mb-1">Buyer's Counter Offer</p>
+            <p className="text-xl font-bold text-purple-700 dark:text-purple-300">৳{Number(counterQuote.counterPrice).toLocaleString()}</p>
+            {counterQuote.counterNote && (
+              <p className="mt-1 text-xs italic">"{counterQuote.counterNote}"</p>
+            )}
+          </div>
+        )}
         <div className="grid md:grid-cols-2 gap-3">
-          <input
-            value={unitPrice}
-            onChange={(event) => setUnitPrice(event.target.value)}
-            placeholder="Unit price (৳)"
-            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
-          />
-          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-slate-700 dark:text-gray-200 flex items-center transition-colors">
-            Total: ৳{total.toLocaleString()}
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Agreed Quantity</label>
+            <input
+              type="number"
+              value={agreedQuantity}
+              onChange={(event) => setAgreedQuantity(event.target.value)}
+              placeholder="Quantity"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Unit Price (৳)</label>
+            <input
+              value={unitPrice}
+              onChange={(event) => setUnitPrice(event.target.value)}
+              placeholder="Unit price (৳)"
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+            />
           </div>
         </div>
-        <select
-          value={validity}
-          onChange={(event) => setValidity(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
-        >
-          <option className="dark:bg-slate-950">7 days</option>
-          <option className="dark:bg-slate-950">14 days</option>
-          <option className="dark:bg-slate-950">30 days</option>
-        </select>
-        <select
-          value={paymentTerms}
-          onChange={(event) => setPaymentTerms(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
-        >
-          {PAYMENT_TERMS.map((term) => (
-            <option key={term} className="dark:bg-slate-950">
-              {term}
-            </option>
-          ))}
-        </select>
-        <select
-          value={deliveryTime}
-          onChange={(event) => setDeliveryTime(event.target.value)}
-          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
-        >
-          {DELIVERY_TIMES.map((time) => (
-            <option key={time} className="dark:bg-slate-950">
-              {time}
-            </option>
-          ))}
-        </select>
+        <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-slate-700 dark:text-gray-200 flex items-center justify-between transition-colors">
+          <span>Total amount:</span>
+          <span className="font-bold">৳{total.toLocaleString()}</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Quote Validity</label>
+            <select
+              value={validity}
+              onChange={(event) => setValidity(event.target.value)}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+            >
+              <option className="dark:bg-slate-950">7 days</option>
+              <option className="dark:bg-slate-950">14 days</option>
+              <option className="dark:bg-slate-950">30 days</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Payment Terms</label>
+            <select
+              value={paymentTerms}
+              onChange={(event) => setPaymentTerms(event.target.value)}
+              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+            >
+              {PAYMENT_TERMS.map((term) => (
+                <option key={term} className="dark:bg-slate-950">
+                  {term}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Delivery Time</label>
+          <select
+            value={deliveryTime}
+            onChange={(event) => setDeliveryTime(event.target.value)}
+            className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+          >
+            {DELIVERY_TIMES.map((time) => (
+              <option key={time} className="dark:bg-slate-950">
+                {time}
+              </option>
+            ))}
+          </select>
+        </div>
         <textarea
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
@@ -751,6 +817,9 @@ function SendQuoteModal({
 
               await onSend({
                 unitPrice: Number(unitPrice),
+                agreedQuantity: Number(agreedQuantity),
+                depositPercentage: getDepositPercentage(paymentTerms),
+                deliveryTime,
                 validityPeriod: expiryDate.toISOString(),
                 notes,
               })

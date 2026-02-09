@@ -195,14 +195,14 @@ export function BulkImportModal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-5xl rounded-2xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-slate-900">
+      <div className="w-full max-w-5xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             Import Products in Bulk
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-slate-400 hover:text-slate-600 dark:text-gray-500 dark:hover:text-gray-300"
             aria-label="Close modal"
             autoFocus
           >
@@ -211,11 +211,11 @@ export function BulkImportModal({
         </div>
 
         <div className="p-6 space-y-6">
-          <section className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="text-sm font-semibold text-slate-700">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 p-4">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-gray-200">
               Step 1: Download Template
             </h3>
-            <ul className="mt-2 text-sm text-slate-500 list-disc pl-5">
+            <ul className="mt-2 text-sm text-slate-500 dark:text-gray-400 list-disc pl-5">
               <li>Download our template</li>
               <li>Fill in product details</li>
               <li>Upload the completed file</li>
@@ -224,7 +224,7 @@ export function BulkImportModal({
               <button
                 type="button"
                 onClick={downloadCsvTemplate}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-300"
               >
                 <Download size={16} />
                 Download CSV Template
@@ -232,7 +232,7 @@ export function BulkImportModal({
               <button
                 type="button"
                 onClick={downloadExcelTemplate}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-300"
               >
                 <Download size={16} />
                 Download Excel Template
@@ -240,12 +240,12 @@ export function BulkImportModal({
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
+          <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-700">
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-gray-200">
                 Step 2: Upload File
               </h3>
-              <label className="flex items-center gap-2 text-xs text-slate-500">
+              <label className="flex items-center gap-2 text-xs text-slate-500 dark:text-gray-400">
                 <input
                   type="checkbox"
                   checked={uploadImagesSeparately}
@@ -257,15 +257,15 @@ export function BulkImportModal({
               </label>
             </div>
             <div
-              className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center"
+              className="rounded-lg border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-6 text-center"
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => {
                 event.preventDefault()
                 void handleFile(event.dataTransfer.files.item(0) || null)
               }}
             >
-              <UploadCloud className="mx-auto text-slate-400" size={28} />
-              <p className="mt-2 text-sm text-slate-500">
+              <UploadCloud className="mx-auto text-slate-400 dark:text-gray-500" size={28} />
+              <p className="mt-2 text-sm text-slate-500 dark:text-gray-400">
                 Drag & drop your CSV/Excel file, or{' '}
                 <label className="text-orange-600 font-semibold cursor-pointer">
                   browse
@@ -279,7 +279,7 @@ export function BulkImportModal({
                   />
                 </label>
               </p>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 dark:text-gray-500 mt-1">
                 Max 10MB · Up to 500 products
               </p>
               {fileError && (
@@ -305,21 +305,21 @@ export function BulkImportModal({
               </div>
 
               {errors.length > 0 && (
-                <div className="rounded-xl border border-red-100 bg-red-50 p-4">
+                <div className="rounded-xl border border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/20 p-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-semibold text-red-700">
+                    <h4 className="text-sm font-semibold text-red-700 dark:text-red-400">
                       Validation Errors
                     </h4>
                     <button
                       type="button"
                       onClick={downloadErrorReport}
-                      className="text-xs font-semibold text-red-600 underline"
+                      className="text-xs font-semibold text-red-600 dark:text-red-400 underline"
                     >
                       Download error report
                     </button>
                   </div>
                   <div className="mt-3 overflow-x-auto">
-                    <table className="w-full text-xs text-red-700">
+                    <table className="w-full text-xs text-red-700 dark:text-red-400">
                       <thead>
                         <tr className="text-left">
                           <th className="pb-2">Row</th>
@@ -343,9 +343,9 @@ export function BulkImportModal({
                 </div>
               )}
 
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold text-slate-700">
+                  <h4 className="text-sm font-semibold text-slate-700 dark:text-gray-200">
                     Preview Valid Products
                   </h4>
                   {validRows.length > 10 && (
@@ -359,7 +359,7 @@ export function BulkImportModal({
                   )}
                 </div>
                 <div className="mt-3 overflow-x-auto">
-                  <table className="w-full text-xs text-slate-600">
+                  <table className="w-full text-xs text-slate-600 dark:text-gray-400">
                     <thead>
                       <tr className="text-left">
                         <th className="pb-2">Title</th>
@@ -372,7 +372,7 @@ export function BulkImportModal({
                     <tbody>
                       {visibleValidRows.map((row) => (
                         <tr key={row.rowNumber}>
-                          <td className="py-1 text-slate-800">{row.title}</td>
+                          <td className="py-1 text-slate-800 dark:text-gray-200">{row.title}</td>
                           <td>{row.category}</td>
                           <td>৳{row.price}</td>
                           <td>{row.moq}</td>
@@ -392,7 +392,7 @@ export function BulkImportModal({
                 >
                   Import Valid Products
                 </button>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-400 dark:text-gray-500">
                   Invalid rows will be skipped.
                 </span>
               </div>
@@ -400,17 +400,17 @@ export function BulkImportModal({
           )}
 
           {state === 'importing' && (
-            <section className="rounded-xl border border-slate-200 bg-white p-5">
-              <h4 className="text-sm font-semibold text-slate-700">
+            <section className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+              <h4 className="text-sm font-semibold text-slate-700 dark:text-gray-200">
                 Importing products...
               </h4>
-              <div className="mt-3 h-2 rounded-full bg-slate-100">
+              <div className="mt-3 h-2 rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
                   className="h-2 rounded-full bg-orange-500"
                   style={{ width: `${importProgress}%` }}
                 />
               </div>
-              <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+              <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-gray-400">
                 <span>{importProgress}% completed</span>
                 <span>
                   Estimated time remaining: {Math.ceil(timeRemaining)}s
@@ -430,18 +430,18 @@ export function BulkImportModal({
           )}
 
           {state === 'complete' && (
-            <section className="rounded-xl border border-green-100 bg-green-50 p-5 space-y-3">
-              <h4 className="text-sm font-semibold text-green-700">
+            <section className="rounded-xl border border-green-100 dark:border-green-900/30 bg-green-50 dark:bg-green-900/20 p-5 space-y-3">
+              <h4 className="text-sm font-semibold text-green-700 dark:text-green-400">
                 Import Complete!
               </h4>
-              <p className="text-xs text-green-700">
+              <p className="text-xs text-green-700 dark:text-green-400">
                 {importStats.success} products imported successfully ·{' '}
                 {importStats.failed} failed
               </p>
               <button
                 type="button"
                 onClick={downloadErrorReport}
-                className="text-xs font-semibold text-green-700 underline"
+                className="text-xs font-semibold text-green-700 dark:text-green-400 underline"
               >
                 Download error report (CSV)
               </button>
@@ -460,7 +460,7 @@ export function BulkImportModal({
                     setRows([])
                     setErrors([])
                   }}
-                  className="rounded-lg border border-green-200 px-4 py-2 text-sm font-semibold text-green-700"
+                  className="rounded-lg border border-green-200 dark:border-green-900/30 px-4 py-2 text-sm font-semibold text-green-700 dark:text-green-400"
                 >
                   Import More
                 </button>
@@ -484,12 +484,12 @@ function SummaryCard({
 }) {
   const toneClass =
     tone === 'success'
-      ? 'bg-green-50 text-green-700'
+      ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
       : tone === 'danger'
-        ? 'bg-red-50 text-red-600'
-        : 'bg-slate-50 text-slate-600'
+        ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
+        : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-gray-400'
   return (
-    <div className={`rounded-xl border border-slate-200 p-4 ${toneClass}`}>
+    <div className={`rounded-xl border border-slate-200 dark:border-slate-800 p-4 ${toneClass}`}>
       <p className="text-xs uppercase">{label}</p>
       <p className="text-2xl font-semibold">{value}</p>
     </div>

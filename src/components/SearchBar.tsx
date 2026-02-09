@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Clock, Search, TrendingUp, X } from 'lucide-react'
+import { Clock, Loader2, Search, TrendingUp, X } from 'lucide-react'
 import { frequentlySearched } from '../data/mock-products'
+import {
+  formatBDT,
+  getProductSuggestions,
+  type ProductSuggestion,
+} from '@/lib/product-server'
 
 interface SearchBarProps {
   initialValue?: string
@@ -21,6 +26,8 @@ export default function SearchBar({
   const [query, setQuery] = useState(initialValue)
   const [isFocused, setIsFocused] = useState(false)
   const [recentSearches, setRecentSearches] = useState<Array<string>>([])
+  const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([])
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -32,6 +39,41 @@ export default function SearchBar({
       setRecentSearches(JSON.parse(saved))
     }
   }, [])
+
+  // Debounced autocomplete fetch
+  useEffect(() => {
+    const trimmed = query.trim()
+    if (!trimmed) {
+      setSuggestions([])
+      setIsLoadingSuggestions(false)
+      return
+    }
+
+    setIsLoadingSuggestions(true)
+    let cancelled = false
+
+    const timer = setTimeout(async () => {
+      try {
+        const results = await getProductSuggestions({ data: { query: trimmed } })
+        if (!cancelled) {
+          setSuggestions(results)
+        }
+      } catch {
+        if (!cancelled) {
+          setSuggestions([])
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingSuggestions(false)
+        }
+      }
+    }, 300)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [query])
 
   // Save search to recent searches
   const saveRecentSearch = (searchQuery: string) => {
@@ -46,8 +88,7 @@ export default function SearchBar({
     localStorage.setItem('recentSearches', JSON.stringify(updated))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const performSearch = () => {
     const trimmed = query.trim()
     if (!trimmed) return
 
@@ -61,6 +102,11 @@ export default function SearchBar({
     }
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    performSearch()
+  }
+
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion)
     saveRecentSearch(suggestion)
@@ -71,6 +117,11 @@ export default function SearchBar({
     } else {
       navigate({ to: '/search', search: { q: suggestion } })
     }
+  }
+
+  const handleProductSuggestionClick = (suggestion: ProductSuggestion) => {
+    setIsFocused(false)
+    navigate({ to: '/products/$productSlug', params: { productSlug: suggestion.slug } })
   }
 
   const clearSearch = () => {
@@ -98,7 +149,8 @@ export default function SearchBar({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const showDropdown = showSuggestions && isFocused && !query
+  const showRecentAndTrending = showSuggestions && isFocused && !query.trim()
+  const showAutocompleteSuggestions = showSuggestions && isFocused && !!query.trim()
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
@@ -135,8 +187,8 @@ export default function SearchBar({
         </div>
       </form>
 
-      {/* Suggestions Dropdown */}
-      {showDropdown && (
+      {/* Recent & Trending Dropdown */}
+      {showRecentAndTrending && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-gray-200 dark:border-slate-800 z-50 overflow-hidden transition-colors">
           {/* Recent Searches */}
           {recentSearches.length > 0 && (
@@ -188,6 +240,60 @@ export default function SearchBar({
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Autocomplete Suggestions Dropdown */}
+      {showAutocompleteSuggestions && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-gray-200 dark:border-slate-800 z-50 overflow-hidden transition-colors">
+          {isLoadingSuggestions ? (
+            <div className="flex items-center gap-2 p-4 text-gray-500 dark:text-gray-400">
+              <Loader2 size={16} className="animate-spin" />
+              <span className="text-sm">Searching...</span>
+            </div>
+          ) : suggestions.length > 0 ? (
+            <>
+              <div className="py-1">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion.id}
+                    onClick={() => handleProductSuggestionClick(suggestion)}
+                    className="flex items-center gap-3 w-full text-left px-3 py-2 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    {suggestion.image ? (
+                      <img
+                        src={suggestion.image}
+                        alt={suggestion.name}
+                        className="w-10 h-10 rounded object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded bg-gray-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
+                        <Search size={16} className="text-gray-400 dark:text-gray-500" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-800 dark:text-gray-100 truncate">
+                        {suggestion.name}
+                      </p>
+                      <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+                        {formatBDT(suggestion.price)}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={performSearch}
+                className="w-full px-3 py-2.5 text-sm text-orange-600 dark:text-orange-400 hover:bg-gray-50 dark:hover:bg-slate-800/50 font-medium border-t border-gray-100 dark:border-slate-800 transition-colors"
+              >
+                See all results for &ldquo;{query.trim()}&rdquo;
+              </button>
+            </>
+          ) : (
+            <div className="p-4 text-sm text-gray-500 dark:text-gray-400">
+              No products found for &ldquo;{query.trim()}&rdquo;
+            </div>
+          )}
         </div>
       )}
     </div>

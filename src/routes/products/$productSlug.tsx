@@ -439,11 +439,17 @@ function ProductDetailPage() {
           {supplier && (
             <div className="border dark:border-slate-800 rounded-lg p-6 bg-white dark:bg-slate-900 sticky top-4 transition-colors">
               <div className="flex items-center space-x-4 mb-4">
-                <img
-                  src={supplier.logo}
-                  alt={supplier.name}
-                  className="w-16 h-16 rounded-full border dark:border-slate-800"
-                />
+                {supplier.logo ? (
+                  <img
+                    src={supplier.logo}
+                    alt={supplier.name}
+                    className="w-16 h-16 rounded-full border dark:border-slate-800"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full border dark:border-slate-800 bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-400 dark:text-slate-500 text-xl font-bold">
+                    {supplier.name.charAt(0)}
+                  </div>
+                )}
                 <div>
                   <h3 className="font-bold text-gray-900 dark:text-white transition-colors">
                     {supplier.name}

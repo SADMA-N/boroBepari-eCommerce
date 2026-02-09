@@ -61,12 +61,12 @@ export default function QuoteResponseModal({
   if (isSuccess) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white dark:bg-slate-900 rounded-lg p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle size={32} />
           </div>
-          <h2 className="text-2xl font-bold mb-2">Quote Sent!</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold mb-2 dark:text-white">Quote Sent!</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Your quote has been sent to the buyer.
           </p>
           <button
@@ -82,13 +82,13 @@ export default function QuoteResponseModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
-      <div className="bg-white rounded-lg w-full max-w-lg my-8 mx-4 flex flex-col">
+      <div className="bg-white dark:bg-slate-900 rounded-lg w-full max-w-lg my-8 mx-4 flex flex-col">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-bold text-gray-900">Send Quote</h2>
+        <div className="flex justify-between items-center p-6 border-b dark:border-slate-800">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Send Quote</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             <X size={24} />
           </button>
@@ -96,7 +96,7 @@ export default function QuoteResponseModal({
 
         {/* Content */}
         <div className="p-6">
-          <div className="bg-gray-50 p-4 rounded-lg mb-6 text-sm">
+          <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg mb-6 text-sm">
             <p>
               <span className="font-semibold">Product:</span> {rfq.product.name}
             </p>
@@ -112,7 +112,7 @@ export default function QuoteResponseModal({
 
           <form id="quote-form" onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Unit Price (BDT) *
               </label>
               <input
@@ -120,12 +120,12 @@ export default function QuoteResponseModal({
                 required
                 value={unitPrice}
                 onChange={(e) => setUnitPrice(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 dark:border-slate-700 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Total Price (Optional)
               </label>
               <input
@@ -133,36 +133,36 @@ export default function QuoteResponseModal({
                 value={totalPrice}
                 onChange={(e) => setTotalPrice(e.target.value)}
                 placeholder="Auto-calculated if empty"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 dark:border-slate-700 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Validity Period
               </label>
               <input
                 type="date"
                 value={validity}
                 onChange={(e) => setValidity(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 dark:border-slate-700 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Terms & Conditions / Notes
               </label>
               <textarea
                 rows={3}
                 value={terms}
                 onChange={(e) => setTerms(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border border-gray-300 dark:border-slate-700 rounded-lg px-3 py-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               />
             </div>
 
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -170,11 +170,11 @@ export default function QuoteResponseModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t bg-gray-50 flex justify-end space-x-4 rounded-b-lg">
+        <div className="p-6 border-t dark:border-slate-800 bg-gray-50 dark:bg-slate-800 flex justify-end space-x-4 rounded-b-lg">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+            className="px-4 py-2 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition"
             disabled={isSubmitting}
           >
             Cancel

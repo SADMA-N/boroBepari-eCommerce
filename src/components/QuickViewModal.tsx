@@ -30,7 +30,7 @@ export default function QuickViewModal({
   onAddToCart,
 }: QuickViewModalProps) {
   const [quantity, setQuantity] = useState(1)
-  const [selectedImage, setSelectedImage] = useState('')
+  const [selectedImage, setSelectedImage] = useState(product?.images[0] ?? '')
 
   const { isAuthenticated } = useAuth()
   const [isRfqOpen, setIsRfqOpen] = useState(false)

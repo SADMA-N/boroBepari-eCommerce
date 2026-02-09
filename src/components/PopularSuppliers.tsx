@@ -94,11 +94,17 @@ function SupplierCard({ supplier }: { supplier: SupplierDisplay }) {
       className="flex-shrink-0 w-64 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-4 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-900 transition-all group"
     >
       <div className="flex items-start gap-3">
-        <img
-          src={supplier.logo}
-          alt={supplier.name}
-          className="w-14 h-14 rounded-lg object-cover bg-gray-100 dark:bg-slate-800"
-        />
+        {supplier.logo ? (
+          <img
+            src={supplier.logo}
+            alt={supplier.name}
+            className="w-14 h-14 rounded-lg object-cover bg-gray-100 dark:bg-slate-800"
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-lg bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-400 dark:text-slate-500 text-xl font-bold">
+            {supplier.name.charAt(0)}
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1">
             <h3 className="font-medium text-gray-800 dark:text-gray-100 truncate group-hover:text-orange-600 dark:group-hover:text-orange-500 transition-colors">

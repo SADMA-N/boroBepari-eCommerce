@@ -1,10 +1,10 @@
+import * as React from 'react'
 import {
   Link,
   createFileRoute,
   notFound,
   useRouter,
 } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
 import {
   AlertTriangle,
   ArrowLeft,
@@ -54,23 +54,23 @@ type SortOption = 'price-asc' | 'price-desc' | 'date'
 
 function RFQDetailPage() {
   const { rfq: initialRfq } = Route.useLoaderData()
-  const [rfq, setRfq] = useState<any>(initialRfq)
-  const [viewMode, setViewMode] = useState<ViewMode>('cards')
-  const [sortOption, setSortOption] = useState<SortOption>('price-asc')
-  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [rfq, setRfq] = React.useState<any>(initialRfq)
+  const [viewMode, setViewMode] = React.useState<ViewMode>('cards')
+  const [sortOption, setSortOption] = React.useState<SortOption>('price-asc')
+  const [isRefreshing, setIsRefreshing] = React.useState(false)
 
   const { addItem } = useCart()
   const router = useRouter()
 
   // Modal State
-  const [selectedQuote, setSelectedQuote] = useState<any | null>(null)
-  const [actionType, setActionType] = useState<
+  const [selectedQuote, setSelectedQuote] = React.useState<any | null>(null)
+  const [actionType, setActionType] = React.useState<
     'accept' | 'reject' | 'counter' | null
   >(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
 
   // Toast State
-  const [toast, setToast] = useState({ message: '', isVisible: false })
+  const [toast, setToast] = React.useState({ message: '', isVisible: false })
 
   const isExpired =
     differenceInDays(new Date(rfq.expiresAt), new Date()) < 0 || rfq.status === 'expired'
@@ -86,7 +86,7 @@ function RFQDetailPage() {
     }
   }
 
-  const sortedQuotes = useMemo(() => {
+  const sortedQuotes = React.useMemo(() => {
     const quotes = [...(rfq.quotes || [])]
     return quotes.sort((a, b) => {
       if (sortOption === 'price-asc')
@@ -180,14 +180,28 @@ function RFQDetailPage() {
   }
 
   const handleCheckout = (quote: any) => {
-    addItem({
+    const result = addItem({
       productId: rfq.productId!,
-      quantity: rfq.quantity!,
+      quantity: quote.agreedQuantity || rfq.quantity!,
       customPrice: Number(quote.unitPrice),
       rfqId: rfq.id,
       quoteId: quote.id,
+      depositPercentage: quote.depositPercentage || 0,
+      productData: {
+        name: rfq.product?.name || 'Product',
+        image: rfq.product?.images?.[0] || '',
+        supplierId: rfq.supplierId!,
+        moq: rfq.product?.moq || 1,
+        stock: rfq.product?.stock || 1000,
+        unit: rfq.product?.unit || 'piece',
+      }
     })
-    router.navigate({ to: '/cart' })
+
+    if (result.success) {
+      router.navigate({ to: '/checkout' })
+    } else {
+      setToast({ message: result.error || 'Failed to add to cart', isVisible: true })
+    }
   }
 
   return (
@@ -195,7 +209,7 @@ function RFQDetailPage() {
       {/* Navigation */}
       <Link
         to="/buyer/rfqs"
-        className="inline-flex items-center text-gray-500 hover:text-gray-900 mb-6 transition-colors"
+        className="inline-flex items-center text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white mb-6 transition-colors"
       >
         <ArrowLeft size={20} className="mr-2" /> Back to RFQs
       </Link>
@@ -210,8 +224,8 @@ function RFQDetailPage() {
         isOpen={!!selectedQuote && actionType === 'accept'}
         onClose={closeActionModal}
         isLoading={isLoading}
-        supplierName={selectedQuote?.supplierName || ''}
-        price={selectedQuote?.totalPrice || 0}
+        supplierName={selectedQuote?.supplier?.name || ''}
+        price={selectedQuote?.unitPrice || 0}
         onConfirm={handleConfirmAccept}
       />
 
@@ -219,7 +233,7 @@ function RFQDetailPage() {
         isOpen={!!selectedQuote && actionType === 'reject'}
         onClose={closeActionModal}
         isLoading={isLoading}
-        supplierName={selectedQuote?.supplierName || ''}
+        supplierName={selectedQuote?.supplier?.name || ''}
         onConfirm={handleConfirmReject}
       />
 
@@ -227,7 +241,7 @@ function RFQDetailPage() {
         isOpen={!!selectedQuote && actionType === 'counter'}
         onClose={closeActionModal}
         isLoading={isLoading}
-        currentPrice={selectedQuote?.unitPrice || 0}
+        currentPrice={Number(selectedQuote?.unitPrice || 0)}
         onConfirm={handleConfirmCounter}
       />
 
@@ -236,14 +250,14 @@ function RFQDetailPage() {
         {/* Left Column: RFQ Details */}
         <div className="lg:col-span-1 space-y-6">
           {/* Status Card */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">RFQ Status</h2>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">RFQ Status</h2>
               <StatusBadge status={rfq.status} />
             </div>
 
             {isExpired ? (
-              <div className="flex items-start bg-red-50 text-red-800 p-3 rounded-lg text-sm mb-4">
+              <div className="flex items-start bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-400 p-3 rounded-lg text-sm mb-4">
                 <AlertTriangle
                   size={18}
                   className="mr-2 flex-shrink-0 mt-0.5"
@@ -254,7 +268,7 @@ function RFQDetailPage() {
                 </div>
               </div>
             ) : isAccepted ? (
-              <div className="flex items-start bg-green-50 text-green-800 p-3 rounded-lg text-sm mb-4">
+              <div className="flex items-start bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-400 p-3 rounded-lg text-sm mb-4">
                 <CheckCircle size={18} className="mr-2 flex-shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold block">Quote Accepted</span>
@@ -262,62 +276,66 @@ function RFQDetailPage() {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center text-gray-600 mb-4">
+              <div className="flex items-center text-gray-600 dark:text-gray-400 mb-4">
                 <Clock size={18} className="mr-2 text-orange-500" />
                 <span>
                   Expires in{' '}
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-gray-900 dark:text-white">
                     {differenceInDays(new Date(rfq.expiresAt), new Date())} days
                   </span>
                 </span>
               </div>
             )}
 
-            <div className="text-sm text-gray-500 flex justify-between border-t pt-4">
+            <div className="text-sm text-gray-500 dark:text-gray-400 flex justify-between border-t dark:border-slate-800 pt-4">
               <span>Created</span>
-              <span className="font-medium text-gray-900">
+              <span className="font-medium text-gray-900 dark:text-white">
                 {format(new Date(rfq.createdAt), 'PPP')}
               </span>
             </div>
           </div>
 
           {/* Product Details Card */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-            <div className="aspect-video bg-gray-50 p-4 flex items-center justify-center">
-              <img
-                src={rfq.product?.images?.[0]}
-                alt={rfq.product?.name}
-                className="max-h-full object-contain"
-              />
+          <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+            <div className="aspect-video bg-gray-50 dark:bg-slate-800 p-4 flex items-center justify-center">
+              {rfq.product?.images?.[0] ? (
+                <img
+                  src={rfq.product.images[0]}
+                  alt={rfq.product?.name}
+                  className="max-h-full object-contain"
+                />
+              ) : (
+                <div className="text-gray-300 dark:text-gray-600 text-4xl">No Image</div>
+              )}
             </div>
             <div className="p-6">
-              <h3 className="font-bold text-gray-900 text-lg mb-2">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
                 {rfq.product.name}
               </h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Requested Qty</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="text-gray-500 dark:text-gray-400">Requested Qty</span>
+                  <span className="font-bold text-gray-900 dark:text-white">
                     {rfq.quantity} {rfq.product.unit}s
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Target Price</span>
-                  <span className="font-bold text-blue-600">
+                  <span className="text-gray-500 dark:text-gray-400">Target Price</span>
+                  <span className="font-bold text-blue-600 dark:text-blue-400">
                     {formatBDT(Number(rfq.targetPrice))}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Location</span>
-                  <span className="font-medium text-gray-900 text-right max-w-[60%]">
+                  <span className="text-gray-500 dark:text-gray-400">Location</span>
+                  <span className="font-medium text-gray-900 dark:text-white text-right max-w-[60%]">
                     {rfq.deliveryLocation}
                   </span>
                 </div>
               </div>
 
               {/* Attachments */}
-              <div className="mt-6 pt-4 border-t">
-                <h4 className="text-xs font-semibold uppercase text-gray-500 mb-3">
+              <div className="mt-6 pt-4 border-t dark:border-slate-800">
+                <h4 className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-3">
                   Attachments
                 </h4>
                 {rfq.attachments && rfq.attachments.length > 0 ? (
@@ -328,15 +346,15 @@ function RFQDetailPage() {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-600 py-2 rounded-lg text-sm hover:bg-gray-50 transition"
+                        className="w-full flex items-center justify-center gap-2 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400 py-2 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-slate-800 transition"
                       >
                         <FileText size={16} /> File {idx + 1}
-                        <Download size={14} className="ml-auto text-gray-400" />
+                        <Download size={14} className="ml-auto text-gray-400 dark:text-gray-500" />
                       </a>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400">No attachments provided</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500">No attachments provided</p>
                 )}
               </div>
             </div>
@@ -347,36 +365,36 @@ function RFQDetailPage() {
         <div className="lg:col-span-2">
           <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Received Quotes
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 {sortedQuotes.length} supplier{sortedQuotes.length !== 1 && 's'}{' '}
                 responded
               </p>
             </div>
 
             {/* Controls */}
-            <div className="flex items-center gap-2 bg-white p-1 rounded-lg border shadow-sm">
+            <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-1 rounded-lg border dark:border-slate-800 shadow-sm">
               <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value as SortOption)}
-                className="text-sm border-none focus:ring-0 bg-transparent py-1 pl-2 pr-8 font-medium text-gray-600 cursor-pointer"
+                className="text-sm border-none focus:ring-0 bg-transparent py-1 pl-2 pr-8 font-medium text-gray-600 dark:text-gray-400 cursor-pointer dark:bg-slate-900"
               >
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
                 <option value="date">Date: Newest</option>
               </select>
-              <div className="w-px h-6 bg-gray-200 mx-1"></div>
+              <div className="w-px h-6 bg-gray-200 dark:bg-slate-700 mx-1"></div>
               <button
                 onClick={() => setViewMode('cards')}
-                className={`p-1.5 rounded ${viewMode === 'cards' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`p-1.5 rounded ${viewMode === 'cards' ? 'bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
               >
                 <LayoutGrid size={18} />
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`p-1.5 rounded ${viewMode === 'table' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                className={`p-1.5 rounded ${viewMode === 'table' ? 'bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}
               >
                 <LayoutList size={18} />
               </button>
@@ -385,24 +403,24 @@ function RFQDetailPage() {
 
           {/* Quotes List */}
           {sortedQuotes.length === 0 ? (
-            <div className="bg-white rounded-lg border border-dashed border-gray-300 p-12 text-center">
-              <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-500 animate-pulse">
+            <div className="bg-white dark:bg-slate-900 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 p-12 text-center">
+              <div className="mx-auto w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-4 text-blue-500 animate-pulse">
                 <RefreshCw
                   size={24}
                   className={isRefreshing ? 'animate-spin' : ''}
                 />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-1">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
                 Waiting for quotes...
               </h3>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
                 We've sent your request to relevant suppliers. Responses usually
                 arrive within 24 hours.
               </p>
               <button
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 disabled:opacity-50"
               >
                 <RefreshCw
                   size={16}
@@ -419,6 +437,7 @@ function RFQDetailPage() {
                     <QuoteCard
                       key={quote.id}
                       quote={quote}
+                      rfq={rfq}
                       isExpired={isExpired || isAccepted}
                       onAction={(id, action) => openActionModal(quote, action)}
                       onCheckout={() => handleCheckout(quote)}
@@ -426,10 +445,10 @@ function RFQDetailPage() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-gray-50 text-gray-500">
+                      <thead className="bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-gray-400">
                         <tr>
                           <th className="px-6 py-3 font-medium">Supplier</th>
                           <th className="px-6 py-3 font-medium">Unit Price</th>
@@ -440,28 +459,34 @@ function RFQDetailPage() {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100">
+                      <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                         {sortedQuotes.map((quote) => (
-                          <tr key={quote.id} className="hover:bg-gray-50">
+                          <tr key={quote.id} className="hover:bg-gray-50 dark:hover:bg-slate-800">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                <img
-                                  src={quote.supplier?.logo}
-                                  className="w-8 h-8 rounded-full bg-gray-200"
-                                  alt=""
-                                />
-                                <span className="font-medium text-gray-900">
+                                {quote.supplier?.logo ? (
+                                  <img
+                                    src={quote.supplier.logo}
+                                    className="w-8 h-8 rounded-full bg-gray-200"
+                                    alt=""
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm font-bold">
+                                    {quote.supplier?.name?.charAt(0) ?? '?'}
+                                  </div>
+                                )}
+                                <span className="font-medium text-gray-900 dark:text-white">
                                   {quote.supplier?.name}
                                 </span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-gray-600">
+                            <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
                               {formatBDT(Number(quote.unitPrice))}
                             </td>
-                            <td className="px-6 py-4 font-bold text-gray-900">
+                            <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">
                               {formatBDT(Number(quote.totalPrice))}
                             </td>
-                            <td className="px-6 py-4 text-gray-500">
+                            <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
                               {format(new Date(quote.validityPeriod), 'MMM d')}
                             </td>
                             <td className="px-6 py-4 text-right">
@@ -516,11 +541,13 @@ function RFQDetailPage() {
 
 function QuoteCard({
   quote,
+  rfq,
   isExpired,
   onAction,
   onCheckout,
 }: {
   quote: any
+  rfq: any
   isExpired: boolean
   onAction: (id: number, action: 'accept' | 'reject' | 'counter') => void
   onCheckout: () => void
@@ -529,23 +556,29 @@ function QuoteCard({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow ${
+      className={`bg-white dark:bg-slate-900 rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow ${
         quote.status === 'accepted'
           ? 'border-green-500 ring-1 ring-green-500'
-          : 'border-gray-100'
+          : 'border-gray-100 dark:border-slate-800'
       }`}
     >
       <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-4">
         {/* Supplier Info */}
         <div className="flex items-start gap-4">
-          <img
-            src={quote.supplier?.logo}
-            alt={quote.supplier?.name}
-            className="w-12 h-12 rounded-full border bg-gray-50"
-          />
+          {quote.supplier?.logo ? (
+            <img
+              src={quote.supplier.logo}
+              alt={quote.supplier.name}
+              className="w-12 h-12 rounded-full border dark:border-slate-700 bg-gray-50 dark:bg-slate-800"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-full border dark:border-slate-700 bg-gray-50 dark:bg-slate-800 flex items-center justify-center text-gray-400 dark:text-gray-500 text-lg font-bold">
+              {quote.supplier?.name?.charAt(0) ?? '?'}
+            </div>
+          )}
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-gray-900 text-lg">
+              <h3 className="font-bold text-gray-900 dark:text-white text-lg">
                 {quote.supplier?.name}
               </h3>
               <BadgeCheck size={16} className="text-blue-500" />
@@ -553,7 +586,7 @@ function QuoteCard({
                 <StatusBadge status={quote.status} />
               )}
             </div>
-            <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+            <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
               <span className="flex items-center gap-1">
                 <Star size={14} className="text-yellow-400 fill-current" /> 4.8
               </span>
@@ -565,44 +598,69 @@ function QuoteCard({
 
         {/* Price Info */}
         <div className="text-right">
-          <div className="text-3xl font-bold text-gray-900">
+          <div className="text-3xl font-bold text-gray-900 dark:text-white">
             {formatBDT(Number(quote.unitPrice))}
           </div>
-          <div className="text-sm text-gray-500">per unit</div>
-          <div className="mt-1 text-sm font-medium text-gray-700">
-            Total: {formatBDT(Number(quote.totalPrice))}
+          <div className="text-sm text-gray-500 dark:text-gray-400">per unit</div>
+          <div className="mt-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Total: {formatBDT(Number(quote.unitPrice) * (quote.agreedQuantity || rfq.quantity))}
           </div>
+          {quote.agreedQuantity && quote.agreedQuantity !== rfq.quantity && (
+            <div className="mt-1 text-[10px] text-blue-600 dark:text-blue-400 font-bold uppercase">
+              Agreed Qty: {quote.agreedQuantity} units
+            </div>
+          )}
+          {quote.status === 'countered' && quote.counterPrice && (
+            <div className="mt-2 p-2 bg-purple-50 dark:bg-purple-900/10 rounded border border-purple-100 dark:border-purple-900/30 text-right">
+              <p className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400">Your Counter Offer</p>
+              <p className="text-lg font-bold text-purple-700 dark:text-purple-300">{formatBDT(Number(quote.counterPrice))}</p>
+              {quote.counterNote && (
+                <p className="text-xs text-purple-600 dark:text-purple-400 mt-1 italic">"{quote.counterNote}"</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Quote Details */}
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
+      <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-4 mb-6">
         <div className="flex flex-wrap gap-y-2 gap-x-6 text-sm">
           <div className="flex items-center gap-2">
-            <Clock size={16} className="text-gray-400" />
-            <span className="text-gray-600">Validity:</span>
+            <Clock size={16} className="text-gray-400 dark:text-gray-500" />
+            <span className="text-gray-600 dark:text-gray-400">Validity:</span>
             <span
-              className={`font-medium ${daysValid < 2 ? 'text-red-600' : 'text-gray-900'}`}
+              className={`font-medium ${daysValid < 2 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-white'}`}
             >
               {daysValid} Days Left
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar size={16} className="text-gray-400" />
-            <span className="text-gray-600">Received:</span>
-            <span className="font-medium text-gray-900">
+            <Calendar size={16} className="text-gray-400 dark:text-gray-500" />
+            <span className="text-gray-600 dark:text-gray-400">Received:</span>
+            <span className="font-medium text-gray-900 dark:text-white">
               {format(new Date(quote.createdAt), 'MMM d, yyyy')}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-gray-400" />
-            <span className="text-gray-600">Shipping:</span>
-            <span className="font-medium text-green-600">Included</span>
+            <MapPin size={16} className="text-gray-400 dark:text-gray-500" />
+            <span className="text-gray-600 dark:text-gray-400">Delivery:</span>
+            <span className="font-medium text-green-600 dark:text-green-400">
+              {quote.deliveryTime || '7-10 days'}
+            </span>
           </div>
+          {quote.depositPercentage > 0 && (
+            <div className="flex items-center gap-2">
+              <BadgeCheck size={16} className="text-orange-500" />
+              <span className="text-gray-600 dark:text-gray-400">Deposit:</span>
+              <span className="font-medium text-orange-600">
+                {quote.depositPercentage}% required
+              </span>
+            </div>
+          )}
         </div>
         {quote.terms && (
-          <div className="mt-3 text-sm text-gray-600 border-t border-gray-200 pt-2">
-            <span className="font-medium text-gray-900 mr-2">Note:</span>
+          <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-slate-700 pt-2">
+            <span className="font-medium text-gray-900 dark:text-white mr-2">Note:</span>
             {quote.terms}
           </div>
         )}
@@ -611,7 +669,10 @@ function QuoteCard({
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
         {quote.status === 'accepted' ? (
-          <button className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center gap-2">
+          <button 
+            onClick={onCheckout}
+            className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center gap-2"
+          >
             Proceed to Checkout
           </button>
         ) : (
@@ -626,17 +687,16 @@ function QuoteCard({
             <button
               disabled={isExpired || quote.status === 'rejected'}
               onClick={() => onAction(quote.id!, 'counter')}
-              className="flex-1 bg-white border border-blue-600 text-blue-600 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-white dark:bg-slate-900 border border-blue-600 text-blue-600 dark:text-blue-400 py-2.5 rounded-lg font-semibold hover:bg-blue-50 dark:hover:bg-blue-900/20 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Counter Offer
             </button>
             <button
               disabled={isExpired || quote.status === 'rejected'}
               onClick={() => onAction(quote.id!, 'reject')}
-              className="flex-none px-4 bg-white border border-gray-300 text-gray-600 py-2.5 rounded-lg font-semibold hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Reject Quote"
+              className="flex-1 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-400 py-2.5 rounded-lg font-semibold hover:text-red-600 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 dark:hover:border-red-900/30 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ThumbsDown size={18} />
+              <ThumbsDown size={18} /> Decline Quote
             </button>
           </>
         )}
@@ -647,24 +707,29 @@ function QuoteCard({
 
 function StatusBadge({ status }: { status?: string }) {
   const styles = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    quoted: 'bg-blue-100 text-blue-800',
-    accepted: 'bg-green-100 text-green-800',
-    rejected: 'bg-red-100 text-red-800',
-    expired: 'bg-gray-100 text-gray-600',
-    converted: 'bg-purple-100 text-purple-800',
-    countered: 'bg-purple-100 text-purple-800',
+    pending:
+      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+    quoted: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+    accepted:
+      'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+    rejected: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+    expired: 'bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-gray-400',
+    converted:
+      'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+    countered:
+      'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
   }
 
   const label = status
     ? status.charAt(0).toUpperCase() + status.slice(1)
     : 'Unknown'
   const style =
-    styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-800'
+    styles[status as keyof typeof styles] ||
+    'bg-gray-100 text-gray-800 dark:bg-slate-800 dark:text-gray-400'
 
   return (
     <span
-      className={`px-2.5 py-0.5 rounded-full text-xs font-medium border border-transparent ${style}`}
+      className={`px-2.5 py-0.5 rounded-full text-xs font-medium border border-transparent transition-colors ${style}`}
     >
       {label}
     </span>

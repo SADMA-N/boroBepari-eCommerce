@@ -288,6 +288,8 @@ function CheckoutPage() {
                 </div>
               )}
             </div>
+            
+            {/* Total Section */}
             <div className="flex justify-between items-center py-4 font-bold text-lg text-gray-900">
               <span>Total</span>
               <span className="text-orange-600">
@@ -295,7 +297,20 @@ function CheckoutPage() {
               </span>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded-lg text-xs text-gray-500">
+            {/* Deposit Info */}
+            {cart.items.some(i => (i.depositPercentage ?? 0) > 0) && (
+              <div className="mt-2 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                <div className="flex justify-between items-center text-sm font-bold text-orange-800 mb-2">
+                  <span>Advance Payment (Deposit)</span>
+                  <span>৳{cart.items.reduce((acc, i) => acc + (i.lineTotal * (i.depositPercentage || 0) / 100), 0).toLocaleString()}</span>
+                </div>
+                <p className="text-[10px] text-orange-600 leading-tight">
+                  Based on supplier terms, you only need to pay the deposit amount now to confirm your order. The remaining balance will be due later.
+                </p>
+              </div>
+            )}
+
+            <div className="bg-gray-50 p-3 mt-4 rounded-lg text-xs text-gray-500">
               Review items and delivery details in the next step.
             </div>
           </div>

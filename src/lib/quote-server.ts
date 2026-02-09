@@ -33,7 +33,12 @@ export const submitRFQ = createServerFn({ method: 'POST' })
     })
 
     if (!product) throw new Error('Product not found')
-    if (!product.supplierId) throw new Error('Product has no supplier')
+    if (!product.supplierId) {
+      console.error('Product found but has no supplierId:', product.id)
+      throw new Error('Product has no associated supplier')
+    }
+
+    console.log('Submitting RFQ for product:', product.id, 'Supplier:', product.supplierId)
 
     const [newRfq] = await db
       .insert(rfqs)
@@ -51,32 +56,48 @@ export const submitRFQ = createServerFn({ method: 'POST' })
       })
       .returning()
 
+    console.log('RFQ created successfully:', newRfq.id)
+
     // Notify Supplier
-    const supplier = await db.query.suppliers.findFirst({
-      where: eq(suppliers.id, product.supplierId),
-      with: {
-        owner: true,
+    try {
+      const supplier = await db.query.suppliers.findFirst({
+        where: eq(suppliers.id, product.supplierId),
+        with: {
+          owner: true,
+        }
+      })
+
+      if (supplier?.ownerId) {
+        // Only try to insert notification if ownerId exists and might be a valid user.id
+        // We catch errors here to prevent RFQ submission failure due to notification issues
+        try {
+          await db.insert(notifications).values({
+            userId: supplier.ownerId,
+            title: 'New RFQ Received',
+            message: `You have received a new RFQ for ${product.name} (Qty: ${data.quantity})`,
+            type: 'rfq_received',
+            link: `/seller/rfqs`,
+          })
+        } catch (notifyErr) {
+          console.error('Failed to insert in-app notification:', notifyErr)
+        }
+
+        if (supplier.owner?.email) {
+          // Send Email
+          await sendRfqEmail({
+            email: supplier.owner.email,
+            name: supplier.owner.name || 'Supplier',
+            rfqId: newRfq.id,
+            productName: product.name,
+            quantity: data.quantity,
+            link: `${env.APP_URL || 'http://localhost:3000'}/seller/rfqs`
+          })
+        }
+      } else {
+        console.warn('No ownerId found for supplier:', product.supplierId, '- In-app notification skipped.')
       }
-    })
-
-    if (supplier?.ownerId && supplier.owner) {
-      await db.insert(notifications).values({
-        userId: supplier.ownerId,
-        title: 'New RFQ Received',
-        message: `You have received a new RFQ for ${product.name} (Qty: ${data.quantity})`,
-        type: 'rfq_received',
-        link: `/seller/rfqs`,
-      })
-
-      // Send Email
-      await sendRfqEmail({
-        email: supplier.owner.email,
-        name: supplier.owner.name || 'Supplier',
-        rfqId: newRfq.id,
-        productName: product.name,
-        quantity: data.quantity,
-        link: `${env.APP_URL || 'http://localhost:3000'}/seller/rfqs`
-      })
+    } catch (supplierErr) {
+      console.error('Error during supplier notification process:', supplierErr)
     }
 
     return { success: true, rfqId: newRfq.id }
@@ -126,6 +147,9 @@ export const sendQuote = createServerFn({ method: 'POST' })
       .object({
         rfqId: z.number(),
         unitPrice: z.number().positive(),
+        agreedQuantity: z.number().positive().optional(),
+        depositPercentage: z.number().min(0).max(100).optional(),
+        deliveryTime: z.string().optional(),
         validityPeriod: z.string(), // ISO date
         notes: z.string().optional(),
       })
@@ -144,17 +168,47 @@ export const sendQuote = createServerFn({ method: 'POST' })
 
     if (!rfq) throw new Error('RFQ not found')
 
-    const totalPrice = (data.unitPrice * rfq.quantity).toString()
-
-    await db.insert(quotes).values({
-      rfqId: data.rfqId,
-      supplierId: rfq.supplierId,
-      unitPrice: data.unitPrice.toString(),
-      totalPrice,
-      validityPeriod: new Date(data.validityPeriod),
-      terms: data.notes,
-      status: 'pending',
+    // Check for existing quote from this supplier for this RFQ
+    const existingQuote = await db.query.quotes.findFirst({
+      where: and(
+        eq(quotes.rfqId, data.rfqId),
+        eq(quotes.supplierId, rfq.supplierId)
+      )
     })
+
+    const finalQuantity = data.agreedQuantity || rfq.quantity
+    const totalPrice = (data.unitPrice * finalQuantity).toString()
+
+    if (existingQuote) {
+      // Update existing quote (for back-and-forth negotiation)
+      await db.update(quotes)
+        .set({
+          unitPrice: data.unitPrice.toString(),
+          totalPrice,
+          agreedQuantity: finalQuantity,
+          depositPercentage: data.depositPercentage || 0,
+          deliveryTime: data.deliveryTime,
+          validityPeriod: new Date(data.validityPeriod),
+          terms: data.notes,
+          status: 'pending', // Reset to pending for buyer review
+          updatedAt: new Date(),
+        })
+        .where(eq(quotes.id, existingQuote.id))
+    } else {
+      // Insert new quote
+      await db.insert(quotes).values({
+        rfqId: data.rfqId,
+        supplierId: rfq.supplierId,
+        unitPrice: data.unitPrice.toString(),
+        totalPrice,
+        agreedQuantity: finalQuantity,
+        depositPercentage: data.depositPercentage || 0,
+        deliveryTime: data.deliveryTime,
+        validityPeriod: new Date(data.validityPeriod),
+        terms: data.notes,
+        status: 'pending',
+      })
+    }
 
     await db
       .update(rfqs)
@@ -352,21 +406,55 @@ export const updateQuoteStatus = createServerFn({ method: 'POST' })
         .update(rfqs)
         .set({ status: 'accepted' })
         .where(eq(rfqs.id, quote.rfqId))
+    } else if (data.status === 'rejected') {
+      await db
+        .update(rfqs)
+        .set({ status: 'rejected' })
+        .where(eq(rfqs.id, quote.rfqId))
     }
 
     // Notify Supplier (find supplier owner)
     const supplier = await db.query.suppliers.findFirst({
       where: eq(suppliers.id, quote.supplierId),
+      with: {
+        owner: true,
+      },
     })
 
-    if (supplier?.ownerId) {
+    if (supplier?.ownerId && supplier.owner) {
+      const statusLabel =
+        data.status === 'accepted'
+          ? 'Accepted'
+          : data.status === 'rejected'
+            ? 'Declined'
+            : 'Countered'
+
+      let message = `Your quote for RFQ #${quote.rfqId} has been ${data.status} by the buyer.`
+      if (data.status === 'rejected') {
+        message = `The buyer has declined your quote for RFQ #${quote.rfqId}. They won't agree to the terms and do not wish to proceed with this request from you.`
+      } else if (data.status === 'countered') {
+        message = `The buyer has sent a counter offer of ৳${Number(data.counterPrice).toLocaleString()} for RFQ #${quote.rfqId}.`
+      }
+
       await db.insert(notifications).values({
         userId: supplier.ownerId,
-        title: `Quote ${data.status.charAt(0).toUpperCase() + data.status.slice(1)}`,
-        message: `Your quote for RFQ #${quote.rfqId} has been ${data.status} by the buyer.`,
+        title: `Quote ${statusLabel}`,
+        message: message,
         type: `quote_${data.status}`,
-        link: `/supplier/dashboard`,
+        link: `/seller/rfqs`,
       })
+
+      // Send Email for important updates
+      if (data.status === 'rejected' || data.status === 'countered') {
+        await sendQuoteEmail({
+          email: supplier.owner.email,
+          name: supplier.owner.name || 'Supplier',
+          rfqId: quote.rfqId,
+          productName: quote.rfq.productId.toString(), // Simplified or lookup
+          unitPrice: data.status === 'countered' ? `Counter: ৳${data.counterPrice}` : 'Declined',
+          link: `${env.APP_URL || 'http://localhost:3000'}/seller/rfqs`
+        })
+      }
     }
 
     return { success: true }

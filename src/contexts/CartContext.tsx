@@ -143,7 +143,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // --------------------------------------------------------------------------
   const addItem = useCallback(
     (request: AddToCartRequest): { success: boolean; error?: string } => {
-      const product = getProductById(request.productId)
+      let product: any = getProductById(request.productId)
+      
+      // Fallback to provided product data if not in mock database
+      if (!product && request.productData) {
+        product = {
+          id: request.productId,
+          ...request.productData,
+          price: request.customPrice || 0, // Default price
+          images: [request.productData.image],
+        }
+      }
+
       if (!product) {
         return { success: false, error: 'Product not found' }
       }
@@ -166,6 +177,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         lineTotal: request.quantity * unitPrice,
         rfqId: request.rfqId,
         quoteId: request.quoteId,
+        depositPercentage: request.depositPercentage || 0,
         isPriceLocked: !!request.rfqId,
       }
 
@@ -181,10 +193,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         let updatedItems: Array<CartItem>
         if (existingIndex > -1) {
-          // Update existing item quantity
+          // For RFQ items, replace the quantity exactly. For standard items, add to it.
           updatedItems = prev.items.map((item, index) => {
             if (index === existingIndex) {
-              const newQuantity = item.quantity + request.quantity
+              const newQuantity = request.rfqId ? request.quantity : (item.quantity + request.quantity)
+              
               // Check stock for combined quantity
               if (newQuantity > item.stock) {
                 return item // Don't update if exceeds stock
@@ -193,6 +206,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 ...item,
                 quantity: newQuantity,
                 lineTotal: newQuantity * item.unitPrice,
+                depositPercentage: request.depositPercentage || item.depositPercentage,
               }
             }
             return item

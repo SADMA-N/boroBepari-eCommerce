@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {
   AlertTriangle,
   CheckCircle,
@@ -5,7 +6,6 @@ import {
   Loader2,
   X,
 } from 'lucide-react'
-import { useState } from 'react'
 import { formatBDT } from '@/data/mock-products'
 
 interface BaseModalProps {
@@ -33,25 +33,25 @@ export function AcceptQuoteModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
         <div className="flex items-center gap-3 mb-4 text-green-600">
-          <div className="p-2 bg-green-100 rounded-full">
+          <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
             <CheckCircle size={24} />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Accept Quote</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Accept Quote</h2>
         </div>
 
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
           Are you sure you want to accept the quote from{' '}
-          <span className="font-bold text-gray-900">{supplierName}</span>?
+          <span className="font-bold text-gray-900 dark:text-white">{supplierName}</span>?
         </p>
 
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-          <p className="text-sm text-gray-500 mb-1">Locked Price:</p>
-          <p className="text-2xl font-bold text-gray-900">
+        <div className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 mb-6">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Locked Price:</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {formatBDT(Number(price))}
           </p>
-          <p className="text-xs text-blue-600 mt-2 flex items-center gap-1">
+          <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 flex items-center gap-1">
             <AlertTriangle size={12} />
             This price will be locked for your order.
           </p>
@@ -60,7 +60,7 @@ export function AcceptQuoteModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+            className="flex-1 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition"
           >
             Cancel
           </button>
@@ -94,35 +94,41 @@ export function RejectQuoteModal({
   supplierName,
   onConfirm,
 }: RejectQuoteModalProps) {
-  const [reason, setReason] = useState('')
+  const [reason, setReason] = React.useState('')
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setReason('')
+    }
+  }, [isOpen])
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200 backdrop-blur-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200 border border-gray-200 dark:border-slate-800">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Reject Quote</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Decline Quote</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
         </div>
 
-        <p className="text-gray-600 mb-4">
-          You are rejecting the quote from{' '}
-          <span className="font-bold text-gray-900">{supplierName}</span>. This
-          action cannot be undone.
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          You are declining the quote from{' '}
+          <span className="font-bold text-gray-900 dark:text-gray-100">{supplierName}</span>. This
+          action will notify the supplier that you do not wish to proceed with their quote for this RFQ.
         </p>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Reason (Optional)
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Reason for declining (Optional)
           </label>
           <select
-            className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mb-3 focus:ring-2 focus:ring-red-500 outline-none"
+            className="w-full border border-gray-300 dark:border-slate-700 rounded-lg p-2.5 text-sm mb-3 focus:ring-2 focus:ring-red-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
           >
@@ -136,7 +142,7 @@ export function RejectQuoteModal({
           </select>
           {reason === 'other' && (
             <textarea
-              className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 outline-none"
+              className="w-full border border-gray-300 dark:border-slate-700 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-red-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               rows={3}
               placeholder="Please specify..."
             />
@@ -146,7 +152,7 @@ export function RejectQuoteModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+            className="flex-1 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition"
           >
             Cancel
           </button>
@@ -158,7 +164,7 @@ export function RejectQuoteModal({
             {isLoading ? (
               <Loader2 size={18} className="animate-spin" />
             ) : (
-              'Reject Quote'
+              'Decline & Notify'
             )}
           </button>
         </div>
@@ -180,9 +186,18 @@ export function CounterOfferModal({
   currentPrice,
   onConfirm,
 }: CounterOfferModalProps) {
-  const [counterPrice, setCounterPrice] = useState<string>(String(currentPrice))
-  const [notes, setNotes] = useState('')
-  const [error, setError] = useState('')
+  const [counterPrice, setCounterPrice] = React.useState<string>('')
+  const [notes, setNotes] = React.useState('')
+  const [error, setError] = React.useState('')
+
+  // Sync state when currentPrice changes or modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setCounterPrice(String(currentPrice))
+      setNotes('')
+      setError('')
+    }
+  }, [isOpen, currentPrice])
 
   const handleSubmit = () => {
     const price = Number(counterPrice)
@@ -202,20 +217,20 @@ export function CounterOfferModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             Make Counter Offer
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="bg-blue-50 p-3 rounded-lg text-blue-800 text-sm mb-4 flex items-center gap-2">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-blue-800 dark:text-blue-300 text-sm mb-4 flex items-center gap-2">
           <DollarSign size={16} />
           Current Price:{' '}
           <span className="font-bold">{formatBDT(Number(currentPrice))}</span>
@@ -223,27 +238,27 @@ export function CounterOfferModal({
 
         <div className="space-y-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Your Counter Price (BDT)
             </label>
             <input
               type="number"
               value={counterPrice}
               onChange={(e) => setCounterPrice(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full border border-gray-300 dark:border-slate-700 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               placeholder="0.00"
             />
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Note to Supplier
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+              className="w-full border border-gray-300 dark:border-slate-700 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               rows={3}
               placeholder="I can order immediately if price is..."
             />
@@ -253,7 +268,7 @@ export function CounterOfferModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+            className="flex-1 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition"
           >
             Cancel
           </button>

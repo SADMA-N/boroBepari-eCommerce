@@ -284,6 +284,41 @@ export const getProductBySlug = createServerFn({ method: 'POST' })
     return product
   })
 
+export interface ProductSuggestion {
+  id: number
+  name: string
+  slug: string
+  image: string | null
+  price: number
+}
+
+export const getProductSuggestions = createServerFn({ method: 'GET' })
+  .inputValidator(z.object({ query: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const escaped = data.query.replace(/[%_]/g, '\\$&')
+    const rows = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        images: products.images,
+        price: products.price,
+      })
+      .from(products)
+      .where(ilike(products.name, `${escaped}%`))
+      .limit(6)
+
+    return rows.map(
+      (r): ProductSuggestion => ({
+        id: r.id,
+        name: r.name,
+        slug: r.slug,
+        image: (r.images as string[] | null)?.[0] ?? null,
+        price: parseFloat(r.price),
+      }),
+    )
+  })
+
 export const searchProducts = createServerFn({ method: 'POST' })
   .inputValidator(
     z.object({

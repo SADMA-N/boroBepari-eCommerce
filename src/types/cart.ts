@@ -34,6 +34,8 @@ export interface CartItem {
   rfqId?: number
   /** Optional: Quote ID if this item came from an accepted quote */
   quoteId?: number
+  /** Optional: Deposit percentage (0-100) */
+  depositPercentage?: number
   /** Whether the price is locked (e.g., from accepted RFQ quote) */
   isPriceLocked?: boolean
 }
@@ -142,6 +144,17 @@ export interface AddToCartRequest {
   rfqId?: number
   /** Optional Quote ID if from accepted quote */
   quoteId?: number
+  /** Optional: Deposit percentage (0-100) */
+  depositPercentage?: number
+  /** Optional: Product data for items not in mock-products */
+  productData?: {
+    name: string
+    image: string
+    supplierId: number
+    moq: number
+    stock: number
+    unit: string
+  }
 }
 
 /**

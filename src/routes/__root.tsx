@@ -1,5 +1,6 @@
 import {
   HeadContent,
+  Link,
   Scripts,
   createRootRouteWithContext,
   redirect,
@@ -84,7 +85,28 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
 
   shellComponent: RootDocument,
+  notFoundComponent: NotFoundPage,
 })
+
+function NotFoundPage() {
+  return (
+    <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 text-center">
+      <h1 className="text-6xl font-bold text-gray-300 dark:text-slate-700">404</h1>
+      <h2 className="mt-4 text-xl font-semibold text-gray-800 dark:text-gray-200">
+        Page Not Found
+      </h2>
+      <p className="mt-2 text-gray-500 dark:text-gray-400">
+        The page you're looking for doesn't exist or has been moved.
+      </p>
+      <Link
+        to="/"
+        className="mt-6 px-6 py-3 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-colors"
+      >
+        Go to Homepage
+      </Link>
+    </div>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({
@@ -116,14 +138,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 root.classList.remove('light', 'dark');
                 root.classList.add(theme);
                 root.style.colorScheme = theme;
-                
-                // Immediate background color to prevent flash before CSS loads
-                if (theme === 'dark') {
-                  root.style.backgroundColor = '#020817';
-                } else {
-                  root.style.backgroundColor = '#ffffff';
-                }
               })();
+            `,
+          }}
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              html.dark { background-color: #020817; color-scheme: dark; }
+              html.dark body { background-color: #020817; color: hsl(210 40% 98%); }
+              html.light, html:not(.dark):not(.light) { background-color: #ffffff; color-scheme: light; }
+              html.light body, html:not(.dark):not(.light) body { background-color: #ffffff; color: hsl(222.2 84% 4.9%); }
             `,
           }}
         />

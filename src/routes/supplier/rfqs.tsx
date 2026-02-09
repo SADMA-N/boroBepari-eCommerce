@@ -62,8 +62,8 @@ function SupplierRFQInbox() {
     <div className="max-w-[1440px] mx-auto px-6 py-8">
       <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">RFQ Requests</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">RFQ Requests</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             Manage incoming quote requests from buyers
           </p>
         </div>
@@ -76,8 +76,8 @@ function SupplierRFQInbox() {
       />
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 mb-6">
-        <div className="border-b px-4 overflow-x-auto">
+      <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 mb-6">
+        <div className="border-b dark:border-slate-800 px-4 overflow-x-auto">
           <div className="flex space-x-6 min-w-max">
             {(
               ['new', 'quoted', 'accepted', 'expired'] as Array<SupplierTab>
@@ -88,15 +88,15 @@ function SupplierRFQInbox() {
                 className={`py-4 text-sm font-medium capitalize border-b-2 transition-colors ${
                   activeTab === tab
                     ? 'border-orange-600 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-slate-700'
                 }`}
               >
                 {tab}
                 <span
                   className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                     activeTab === tab
-                      ? 'bg-orange-50 text-orange-600'
-                      : 'bg-gray-100 text-gray-600'
+                      ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600'
+                      : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   {/* Mock counts */}
@@ -118,7 +118,7 @@ function SupplierRFQInbox() {
               placeholder="Search product, buyer..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none"
+              className="w-full pl-10 pr-4 py-2 border dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
             />
           </div>
         </div>
@@ -135,7 +135,7 @@ function SupplierRFQInbox() {
           />
         ))}
         {supplierRfqs.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg border border-dashed text-gray-500">
+          <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-lg border border-dashed dark:border-slate-700 text-gray-500 dark:text-gray-400">
             No RFQs found in this tab.
           </div>
         )}
@@ -167,7 +167,7 @@ function SupplierRFQCard({
   const isUrgent = hoursLeft > 0 && hoursLeft < 24
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow relative overflow-hidden">
+    <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-6 hover:shadow-md transition-shadow relative overflow-hidden">
       {/* Urgent Badge */}
       {isUrgent && isActionable && (
         <div className="absolute top-0 right-0 bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
@@ -179,32 +179,32 @@ function SupplierRFQCard({
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="bg-blue-50 text-blue-700 text-xs font-mono px-2 py-0.5 rounded">
+            <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs font-mono px-2 py-0.5 rounded">
               {rfq.rfqNumber}
             </span>
-            <span className="text-gray-400 text-xs">•</span>
-            <span className="text-sm text-gray-500">
+            <span className="text-gray-400 dark:text-gray-500 text-xs">•</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {format(rfq.createdAt!, 'PP')}
             </span>
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-1">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
             {rfq.product.name}
           </h3>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 mt-2">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-400 mt-2">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {rfq.quantity} {rfq.product.unit}s
               </span>
-              <span className="bg-gray-100 px-1.5 rounded text-xs">Qty</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-1.5 rounded text-xs">Qty</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-blue-600">
+              <span className="font-semibold text-blue-600 dark:text-blue-400">
                 {formatBDT(Number(rfq.targetPrice))}
               </span>
-              <span className="bg-gray-100 px-1.5 rounded text-xs">Target</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-1.5 rounded text-xs">Target</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <MapPin size={14} className="text-gray-400" />
+              <MapPin size={14} className="text-gray-400 dark:text-gray-500" />
               <span
                 className="truncate max-w-[150px]"
                 title={rfq.deliveryLocation}
@@ -225,7 +225,7 @@ function SupplierRFQCard({
               Send Quote
             </button>
           ) : (
-            <button className="bg-gray-100 text-gray-500 px-6 py-2.5 rounded-lg font-medium cursor-not-allowed">
+            <button className="bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 px-6 py-2.5 rounded-lg font-medium cursor-not-allowed">
               View Details
             </button>
           )}
@@ -269,16 +269,16 @@ function QuoteResponseModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl max-w-2xl w-full flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+        <div className="px-6 py-4 border-b dark:border-slate-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800 rounded-t-xl">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Send Quote</h2>
-            <p className="text-sm text-gray-500">Ref: {rfq.rfqNumber}</p>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Send Quote</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Ref: {rfq.rfqNumber}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
           >
             <X size={20} />
           </button>
@@ -286,14 +286,14 @@ function QuoteResponseModal({
 
         <div className="p-6 overflow-y-auto custom-scrollbar">
           {/* Summary of Request */}
-          <div className="bg-blue-50 p-4 rounded-lg mb-6 border border-blue-100">
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-6 border border-blue-100 dark:border-blue-900/30">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-blue-900">{rfq.product.name}</h3>
-              <span className="text-xs bg-white text-blue-700 px-2 py-1 rounded font-mono font-bold">
+              <h3 className="font-bold text-blue-900 dark:text-blue-300">{rfq.product.name}</h3>
+              <span className="text-xs bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 px-2 py-1 rounded font-mono font-bold">
                 Qty: {rfq.quantity}
               </span>
             </div>
-            <div className="text-sm text-blue-800 flex gap-4">
+            <div className="text-sm text-blue-800 dark:text-blue-300 flex gap-4">
               <span>
                 Buyer Target:{' '}
                 <span className="font-bold">
@@ -306,11 +306,11 @@ function QuoteResponseModal({
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Unit Price (BDT) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
                     <span className="font-bold">৳</span>
                   </div>
                   <input
@@ -319,7 +319,7 @@ function QuoteResponseModal({
                     min="1"
                     value={unitPrice}
                     onChange={(e) => setUnitPrice(e.target.value)}
-                    className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    className="w-full pl-8 pr-4 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                     placeholder="0.00"
                   />
                 </div>
@@ -335,10 +335,10 @@ function QuoteResponseModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Total Price
                 </label>
-                <div className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-bold">
+                <div className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white font-bold">
                   {formatBDT(totalPrice)}
                 </div>
               </div>
@@ -346,13 +346,13 @@ function QuoteResponseModal({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Validity Period
                 </label>
                 <select
                   value={validity}
                   onChange={(e) => setValidity(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                 >
                   <option value="7">7 Days</option>
                   <option value="14">14 Days</option>
@@ -361,7 +361,7 @@ function QuoteResponseModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Est. Delivery Time
                 </label>
                 <input
@@ -369,13 +369,13 @@ function QuoteResponseModal({
                   value={deliveryTime}
                   onChange={(e) => setDeliveryTime(e.target.value)}
                   placeholder="e.g. 5-7 days"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Terms & Conditions / Notes
               </label>
               <textarea
@@ -383,15 +383,15 @@ function QuoteResponseModal({
                 value={terms}
                 onChange={(e) => setTerms(e.target.value)}
                 placeholder="Payment terms, warranty details, or specific notes..."
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none resize-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white"
               />
             </div>
 
-            <div className="pt-4 border-t flex justify-end gap-3">
+            <div className="pt-4 border-t dark:border-slate-800 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition"
+                className="px-6 py-2.5 border border-gray-300 dark:border-slate-700 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition"
               >
                 Cancel
               </button>

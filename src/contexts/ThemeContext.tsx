@@ -59,11 +59,6 @@ export function ThemeProvider({
       root.style.colorScheme = resolved
     }
 
-    // Clear the temporary background color set by the early script
-    if (root.style.backgroundColor) {
-      root.style.backgroundColor = ''
-    }
-
     // Set cookie for SSR support
     document.cookie = `${storageKey}=${theme}; path=/; max-age=31536000; SameSite=Lax`
   }, [theme, storageKey])
