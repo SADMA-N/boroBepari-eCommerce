@@ -88,6 +88,7 @@ type Product = {
   sellerProductId?: number
   sellerBusinessName?: string
   adminNotes?: string
+  slug?: string
 }
 
 const CATEGORIES = [
@@ -322,7 +323,7 @@ const SORT_OPTIONS: Array<{ label: string; value: SortKey }> = [
 ]
 
 function formatCurrency(amount: number) {
-  return `₹${amount.toLocaleString()}`
+  return `৳${amount.toLocaleString()}`
 }
 
 function statusBadge(status: ProductStatus) {
@@ -427,6 +428,7 @@ export function AdminProductsPage() {
           id: `SP-${sp.id}`,
           name: sp.name,
           sku: sp.sku,
+          slug: sp.slug,
           supplier: sp.sellerBusinessName,
           category: sp.subCategory || sp.mainCategory || 'Uncategorized',
           price: sp.price,
@@ -1038,7 +1040,7 @@ export function AdminProductsPage() {
                               />
                               <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg transition-colors overflow-hidden">
                                 <a
-                                  href={`/products/${product.id}`}
+                                  href={`/products/${product.slug || product.id}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   onClick={() => setOpenMenuId(null)}
@@ -1067,6 +1069,17 @@ export function AdminProductsPage() {
                                           headers: { Authorization: `Bearer ${token}` },
                                         })
                                           .then(() => {
+                                            setSellerProducts((prev) =>
+                                              prev.map((p) =>
+                                                p.sellerProductId ===
+                                                product.sellerProductId
+                                                  ? {
+                                                      ...p,
+                                                      status: 'accepted' as ProductStatus,
+                                                    }
+                                                  : p,
+                                              ),
+                                            )
                                             refreshSellerProducts()
                                           })
                                           .catch((err) => {
@@ -1354,10 +1367,23 @@ export function AdminProductsPage() {
                           setActionLoading(true)
                           const token = localStorage.getItem('admin_token') || ''
                           approveSellerProduct({
-                            data: { sellerProductId: detailProduct.sellerProductId! },
+                            data: {
+                              sellerProductId: detailProduct.sellerProductId!,
+                            },
                             headers: { Authorization: `Bearer ${token}` },
                           })
                             .then(() => {
+                              setSellerProducts((prev) =>
+                                prev.map((p) =>
+                                  p.sellerProductId ===
+                                  detailProduct.sellerProductId
+                                    ? {
+                                        ...p,
+                                        status: 'accepted' as ProductStatus,
+                                      }
+                                    : p,
+                                ),
+                              )
                               refreshSellerProducts()
                               setDetailProduct(null)
                             })
@@ -1915,6 +1941,14 @@ export function AdminProductsPage() {
                     headers: { Authorization: `Bearer ${token}` },
                   })
                     .then(() => {
+                      setSellerProducts((prev) =>
+                        prev.map((p) =>
+                          p.sellerProductId ===
+                          declineModalProduct.sellerProductId
+                            ? { ...p, status: 'declined' as ProductStatus }
+                            : p,
+                        ),
+                      )
                       refreshSellerProducts()
                       setDeclineModalProduct(null)
                     })

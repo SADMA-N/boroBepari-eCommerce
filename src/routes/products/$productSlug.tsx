@@ -202,6 +202,7 @@ function ProductDetailPage() {
             <img
               src={selectedImage}
               alt={product.name}
+              
               className="w-full h-96 object-contain cursor-zoom-in"
             />
           </div>
@@ -215,6 +216,7 @@ function ProductDetailPage() {
                 <img
                   src={img}
                   alt={`View ${idx + 1}`}
+                  
                   className="w-full h-20 object-contain"
                 />
               </button>

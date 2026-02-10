@@ -271,7 +271,7 @@ const SORT_OPTIONS: Array<{ label: string; value: SortKey }> = [
 const PAGE_SIZE = 50
 
 function formatCurrency(amount: number) {
-  return `₹${amount.toLocaleString()}`
+  return `৳${amount.toLocaleString()}`
 }
 
 function matchesOrderCount(orders: number, filter: OrderCountFilter) {
@@ -742,7 +742,7 @@ export function AdminUsersPage() {
                   <th className="px-4 py-3 text-left">Phone</th>
                   <th className="px-4 py-3 text-left">Registered Date</th>
                   <th className="px-4 py-3 text-right">Total Orders</th>
-                  <th className="px-4 py-3 text-right">Total Spent (₹)</th>
+                  <th className="px-4 py-3 text-right">Total Spent (৳)</th>
                   <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>

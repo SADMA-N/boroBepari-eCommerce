@@ -102,6 +102,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <img
                       src={item.image}
                       alt={item.productName}
+                      
                       className="w-full h-full object-cover"
                     />
                   </div>

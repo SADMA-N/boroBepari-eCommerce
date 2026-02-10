@@ -291,7 +291,7 @@ const SORT_OPTIONS: Array<{ label: string; value: SortKey }> = [
 const PAGE_SIZE = 50
 
 function formatCurrency(amount: number) {
-  return `₹${amount.toLocaleString()}`
+  return `৳${amount.toLocaleString()}`
 }
 
 function kycBadge(status: KycStatus) {
@@ -807,7 +807,7 @@ export function AdminSuppliersPage() {
                   <th className="px-4 py-3 text-center">Verified</th>
                   <th className="px-4 py-3 text-right">Products</th>
                   <th className="px-4 py-3 text-right">Orders</th>
-                  <th className="px-4 py-3 text-right">GMV (₹)</th>
+                  <th className="px-4 py-3 text-right">GMV (৳)</th>
                   <th className="px-4 py-3 text-left">Registration Date</th>
                   <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-right">Actions</th>

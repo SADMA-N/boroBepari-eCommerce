@@ -254,6 +254,7 @@ function MoqWarningBanner({
                     <img
                       src={item.image}
                       alt={item.productName}
+                      
                       className="w-12 h-12 rounded-lg object-cover border"
                     />
 
@@ -426,6 +427,7 @@ function CartItemRow({
         <img
           src={item.image}
           alt={item.productName}
+          
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {isLocked && item.rfqId && (

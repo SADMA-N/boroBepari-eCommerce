@@ -318,27 +318,27 @@ export function AdminSettingsPage() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <input
                       className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
-                      placeholder="Listing Fee (₹)"
+                      placeholder="Listing Fee (৳)"
                       defaultValue="0"
                     />
                     <input
                       className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
-                      placeholder="Featured Listing Fee (₹/month)"
+                      placeholder="Featured Listing Fee (৳/month)"
                       defaultValue="1500"
                     />
                     <input
                       className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
-                      placeholder="Transaction Fee (₹ or %)"
+                      placeholder="Transaction Fee (৳ or %)"
                       defaultValue="1%"
                     />
                     <input
                       className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
-                      placeholder="Withdrawal Fee (₹ or %)"
+                      placeholder="Withdrawal Fee (৳ or %)"
                       defaultValue="20"
                     />
                     <input
                       className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
-                      placeholder="Minimum Withdrawal Amount (₹)"
+                      placeholder="Minimum Withdrawal Amount (৳)"
                       defaultValue="500"
                     />
                   </div>
@@ -461,7 +461,7 @@ export function AdminSettingsPage() {
                       </label>
                       <input
                         className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                        placeholder="Order value < ₹X"
+                        placeholder="Order value < ৳X"
                         defaultValue="50000"
                       />
                       <input
@@ -555,8 +555,8 @@ export function AdminSettingsPage() {
                             Cities:{' '}
                             {zone === 'Dhaka Metro' ? 'Dhaka, Gazipur' : zone}
                           </span>
-                          <span>Base rate: ₹120</span>
-                          <span>+₹20/kg</span>
+                          <span>Base rate: ৳120</span>
+                          <span>+৳20/kg</span>
                         </div>
                         <div className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
                           ETA: 2-4 days
@@ -616,7 +616,7 @@ export function AdminSettingsPage() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <input
                       className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                      placeholder="Free shipping threshold (₹)"
+                      placeholder="Free shipping threshold (৳)"
                       defaultValue="10000"
                     />
                     <input

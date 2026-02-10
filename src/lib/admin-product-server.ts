@@ -54,14 +54,14 @@ export const getAdminSellerProducts = createServerFn({ method: 'GET' })
     }
 
     const rows = await db.query.sellerProducts.findMany({
-      with: { seller: true },
+      with: { seller: true, publishedProduct: true },
       orderBy: [desc(schema.sellerProducts.createdAt)],
     })
 
     return rows.map((r) => ({
       id: r.id,
       name: r.name,
-      slug: r.slug,
+      slug: r.publishedProduct?.slug ?? r.slug,
       sku: r.sku ?? '',
       brand: r.brand,
       mainCategory: r.mainCategory,
