@@ -133,7 +133,12 @@ export function SellerRFQsPage() {
   useEffect(() => {
     const fetchRfqs = async () => {
       try {
-        const data = await getSellerRfqs()
+        const token = localStorage.getItem('seller_token')
+        console.log('Fetching Seller RFQs...')
+        const data = await getSellerRfqs({
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        console.log('Seller RFQs Fetched:', data)
         setRfqs(data)
       } catch (error) {
         console.error('Failed to fetch seller RFQs:', error)
