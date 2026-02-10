@@ -123,6 +123,8 @@ function ReviewPage() {
             productId: item.productId,
             quantity: item.quantity,
             price: item.unitPrice,
+            rfqId: item.rfqId,
+            quoteId: item.quoteId,
           })),
           totalAmount: cart.total,
           paymentMethod: state.paymentMethod || 'cod',

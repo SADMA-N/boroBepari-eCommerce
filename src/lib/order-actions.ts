@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-server'
-import { addresses, orderItems, orders, products, user } from '@/db/schema'
+import { addresses, orderItems, orders, products, rfqs, user } from '@/db/schema'
 import { db } from '@/db'
 import { sendOrderStatusEmail } from '@/lib/notifications'
 
@@ -53,6 +53,8 @@ const createOrderSchema = z.object({
       productId: z.number(),
       quantity: z.number(),
       price: z.number(),
+      rfqId: z.number().optional(),
+      quoteId: z.number().optional(),
     }),
   ),
   totalAmount: z.number(),
@@ -112,10 +114,27 @@ export const createOrder = createServerFn({ method: 'POST' })
         normalizedItems.map((item) => ({
           orderId: newOrder.id,
           productId: item.productId,
+          rfqId: item.rfqId,
+          quoteId: item.quoteId,
           quantity: item.quantity,
           price: item.lineTotal.toString(),
         })),
       )
+    }
+
+    const rfqIds = Array.from(
+      new Set(
+        normalizedItems
+          .map((item) => item.rfqId)
+          .filter((id): id is number => typeof id === 'number'),
+      ),
+    )
+
+    if (rfqIds.length > 0) {
+      await db
+        .update(rfqs)
+        .set({ status: 'converted', updatedAt: new Date() })
+        .where(inArray(rfqs.id, rfqIds))
     }
 
     const buyer = await db.query.user.findFirst({

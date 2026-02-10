@@ -378,6 +378,9 @@ export const orderItems = pgTable('order_items', {
 
   supplierId: integer('supplier_id').references(() => suppliers.id),
 
+  rfqId: integer('rfq_id').references(() => rfqs.id),
+  quoteId: integer('quote_id').references(() => quotes.id),
+
   quantity: integer('quantity').notNull(),
 
   price: decimal('price', { precision: 12, scale: 2 }).notNull(),

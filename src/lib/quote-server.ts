@@ -7,6 +7,8 @@ import { uploadToS3 } from './s3'
 import { db } from '@/db'
 import {
   notifications,
+  orderItems,
+  orders,
   products,
   quotes,
   rfqs,
@@ -385,7 +387,50 @@ export const getRfqById = createServerFn({ method: 'GET' })
     if (!rfq) throw new Error('RFQ not found')
     if (rfq.buyerId !== session.user.id) throw new Error('Unauthorized')
 
-    return rfq
+    let orderMatch = await db.query.orderItems.findFirst({
+      where: eq(orderItems.rfqId, rfq.id),
+      with: {
+        order: true,
+      },
+      orderBy: (items, { desc }) => [desc(items.id)],
+    })
+
+    if (!orderMatch) {
+      const acceptedQuote = rfq.quotes?.find((quote) => quote.status === 'accepted')
+      if (acceptedQuote) {
+        const expectedQuantity = acceptedQuote.agreedQuantity ?? rfq.quantity
+        const expectedTotal = (
+          Number(acceptedQuote.unitPrice) * expectedQuantity
+        ).toString()
+
+        orderMatch = await db.query.orderItems.findFirst({
+          where: and(
+            eq(orderItems.productId, rfq.productId),
+            eq(orderItems.quantity, expectedQuantity),
+            eq(orderItems.price, expectedTotal),
+          ),
+          with: {
+            order: true,
+          },
+          orderBy: (items, { desc }) => [desc(items.id)],
+        })
+      }
+    }
+
+    const order =
+      orderMatch?.order && orderMatch.order.userId === session.user.id
+        ? {
+            id: orderMatch.order.id,
+            status: orderMatch.order.status,
+            paymentStatus: orderMatch.order.paymentStatus,
+            createdAt: orderMatch.order.createdAt,
+          }
+        : null
+
+    return {
+      ...rfq,
+      order,
+    }
   })
 
 export const updateQuoteStatus = createServerFn({ method: 'POST' })
