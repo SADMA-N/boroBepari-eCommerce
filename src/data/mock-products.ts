@@ -482,6 +482,8 @@ export interface ProductFilters {
   maxMoq?: number
   locations?: Array<string>
   verifiedOnly?: boolean
+  featured?: boolean
+  isNew?: boolean
   sortBy?: 'price-asc' | 'price-desc' | 'newest' | 'popularity'
 }
 

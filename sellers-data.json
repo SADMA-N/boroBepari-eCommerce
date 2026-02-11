@@ -1,0 +1,347 @@
+[
+  {
+    "id": "seller_001",
+    "businessName": "Rahim Textiles Ltd.",
+    "businessType": "Manufacturer",
+    "categories": ["Textiles", "Fabrics"],
+    "yearsInBusiness": 15,
+    "contactDetails": {
+      "email": "info@rahimtextiles.com.bd",
+      "phone": "+8801711223344",
+      "address": "Plot 12, Road 5, Tejgaon Industrial Area, Dhaka-1208",
+      "website": "www.rahimtextiles.com.bd"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DSCC/001234/2023",
+      "tinNumber": "123456789012",
+      "bankDetails": {
+        "bankName": "Dutch-Bangla Bank Ltd.",
+        "accountName": "Rahim Textiles Ltd.",
+        "accountNumber": "101.110.12345",
+        "branchName": "Tejgaon Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_002",
+    "businessName": "Bhai Bhai Electronics",
+    "businessType": "Wholesaler",
+    "categories": ["Electronics", "Home Appliances"],
+    "yearsInBusiness": 8,
+    "contactDetails": {
+      "email": "sales@bhaibhaielectronics.com",
+      "phone": "+8801819876543",
+      "address": "Shop 45, Stadium Market, Gulistan, Dhaka-1000",
+      "website": "www.bhaibhaielectronics.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DSCC/005678/2023",
+      "tinNumber": "987654321098",
+      "bankDetails": {
+        "bankName": "Islami Bank Bangladesh Ltd.",
+        "accountName": "Bhai Bhai Electronics",
+        "accountNumber": "2050123000001",
+        "branchName": "Foreign Exchange Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_003",
+    "businessName": "Padma Agro Foods",
+    "businessType": "Manufacturer",
+    "categories": ["Food & Beverage", "Organic Products"],
+    "yearsInBusiness": 12,
+    "contactDetails": {
+      "email": "orders@padmaagro.com",
+      "phone": "+8801678112233",
+      "address": "BSCIC Industrial Estate, Rajshahi",
+      "website": "www.padmaagro.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/RCC/009012/2023",
+      "tinNumber": "456789012345",
+      "bankDetails": {
+        "bankName": "BRAC Bank Ltd.",
+        "accountName": "Padma Agro Foods",
+        "accountNumber": "1501201234567001",
+        "branchName": "Rajshahi Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_004",
+    "businessName": "Khan Construction Supplies",
+    "businessType": "Distributor",
+    "categories": ["Construction Materials", "Hardware"],
+    "yearsInBusiness": 20,
+    "contactDetails": {
+      "email": "khan.construct@gmail.com",
+      "phone": "+8801911334455",
+      "address": "12/A, Nawabpur Road, Old Dhaka",
+      "website": ""
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DSCC/003456/2023",
+      "tinNumber": "321098765432",
+      "bankDetails": {
+        "bankName": "Sonali Bank Ltd.",
+        "accountName": "Khan Construction Supplies",
+        "accountNumber": "0100023456789",
+        "branchName": "Nawabpur Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_005",
+    "businessName": "Dhaka Garments Accessories",
+    "businessType": "Manufacturer",
+    "categories": ["Textiles", "Garment Accessories"],
+    "yearsInBusiness": 10,
+    "contactDetails": {
+      "email": "info@dgaccessories.com",
+      "phone": "+8801733556677",
+      "address": "Plot 5, Sector 3, Uttara, Dhaka",
+      "website": "www.dgaccessories.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DNCC/007890/2023",
+      "tinNumber": "789012345678",
+      "bankDetails": {
+        "bankName": "City Bank Ltd.",
+        "accountName": "Dhaka Garments Accessories",
+        "accountNumber": "1101234567001",
+        "branchName": "Uttara Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_006",
+    "businessName": "Jamuna Trading Corp",
+    "businessType": "Wholesaler",
+    "categories": ["Consumer Goods", "Toiletries"],
+    "yearsInBusiness": 5,
+    "contactDetails": {
+      "email": "sales@jamunatrading.com",
+      "phone": "+8801844223311",
+      "address": "Chawkbazar, Dhaka",
+      "website": ""
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DSCC/002345/2023",
+      "tinNumber": "654321098765",
+      "bankDetails": {
+        "bankName": "Pubali Bank Ltd.",
+        "accountName": "Jamuna Trading Corp",
+        "accountNumber": "0567890123456",
+        "branchName": "Chawkbazar Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_007",
+    "businessName": "Chittagong Steel Mills",
+    "businessType": "Manufacturer",
+    "categories": ["Construction Materials", "Steel"],
+    "yearsInBusiness": 25,
+    "contactDetails": {
+      "email": "contact@csmsteel.com",
+      "phone": "+880312556677",
+      "address": "Nasirabad Industrial Area, Chittagong",
+      "website": "www.csmsteel.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/CCC/001122/2023",
+      "tinNumber": "210987654321",
+      "bankDetails": {
+        "bankName": "Eastern Bank Ltd.",
+        "accountName": "Chittagong Steel Mills",
+        "accountNumber": "1011010123456",
+        "branchName": "Agrabad Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_008",
+    "businessName": "Desh Motors & Machinery",
+    "businessType": "Distributor",
+    "categories": ["Machinery", "Automotive Parts"],
+    "yearsInBusiness": 7,
+    "contactDetails": {
+      "email": "info@deshmotors.com",
+      "phone": "+8801552334455",
+      "address": "Dholaikhal, Dhaka",
+      "website": "www.deshmotors.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DSCC/006789/2023",
+      "tinNumber": "543210987654",
+      "bankDetails": {
+        "bankName": "Mercantile Bank Ltd.",
+        "accountName": "Desh Motors & Machinery",
+        "accountNumber": "0123456789012",
+        "branchName": "Dholaikhal Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_009",
+    "businessName": "Green Leaf Organics",
+    "businessType": "Manufacturer",
+    "categories": ["Food & Beverage", "Organic Products"],
+    "yearsInBusiness": 4,
+    "contactDetails": {
+      "email": "hello@greenleaforganics.bd",
+      "phone": "+8801700998877",
+      "address": "Savar, Dhaka",
+      "website": "www.greenleaforganics.bd"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/SVR/004321/2023",
+      "tinNumber": "890123456789",
+      "bankDetails": {
+        "bankName": "Prime Bank Ltd.",
+        "accountName": "Green Leaf Organics",
+        "accountNumber": "2123456789012",
+        "branchName": "Savar Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_010",
+    "businessName": "TechValley BD",
+    "businessType": "Wholesaler",
+    "categories": ["Electronics", "Computer Accessories"],
+    "yearsInBusiness": 6,
+    "contactDetails": {
+      "email": "support@techvalleybd.com",
+      "phone": "+8801611223344",
+      "address": "Multiplan Center, Elephant Road, Dhaka",
+      "website": "www.techvalleybd.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/DSCC/008765/2023",
+      "tinNumber": "678901234567",
+      "bankDetails": {
+        "bankName": "Bank Asia Ltd.",
+        "accountName": "TechValley BD",
+        "accountNumber": "0456789012345",
+        "branchName": "Elephant Road Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_011",
+    "businessName": "Meghna Plastics",
+    "businessType": "Manufacturer",
+    "categories": ["Packaging", "Plastics"],
+    "yearsInBusiness": 18,
+    "contactDetails": {
+      "email": "sales@meghnaplastics.com",
+      "phone": "+8801819112233",
+      "address": "Tongi Industrial Area, Gazipur",
+      "website": "www.meghnaplastics.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/GZP/002233/2023",
+      "tinNumber": "345678901234",
+      "bankDetails": {
+        "bankName": "Jamuna Bank Ltd.",
+        "accountName": "Meghna Plastics",
+        "accountNumber": "002233445566",
+        "branchName": "Tongi Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_012",
+    "businessName": "Sylhet Tea Traders",
+    "businessType": "Distributor",
+    "categories": ["Food & Beverage", "Tea"],
+    "yearsInBusiness": 30,
+    "contactDetails": {
+      "email": "export@sylhettea.com",
+      "phone": "+8801711556677",
+      "address": "Zindabazar, Sylhet",
+      "website": "www.sylhettea.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/SCC/005544/2023",
+      "tinNumber": "901234567890",
+      "bankDetails": {
+        "bankName": "National Bank Ltd.",
+        "accountName": "Sylhet Tea Traders",
+        "accountNumber": "100200300400",
+        "branchName": "Sylhet Main Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_013",
+    "businessName": "Bogra Spices",
+    "businessType": "Manufacturer",
+    "categories": ["Food & Beverage", "Spices"],
+    "yearsInBusiness": 9,
+    "contactDetails": {
+      "email": "orders@bograspices.com",
+      "phone": "+8801922334455",
+      "address": "Sherpur Road, Bogra",
+      "website": ""
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/BOG/007788/2023",
+      "tinNumber": "123098456765",
+      "bankDetails": {
+        "bankName": "Rupali Bank Ltd.",
+        "accountName": "Bogra Spices",
+        "accountNumber": "556677889900",
+        "branchName": "Bogra Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_014",
+    "businessName": "Comilla Ceramics",
+    "businessType": "Manufacturer",
+    "categories": ["Construction Materials", "Ceramics"],
+    "yearsInBusiness": 14,
+    "contactDetails": {
+      "email": "info@comillaceramics.com",
+      "phone": "+8801817112233",
+      "address": "Kandirpar, Comilla",
+      "website": "www.comillaceramics.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/COM/009900/2023",
+      "tinNumber": "098765432109",
+      "bankDetails": {
+        "bankName": "Southeast Bank Ltd.",
+        "accountName": "Comilla Ceramics",
+        "accountNumber": "112233445566",
+        "branchName": "Comilla Branch"
+      }
+    }
+  },
+  {
+    "id": "seller_015",
+    "businessName": "Rajshahi Silk House",
+    "businessType": "Manufacturer",
+    "categories": ["Textiles", "Silk"],
+    "yearsInBusiness": 22,
+    "contactDetails": {
+      "email": "sales@rajshahisilk.com",
+      "phone": "+8801713334455",
+      "address": "Shaheb Bazar, Rajshahi",
+      "website": "www.rajshahisilk.com"
+    },
+    "kycInformation": {
+      "tradeLicenseNumber": "TRAD/RCC/001122/2023",
+      "tinNumber": "432109876543",
+      "bankDetails": {
+        "bankName": "Janata Bank Ltd.",
+        "accountName": "Rajshahi Silk House",
+        "accountNumber": "334455667788",
+        "branchName": "Shaheb Bazar Branch"
+      }
+    }
+  }
+]

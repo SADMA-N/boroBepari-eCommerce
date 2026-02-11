@@ -1,0 +1,1001 @@
+[
+  {
+    "id": "prod_001",
+    "name": "100% Cotton Yarn 30/1",
+    "sellerId": "seller_001",
+    "description": "Premium quality 100% cotton yarn, count 30/1, suitable for knitting and weaving. Produced using state-of-the-art ring spinning technology ensuring high strength and evenness. Ideal for manufacturing t-shirts, polo shirts, and undergarments. Sourced from the finest cotton bales.",
+    "specifications": {
+      "Count": "30/1 Carded",
+      "Material": "100% Cotton",
+      "Strength": "High",
+      "Twist": "Standard",
+      "Color": "Raw White"
+    },
+    "category": "Textiles",
+    "subCategory": "Yarn",
+    "moq": 500,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 500, "price": 4.50 },
+      { "minQty": 1000, "price": 4.30 },
+      { "minQty": 5000, "price": 4.10 }
+    ],
+    "tags": ["cotton", "yarn", "spinning", "textile"]
+  },
+  {
+    "id": "prod_002",
+    "name": "Single Jersey Fabric 160 GSM",
+    "sellerId": "seller_001",
+    "description": "High-quality Single Jersey fabric, 160 GSM, made from 100% combed cotton. Soft hand feel, perfect for manufacturing premium t-shirts. Available in tubular or open width. Pre-shrunk and ready for dyeing or printing.",
+    "specifications": {
+      "GSM": "160",
+      "Width": "72 inches",
+      "Composition": "100% Cotton",
+      "Type": "Single Jersey"
+    },
+    "category": "Textiles",
+    "subCategory": "Fabric",
+    "moq": 200,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 200, "price": 6.00 },
+      { "minQty": 500, "price": 5.80 },
+      { "minQty": 1000, "price": 5.50 }
+    ],
+    "tags": ["fabric", "knit", "jersey", "cotton"]
+  },
+  {
+    "id": "prod_003",
+    "name": "Grey Fabric (Woven)",
+    "sellerId": "seller_001",
+    "description": "Unprocessed woven grey fabric, suitable for dyeing and printing. Plain weave construction. Durable and versatile, used for bed sheets, shirts, and industrial applications.",
+    "specifications": {
+      "Construction": "60x60 / 20x20",
+      "Width": "60 inches",
+      "Material": "Cotton/Polyester Blend"
+    },
+    "category": "Textiles",
+    "subCategory": "Fabric",
+    "moq": 1000,
+    "unit": "meter",
+    "tieredPricing": [
+      { "minQty": 1000, "price": 1.20 },
+      { "minQty": 5000, "price": 1.10 },
+      { "minQty": 10000, "price": 1.00 }
+    ],
+    "tags": ["woven", "grey fabric", "textile"]
+  },
+  {
+    "id": "prod_004",
+    "name": "Walton Primo GH11 Smartphone",
+    "sellerId": "seller_002",
+    "description": "Affordable android smartphone with 6.5 inch HD+ display, 4GB RAM, and 64GB ROM. Long-lasting 5000mAh battery. Dual rear camera setup. Ideal for retail distribution across Bangladesh.",
+    "specifications": {
+      "Display": "6.5 inch HD+",
+      "RAM": "4GB",
+      "Storage": "64GB",
+      "Battery": "5000mAh"
+    },
+    "category": "Electronics",
+    "subCategory": "Mobile Phones",
+    "moq": 10,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 10, "price": 9500 },
+      { "minQty": 50, "price": 9200 },
+      { "minQty": 100, "price": 9000 }
+    ],
+    "tags": ["smartphone", "mobile", "android", "walton"]
+  },
+  {
+    "id": "prod_005",
+    "name": "Vision 32-inch LED TV",
+    "sellerId": "seller_002",
+    "description": "HD Ready LED Smart TV with Android operating system. Wi-Fi enabled, supports YouTube and Netflix. Crystal clear picture quality and powerful sound. 2 years panel warranty.",
+    "specifications": {
+      "Screen Size": "32 Inch",
+      "Resolution": "HD Ready (1366x768)",
+      "OS": "Android",
+      "Ports": "HDMI, USB"
+    },
+    "category": "Electronics",
+    "subCategory": "Televisions",
+    "moq": 5,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 5, "price": 14500 },
+      { "minQty": 20, "price": 14000 },
+      { "minQty": 50, "price": 13500 }
+    ],
+    "tags": ["tv", "led", "smart tv", "vision"]
+  },
+  {
+    "id": "prod_006",
+    "name": "Ceiling Fan 56 inch",
+    "sellerId": "seller_002",
+    "description": "Energy efficient 56-inch ceiling fan. High-speed motor with copper winding. Aerodynamic blades for better air delivery. 5-star energy rating.",
+    "specifications": {
+      "Sweep": "56 Inch (1400mm)",
+      "Speed": "350 RPM",
+      "Power": "70W",
+      "Color": "White/Ivory"
+    },
+    "category": "Electronics",
+    "subCategory": "Fans",
+    "moq": 20,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 20, "price": 2200 },
+      { "minQty": 50, "price": 2100 },
+      { "minQty": 100, "price": 2000 }
+    ],
+    "tags": ["fan", "ceiling fan", "appliance"]
+  },
+  {
+    "id": "prod_007",
+    "name": "Electric Iron (Dry)",
+    "sellerId": "seller_002",
+    "description": "Heavy-weight dry iron with non-stick coating soleplate. Adjustable thermostat control. Swivel cord for easy movement. Durable and reliable for daily use.",
+    "specifications": {
+      "Power": "1000W",
+      "Voltage": "220V",
+      "Soleplate": "Non-stick Coated",
+      "Weight": "1.5 kg"
+    },
+    "category": "Electronics",
+    "subCategory": "Home Appliances",
+    "moq": 24,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 24, "price": 850 },
+      { "minQty": 60, "price": 800 },
+      { "minQty": 120, "price": 750 }
+    ],
+    "tags": ["iron", "appliance", "home"]
+  },
+  {
+    "id": "prod_008",
+    "name": "Miniket Rice (Premium)",
+    "sellerId": "seller_003",
+    "description": "Premium quality Miniket Rice, sorted and polished. Sourced from the best paddy fields in Kushtia. Long grain, non-sticky, and aromatic. Perfect for daily consumption.",
+    "specifications": {
+      "Type": "Miniket",
+      "Grain": "Long",
+      "Processing": "Parboiled",
+      "Packaging": "50kg Sack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Rice",
+    "moq": 1000,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 1000, "price": 62 },
+      { "minQty": 5000, "price": 60 },
+      { "minQty": 10000, "price": 58 }
+    ],
+    "tags": ["rice", "staple", "miniket", "food"]
+  },
+  {
+    "id": "prod_009",
+    "name": "Mustard Oil (Pure)",
+    "sellerId": "seller_003",
+    "description": "100% pure Mustard Oil pressed from high-quality mustard seeds. Strong aroma and pungency. Rich in Omega-3 and Omega-6 fatty acids. No added chemicals or preservatives.",
+    "specifications": {
+      "Type": "Mustard Oil",
+      "Extraction": "Cold Pressed/Ghani",
+      "Purity": "100%",
+      "Packaging": "1 Liter/5 Liter Bottle"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Edible Oil",
+    "moq": 100,
+    "unit": "liter",
+    "tieredPricing": [
+      { "minQty": 100, "price": 220 },
+      { "minQty": 500, "price": 210 },
+      { "minQty": 1000, "price": 200 }
+    ],
+    "tags": ["oil", "mustard", "cooking", "food"]
+  },
+  {
+    "id": "prod_010",
+    "name": "Red Lentils (Masoor Dal)",
+    "sellerId": "seller_003",
+    "description": "High-quality Deshi Masoor Dal. Cleaned and sorted. Quick cooking and rich in protein. A staple in every Bangladeshi kitchen.",
+    "specifications": {
+      "Type": "Red Lentil",
+      "Origin": "Bangladesh",
+      "Quality": "Premium",
+      "Packaging": "25kg Sack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Pulses",
+    "moq": 500,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 500, "price": 110 },
+      { "minQty": 2000, "price": 105 },
+      { "minQty": 5000, "price": 100 }
+    ],
+    "tags": ["dal", "lentil", "pulse", "protein"]
+  },
+  {
+    "id": "prod_011",
+    "name": "Portland Composite Cement",
+    "sellerId": "seller_004",
+    "description": "High-strength Portland Composite Cement (PCC). Complies with BDS EN 197-1:2003. Ideal for all types of concrete structures, masonry, and plastering work. Ensures durability and longevity.",
+    "specifications": {
+      "Type": "CEM II/B-M (S-V-L) 42.5 N",
+      "Weight": "50kg Bag",
+      "Setting Time": "Initial > 45min"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Cement",
+    "moq": 200,
+    "unit": "bag",
+    "tieredPricing": [
+      { "minQty": 200, "price": 480 },
+      { "minQty": 500, "price": 470 },
+      { "minQty": 1000, "price": 460 }
+    ],
+    "tags": ["cement", "construction", "concrete"]
+  },
+  {
+    "id": "prod_012",
+    "name": "Auto Bricks (Machine Made)",
+    "sellerId": "seller_004",
+    "description": "First-class auto bricks manufactured in automated tunnel kilns. Uniform size, shape, and high strength. Eco-friendly production process. Perfect for load-bearing walls.",
+    "specifications": {
+      "Size": "9.5 x 4.5 x 2.75 inches",
+      "Type": "Solid",
+      "Class": "First Class",
+      "Color": "Red"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Bricks",
+    "moq": 2000,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 2000, "price": 10.50 },
+      { "minQty": 10000, "price": 10.00 },
+      { "minQty": 50000, "price": 9.50 }
+    ],
+    "tags": ["bricks", "auto bricks", "construction"]
+  },
+  {
+    "id": "prod_013",
+    "name": "Sand (Sylhet Sand)",
+    "sellerId": "seller_004",
+    "description": "Coarse sand sourced from Sylhet. High FM (Fineness Modulus) suitable for casting and concrete work. Clean and free from organic impurities.",
+    "specifications": {
+      "FM": "2.5 - 2.8",
+      "Source": "Sylhet",
+      "Type": "Coarse"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Aggregates",
+    "moq": 500,
+    "unit": "cft",
+    "tieredPricing": [
+      { "minQty": 500, "price": 45 },
+      { "minQty": 2000, "price": 42 },
+      { "minQty": 5000, "price": 40 }
+    ],
+    "tags": ["sand", "sylhet sand", "construction"]
+  },
+  {
+    "id": "prod_014",
+    "name": "Invisible Zipper (Nylon)",
+    "sellerId": "seller_005",
+    "description": "High-quality invisible zippers for dresses, skirts, and cushions. Smooth operation and durable nylon teeth. Available in various colors and lengths.",
+    "specifications": {
+      "Size": "#3",
+      "Type": "Invisible / Concealed",
+      "Length": "8 inch - 22 inch",
+      "Material": "Nylon"
+    },
+    "category": "Textiles",
+    "subCategory": "Accessories",
+    "moq": 1000,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 1000, "price": 5.00 },
+      { "minQty": 5000, "price": 4.50 },
+      { "minQty": 10000, "price": 4.00 }
+    ],
+    "tags": ["zipper", "garment", "accessories"]
+  },
+  {
+    "id": "prod_015",
+    "name": "Plastic Buttons (Shirt)",
+    "sellerId": "seller_005",
+    "description": "Standard 4-hole plastic buttons for shirts. Durable polyester material. Available in clear, white, and dyed colors. Custom logo engraving available.",
+    "specifications": {
+      "Size": "14L / 16L / 18L",
+      "Material": "Polyester",
+      "Type": "4-Hole / 2-Hole"
+    },
+    "category": "Textiles",
+    "subCategory": "Accessories",
+    "moq": 5000,
+    "unit": "gross",
+    "tieredPricing": [
+      { "minQty": 5000, "price": 20.00 },
+      { "minQty": 10000, "price": 18.00 },
+      { "minQty": 50000, "price": 16.00 }
+    ],
+    "tags": ["buttons", "shirt", "garment", "accessories"]
+  },
+  {
+    "id": "prod_016",
+    "name": "Elastic Tape (Woven)",
+    "sellerId": "seller_005",
+    "description": "High-elasticity woven elastic tape for waistbands and cuffs. Durable and shrink-resistant. Available in various widths.",
+    "specifications": {
+      "Width": "1 inch",
+      "Material": "Polyester + Latex",
+      "Color": "Black / White"
+    },
+    "category": "Textiles",
+    "subCategory": "Accessories",
+    "moq": 2000,
+    "unit": "yard",
+    "tieredPricing": [
+      { "minQty": 2000, "price": 3.50 },
+      { "minQty": 5000, "price": 3.00 },
+      { "minQty": 10000, "price": 2.80 }
+    ],
+    "tags": ["elastic", "tape", "garment"]
+  },
+  {
+    "id": "prod_017",
+    "name": "Dishwashing Liquid (5L)",
+    "sellerId": "seller_006",
+    "description": "Powerful grease-cutting dishwashing liquid. Lemon fragrance. Gentle on hands but tough on stains. Bulk packaging for commercial use.",
+    "specifications": {
+      "Volume": "5 Liters",
+      "Scent": "Lemon",
+      "Type": "Liquid"
+    },
+    "category": "Consumer Goods",
+    "subCategory": "Cleaning Supplies",
+    "moq": 20,
+    "unit": "can",
+    "tieredPricing": [
+      { "minQty": 20, "price": 450 },
+      { "minQty": 50, "price": 420 },
+      { "minQty": 100, "price": 400 }
+    ],
+    "tags": ["cleaning", "dishwash", "detergent"]
+  },
+  {
+    "id": "prod_018",
+    "name": "Toilet Tissue Paper (Rolls)",
+    "sellerId": "seller_006",
+    "description": "Soft and absorbent 2-ply toilet tissue paper. Hygienic and dissolvable. Standard core size. Packed in bundles.",
+    "specifications": {
+      "Ply": "2-Ply",
+      "Sheets": "250 per roll",
+      "Material": "Virgin Pulp"
+    },
+    "category": "Consumer Goods",
+    "subCategory": "Paper Products",
+    "moq": 100,
+    "unit": "pack",
+    "tieredPricing": [
+      { "minQty": 100, "price": 150 },
+      { "minQty": 500, "price": 140 },
+      { "minQty": 1000, "price": 130 }
+    ],
+    "tags": ["tissue", "paper", "hygiene"]
+  },
+  {
+    "id": "prod_019",
+    "name": "Ballpoint Pens (Black)",
+    "sellerId": "seller_006",
+    "description": "Smooth writing ballpoint pens. 0.5mm tip for precise writing. Comfortable grip. Ideal for office and school supply.",
+    "specifications": {
+      "Ink Color": "Black",
+      "Tip Size": "0.5mm",
+      "Type": "Click / Cap"
+    },
+    "category": "Consumer Goods",
+    "subCategory": "Stationery",
+    "moq": 500,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 500, "price": 4.00 },
+      { "minQty": 2000, "price": 3.80 },
+      { "minQty": 5000, "price": 3.50 }
+    ],
+    "tags": ["pen", "stationery", "office"]
+  },
+  {
+    "id": "prod_020",
+    "name": "500W Grade TMT Bar (10mm)",
+    "sellerId": "seller_007",
+    "description": "BSRM/KSRM equivalent 500W Grade TMT steel bars. High tensile strength and ductility. Earthquake resistant. Best for construction of high-rise buildings.",
+    "specifications": {
+      "Diameter": "10mm",
+      "Grade": "500W / 60G",
+      "Standard": "BDS ISO 6935-2"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Steel",
+    "moq": 1,
+    "unit": "ton",
+    "tieredPricing": [
+      { "minQty": 1, "price": 92000 },
+      { "minQty": 10, "price": 91000 },
+      { "minQty": 50, "price": 90000 }
+    ],
+    "tags": ["rod", "steel", "tmt", "construction"]
+  },
+  {
+    "id": "prod_021",
+    "name": "Corrugated Steel Sheet (Tin)",
+    "sellerId": "seller_007",
+    "description": "Galvanized corrugated steel sheets for roofing and fencing. Rust resistant zinc coating. Available in various gauges and lengths.",
+    "specifications": {
+      "Thickness": "0.32mm / 0.46mm",
+      "Width": "Standard",
+      "Coating": "Zinc Galvanized"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Roofing",
+    "moq": 50,
+    "unit": "sheet",
+    "tieredPricing": [
+      { "minQty": 50, "price": 600 },
+      { "minQty": 200, "price": 580 },
+      { "minQty": 500, "price": 560 }
+    ],
+    "tags": ["tin", "roofing", "steel", "construction"]
+  },
+  {
+    "id": "prod_022",
+    "name": "Centrifugal Water Pump (1HP)",
+    "sellerId": "seller_008",
+    "description": "Powerful 1HP centrifugal water pump for domestic and agricultural use. Copper motor winding. High head and flow rate. Durable cast iron body.",
+    "specifications": {
+      "Power": "1 HP / 0.75 kW",
+      "Suction/Delivery": "1 inch x 1 inch",
+      "Head": "Max 30m"
+    },
+    "category": "Machinery",
+    "subCategory": "Pumps",
+    "moq": 5,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 5, "price": 4500 },
+      { "minQty": 20, "price": 4300 },
+      { "minQty": 50, "price": 4100 }
+    ],
+    "tags": ["pump", "water pump", "motor"]
+  },
+  {
+    "id": "prod_023",
+    "name": "Diesel Generator (5 kVA)",
+    "sellerId": "seller_008",
+    "description": "Portable 5 kVA diesel generator. Air-cooled engine. Electric start. Suitable for small shops, homes, and construction sites.",
+    "specifications": {
+      "Output": "5 kVA / 4 kW",
+      "Fuel": "Diesel",
+      "Starting System": "Electric Key Start"
+    },
+    "category": "Machinery",
+    "subCategory": "Generators",
+    "moq": 1,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 1, "price": 65000 },
+      { "minQty": 5, "price": 62000 },
+      { "minQty": 10, "price": 60000 }
+    ],
+    "tags": ["generator", "power", "machinery"]
+  },
+  {
+    "id": "prod_024",
+    "name": "Angle Grinder (4 inch)",
+    "sellerId": "seller_008",
+    "description": "Professional 4-inch angle grinder for cutting and grinding metal/stone. 850W powerful motor. Spindle lock for easy disc change. Ergonomic design.",
+    "specifications": {
+      "Disc Diameter": "100mm (4 inch)",
+      "Power": "850W",
+      "Speed": "11000 RPM"
+    },
+    "category": "Machinery",
+    "subCategory": "Power Tools",
+    "moq": 10,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 10, "price": 2200 },
+      { "minQty": 50, "price": 2000 },
+      { "minQty": 100, "price": 1900 }
+    ],
+    "tags": ["grinder", "power tools", "machinery"]
+  },
+  {
+    "id": "prod_025",
+    "name": "Organic Honey (Sundarbans)",
+    "sellerId": "seller_009",
+    "description": "100% pure raw honey collected from the Sundarbans mangrove forest. Distinctive taste and aroma. Rich in antioxidants. Unprocessed and unfiltered.",
+    "specifications": {
+      "Source": "Sundarbans",
+      "Type": "Raw/Wild Honey",
+      "Packaging": "500g Glass Jar"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Organics",
+    "moq": 20,
+    "unit": "jar",
+    "tieredPricing": [
+      { "minQty": 20, "price": 450 },
+      { "minQty": 50, "price": 420 },
+      { "minQty": 100, "price": 400 }
+    ],
+    "tags": ["honey", "organic", "food"]
+  },
+  {
+    "id": "prod_026",
+    "name": "Ghee (Clarified Butter)",
+    "sellerId": "seller_009",
+    "description": "Traditional homemade style cow milk ghee. Rich aroma and granular texture (Danadar). Perfect for cooking biryani, sweets, and traditional dishes.",
+    "specifications": {
+      "Source": "Cow Milk",
+      "Type": "Danadar",
+      "Packaging": "900g Tin"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Dairy",
+    "moq": 12,
+    "unit": "tin",
+    "tieredPricing": [
+      { "minQty": 12, "price": 1200 },
+      { "minQty": 36, "price": 1150 },
+      { "minQty": 60, "price": 1100 }
+    ],
+    "tags": ["ghee", "dairy", "cooking"]
+  },
+  {
+    "id": "prod_027",
+    "name": "Mango Pulp (Aseptic)",
+    "sellerId": "seller_009",
+    "description": "Natural mango pulp made from premium selected mangoes. No added sugar or preservatives. Aseptic packaging ensures long shelf life. Ideal for juice and beverage industry.",
+    "specifications": {
+      "Variety": "Totapuri/Alphonso",
+      "Brix": "14-16 deg",
+      "Packaging": "3.1kg Can"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Processed Food",
+    "moq": 6,
+    "unit": "can",
+    "tieredPricing": [
+      { "minQty": 6, "price": 350 },
+      { "minQty": 24, "price": 330 },
+      { "minQty": 100, "price": 310 }
+    ],
+    "tags": ["mango", "pulp", "fruit"]
+  },
+  {
+    "id": "prod_028",
+    "name": "USB-C Charging Cable",
+    "sellerId": "seller_010",
+    "description": "Fast charging USB-C data cable. Nylon braided for extra durability. Supports QC 3.0. Length 1 meter. Compatible with all Type-C devices.",
+    "specifications": {
+      "Type": "USB-A to USB-C",
+      "Current": "3A Max",
+      "Length": "1 Meter"
+    },
+    "category": "Electronics",
+    "subCategory": "Accessories",
+    "moq": 50,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 50, "price": 120 },
+      { "minQty": 200, "price": 100 },
+      { "minQty": 500, "price": 90 }
+    ],
+    "tags": ["cable", "usb-c", "charger", "mobile accessories"]
+  },
+  {
+    "id": "prod_029",
+    "name": "Wireless Mouse (2.4GHz)",
+    "sellerId": "seller_010",
+    "description": "Ergonomic wireless optical mouse. 2.4GHz reliable connection. 10m range. Plug and play nano receiver. Long battery life.",
+    "specifications": {
+      "DPI": "1000/1200/1600",
+      "Buttons": "3",
+      "Battery": "1x AA"
+    },
+    "category": "Electronics",
+    "subCategory": "Computer Accessories",
+    "moq": 20,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 20, "price": 350 },
+      { "minQty": 50, "price": 320 },
+      { "minQty": 100, "price": 300 }
+    ],
+    "tags": ["mouse", "wireless", "computer"]
+  },
+  {
+    "id": "prod_030",
+    "name": "CCTV Camera (Dome)",
+    "sellerId": "seller_010",
+    "description": "2MP HD Dome CCTV Camera for indoor surveillance. Night vision capability up to 20m. Compatible with HD DVRs.",
+    "specifications": {
+      "Resolution": "1080p (2MP)",
+      "Lens": "3.6mm",
+      "IR Distance": "20m"
+    },
+    "category": "Electronics",
+    "subCategory": "Security",
+    "moq": 10,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 10, "price": 1200 },
+      { "minQty": 50, "price": 1100 },
+      { "minQty": 100, "price": 1050 }
+    ],
+    "tags": ["cctv", "camera", "security"]
+  },
+  {
+    "id": "prod_031",
+    "name": "LED Bulb 12W",
+    "sellerId": "seller_010",
+    "description": "Energy saving 12W LED bulb. Cool daylight (6500K). B22/E27 base. Long lifespan of 25,000 hours. Flicker-free light.",
+    "specifications": {
+      "Power": "12W",
+      "Lumens": "1080lm",
+      "Base": "B22 Pin"
+    },
+    "category": "Electronics",
+    "subCategory": "Lighting",
+    "moq": 50,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 50, "price": 180 },
+      { "minQty": 200, "price": 160 },
+      { "minQty": 500, "price": 150 }
+    ],
+    "tags": ["led", "bulb", "light"]
+  },
+  {
+    "id": "prod_032",
+    "name": "Plastic Chair (Armless)",
+    "sellerId": "seller_011",
+    "description": "Durable molded plastic chair without arms. Stackable design to save space. Weather resistant, suitable for indoor and outdoor use.",
+    "specifications": {
+      "Material": "Polypropylene (PP)",
+      "Weight Capacity": "120kg",
+      "Color": "Red/Blue/Green"
+    },
+    "category": "Furniture",
+    "subCategory": "Plastic Furniture",
+    "moq": 50,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 50, "price": 450 },
+      { "minQty": 100, "price": 420 },
+      { "minQty": 500, "price": 400 }
+    ],
+    "tags": ["chair", "plastic", "furniture"]
+  },
+  {
+    "id": "prod_033",
+    "name": "Water Tank (500L)",
+    "sellerId": "seller_011",
+    "description": "3-layer food grade plastic water tank. UV stabilized to prevent algae growth. Strong and durable. Threaded lid.",
+    "specifications": {
+      "Capacity": "500 Liters",
+      "Layers": "3",
+      "Material": "LLDPE"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Plumbing",
+    "moq": 5,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 5, "price": 3500 },
+      { "minQty": 20, "price": 3300 },
+      { "minQty": 50, "price": 3100 }
+    ],
+    "tags": ["tank", "water tank", "plastic"]
+  },
+  {
+    "id": "prod_034",
+    "name": "Stretch Film (Packaging)",
+    "sellerId": "seller_011",
+    "description": "Industrial grade stretch film for pallet wrapping. High puncture resistance and cling. Protects goods from dust and moisture.",
+    "specifications": {
+      "Width": "500mm",
+      "Thickness": "23 micron",
+      "Weight": "2kg roll"
+    },
+    "category": "Packaging",
+    "subCategory": "Industrial",
+    "moq": 24,
+    "unit": "roll",
+    "tieredPricing": [
+      { "minQty": 24, "price": 400 },
+      { "minQty": 60, "price": 380 },
+      { "minQty": 120, "price": 360 }
+    ],
+    "tags": ["packaging", "stretch film", "plastic"]
+  },
+  {
+    "id": "prod_035",
+    "name": "Sylhet Tea (BOP)",
+    "sellerId": "seller_012",
+    "description": "Broken Orange Pekoe (BOP) grade black tea. Strong liquor and rich color. Sourced directly from Sylhet tea gardens. Ideal for tea stalls and households.",
+    "specifications": {
+      "Grade": "BOP",
+      "Origin": "Sylhet",
+      "Packaging": "50kg Sack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Tea",
+    "moq": 50,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 50, "price": 280 },
+      { "minQty": 200, "price": 270 },
+      { "minQty": 500, "price": 260 }
+    ],
+    "tags": ["tea", "black tea", "beverage"]
+  },
+  {
+    "id": "prod_036",
+    "name": "Green Tea",
+    "sellerId": "seller_012",
+    "description": "Premium organic green tea leaves. Rich in antioxidants. Gentle processing to retain natural flavor and benefits. loose leaf.",
+    "specifications": {
+      "Type": "Green Tea",
+      "Form": "Loose Leaf",
+      "Packaging": "1kg Pack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Tea",
+    "moq": 10,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 10, "price": 800 },
+      { "minQty": 50, "price": 750 },
+      { "minQty": 100, "price": 700 }
+    ],
+    "tags": ["green tea", "tea", "health"]
+  },
+  {
+    "id": "prod_037",
+    "name": "Tea Dust (CD)",
+    "sellerId": "seller_012",
+    "description": "Strong dust tea for quick brewing and dark color. Very popular for street tea stalls (Tong). Cost-effective.",
+    "specifications": {
+      "Grade": "CD (Clean Dust)",
+      "Strength": "Very Strong",
+      "Packaging": "50kg Sack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Tea",
+    "moq": 100,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 100, "price": 240 },
+      { "minQty": 500, "price": 230 },
+      { "minQty": 1000, "price": 220 }
+    ],
+    "tags": ["tea", "dust tea", "beverage"]
+  },
+  {
+    "id": "prod_038",
+    "name": "Turmeric Powder",
+    "sellerId": "seller_013",
+    "description": "Pure ground turmeric root. Bright yellow color and authentic earthy flavor. No artificial colors added. Essential spice for curries.",
+    "specifications": {
+      "Type": "Powder",
+      "Purity": "100%",
+      "Packaging": "1kg Pack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Spices",
+    "moq": 20,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 20, "price": 180 },
+      { "minQty": 100, "price": 170 },
+      { "minQty": 500, "price": 160 }
+    ],
+    "tags": ["spice", "turmeric", "cooking"]
+  },
+  {
+    "id": "prod_039",
+    "name": "Chili Powder (Hot)",
+    "sellerId": "seller_013",
+    "description": "Spicy red chili powder made from sun-dried red chilies. Adds heat and vibrant red color to dishes. Finely ground.",
+    "specifications": {
+      "Heat Level": "High",
+      "Color": "Deep Red",
+      "Packaging": "1kg Pack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Spices",
+    "moq": 20,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 20, "price": 250 },
+      { "minQty": 100, "price": 240 },
+      { "minQty": 500, "price": 230 }
+    ],
+    "tags": ["spice", "chili", "hot"]
+  },
+  {
+    "id": "prod_040",
+    "name": "Cumin Seeds (Jeera)",
+    "sellerId": "seller_013",
+    "description": "Whole cumin seeds with strong aroma. Cleaned and dried. Used for tempering (tarka) and spice blends.",
+    "specifications": {
+      "Form": "Whole Seed",
+      "Origin": "Imported/Local",
+      "Packaging": "1kg Pack"
+    },
+    "category": "Food & Beverage",
+    "subCategory": "Spices",
+    "moq": 10,
+    "unit": "kg",
+    "tieredPricing": [
+      { "minQty": 10, "price": 450 },
+      { "minQty": 50, "price": 430 },
+      { "minQty": 100, "price": 410 }
+    ],
+    "tags": ["spice", "cumin", "jeera"]
+  },
+  {
+    "id": "prod_041",
+    "name": "Floor Tiles (24x24)",
+    "sellerId": "seller_014",
+    "description": "Double charge vitrified floor tiles. High gloss finish and stain resistant. Elegant marble design. Suitable for residential and commercial flooring.",
+    "specifications": {
+      "Size": "24 x 24 inch (600x600mm)",
+      "Type": "Double Charge Vitrified",
+      "Finish": "Glossy"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Tiles",
+    "moq": 500,
+    "unit": "sqft",
+    "tieredPricing": [
+      { "minQty": 500, "price": 85 },
+      { "minQty": 2000, "price": 80 },
+      { "minQty": 5000, "price": 75 }
+    ],
+    "tags": ["tiles", "floor", "ceramics"]
+  },
+  {
+    "id": "prod_042",
+    "name": "Wall Tiles (12x20)",
+    "sellerId": "seller_014",
+    "description": "Decorative ceramic wall tiles for bathroom and kitchen. Water resistant and easy to clean. Digital print designs available.",
+    "specifications": {
+      "Size": "12 x 20 inch",
+      "Type": "Ceramic",
+      "Finish": "Glossy/Matte"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Tiles",
+    "moq": 500,
+    "unit": "sqft",
+    "tieredPricing": [
+      { "minQty": 500, "price": 55 },
+      { "minQty": 2000, "price": 52 },
+      { "minQty": 5000, "price": 50 }
+    ],
+    "tags": ["tiles", "wall", "ceramics"]
+  },
+  {
+    "id": "prod_043",
+    "name": "Sanitary Ware Set",
+    "sellerId": "seller_014",
+    "description": "Complete bathroom sanitary set including commode and basin. White vitreous china. Modern ergonomic design. Easy installation.",
+    "specifications": {
+      "Set Includes": "Commode, Cistern, Basin, Pedestal",
+      "Color": "White",
+      "Material": "Ceramic"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Sanitary Ware",
+    "moq": 5,
+    "unit": "set",
+    "tieredPricing": [
+      { "minQty": 5, "price": 8500 },
+      { "minQty": 20, "price": 8000 },
+      { "minQty": 50, "price": 7500 }
+    ],
+    "tags": ["sanitary", "bathroom", "commode"]
+  },
+  {
+    "id": "prod_044",
+    "name": "Rajshahi Silk Saree",
+    "sellerId": "seller_015",
+    "description": "Authentic Rajshahi Silk Saree. Handloom woven with intricate designs. Smooth texture and luxurious sheen. Traditional wear for festivals and weddings.",
+    "specifications": {
+      "Material": "Pure Silk",
+      "Length": "13.5 Hat (approx 6m)",
+      "Design": "Traditional Block/Embroidery"
+    },
+    "category": "Textiles",
+    "subCategory": "Sarees",
+    "moq": 10,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 10, "price": 3500 },
+      { "minQty": 50, "price": 3200 },
+      { "minQty": 100, "price": 3000 }
+    ],
+    "tags": ["saree", "silk", "clothing"]
+  },
+  {
+    "id": "prod_045",
+    "name": "Silk Scarf / Dupatta",
+    "sellerId": "seller_015",
+    "description": "Lightweight pure silk scarf. Soft and elegant. Available in vibrant solid colors and prints. Perfect fashion accessory.",
+    "specifications": {
+      "Material": "Silk",
+      "Size": "2m x 1m",
+      "Pattern": "Printed/Solid"
+    },
+    "category": "Textiles",
+    "subCategory": "Accessories",
+    "moq": 50,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 50, "price": 600 },
+      { "minQty": 200, "price": 550 },
+      { "minQty": 500, "price": 500 }
+    ],
+    "tags": ["scarf", "silk", "fashion"]
+  },
+  {
+    "id": "prod_046",
+    "name": "Silk Fabric (Unstitched)",
+    "sellerId": "seller_015",
+    "description": "Raw silk fabric by the yard. Suitable for making dresses, kurtas, and home furnishings. High durability and natural shine.",
+    "specifications": {
+      "Width": "44 inches",
+      "GSM": "80",
+      "Material": "100% Silk"
+    },
+    "category": "Textiles",
+    "subCategory": "Fabric",
+    "moq": 50,
+    "unit": "yard",
+    "tieredPricing": [
+      { "minQty": 50, "price": 450 },
+      { "minQty": 200, "price": 420 },
+      { "minQty": 500, "price": 400 }
+    ],
+    "tags": ["silk", "fabric", "textile"]
+  },
+  {
+    "id": "prod_047",
+    "name": "Steel Angle Bar (2 inch)",
+    "sellerId": "seller_007",
+    "description": "Structural steel angle bar. Hot rolled. Used in construction of towers, bridges, and industrial frames.",
+    "specifications": {
+      "Size": "50x50x5 mm",
+      "Length": "20 feet",
+      "Grade": "A36"
+    },
+    "category": "Construction Materials",
+    "subCategory": "Steel",
+    "moq": 50,
+    "unit": "piece",
+    "tieredPricing": [
+      { "minQty": 50, "price": 1200 },
+      { "minQty": 200, "price": 1150 },
+      { "minQty": 500, "price": 1100 }
+    ],
+    "tags": ["steel", "angle", "construction"]
+  }
+]

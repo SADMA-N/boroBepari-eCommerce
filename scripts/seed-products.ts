@@ -1,102 +1,146 @@
-import { sql } from 'drizzle-orm'
-import { db } from '../src/db'
-import { categories, products, suppliers } from '../src/db/schema'
-import {
-  mockCategories,
-  mockProducts,
-  mockSuppliers,
-} from '../src/data/mock-products'
 
-async function seed() {
-  console.log('🌱 Seeding database...')
+import { db } from '@/db';
+import { products, sellerProducts, categories, suppliers, sellers } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import fs from 'fs';
+import path from 'path';
+
+const catalogPath = path.join(process.cwd(), 'products-catalog.json');
+const imagesPath = path.join(process.cwd(), 'product-images.json');
+
+const productsCatalog = JSON.parse(fs.readFileSync(catalogPath, 'utf-8'));
+const productImages = JSON.parse(fs.readFileSync(imagesPath, 'utf-8'));
+
+const slugify = (text: string) =>
+  text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+
+async function seedProducts() {
+  console.log('Seeding products...');
 
   try {
-    // 1. Clear existing data (optional, be careful in prod)
-    // Using TRUNCATE CASCADE to clear dependent tables
-    console.log('Cleaning up old data...')
-    await db.execute(sql`TRUNCATE TABLE ${products} RESTART IDENTITY CASCADE`)
-    await db.execute(sql`TRUNCATE TABLE ${suppliers} RESTART IDENTITY CASCADE`)
-    await db.execute(sql`TRUNCATE TABLE ${categories} RESTART IDENTITY CASCADE`)
+    // 1. Fetch Categories Map
+    const allCategories = await db.select().from(categories);
+    const categoryMap = new Map<string, number>();
+    const subCategoryMap = new Map<string, number>();
 
-    // 2. Insert Categories
-    console.log(`Inserting ${mockCategories.length} categories...`)
-    await db.insert(categories).values(
-      mockCategories.map((c) => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-        icon: c.icon,
-        parentId: c.parentId,
-      })),
-    )
+    allCategories.forEach((cat) => {
+      categoryMap.set(slugify(cat.name), cat.id);
+      if (cat.parentId) {
+         // It's a subcategory
+         subCategoryMap.set(slugify(cat.name), cat.id);
+      }
+    });
 
-    // Reset sequence for categories if needed, but since we insert with IDs, Postgres might need sequence update
-    await db.execute(
-      sql`SELECT setval('categories_id_seq', (SELECT MAX(id) FROM categories))`,
-    )
+    // 2. Fetch Sellers Map to get Supplier IDs
+    const allSellers = await db.select().from(sellers);
+    const sellerSupplierMap = new Map<string, number>(); // sellerId (text) -> supplierId (int)
+    
+    allSellers.forEach(s => {
+        if (s.supplierId) {
+            sellerSupplierMap.set(s.id, s.supplierId);
+        }
+    });
 
-    // 3. Insert Suppliers
-    console.log(`Inserting ${mockSuppliers.length} suppliers...`)
-    await db.insert(suppliers).values(
-      mockSuppliers.map((s) => ({
-        id: s.id,
-        name: s.name,
-        slug: s.slug,
-        logo: s.logo,
-        verified: s.verified,
-        location: s.location,
-        responseRate: s.responseRate.toString(),
-        onTimeDelivery: s.onTimeDelivery.toString(),
-        yearsInBusiness: s.yearsInBusiness,
-        description: s.description,
-      })),
-    )
-    await db.execute(
-      sql`SELECT setval('suppliers_id_seq', (SELECT MAX(id) FROM suppliers))`,
-    )
+    for (const product of productsCatalog) {
+      const slug = slugify(product.name);
+      
+      // Get category ID
+      // Try subcategory first, then main category
+      const subCatSlug = slugify(product.subCategory);
+      const mainCatSlug = slugify(product.category);
+      
+      let categoryId = subCategoryMap.get(subCatSlug);
+      if (!categoryId) {
+        categoryId = categoryMap.get(mainCatSlug);
+      }
+      
+      if (!categoryId) {
+        console.warn(`Category not found for product: ${product.name} (${product.category}/${product.subCategory})`);
+        continue;
+      }
 
-    // 4. Insert Products
-    console.log(`Inserting ${mockProducts.length} products...`)
-    // Batch insert to avoid query size limits
-    const batchSize = 50
-    for (let i = 0; i < mockProducts.length; i += batchSize) {
-      const batch = mockProducts.slice(i, i + batchSize)
-      await db.insert(products).values(
-        batch.map((p) => ({
-          id: p.id,
-          name: p.name,
-          slug: p.slug,
-          description: p.description,
-          images: p.images,
-          price: p.price.toString(),
-          originalPrice: p.originalPrice?.toString(),
-          moq: p.moq,
-          stock: p.stock,
-          unit: p.unit,
-          categoryId: p.categoryId,
-          supplierId: p.supplierId,
-          featured: p.featured,
-          isNew: p.isNew,
-          rating: p.rating.toString(),
-          reviewCount: p.reviewCount,
-          soldCount: p.soldCount,
-          tags: p.tags,
-          tieredPricing: p.tieredPricing,
-          specifications: p.specifications,
-          hasSample: p.hasSample,
-          samplePrice: p.samplePrice?.toString() ?? null,
-        })),
-      )
+      // Get Supplier ID
+      const supplierId = sellerSupplierMap.get(product.sellerId);
+      if (!supplierId) {
+        console.warn(`Supplier not found for seller ID: ${product.sellerId}`);
+        continue;
+      }
+
+      // Get Images
+      // The image map keys are slugs of the name
+      const images = productImages[slug] || [];
+
+      // Check if product exists (by slug)
+      const existingProduct = await db.select().from(products).where(eq(products.slug, slug)).limit(1);
+      
+      if (existingProduct.length > 0) {
+        console.log(`Product ${slug} already exists, updating images.`);
+        await db.update(products).set({ images }).where(eq(products.slug, slug));
+        await db.update(sellerProducts).set({ images }).where(eq(sellerProducts.slug, slug));
+        continue;
+      }
+
+      // 1. Insert into Products (Published)
+      // Note: In a real flow, you might insert into seller_products first, then publish.
+      // But for seeding, we want the published product immediately.
+      const [publishedProduct] = await db.insert(products).values({
+        name: product.name,
+        slug: slug,
+        description: product.description,
+        images: images,
+        price: product.tieredPricing[0]?.price.toString() || "0", // Base price
+        moq: product.moq,
+        stock: Math.floor(Math.random() * (10000 - 100) + 100), // Random stock
+        unit: product.unit,
+        categoryId: categoryId,
+        supplierId: supplierId,
+        featured: Math.random() > 0.8, // 20% featured
+        isNew: Math.random() > 0.7,
+        rating: (Math.random() * (5 - 3.5) + 3.5).toFixed(1), // Random rating 3.5-5.0
+        reviewCount: Math.floor(Math.random() * 50),
+        soldCount: Math.floor(Math.random() * 500),
+        tags: product.tags,
+        tieredPricing: product.tieredPricing,
+        specifications: Object.entries(product.specifications).map(([key, value]) => ({ key, value: String(value) })),
+        hasSample: false, // Default
+      }).returning({ id: products.id });
+
+      console.log(`Created product: ${product.name}`);
+
+      // 2. Insert into Seller Products (Draft/Record)
+      await db.insert(sellerProducts).values({
+        sellerId: product.sellerId,
+        name: product.name,
+        slug: slug,
+        price: product.tieredPricing[0]?.price.toString() || "0",
+        moq: product.moq,
+        status: 'accepted',
+        publishedProductId: publishedProduct.id,
+        mainCategory: product.category,
+        subCategory: product.subCategory,
+        description: product.description,
+        images: images,
+        tags: product.tags,
+        tieredPricing: product.tieredPricing,
+        specifications: Object.entries(product.specifications).map(([key, value]) => ({ key, value: String(value) })),
+        stock: Math.floor(Math.random() * (10000 - 100) + 100),
+        unit: product.unit,
+      });
     }
-    await db.execute(
-      sql`SELECT setval('products_id_seq', (SELECT MAX(id) FROM products))`,
-    )
 
-    console.log('✅ Seeding complete!')
+    console.log('Products seeded successfully!');
+
   } catch (error) {
-    console.error('❌ Seeding failed:', error)
-    process.exit(1)
+    console.error('Error seeding products:', error);
+    process.exit(1);
   }
 }
 
-seed()
+seedProducts();
