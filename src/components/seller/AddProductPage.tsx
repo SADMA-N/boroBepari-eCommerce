@@ -89,6 +89,7 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
   const [showSuccess, setShowSuccess] = useState(false)
   const [submitMode, setSubmitMode] = useState<SubmitMode>('draft')
   const [submitError, setSubmitError] = useState('')
+  const [savedSlug, setSavedSlug] = useState('')
 
   const [title, setTitle] = useState('')
   const [mainCategory, setMainCategory] = useState('')
@@ -754,21 +755,26 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
         mode,
       }
 
+      let resultSlug = ''
       if (initialData?.id) {
-        await updateSellerProduct({
+        const res = await updateSellerProduct({
           data: { ...payload, id: initialData.id },
           headers: { Authorization: `Bearer ${token}` },
         })
+        resultSlug = res.slug
       } else {
-        await submitSellerProduct({
+        const res = await submitSellerProduct({
           data: payload,
           headers: { Authorization: `Bearer ${token}` },
         })
+        resultSlug = res.slug
       }
+      return resultSlug
     }
 
     void doSubmit()
-      .then(() => {
+      .then((slug) => {
+        setSavedSlug(slug)
         localStorage.removeItem('seller_product_draft')
         setShowSuccess(true)
         pushToast(
@@ -1569,7 +1575,7 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
             <div className="grid sm:grid-cols-3 gap-3">
               <button
                 type="button"
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => window.open(`/products/${savedSlug}`, '_blank')}
                 className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 View Product
@@ -1578,11 +1584,11 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
                 type="button"
                 onClick={() => {
                   setShowSuccess(false)
-                  navigate({ to: '/seller/products/add' })
+                  navigate({ to: '/seller' })
                 }}
                 className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/30 px-4 py-2 text-sm font-semibold text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/50"
               >
-                Add Another Product
+                Dashboard
               </button>
               <Link
                 to="/seller/products"

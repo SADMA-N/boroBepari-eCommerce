@@ -147,9 +147,9 @@ export const submitSellerProduct = createServerFn({ method: 'POST' })
         sampleDelivery: data.sampleDelivery || null,
         status,
       })
-      .returning({ id: schema.sellerProducts.id, status: schema.sellerProducts.status })
+      .returning({ id: schema.sellerProducts.id, status: schema.sellerProducts.status, slug: schema.sellerProducts.slug })
 
-    return { id: inserted.id, status: inserted.status }
+    return { id: inserted.id, status: inserted.status, slug: inserted.slug }
   })
 
 export const getSellerProducts = createServerFn({ method: 'GET' })
@@ -235,7 +235,8 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
         .map((s) => ({ key: s.key, value: s.value })) ?? []
 
     // If publishing, change status to pending, otherwise draft
-    const status = data.mode === 'publish' ? 'pending' : 'draft'
+    // We will override this to 'accepted' if we successfully sync to products table
+    let status = data.mode === 'publish' ? 'pending' : 'draft'
 
     const [updated] = await db
       .update(schema.sellerProducts)
@@ -271,7 +272,76 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
         updatedAt: new Date(),
       })
       .where(eq(schema.sellerProducts.id, data.id))
-      .returning({ id: schema.sellerProducts.id })
+      .returning({ id: schema.sellerProducts.id, slug: schema.sellerProducts.slug })
 
-    return { success: true, id: updated.id }
+    // Sync with public products table if mode is publish
+    if (data.mode === 'publish') {
+      try {
+        const seller = await db.query.sellers.findFirst({
+          where: eq(schema.sellers.id, context.seller.id),
+        })
+
+        if (updated.publishedProductId) {
+          // Update existing public product
+          await db
+            .update(schema.products)
+            .set({
+              name: data.name,
+              description: data.description || null,
+              images: data.images,
+              price: data.price,
+              originalPrice: data.originalPrice || null,
+              moq: parseInt(data.moq),
+              stock: parseInt(data.stock),
+              unit: data.unit || 'piece',
+              specifications: specsData,
+              tieredPricing: tieredPricingData,
+              updatedAt: new Date(),
+            })
+            .where(eq(schema.products.id, updated.publishedProductId))
+
+          // Auto-approve
+          await db
+            .update(schema.sellerProducts)
+            .set({ status: 'accepted' })
+            .where(eq(schema.sellerProducts.id, updated.id))
+        } else if (seller?.supplierId) {
+          // Create new public product
+          const [newProduct] = await db
+            .insert(schema.products)
+            .values({
+              name: data.name,
+              slug: updated.slug,
+              description: data.description || null,
+              images: data.images,
+              price: data.price,
+              originalPrice: data.originalPrice || null,
+              moq: parseInt(data.moq),
+              stock: parseInt(data.stock),
+              unit: data.unit || 'piece',
+              specifications: specsData,
+              tieredPricing: tieredPricingData,
+              supplierId: seller.supplierId,
+              categoryId: null, // Pending category mapping
+              isNew: true,
+            })
+            .returning({ id: schema.products.id })
+
+          // Link back and auto-approve
+          await db
+            .update(schema.sellerProducts)
+            .set({
+              publishedProductId: newProduct.id,
+              status: 'accepted',
+            })
+            .where(eq(schema.sellerProducts.id, updated.id))
+        }
+      } catch (error) {
+        console.error('Error syncing to products table:', error)
+        // We don't throw here to avoid breaking the seller flow, but we log it.
+        // The seller product is still saved as pending/draft.
+      }
+    }
+
+    return { success: true, id: updated.id, slug: updated.slug }
   })
