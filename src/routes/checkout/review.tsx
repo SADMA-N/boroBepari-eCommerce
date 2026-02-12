@@ -73,6 +73,23 @@ function ReviewPage() {
       setToast({ message: 'You must be logged in', isVisible: true })
       return
     }
+    if (
+      (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') &&
+      (!state.paymentDetails.channel ||
+        !state.paymentDetails.provider.trim() ||
+        !state.paymentDetails.transactionId.trim() ||
+        !state.paymentDetails.referenceNumber.trim() ||
+        !state.paymentDetails.senderAccount.trim() ||
+        !state.paymentDetails.declarationAccepted)
+    ) {
+      setToast({
+        message:
+          'Please complete payment details before placing the order.',
+        isVisible: true,
+      })
+      router.navigate({ to: '/checkout/payment' })
+      return
+    }
     setIsSubmitting(true)
 
     try {
@@ -116,6 +133,27 @@ function ReviewPage() {
 
       setDebugStep('Creating order')
       // 3. Create Order in DB
+      const paymentChannel =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.channel || undefined
+          : undefined
+      const paymentProvider =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.provider.trim() || undefined
+          : undefined
+      const paymentReference =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.referenceNumber.trim() || undefined
+          : undefined
+      const paymentSenderAccount =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.senderAccount.trim() || undefined
+          : undefined
+      const transactionId =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.transactionId.trim() || undefined
+          : undefined
+
       const newOrder = await createOrder({
         data: {
           userId: user.id,
@@ -128,12 +166,15 @@ function ReviewPage() {
           })),
           totalAmount: cart.total,
           paymentMethod: state.paymentMethod || 'cod',
-          paymentChannel: state.paymentDetails.channel || undefined,
-          paymentProvider: state.paymentDetails.provider || undefined,
-          paymentReference: state.paymentDetails.referenceNumber || undefined,
-          paymentSenderAccount: state.paymentDetails.senderAccount || undefined,
-          paymentDeclaration: state.paymentDetails.declarationAccepted || false,
-          transactionId: state.paymentDetails.transactionId || undefined,
+          paymentChannel,
+          paymentProvider,
+          paymentReference,
+          paymentSenderAccount,
+          paymentDeclaration:
+            state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+              ? state.paymentDetails.declarationAccepted || false
+              : false,
+          transactionId,
           depositAmount,
           balanceDue,
           notes: state.notes,
@@ -170,7 +211,10 @@ function ReviewPage() {
     } catch (error) {
       console.error('Place order failed at step:', debugStep, error)
       setToast({
-        message: `Failed to place order (${debugStep ?? 'unknown step'})`,
+        message:
+          error instanceof Error
+            ? error.message
+            : `Failed to place order (${debugStep ?? 'unknown step'})`,
         isVisible: true,
       })
       setIsSubmitting(false)
