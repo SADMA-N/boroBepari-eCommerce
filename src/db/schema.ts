@@ -347,6 +347,11 @@ export const orders = pgTable('orders', {
   paymentStatus: text('payment_status').default('pending').notNull(),
   transactionId: text('transaction_id'),
   paymentMethod: text('payment_method'),
+  paymentChannel: text('payment_channel'),
+  paymentProvider: text('payment_provider'),
+  paymentReference: text('payment_reference'),
+  paymentSenderAccount: text('payment_sender_account'),
+  paymentDeclaration: boolean('payment_declaration').default(false),
 
   // Escrow & Deposit Fields
   depositAmount: decimal('deposit_amount', { precision: 12, scale: 2 }).default(
