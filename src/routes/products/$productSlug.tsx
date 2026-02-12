@@ -96,7 +96,19 @@ function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
-    const result = addItem({ productId: product.id, quantity })
+    const result = addItem({
+      productId: product.id,
+      quantity,
+      customPrice: product.price,
+      productData: {
+        name: product.name,
+        image: product.images?.[0] || '',
+        moq: product.moq,
+        stock: product.stock,
+        supplierId: product.supplierId,
+        unit: product.unit,
+      },
+    })
     if (result.success) {
       setToastMessage(
         `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
