@@ -3,6 +3,7 @@ import { and, eq, inArray, isNull, lt, or } from 'drizzle-orm'
 import { addDays } from 'date-fns'
 import { db } from '@/db'
 import { stockAlerts } from '@/db/schema'
+import { BD_PHONE_REGEX } from '@/lib/validators'
 
 export const Route = createFileRoute('/api/stock-alerts')({
   server: {
@@ -72,6 +73,15 @@ export const Route = createFileRoute('/api/stock-alerts')({
         if (!productId || !email) {
           return new Response(
             JSON.stringify({ error: 'productId and email are required' }),
+            {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
+        }
+        if (phone && !BD_PHONE_REGEX.test(String(phone).trim())) {
+          return new Response(
+            JSON.stringify({ error: 'Phone must be BD format: 01XXXXXXXXX' }),
             {
               status: 400,
               headers: { 'Content-Type': 'application/json' },

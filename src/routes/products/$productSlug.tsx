@@ -25,6 +25,7 @@ import Toast from '../../components/Toast'
 import RFQFormModal from '../../components/RFQFormModal'
 import AuthModal from '../../components/AuthModal'
 import { useNotifications } from '@/contexts/NotificationContext'
+import { isValidBDPhone } from '@/lib/validators'
 
 export const Route = createFileRoute('/products/$productSlug')({
   gcTime: 0,
@@ -121,6 +122,11 @@ function ProductDetailPage() {
   const handleSubmitStockAlert = async () => {
     if (!alertEmail) {
       setToastMessage('Please provide an email for stock alerts.')
+      setShowToast(true)
+      return
+    }
+    if (alertPhone && !isValidBDPhone(alertPhone)) {
+      setToastMessage('Phone number must be BD format: 01XXXXXXXXX')
       setShowToast(true)
       return
     }

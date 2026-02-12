@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Loader2 } from 'lucide-react'
 import { z } from 'zod'
+import { BD_PHONE_REGEX } from '@/lib/validators'
 
 const guestAddressSchema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
@@ -9,7 +10,9 @@ const guestAddressSchema = z.object({
   address: z.string().min(5, 'Full address is required'),
   city: z.string().min(2, 'City is required'),
   postcode: z.string().min(2, 'Postal code is required'),
-  phone: z.string().min(10, 'Valid phone number is required'),
+  phone: z
+    .string()
+    .regex(BD_PHONE_REGEX, 'Use BD format: 01XXXXXXXXX'),
 })
 
 type GuestAddressFormData = z.infer<typeof guestAddressSchema>
