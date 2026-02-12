@@ -5,6 +5,8 @@ import { sendVerificationEmail } from './email'
 import type { SellerUser } from '@/types/seller'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
+import { BD_PHONE_REGEX } from '@/lib/validators'
+import { sanitizeText } from '@/lib/sanitize'
 
 // Simple JWT-like token generation and verification
 // In production, use a proper JWT library like jose
@@ -133,7 +135,9 @@ export const sellerRegister = createServerFn({ method: 'POST' })
       yearsInBusiness: z.string().optional(),
       fullName: z.string().min(1),
       email: z.string().email('Invalid email address'),
-      phone: z.string().min(1),
+      phone: z
+        .string()
+        .regex(BD_PHONE_REGEX, 'Use BD format: 01XXXXXXXXX'),
       address: z.string().min(1),
       city: z.string().min(1),
       postalCode: z.string().min(1),
@@ -166,23 +170,23 @@ export const sellerRegister = createServerFn({ method: 'POST' })
       id,
       email: data.email.toLowerCase(),
       password: hashedPassword,
-      businessName: data.businessName,
-      businessType: data.businessType,
-      tradeLicenseNumber: data.tradeLicenseNumber,
-      businessCategory: data.businessCategory,
+      businessName: sanitizeText(data.businessName),
+      businessType: sanitizeText(data.businessType),
+      tradeLicenseNumber: sanitizeText(data.tradeLicenseNumber),
+      businessCategory: sanitizeText(data.businessCategory),
       yearsInBusiness: data.yearsInBusiness
         ? parseInt(data.yearsInBusiness)
         : null,
-      fullName: data.fullName,
-      phone: data.phone,
-      address: data.address,
-      city: data.city,
-      postalCode: data.postalCode,
-      bankName: data.bankName,
-      accountHolderName: data.accountHolderName,
-      accountNumber: data.accountNumber,
-      branchName: data.branchName,
-      routingNumber: data.routingNumber || null,
+      fullName: sanitizeText(data.fullName),
+      phone: data.phone.trim(),
+      address: sanitizeText(data.address),
+      city: sanitizeText(data.city),
+      postalCode: sanitizeText(data.postalCode),
+      bankName: sanitizeText(data.bankName),
+      accountHolderName: sanitizeText(data.accountHolderName),
+      accountNumber: sanitizeText(data.accountNumber),
+      branchName: sanitizeText(data.branchName),
+      routingNumber: data.routingNumber ? sanitizeText(data.routingNumber) : null,
       kycStatus: 'pending',
       verificationBadge: 'none',
     })
@@ -277,7 +281,10 @@ export const updateSellerProfile = createServerFn({ method: 'POST' })
       businessCategory: z.string().optional(),
       yearsInBusiness: z.number().optional(),
       fullName: z.string().optional(),
-      phone: z.string().optional(),
+      phone: z
+        .string()
+        .regex(BD_PHONE_REGEX, 'Use BD format: 01XXXXXXXXX')
+        .optional(),
       address: z.string().optional(),
       city: z.string().optional(),
       postalCode: z.string().optional(),
@@ -296,7 +303,21 @@ export const updateSellerProfile = createServerFn({ method: 'POST' })
     const [updated] = await db
       .update(schema.sellers)
       .set({
-        ...data,
+        businessName: data.businessName ? sanitizeText(data.businessName) : undefined,
+        businessType: data.businessType ? sanitizeText(data.businessType) : undefined,
+        tradeLicenseNumber: data.tradeLicenseNumber ? sanitizeText(data.tradeLicenseNumber) : undefined,
+        businessCategory: data.businessCategory ? sanitizeText(data.businessCategory) : undefined,
+        yearsInBusiness: data.yearsInBusiness ?? undefined,
+        fullName: data.fullName ? sanitizeText(data.fullName) : undefined,
+        phone: data.phone ? data.phone.trim() : undefined,
+        address: data.address ? sanitizeText(data.address) : undefined,
+        city: data.city ? sanitizeText(data.city) : undefined,
+        postalCode: data.postalCode ? sanitizeText(data.postalCode) : undefined,
+        bankName: data.bankName ? sanitizeText(data.bankName) : undefined,
+        accountHolderName: data.accountHolderName ? sanitizeText(data.accountHolderName) : undefined,
+        accountNumber: data.accountNumber ? sanitizeText(data.accountNumber) : undefined,
+        branchName: data.branchName ? sanitizeText(data.branchName) : undefined,
+        routingNumber: data.routingNumber ? sanitizeText(data.routingNumber) : undefined,
         updatedAt: new Date(),
       })
       .where(eq(schema.sellers.id, context.seller.id))

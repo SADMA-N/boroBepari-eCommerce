@@ -19,6 +19,7 @@ import {
 import { sendQuoteEmail, sendRfqEmail } from '@/lib/email'
 import { formatBDT } from './product-server'
 import { env } from '@/env'
+import { sanitizeText } from '@/lib/sanitize'
 
 export const submitRFQ = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
@@ -60,7 +61,7 @@ export const submitRFQ = createServerFn({ method: 'POST' })
         quantity: data.quantity,
         targetPrice: data.targetPrice?.toString(),
         deliveryLocation: data.deliveryLocation,
-        notes: data.notes,
+        notes: data.notes ? sanitizeText(data.notes) : null,
         attachments: data.attachments,
         status: 'pending',
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days expiry
@@ -214,7 +215,7 @@ export const sendQuote = createServerFn({ method: 'POST' })
           depositPercentage: data.depositPercentage || 0,
           deliveryTime: data.deliveryTime,
           validityPeriod: new Date(data.validityPeriod),
-          terms: data.notes,
+          terms: data.notes ? sanitizeText(data.notes) : null,
           status: 'pending', // Reset to pending for buyer review
           updatedAt: new Date(),
         })
@@ -230,7 +231,7 @@ export const sendQuote = createServerFn({ method: 'POST' })
         depositPercentage: data.depositPercentage || 0,
         deliveryTime: data.deliveryTime,
         validityPeriod: new Date(data.validityPeriod),
-        terms: data.notes,
+        terms: data.notes ? sanitizeText(data.notes) : null,
         status: 'pending',
       })
     }
@@ -466,7 +467,7 @@ export const updateQuoteStatus = createServerFn({ method: 'POST' })
       .set({
         status: data.status,
         counterPrice: data.counterPrice,
-        counterNote: data.counterNote,
+        counterNote: data.counterNote ? sanitizeText(data.counterNote) : null,
       })
       .where(eq(quotes.id, data.quoteId))
 

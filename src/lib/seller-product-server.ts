@@ -5,6 +5,7 @@ import { sellerAuthMiddleware } from './seller-auth-server'
 import { uploadProductImage } from './product-images-s3'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
+import { sanitizeHtml, sanitizeText } from '@/lib/sanitize'
 
 export const uploadSellerProductImage = createServerFn({ method: 'POST' })
   .middleware([sellerAuthMiddleware])
@@ -91,7 +92,8 @@ export const submitSellerProduct = createServerFn({ method: 'POST' })
     }
 
     const shortId = crypto.randomUUID().slice(0, 8)
-    const slug = `${data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}-${shortId}`
+    const safeName = sanitizeText(data.name)
+    const slug = `${safeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}-${shortId}`
 
     const status = data.mode === 'publish' ? 'pending' : 'draft'
 
@@ -115,12 +117,12 @@ export const submitSellerProduct = createServerFn({ method: 'POST' })
       .insert(schema.sellerProducts)
       .values({
         sellerId: context.seller.id,
-        name: data.name,
+        name: safeName,
         slug,
-        brand: data.brand || null,
-        mainCategory: data.mainCategory || null,
-        subCategory: data.subCategory || null,
-        description: data.description || null,
+        brand: data.brand ? sanitizeText(data.brand) : null,
+        mainCategory: data.mainCategory ? sanitizeText(data.mainCategory) : null,
+        subCategory: data.subCategory ? sanitizeText(data.subCategory) : null,
+        description: data.description ? sanitizeHtml(data.description) : null,
         tags: data.tags ?? [],
         images: data.images,
         price: data.price,
@@ -128,23 +130,23 @@ export const submitSellerProduct = createServerFn({ method: 'POST' })
         tieredPricing: tieredPricingData,
         moq: parseInt(data.moq),
         stock: parseInt(data.stock),
-        sku: data.sku || null,
+        sku: data.sku ? sanitizeText(data.sku) : null,
         unit: data.unit || 'piece',
         lowStockThreshold: data.lowStockThreshold
           ? parseInt(data.lowStockThreshold)
           : 10,
         specifications: specsData,
-        weight: data.weight || null,
+        weight: data.weight ? sanitizeText(data.weight) : null,
         dimensions: data.dimensions || null,
-        shipFrom: data.shipFrom || null,
-        deliveryTime: data.deliveryTime || null,
-        returnPolicy: data.returnPolicy || null,
+        shipFrom: data.shipFrom ? sanitizeText(data.shipFrom) : null,
+        deliveryTime: data.deliveryTime ? sanitizeText(data.deliveryTime) : null,
+        returnPolicy: data.returnPolicy ? sanitizeText(data.returnPolicy) : null,
         hasSample: data.hasSample,
         samplePrice: data.samplePrice || null,
         sampleMaxQty: data.sampleMaxQty
           ? parseInt(data.sampleMaxQty)
           : null,
-        sampleDelivery: data.sampleDelivery || null,
+        sampleDelivery: data.sampleDelivery ? sanitizeText(data.sampleDelivery) : null,
         status,
       })
       .returning({ id: schema.sellerProducts.id, status: schema.sellerProducts.status, slug: schema.sellerProducts.slug })
@@ -238,14 +240,15 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
     // We will override this to 'accepted' if we successfully sync to products table
     let status = data.mode === 'publish' ? 'pending' : 'draft'
 
+    const safeName = sanitizeText(data.name)
     const [updated] = await db
       .update(schema.sellerProducts)
       .set({
-        name: data.name,
-        brand: data.brand || null,
-        mainCategory: data.mainCategory || null,
-        subCategory: data.subCategory || null,
-        description: data.description || null,
+        name: safeName,
+        brand: data.brand ? sanitizeText(data.brand) : null,
+        mainCategory: data.mainCategory ? sanitizeText(data.mainCategory) : null,
+        subCategory: data.subCategory ? sanitizeText(data.subCategory) : null,
+        description: data.description ? sanitizeHtml(data.description) : null,
         tags: data.tags ?? [],
         images: data.images,
         price: data.price,
@@ -253,21 +256,21 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
         tieredPricing: tieredPricingData,
         moq: parseInt(data.moq),
         stock: parseInt(data.stock),
-        sku: data.sku || null,
+        sku: data.sku ? sanitizeText(data.sku) : null,
         unit: data.unit || 'piece',
         lowStockThreshold: data.lowStockThreshold
           ? parseInt(data.lowStockThreshold)
           : 10,
         specifications: specsData,
-        weight: data.weight || null,
+        weight: data.weight ? sanitizeText(data.weight) : null,
         dimensions: data.dimensions || null,
-        shipFrom: data.shipFrom || null,
-        deliveryTime: data.deliveryTime || null,
-        returnPolicy: data.returnPolicy || null,
+        shipFrom: data.shipFrom ? sanitizeText(data.shipFrom) : null,
+        deliveryTime: data.deliveryTime ? sanitizeText(data.deliveryTime) : null,
+        returnPolicy: data.returnPolicy ? sanitizeText(data.returnPolicy) : null,
         hasSample: data.hasSample,
         samplePrice: data.samplePrice || null,
         sampleMaxQty: data.sampleMaxQty ? parseInt(data.sampleMaxQty) : null,
-        sampleDelivery: data.sampleDelivery || null,
+        sampleDelivery: data.sampleDelivery ? sanitizeText(data.sampleDelivery) : null,
         status: status, // Update status based on action
         updatedAt: new Date(),
       })
@@ -289,8 +292,8 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
           await db
             .update(schema.products)
             .set({
-              name: data.name,
-              description: data.description || null,
+              name: safeName,
+              description: data.description ? sanitizeHtml(data.description) : null,
               images: data.images,
               price: data.price,
               originalPrice: data.originalPrice || null,
@@ -313,9 +316,9 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
           const [newProduct] = await db
             .insert(schema.products)
             .values({
-              name: data.name,
+              name: safeName,
               slug: updated.slug,
-              description: data.description || null,
+              description: data.description ? sanitizeHtml(data.description) : null,
               images: data.images,
               price: data.price,
               originalPrice: data.originalPrice || null,

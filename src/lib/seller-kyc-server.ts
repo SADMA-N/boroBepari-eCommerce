@@ -6,6 +6,7 @@ import { adminAuthMiddleware } from './admin-auth-server'
 import { BUCKET_NAME, getSignedUrl, uploadToS3 } from './s3'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
+import { sanitizeText } from '@/lib/sanitize'
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'] as const
@@ -80,6 +81,9 @@ export const submitSellerKyc = createServerFn({ method: 'POST' })
 
     const sellerId = context.seller.id
     const { description, categories, inventoryRange, documents } = data
+    const safeDescription = sanitizeText(description)
+    const safeCategories = categories.map((c) => sanitizeText(c))
+    const safeInventoryRange = sanitizeText(inventoryRange)
 
     // Process all documents
     const docEntries = Object.entries(documents) as Array<
@@ -107,9 +111,9 @@ export const submitSellerKyc = createServerFn({ method: 'POST' })
           kycSubmittedAt: submittedAt,
           kycRejectionReason: null,
           kycAdditionalInfo: {
-            description,
-            categories,
-            inventoryRange,
+            description: safeDescription,
+            categories: safeCategories,
+            inventoryRange: safeInventoryRange,
           },
           updatedAt: submittedAt,
         })

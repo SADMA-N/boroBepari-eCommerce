@@ -5,6 +5,7 @@ import { authMiddleware } from './auth-server'
 import { addresses, orderItems, orders, products, rfqs, user } from '@/db/schema'
 import { db } from '@/db'
 import { sendOrderStatusEmail } from '@/lib/notifications'
+import { sanitizeText } from '@/lib/sanitize'
 
 export const getOrder = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
@@ -114,7 +115,7 @@ export const createOrder = createServerFn({ method: 'POST' })
       transactionId: data.transactionId,
       depositAmount: depositAmount.toString(),
       balanceDue: balanceDue.toString(),
-      notes: data.notes,
+        notes: data.notes ? sanitizeText(data.notes) : null,
     }
 
     let newOrder
