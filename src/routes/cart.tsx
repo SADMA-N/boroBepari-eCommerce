@@ -1171,6 +1171,7 @@ function CartPage() {
     validateCartItems,
     updateQuantity,
     removeItem,
+    isLoading,
   } = useCart()
   const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(
     new Set(),
@@ -1362,7 +1363,11 @@ function CartPage() {
           </div>
         )}
 
-        {cart.items.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16 text-gray-500">
+            Loading your cart...
+          </div>
+        ) : cart.items.length === 0 ? (
           <EmptyCart />
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
