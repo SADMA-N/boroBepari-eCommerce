@@ -100,25 +100,53 @@ export const createOrder = createServerFn({ method: 'POST' })
     }
 
     // 1. Create Order
-    const [newOrder] = await db
-      .insert(orders)
-      .values({
-        userId: session.user.id,
-        totalAmount: totalAmount.toString(),
-        status: 'pending',
-        paymentStatus: 'pending',
-        paymentMethod: data.paymentMethod,
-        paymentChannel: data.paymentChannel,
-        paymentProvider: data.paymentProvider,
-        paymentReference: data.paymentReference,
-        paymentSenderAccount: data.paymentSenderAccount,
-        paymentDeclaration: data.paymentDeclaration ?? false,
-        transactionId: data.transactionId,
-        depositAmount: depositAmount.toString(),
-        balanceDue: balanceDue.toString(),
-        notes: data.notes,
-      })
-      .returning()
+    const insertValues = {
+      userId: session.user.id,
+      totalAmount: totalAmount.toString(),
+      status: 'pending',
+      paymentStatus: 'pending',
+      paymentMethod: data.paymentMethod,
+      paymentChannel: data.paymentChannel,
+      paymentProvider: data.paymentProvider,
+      paymentReference: data.paymentReference,
+      paymentSenderAccount: data.paymentSenderAccount,
+      paymentDeclaration: data.paymentDeclaration ?? false,
+      transactionId: data.transactionId,
+      depositAmount: depositAmount.toString(),
+      balanceDue: balanceDue.toString(),
+      notes: data.notes,
+    }
+
+    let newOrder
+    try {
+      ;[newOrder] = await db.insert(orders).values(insertValues).returning()
+    } catch (err: any) {
+      const msg =
+        err?.cause?.message || err?.message || 'Unknown database error'
+      // Fallback for older DBs missing new payment columns
+      if (
+        msg.includes('payment_channel') ||
+        msg.includes('payment_provider') ||
+        msg.includes('payment_reference') ||
+        msg.includes('payment_sender_account') ||
+        msg.includes('payment_declaration')
+      ) {
+        const fallbackValues = {
+          userId: insertValues.userId,
+          totalAmount: insertValues.totalAmount,
+          status: insertValues.status,
+          paymentStatus: insertValues.paymentStatus,
+          paymentMethod: insertValues.paymentMethod,
+          transactionId: insertValues.transactionId,
+          depositAmount: insertValues.depositAmount,
+          balanceDue: insertValues.balanceDue,
+          notes: insertValues.notes,
+        }
+        ;[newOrder] = await db.insert(orders).values(fallbackValues).returning()
+      } else {
+        throw new Error(`Order insert failed: ${msg}`)
+      }
+    }
 
     // 2. Create Order Items
     if (normalizedItems.length > 0) {
