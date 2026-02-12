@@ -17,6 +17,7 @@ type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock'
 type Product = {
   id: number
   name: string
+  slug: string
   sku: string
   price: number
   moq: number
@@ -151,6 +152,17 @@ export function SellerProductsPage() {
   }
 
   const handleAction = (id: number, action: string) => {
+    if (action === 'edit') {
+      navigate({ to: `/seller/products/${id}/edit` })
+      return
+    }
+    if (action === 'view') {
+      const product = products.find((p) => p.id === id)
+      if (product) {
+        window.open(`/products/${product.slug}`, '_blank')
+      }
+      return
+    }
     if (action === 'delete') {
       if (!window.confirm('Delete this product?')) return
       setProducts((prev) => prev.filter((product) => product.id !== id))
@@ -462,10 +474,20 @@ export function SellerProductsPage() {
                     </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                    <button className="rounded-lg border border-slate-200 dark:border-slate-800 py-2 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <button
+                      onClick={() =>
+                        navigate({ to: `/seller/products/${product.id}/edit` })
+                      }
+                      className="rounded-lg border border-slate-200 dark:border-slate-800 py-2 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
                       Edit
                     </button>
-                    <button className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 py-2 text-orange-600 dark:text-orange-400 transition-colors">
+                    <button
+                      onClick={() =>
+                        window.open(`/products/${product.slug}`, '_blank')
+                      }
+                      className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 py-2 text-orange-600 dark:text-orange-400 transition-colors"
+                    >
                       View
                     </button>
                   </div>
@@ -591,6 +613,9 @@ function RowActions({
         >
           <option value="" className="dark:bg-slate-900">
             More
+          </option>
+          <option value="edit" className="dark:bg-slate-900">
+            Edit product
           </option>
           {status === 'accepted' && (
             <option value="view" className="dark:bg-slate-900">

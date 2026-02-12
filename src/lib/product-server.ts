@@ -326,6 +326,8 @@ export const searchProducts = createServerFn({ method: 'POST' })
       categoryId: z.number().optional(),
       minPrice: z.number().optional(),
       maxPrice: z.number().optional(),
+      featured: z.boolean().optional(),
+      isNew: z.boolean().optional(),
       sortBy: z.string().optional(),
       limit: z.number().optional(),
     }),
@@ -338,6 +340,12 @@ export const searchProducts = createServerFn({ method: 'POST' })
     }
     if (data.categoryId) {
       conditions.push(eq(products.categoryId, data.categoryId))
+    }
+    if (data.featured) {
+      conditions.push(eq(products.featured, true))
+    }
+    if (data.isNew) {
+      conditions.push(eq(products.isNew, true))
     }
 
     const whereClause =

@@ -31,6 +31,8 @@ interface SearchParams {
   maxMoq?: string
   locations?: string
   verifiedOnly?: string
+  featured?: string
+  new?: string
   sortBy?: string
   page?: string
 }
@@ -46,6 +48,8 @@ export const Route = createFileRoute('/search')({
     maxMoq: search.maxMoq as string | undefined,
     locations: search.locations as string | undefined,
     verifiedOnly: search.verifiedOnly as string | undefined,
+    featured: search.featured as string | undefined,
+    new: search.new as string | undefined,
     sortBy: search.sortBy as string | undefined,
     page: search.page as string | undefined,
   }),
@@ -99,6 +103,8 @@ function SearchPage() {
       maxMoq: search.maxMoq ? Number(search.maxMoq) : undefined,
       locations: search.locations ? search.locations.split(',') : undefined,
       verifiedOnly: search.verifiedOnly === 'true',
+      featured: search.featured === 'true',
+      isNew: search.new === 'true',
       sortBy: search.sortBy as ProductFilters['sortBy'],
     }),
     [search],
@@ -114,6 +120,8 @@ function SearchPage() {
           categoryId: filters.categoryId,
           minPrice: filters.minPrice,
           maxPrice: filters.maxPrice,
+          featured: filters.featured,
+          isNew: filters.isNew,
           sortBy: filters.sortBy,
           limit: 50,
         },
@@ -155,6 +163,8 @@ function SearchPage() {
       if (newFilters.locations?.length)
         newSearch.locations = newFilters.locations.join(',')
       if (newFilters.verifiedOnly) newSearch.verifiedOnly = 'true'
+      if (newFilters.featured) newSearch.featured = 'true'
+      if (newFilters.isNew) newSearch.new = 'true'
       if (newFilters.sortBy) newSearch.sortBy = newFilters.sortBy
 
       navigate({
@@ -345,7 +355,9 @@ function SearchPage() {
                 filters.minMoq ||
                 filters.maxMoq ||
                 filters.locations?.length ||
-                filters.verifiedOnly) && (
+                filters.verifiedOnly ||
+                filters.featured ||
+                filters.isNew) && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {filters.minPrice && (
                     <FilterTag
@@ -401,6 +413,22 @@ function SearchPage() {
                       }
                     />
                   )}
+                  {filters.featured && (
+                    <FilterTag
+                      label="Featured"
+                      onRemove={() =>
+                        handleFiltersChange({ ...filters, featured: false })
+                      }
+                    />
+                  )}
+                  {filters.isNew && (
+                    <FilterTag
+                      label="New Arrivals"
+                      onRemove={() =>
+                        handleFiltersChange({ ...filters, isNew: false })
+                      }
+                    />
+                  )}
                   <button
                     onClick={() =>
                       handleFiltersChange({ search: filters.search })
@@ -433,7 +461,9 @@ function SearchPage() {
                   {(filters.minPrice ||
                     filters.maxPrice ||
                     filters.locations?.length ||
-                    filters.verifiedOnly) && (
+                    filters.verifiedOnly ||
+                    filters.featured ||
+                    filters.isNew) && (
                     <button
                       onClick={() =>
                         handleFiltersChange({ search: filters.search })

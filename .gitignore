@@ -37,3 +37,8 @@ prompt.txt
 public/uploads/
 supabase/snippets/
 docs/
+supabase-storage-dump.tar.gz
+product-images/
+manual_images/
+download-images.sh
+download-real-images.sh

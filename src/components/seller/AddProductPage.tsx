@@ -16,13 +16,14 @@ import { useSellerToast } from '@/components/seller/SellerToastProvider'
 import {
   uploadSellerProductImage,
   submitSellerProduct,
+  updateSellerProduct,
 } from '@/lib/seller-product-server'
 
 type PricingTier = { id: string; minQty: string; maxQty: string; price: string }
 type SpecRow = { id: string; key: string; value: string }
 type UploadImage = {
   id: string
-  file: File
+  file?: File
   previewUrl: string
   thumbUrl: string
   progress: number
@@ -76,7 +77,7 @@ const SECTION_IDS = [
   { id: 'samples', label: 'Sample Orders' },
 ]
 
-export function AddProductPage() {
+export function AddProductPage({ initialData }: { initialData?: any }) {
   const { pushToast } = useSellerToast()
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState('basic')
@@ -88,6 +89,7 @@ export function AddProductPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [submitMode, setSubmitMode] = useState<SubmitMode>('draft')
   const [submitError, setSubmitError] = useState('')
+  const [savedSlug, setSavedSlug] = useState('')
 
   const [title, setTitle] = useState('')
   const [mainCategory, setMainCategory] = useState('')
@@ -136,6 +138,73 @@ export function AddProductPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.name)
+      setMainCategory(initialData.mainCategory || '')
+      setSubCategory(initialData.subCategory || '')
+      setBrand(initialData.brand || '')
+      setDescriptionHtml(initialData.description || '')
+      // Simple text extraction for validation (not perfect but sufficient for required check)
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(initialData.description || '', 'text/html')
+      setDescriptionText(doc.body.textContent || '')
+      
+      setTags(initialData.tags || [])
+      setPrice(String(initialData.price))
+      // Assuming originalPrice logic is handled via discount field in UI if needed, 
+      // but for now we just load price.
+      
+      setMoq(String(initialData.moq))
+      setStock(String(initialData.stock))
+      setSku(initialData.sku || '')
+      setLowStockThreshold(String(initialData.lowStockThreshold || 10))
+      
+      const initImages = (initialData.images || []).map((url: string, idx: number) => ({
+        id: crypto.randomUUID(),
+        previewUrl: url,
+        thumbUrl: url,
+        progress: 100,
+        isPrimary: idx === 0,
+      }))
+      setImages(initImages)
+
+      if (initialData.tieredPricing && initialData.tieredPricing.length > 0) {
+        setTieredPricing(true)
+        setPricingTiers(initialData.tieredPricing.map((t: any) => ({
+            id: crypto.randomUUID(),
+            minQty: String(t.minQty),
+            maxQty: t.maxQty ? String(t.maxQty) : '',
+            price: String(t.price)
+        })))
+      } else {
+        setTieredPricing(false)
+      }
+
+      if (initialData.specifications && initialData.specifications.length > 0) {
+        setSpecs(initialData.specifications.map((s: any) => ({
+            id: crypto.randomUUID(),
+            key: s.key,
+            value: s.value
+        })))
+      } else {
+        setSpecs([{ id: crypto.randomUUID(), key: '', value: '' }])
+      }
+
+      setWeight(initialData.weight || '')
+      setDimensions(initialData.dimensions || { length: '', width: '', height: '' })
+      setShipFrom(initialData.shipFrom || '')
+      setDeliveryTime(initialData.deliveryTime || '')
+      setReturnPolicy(initialData.returnPolicy || '')
+      
+      setSampleEnabled(initialData.hasSample || false)
+      setSamplePrice(initialData.samplePrice ? String(initialData.samplePrice) : '')
+      setSampleMaxQty(initialData.sampleMaxQty ? String(initialData.sampleMaxQty) : '5')
+      setSampleDelivery(initialData.sampleDelivery || '')
+    }
+  }, [initialData])
+
+  useEffect(() => {
+    if (initialData) return // Don't load draft if editing existing product
     const saved = localStorage.getItem('seller_product_draft')
     if (saved) {
       try {
@@ -616,22 +685,27 @@ export function AddProductPage() {
       // Upload images first
       const imageUrls: string[] = []
       for (const img of images) {
-        const arrayBuf = await img.file.arrayBuffer()
-        const base64 = btoa(
-          new Uint8Array(arrayBuf).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            '',
-          ),
-        )
-        const result = await uploadSellerProductImage({
-          data: {
-            fileBase64: base64,
-            mimeType: img.file.type || 'image/jpeg',
-            fileName: img.file.name,
-          },
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        imageUrls.push(result.url)
+        if (img.file) {
+          const arrayBuf = await img.file.arrayBuffer()
+          const base64 = btoa(
+            new Uint8Array(arrayBuf).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              '',
+            ),
+          )
+          const result = await uploadSellerProductImage({
+            data: {
+              fileBase64: base64,
+              mimeType: img.file.type || 'image/jpeg',
+              fileName: img.file.name,
+            },
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          imageUrls.push(result.url)
+        } else {
+          // Existing image
+          imageUrls.push(img.previewUrl)
+        }
       }
 
       // Calculate original price from discount percentage
@@ -681,20 +755,34 @@ export function AddProductPage() {
         mode,
       }
 
-      await submitSellerProduct({
-        data: payload,
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      let resultSlug = ''
+      if (initialData?.id) {
+        const res = await updateSellerProduct({
+          data: { ...payload, id: initialData.id },
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        resultSlug = res.slug
+      } else {
+        const res = await submitSellerProduct({
+          data: payload,
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        resultSlug = res.slug
+      }
+      return resultSlug
     }
 
     void doSubmit()
-      .then(() => {
+      .then((slug) => {
+        setSavedSlug(slug)
         localStorage.removeItem('seller_product_draft')
         setShowSuccess(true)
         pushToast(
-          mode === 'publish'
-            ? 'Product submitted for review'
-            : 'Draft saved',
+          initialData
+            ? 'Product updated successfully'
+            : mode === 'publish'
+              ? 'Product submitted for review'
+              : 'Draft saved',
           'success',
         )
       })
@@ -769,7 +857,7 @@ export function AddProductPage() {
             <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                  Add New Product
+                  {initialData ? 'Edit Product' : 'Add New Product'}
                 </h1>
                 <p className="text-slate-500 dark:text-gray-400 mt-1">
                   Provide complete details to increase buyer confidence.
@@ -1487,7 +1575,7 @@ export function AddProductPage() {
             <div className="grid sm:grid-cols-3 gap-3">
               <button
                 type="button"
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => window.open(`/products/${savedSlug}`, '_blank')}
                 className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 View Product
@@ -1496,11 +1584,11 @@ export function AddProductPage() {
                 type="button"
                 onClick={() => {
                   setShowSuccess(false)
-                  navigate({ to: '/seller/products/add' })
+                  navigate({ to: '/seller' })
                 }}
                 className="rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/30 px-4 py-2 text-sm font-semibold text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/50"
               >
-                Add Another Product
+                Dashboard
               </button>
               <Link
                 to="/seller/products"

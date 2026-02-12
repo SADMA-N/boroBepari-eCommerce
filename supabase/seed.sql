@@ -1266,9 +1266,6 @@ SELECT pg_catalog.setval('"public"."orders_id_seq"', 14, true);
 -- Name: password_reset_otps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."password_reset_otps_id_seq"', 3, true);
-
-
 --
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --

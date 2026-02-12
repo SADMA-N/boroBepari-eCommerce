@@ -694,7 +694,7 @@ export function AdminDisputesPage() {
               Refund issued today
             </p>
             <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
-              ₹{stats.refundToday.toLocaleString()}
+              ৳{stats.refundToday.toLocaleString()}
             </p>
           </div>
           <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
@@ -941,7 +941,7 @@ export function AdminDisputesPage() {
                   </h4>
                   <div className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
                     <p>
-                      Amount paid: ₹
+                      Amount paid: ৳
                       {selectedDispute.amountPaid.toLocaleString()}
                     </p>
                     <p>Delivery: {selectedDispute.deliveryStatus}</p>
@@ -954,7 +954,7 @@ export function AdminDisputesPage() {
                         >
                           <span>{item.name}</span>
                           <span>
-                            {item.qty} x ₹{item.price}
+                            {item.qty} x ৳{item.price}
                           </span>
                         </div>
                       ))}
@@ -1016,7 +1016,7 @@ export function AdminDisputesPage() {
                       Full Refund
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
-                      Refund amount: ₹
+                      Refund amount: ৳
                       {selectedDispute.amountPaid.toLocaleString()}
                     </p>
                     <button
@@ -1092,7 +1092,7 @@ export function AdminDisputesPage() {
                       Escrow
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
-                      Escrow amount: ₹
+                      Escrow amount: ৳
                       {selectedDispute.escrowAmount.toLocaleString()}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -1157,7 +1157,7 @@ export function AdminDisputesPage() {
                   size={20}
                 />
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
-                  Issue full refund of ₹
+                  Issue full refund of ৳
                   {selectedDispute.amountPaid.toLocaleString()}?
                 </h2>
               </div>
@@ -1219,9 +1219,9 @@ export function AdminDisputesPage() {
               </button>
             </div>
             <div className="px-6 py-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 transition-colors">
-              <p>₹{partialAmount || 0} refunded to buyer</p>
+              <p>৳{partialAmount || 0} refunded to buyer</p>
               <p>
-                ₹
+                ৳
                 {Math.max(
                   selectedDispute.amountPaid - Number(partialAmount || 0),
                   0,

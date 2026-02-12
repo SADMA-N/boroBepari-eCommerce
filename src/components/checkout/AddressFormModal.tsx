@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Briefcase, Home, Loader2, MapPin, Warehouse, X } from 'lucide-react'
 import { z } from 'zod'
+import { BD_PHONE_REGEX } from '@/lib/validators'
 import type { NewAddress } from '@/db/schema'
 
 // Schema
@@ -10,7 +11,9 @@ const addressSchema = z.object({
   address: z.string().min(5, 'Full address is required'),
   city: z.string().min(2, 'City is required'),
   postcode: z.string().min(2, 'Postal code is required'),
-  phone: z.string().min(10, 'Valid phone number is required'),
+  phone: z
+    .string()
+    .regex(BD_PHONE_REGEX, 'Use BD format: 01XXXXXXXXX'),
   isDefault: z.boolean(),
 })
 

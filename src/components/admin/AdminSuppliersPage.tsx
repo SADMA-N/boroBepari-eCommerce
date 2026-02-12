@@ -1,3 +1,4 @@
+import { getAdminSuppliers } from '@/lib/admin-supplier-server'
 import { useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
@@ -13,6 +14,7 @@ import {
   FileX2,
   Filter,
   Image,
+  Loader2,
   MoreVertical,
   Search,
   ShieldCheck,
@@ -100,164 +102,7 @@ const CATEGORIES = [
   'Construction Materials',
 ]
 
-const SUPPLIERS: Array<Supplier> = [
-  {
-    id: 'BB-S-1021',
-    businessName: 'Rahim Textiles Ltd.',
-    ownerName: 'Rahim Uddin',
-    email: 'contact@rahimtextiles.com',
-    phone: '01711111111',
-    kycStatus: 'verified',
-    verificationBadge: 'premium',
-    totalProducts: 156,
-    totalOrders: 1240,
-    gmv: 2450000,
-    registrationDate: '2023-06-15',
-    status: 'active',
-    category: 'Apparel & Fashion',
-    businessType: 'Manufacturer',
-    tradeLicense: 'TL-987654',
-    address: 'Tejgaon, Dhaka',
-    bank: {
-      name: 'BRAC Bank',
-      accountName: 'Rahim Textiles Ltd.',
-      accountNumberMasked: '**** 2456',
-      branch: 'Gulshan',
-    },
-    lastActive: '2026-02-03 10:45',
-    kycDocs: {
-      tradeLicense: '/img/kyc/trade-license.png',
-      nidFront: '/img/kyc/nid-front.png',
-      nidBack: '/img/kyc/nid-back.png',
-      bankProof: '/img/kyc/bank-proof.png',
-    },
-    kycDecision: { date: '2023-06-18' },
-    analytics: {
-      fulfillmentRate: 96,
-      averageRating: 4.8,
-      rfqResponseRate: 92,
-      topProducts: [
-        { name: 'Cotton Bedsheets', gmv: 450000 },
-        { name: 'Denim Fabric', gmv: 390000 },
-      ],
-      gmvSeries: [
-        { date: 'Jan', gmv: 180000 },
-        { date: 'Feb', gmv: 210000 },
-        { date: 'Mar', gmv: 190000 },
-        { date: 'Apr', gmv: 230000 },
-        { date: 'May', gmv: 250000 },
-        { date: 'Jun', gmv: 240000 },
-      ],
-    },
-    activityLog: [
-      { id: 'act-1', message: 'Added 3 new products', time: '2 hours ago' },
-      { id: 'act-2', message: 'Fulfilled order ORD-45998', time: '1 day ago' },
-      { id: 'act-3', message: 'Responded to RFQ #RFQ-120', time: '3 days ago' },
-    ],
-  },
-  {
-    id: 'BB-S-1103',
-    businessName: 'Chittagong Electronics',
-    ownerName: 'Fahim Chowdhury',
-    email: 'info@ctgelectronics.com',
-    phone: '01822222222',
-    kycStatus: 'pending',
-    verificationBadge: 'none',
-    totalProducts: 12,
-    totalOrders: 24,
-    gmv: 180000,
-    registrationDate: '2026-01-12',
-    status: 'active',
-    category: 'Electronics',
-    businessType: 'Distributor',
-    tradeLicense: 'TL-456123',
-    address: 'Agrabad, Chittagong',
-    bank: {
-      name: 'Dutch-Bangla Bank',
-      accountName: 'Chittagong Electronics',
-      accountNumberMasked: '**** 7832',
-      branch: 'Agrabad',
-    },
-    lastActive: '2026-02-02 15:30',
-    kycDocs: {
-      tradeLicense: '/img/kyc/trade-license.png',
-      nidFront: '/img/kyc/nid-front.png',
-      nidBack: '/img/kyc/nid-back.png',
-      bankProof: '/img/kyc/bank-proof.png',
-    },
-    analytics: {
-      fulfillmentRate: 82,
-      averageRating: 4.2,
-      rfqResponseRate: 75,
-      topProducts: [
-        { name: 'LED Panels', gmv: 55000 },
-        { name: 'Power Supplies', gmv: 32000 },
-      ],
-      gmvSeries: [
-        { date: 'Jan', gmv: 20000 },
-        { date: 'Feb', gmv: 30000 },
-        { date: 'Mar', gmv: 25000 },
-        { date: 'Apr', gmv: 35000 },
-        { date: 'May', gmv: 40000 },
-        { date: 'Jun', gmv: 30000 },
-      ],
-    },
-    activityLog: [
-      { id: 'act-4', message: 'Uploaded KYC documents', time: '2 days ago' },
-      { id: 'act-5', message: 'Added product SKU-982', time: '4 days ago' },
-    ],
-  },
-  {
-    id: 'BB-S-1180',
-    businessName: 'Sylhet Traders',
-    ownerName: 'Arif Ahmed',
-    email: 'sales@sylhettraders.com',
-    phone: '01933333333',
-    kycStatus: 'rejected',
-    verificationBadge: 'none',
-    totalProducts: 8,
-    totalOrders: 0,
-    gmv: 0,
-    registrationDate: '2025-12-05',
-    status: 'suspended',
-    category: 'Grocery & FMCG',
-    businessType: 'Wholesaler',
-    tradeLicense: 'TL-220144',
-    address: 'Sylhet, Bangladesh',
-    bank: {
-      name: 'Sonali Bank',
-      accountName: 'Sylhet Traders',
-      accountNumberMasked: '**** 3322',
-      branch: 'Sylhet',
-    },
-    lastActive: '2025-12-21 11:15',
-    kycDocs: {
-      tradeLicense: '/img/kyc/trade-license.png',
-      nidFront: '/img/kyc/nid-front.png',
-      nidBack: '/img/kyc/nid-back.png',
-      bankProof: '/img/kyc/bank-proof.png',
-    },
-    kycDecision: { date: '2025-12-18', reason: 'Document not clear/readable' },
-    analytics: {
-      fulfillmentRate: 0,
-      averageRating: 0,
-      rfqResponseRate: 0,
-      topProducts: [],
-      gmvSeries: [
-        { date: 'Jan', gmv: 0 },
-        { date: 'Feb', gmv: 0 },
-        { date: 'Mar', gmv: 0 },
-        { date: 'Apr', gmv: 0 },
-        { date: 'May', gmv: 0 },
-        { date: 'Jun', gmv: 0 },
-      ],
-    },
-    activityLog: [
-      { id: 'act-6', message: 'KYC rejected', time: '6 weeks ago' },
-      { id: 'act-7', message: 'Account suspended', time: '1 month ago' },
-    ],
-  },
-]
+
 
 const KYC_OPTIONS: Array<{ label: string; value: KycStatus | 'all' }> = [
   { label: 'All', value: 'all' },
@@ -291,7 +136,7 @@ const SORT_OPTIONS: Array<{ label: string; value: SortKey }> = [
 const PAGE_SIZE = 50
 
 function formatCurrency(amount: number) {
-  return `₹${amount.toLocaleString()}`
+  return `৳${amount.toLocaleString()}`
 }
 
 function kycBadge(status: KycStatus) {
@@ -338,6 +183,24 @@ export function AdminSuppliersPage() {
   const canSuspend = can('suppliers.suspend')
   const canKycApprove = can('kyc.approve')
   const canKycReject = can('kyc.reject')
+  
+  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadSuppliers() {
+      try {
+        const data = await getAdminSuppliers()
+        setSuppliers(data as Supplier[])
+      } catch (err) {
+        console.error('Failed to load suppliers:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadSuppliers()
+  }, [])
+
   const [searchQuery, setSearchQuery] = useState('')
   const [kycFilter, setKycFilter] = useState<KycStatus | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<SupplierStatus | 'all'>(
@@ -384,7 +247,7 @@ export function AdminSuppliersPage() {
 
   const filtered = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    return SUPPLIERS.filter((supplier) => {
+    return suppliers.filter((supplier) => {
       const matchesSearch =
         !query ||
         supplier.businessName.toLowerCase().includes(query) ||
@@ -414,6 +277,7 @@ export function AdminSuppliersPage() {
       )
     })
   }, [
+    suppliers,
     searchQuery,
     kycFilter,
     statusFilter,
@@ -440,16 +304,16 @@ export function AdminSuppliersPage() {
   const pageStart = (currentPage - 1) * PAGE_SIZE
   const pageSuppliers = sortedSuppliers.slice(pageStart, pageStart + PAGE_SIZE)
 
-  const totalSuppliers = SUPPLIERS.length
-  const activeSuppliers = SUPPLIERS.filter((s) => s.status === 'active').length
-  const kycPending = SUPPLIERS.filter((s) => s.kycStatus === 'pending').length
-  const suspendedSuppliers = SUPPLIERS.filter(
+  const totalSuppliers = suppliers.length
+  const activeSuppliers = suppliers.filter((s) => s.status === 'active').length
+  const kycPending = suppliers.filter((s) => s.kycStatus === 'pending').length
+  const suspendedSuppliers = suppliers.filter(
     (s) => s.status === 'suspended',
   ).length
 
-  const topSuppliers = [...SUPPLIERS].sort((a, b) => b.gmv - a.gmv).slice(0, 10)
-  const underperformers = SUPPLIERS.filter((s) => s.totalOrders === 0)
-  const newSuppliers = SUPPLIERS.filter(
+  const topSuppliers = [...suppliers].sort((a, b) => b.gmv - a.gmv).slice(0, 10)
+  const underperformers = suppliers.filter((s) => s.totalOrders === 0)
+  const newSuppliers = suppliers.filter(
     (s) => s.registrationDate >= '2025-12-01',
   ).length
 
@@ -474,7 +338,7 @@ export function AdminSuppliersPage() {
     scope: 'all' | 'filtered',
     format: 'csv' | 'excel',
   ) => {
-    const exportData = scope === 'all' ? SUPPLIERS : sortedSuppliers
+    const exportData = scope === 'all' ? suppliers : sortedSuppliers
     const header = [
       'Supplier ID',
       'Business Name',
@@ -516,6 +380,16 @@ export function AdminSuppliersPage() {
   }
 
   const selectedCount = selectedIds.length
+
+  if (loading) {
+    return (
+      <AdminProtectedRoute requiredPermissions={['suppliers.view']}>
+        <div className="flex h-96 items-center justify-center">
+          <Loader2 className="animate-spin text-orange-600" size={32} />
+        </div>
+      </AdminProtectedRoute>
+    )
+  }
 
   return (
     <AdminProtectedRoute requiredPermissions={['suppliers.view']}>
@@ -807,7 +681,7 @@ export function AdminSuppliersPage() {
                   <th className="px-4 py-3 text-center">Verified</th>
                   <th className="px-4 py-3 text-right">Products</th>
                   <th className="px-4 py-3 text-right">Orders</th>
-                  <th className="px-4 py-3 text-right">GMV (₹)</th>
+                  <th className="px-4 py-3 text-right">GMV (৳)</th>
                   <th className="px-4 py-3 text-left">Registration Date</th>
                   <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-right">Actions</th>

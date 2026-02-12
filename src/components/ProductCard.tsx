@@ -1,5 +1,5 @@
 import { BadgeCheck, Eye, Heart, MessageSquare, Package } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { formatBDT } from '@/lib/product-server'
 import { useWishlist } from '../contexts/WishlistContext'
@@ -23,6 +23,14 @@ export default function ProductCard({
   const [imageLoaded, setImageLoaded] = useState(false)
   const [isRfqOpen, setIsRfqOpen] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  // Check if image is already loaded (cached) on mount
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current?.naturalWidth > 0) {
+      setImageLoaded(true)
+    }
+  }, [activeIndex])
 
   const handleRequestQuote = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -56,6 +64,7 @@ export default function ProductCard({
             <div className="absolute inset-0 bg-gray-200 dark:bg-slate-700 animate-pulse" />
           )}
           <img
+            ref={imgRef}
             src={images[activeIndex]}
             alt={product.name}
             className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${

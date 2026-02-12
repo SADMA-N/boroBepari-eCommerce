@@ -2,9 +2,10 @@ import { createServerFn } from '@tanstack/react-start'
 import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-server'
-import { addresses, orderItems, orders, products, user } from '@/db/schema'
+import { addresses, orderItems, orders, products, rfqs, user } from '@/db/schema'
 import { db } from '@/db'
 import { sendOrderStatusEmail } from '@/lib/notifications'
+import { sanitizeText } from '@/lib/sanitize'
 
 export const getOrder = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
@@ -53,10 +54,18 @@ const createOrderSchema = z.object({
       productId: z.number(),
       quantity: z.number(),
       price: z.number(),
+      rfqId: z.number().optional(),
+      quoteId: z.number().optional(),
     }),
   ),
   totalAmount: z.number(),
   paymentMethod: z.string(),
+  paymentChannel: z.string().optional(),
+  paymentProvider: z.string().optional(),
+  paymentReference: z.string().optional(),
+  paymentSenderAccount: z.string().optional(),
+  paymentDeclaration: z.boolean().optional(),
+  transactionId: z.string().optional(),
   depositAmount: z.number().default(0),
   balanceDue: z.number().default(0),
   notes: z.string().optional(),
@@ -92,19 +101,53 @@ export const createOrder = createServerFn({ method: 'POST' })
     }
 
     // 1. Create Order
-    const [newOrder] = await db
-      .insert(orders)
-      .values({
-        userId: session.user.id,
-        totalAmount: totalAmount.toString(),
-        status: 'pending',
-        paymentStatus: 'pending',
-        paymentMethod: data.paymentMethod,
-        depositAmount: depositAmount.toString(),
-        balanceDue: balanceDue.toString(),
-        notes: data.notes,
-      })
-      .returning()
+    const insertValues = {
+      userId: session.user.id,
+      totalAmount: totalAmount.toString(),
+      status: 'pending',
+      paymentStatus: 'pending',
+      paymentMethod: data.paymentMethod,
+      paymentChannel: data.paymentChannel,
+      paymentProvider: data.paymentProvider,
+      paymentReference: data.paymentReference,
+      paymentSenderAccount: data.paymentSenderAccount,
+      paymentDeclaration: data.paymentDeclaration ?? false,
+      transactionId: data.transactionId,
+      depositAmount: depositAmount.toString(),
+      balanceDue: balanceDue.toString(),
+        notes: data.notes ? sanitizeText(data.notes) : null,
+    }
+
+    let newOrder
+    try {
+      ;[newOrder] = await db.insert(orders).values(insertValues).returning()
+    } catch (err: any) {
+      const msg =
+        err?.cause?.message || err?.message || 'Unknown database error'
+      // Fallback for older DBs missing new payment columns
+      if (
+        msg.includes('payment_channel') ||
+        msg.includes('payment_provider') ||
+        msg.includes('payment_reference') ||
+        msg.includes('payment_sender_account') ||
+        msg.includes('payment_declaration')
+      ) {
+        const fallbackValues = {
+          userId: insertValues.userId,
+          totalAmount: insertValues.totalAmount,
+          status: insertValues.status,
+          paymentStatus: insertValues.paymentStatus,
+          paymentMethod: insertValues.paymentMethod,
+          transactionId: insertValues.transactionId,
+          depositAmount: insertValues.depositAmount,
+          balanceDue: insertValues.balanceDue,
+          notes: insertValues.notes,
+        }
+        ;[newOrder] = await db.insert(orders).values(fallbackValues).returning()
+      } else {
+        throw new Error(`Order insert failed: ${msg}`)
+      }
+    }
 
     // 2. Create Order Items
     if (normalizedItems.length > 0) {
@@ -112,10 +155,27 @@ export const createOrder = createServerFn({ method: 'POST' })
         normalizedItems.map((item) => ({
           orderId: newOrder.id,
           productId: item.productId,
+          rfqId: item.rfqId,
+          quoteId: item.quoteId,
           quantity: item.quantity,
           price: item.lineTotal.toString(),
         })),
       )
+    }
+
+    const rfqIds = Array.from(
+      new Set(
+        normalizedItems
+          .map((item) => item.rfqId)
+          .filter((id): id is number => typeof id === 'number'),
+      ),
+    )
+
+    if (rfqIds.length > 0) {
+      await db
+        .update(rfqs)
+        .set({ status: 'converted', updatedAt: new Date() })
+        .where(inArray(rfqs.id, rfqIds))
     }
 
     const buyer = await db.query.user.findFirst({

@@ -47,7 +47,7 @@ export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {
         className={`
           fixed top-0 left-0 h-full w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 z-50
           transform transition-transform duration-300 ease-in-out
-          lg:translate-x-0 lg:static lg:z-0 transition-colors
+          lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:z-0 transition-colors
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >

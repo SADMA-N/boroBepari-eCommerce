@@ -74,7 +74,8 @@ function RFQDetailPage() {
 
   const isExpired =
     differenceInDays(new Date(rfq.expiresAt), new Date()) < 0 || rfq.status === 'expired'
-  const isAccepted = rfq.status === 'accepted'
+  const isAccepted = rfq.status === 'accepted' || rfq.status === 'converted'
+  const hasOrder = Boolean(rfq.order?.id)
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -180,6 +181,13 @@ function RFQDetailPage() {
   }
 
   const handleCheckout = (quote: any) => {
+    if (hasOrder) {
+      router.navigate({
+        to: '/buyer/orders/$orderId',
+        params: { orderId: rfq.order.id.toString() },
+      })
+      return
+    }
     // Clear cart first to ensure only the negotiated RFQ item is in the checkout
     clearCart()
 
@@ -274,8 +282,16 @@ function RFQDetailPage() {
               <div className="flex items-start bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-400 p-3 rounded-lg text-sm mb-4">
                 <CheckCircle size={18} className="mr-2 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold block">Quote Accepted</span>
-                  Proceed to place your order.
+                  <span className="font-bold block">
+                    {hasOrder ? 'Order Placed' : 'Quote Accepted'}
+                  </span>
+                  {hasOrder ? (
+                    <span>
+                      Your order has been created. You can track it anytime.
+                    </span>
+                  ) : (
+                    <span>Proceed to place your order.</span>
+                  )}
                 </div>
               </div>
             ) : (
@@ -296,6 +312,27 @@ function RFQDetailPage() {
                 {format(new Date(rfq.createdAt), 'PPP')}
               </span>
             </div>
+            {hasOrder && (
+              <div className="mt-4 flex items-center justify-between rounded-lg border border-green-200 dark:border-green-900/40 bg-green-50/70 dark:bg-green-900/10 px-4 py-3 text-sm text-green-800 dark:text-green-300">
+                <div>
+                  <p className="font-semibold">Order #{rfq.order.id}</p>
+                  <p className="text-xs text-green-700/80 dark:text-green-300/80">
+                    Status: {rfq.order.status} · Payment: {rfq.order.paymentStatus}
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    router.navigate({
+                      to: '/buyer/orders/$orderId',
+                      params: { orderId: rfq.order.id.toString() },
+                    })
+                  }
+                  className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 transition-colors"
+                >
+                  View Order
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Product Details Card */}
@@ -441,9 +478,16 @@ function RFQDetailPage() {
                       key={quote.id}
                       quote={quote}
                       rfq={rfq}
-                      isExpired={isExpired || isAccepted}
+                      isExpired={isExpired || isAccepted || hasOrder}
+                      order={rfq.order}
                       onAction={(id, action) => openActionModal(quote, action)}
                       onCheckout={() => handleCheckout(quote)}
+                      onViewOrder={() =>
+                        router.navigate({
+                          to: '/buyer/orders/$orderId',
+                          params: { orderId: rfq.order.id.toString() },
+                        })
+                      }
                     />
                   ))}
                 </div>
@@ -499,7 +543,7 @@ function RFQDetailPage() {
                                     onClick={() => handleCheckout(quote)}
                                     className="text-white bg-green-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-700"
                                   >
-                                    Checkout
+                                    {hasOrder ? 'View Order' : 'Checkout'}
                                   </button>
                                 ) : (
                                   <>
@@ -546,14 +590,18 @@ function QuoteCard({
   quote,
   rfq,
   isExpired,
+  order,
   onAction,
   onCheckout,
+  onViewOrder,
 }: {
   quote: any
   rfq: any
   isExpired: boolean
+  order?: { id: number } | null
   onAction: (id: number, action: 'accept' | 'reject' | 'counter') => void
   onCheckout: () => void
+  onViewOrder: () => void
 }) {
   const daysValid = differenceInDays(new Date(quote.validityPeriod), new Date())
 
@@ -672,11 +720,11 @@ function QuoteCard({
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3">
         {quote.status === 'accepted' ? (
-          <button 
-            onClick={onCheckout}
+          <button
+            onClick={order?.id ? onViewOrder : onCheckout}
             className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-bold hover:bg-green-700 transition flex items-center justify-center gap-2"
           >
-            Proceed to Checkout
+            {order?.id ? 'View Order' : 'Proceed to Checkout'}
           </button>
         ) : (
           <>

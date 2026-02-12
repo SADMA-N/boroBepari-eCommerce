@@ -129,7 +129,7 @@ function HomePage() {
           title="Recommended for Business"
           subtitle="Products selected based on trending wholesale demands"
           showViewAll
-          viewAllLink="/products?featured=true"
+          viewAllLink="/search?featured=true"
           onQuickView={handleQuickView}
         />
       </section>
@@ -152,7 +152,7 @@ function HomePage() {
           title="Top Ranking Products"
           subtitle="Most ordered products this month"
           showViewAll
-          viewAllLink="/products?sort=popularity"
+          viewAllLink="/search?sortBy=popularity"
           onQuickView={handleQuickView}
         />
       </section>
@@ -164,7 +164,7 @@ function HomePage() {
           title="New Arrivals"
           subtitle="Fresh products from verified suppliers"
           showViewAll
-          viewAllLink="/products?new=true"
+          viewAllLink="/search?new=true"
           onQuickView={handleQuickView}
         />
       </section>

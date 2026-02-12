@@ -2,12 +2,24 @@ import { createServerFn } from '@tanstack/react-start'
 import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-server'
+import { sellerAuthMiddleware } from './seller-auth-server'
 import { uploadToS3 } from './s3'
 import { db } from '@/db'
-import { notifications, products, quotes, rfqs, suppliers, user as userTable } from '@/db/schema'
+import {
+  notifications,
+  orderItems,
+  orders,
+  products,
+  quotes,
+  rfqs,
+  sellers,
+  suppliers,
+  user as userTable,
+} from '@/db/schema'
 import { sendQuoteEmail, sendRfqEmail } from '@/lib/email'
 import { formatBDT } from './product-server'
 import { env } from '@/env'
+import { sanitizeText } from '@/lib/sanitize'
 
 export const submitRFQ = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
@@ -49,7 +61,7 @@ export const submitRFQ = createServerFn({ method: 'POST' })
         quantity: data.quantity,
         targetPrice: data.targetPrice?.toString(),
         deliveryLocation: data.deliveryLocation,
-        notes: data.notes,
+        notes: data.notes ? sanitizeText(data.notes) : null,
         attachments: data.attachments,
         status: 'pending',
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days expiry
@@ -141,7 +153,7 @@ export const uploadRfqAttachment = createServerFn({ method: 'POST' })
   })
 
 export const sendQuote = createServerFn({ method: 'POST' })
-  .middleware([authMiddleware])
+  .middleware([sellerAuthMiddleware])
   .inputValidator((data: any) => {
     return z
       .object({
@@ -156,8 +168,17 @@ export const sendQuote = createServerFn({ method: 'POST' })
       .parse(data)
   })
   .handler(async ({ data, context }) => {
-    const { session } = context
-    if (!session?.user) throw new Error('Unauthorized')
+    const { seller } = context
+    if (!seller) throw new Error('Unauthorized')
+
+    // Find supplier linked to this seller
+    const sellerRecord = await db.query.sellers.findFirst({
+      where: eq(sellers.id, seller.id),
+    })
+
+    if (!sellerRecord?.supplierId) {
+      throw new Error('No supplier shop found for this seller')
+    }
 
     const rfq = await db.query.rfqs.findFirst({
       where: eq(rfqs.id, data.rfqId),
@@ -168,12 +189,16 @@ export const sendQuote = createServerFn({ method: 'POST' })
 
     if (!rfq) throw new Error('RFQ not found')
 
+    if (rfq.supplierId !== sellerRecord.supplierId) {
+      throw new Error('Unauthorized access to this RFQ')
+    }
+
     // Check for existing quote from this supplier for this RFQ
     const existingQuote = await db.query.quotes.findFirst({
       where: and(
         eq(quotes.rfqId, data.rfqId),
-        eq(quotes.supplierId, rfq.supplierId)
-      )
+        eq(quotes.supplierId, rfq.supplierId),
+      ),
     })
 
     const finalQuantity = data.agreedQuantity || rfq.quantity
@@ -181,7 +206,8 @@ export const sendQuote = createServerFn({ method: 'POST' })
 
     if (existingQuote) {
       // Update existing quote (for back-and-forth negotiation)
-      await db.update(quotes)
+      await db
+        .update(quotes)
         .set({
           unitPrice: data.unitPrice.toString(),
           totalPrice,
@@ -189,7 +215,7 @@ export const sendQuote = createServerFn({ method: 'POST' })
           depositPercentage: data.depositPercentage || 0,
           deliveryTime: data.deliveryTime,
           validityPeriod: new Date(data.validityPeriod),
-          terms: data.notes,
+          terms: data.notes ? sanitizeText(data.notes) : null,
           status: 'pending', // Reset to pending for buyer review
           updatedAt: new Date(),
         })
@@ -205,7 +231,7 @@ export const sendQuote = createServerFn({ method: 'POST' })
         depositPercentage: data.depositPercentage || 0,
         deliveryTime: data.deliveryTime,
         validityPeriod: new Date(data.validityPeriod),
-        terms: data.notes,
+        terms: data.notes ? sanitizeText(data.notes) : null,
         status: 'pending',
       })
     }
@@ -235,7 +261,7 @@ export const sendQuote = createServerFn({ method: 'POST' })
         rfqId: rfq.id,
         productName: rfq.product.name,
         unitPrice: formatBDT(data.unitPrice),
-        link: `${env.APP_URL || 'http://localhost:3000'}/buyer/rfqs/${rfq.id}`
+        link: `${env.APP_URL || 'http://localhost:3000'}/buyer/rfqs/${rfq.id}`,
       })
     }
 
@@ -243,20 +269,22 @@ export const sendQuote = createServerFn({ method: 'POST' })
   })
 
 export const getSellerRfqs = createServerFn({ method: 'GET' })
-  .middleware([authMiddleware])
+  .middleware([sellerAuthMiddleware])
   .handler(async ({ context }) => {
-    const { session } = context
-    if (!session?.user) throw new Error('Unauthorized')
+    const { seller } = context
+    if (!seller) throw new Error('Unauthorized')
 
-    // Find the supplier owned by this user
-    const supplier = await db.query.suppliers.findFirst({
-      where: eq(suppliers.ownerId, session.user.id),
+    // Find supplier linked to this seller
+    const sellerRecord = await db.query.sellers.findFirst({
+      where: eq(sellers.id, seller.id),
     })
 
-    if (!supplier) throw new Error('No supplier shop found for this user')
+    if (!sellerRecord?.supplierId) {
+      throw new Error('No supplier shop found for this seller')
+    }
 
     const sellerRfqs = await db.query.rfqs.findMany({
-      where: eq(rfqs.supplierId, supplier.id),
+      where: eq(rfqs.supplierId, sellerRecord.supplierId),
       with: {
         product: true,
         buyer: {
@@ -360,7 +388,50 @@ export const getRfqById = createServerFn({ method: 'GET' })
     if (!rfq) throw new Error('RFQ not found')
     if (rfq.buyerId !== session.user.id) throw new Error('Unauthorized')
 
-    return rfq
+    let orderMatch = await db.query.orderItems.findFirst({
+      where: eq(orderItems.rfqId, rfq.id),
+      with: {
+        order: true,
+      },
+      orderBy: (items, { desc }) => [desc(items.id)],
+    })
+
+    if (!orderMatch) {
+      const acceptedQuote = rfq.quotes?.find((quote) => quote.status === 'accepted')
+      if (acceptedQuote) {
+        const expectedQuantity = acceptedQuote.agreedQuantity ?? rfq.quantity
+        const expectedTotal = (
+          Number(acceptedQuote.unitPrice) * expectedQuantity
+        ).toString()
+
+        orderMatch = await db.query.orderItems.findFirst({
+          where: and(
+            eq(orderItems.productId, rfq.productId),
+            eq(orderItems.quantity, expectedQuantity),
+            eq(orderItems.price, expectedTotal),
+          ),
+          with: {
+            order: true,
+          },
+          orderBy: (items, { desc }) => [desc(items.id)],
+        })
+      }
+    }
+
+    const order =
+      orderMatch?.order && orderMatch.order.userId === session.user.id
+        ? {
+            id: orderMatch.order.id,
+            status: orderMatch.order.status,
+            paymentStatus: orderMatch.order.paymentStatus,
+            createdAt: orderMatch.order.createdAt,
+          }
+        : null
+
+    return {
+      ...rfq,
+      order,
+    }
   })
 
 export const updateQuoteStatus = createServerFn({ method: 'POST' })
@@ -396,7 +467,7 @@ export const updateQuoteStatus = createServerFn({ method: 'POST' })
       .set({
         status: data.status,
         counterPrice: data.counterPrice,
-        counterNote: data.counterNote,
+        counterNote: data.counterNote ? sanitizeText(data.counterNote) : null,
       })
       .where(eq(quotes.id, data.quoteId))
 

@@ -170,8 +170,16 @@ function MoqWarningBanner({
   return (
     <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-top-2 duration-300 mb-6">
       {/* Header */}
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setIsExpanded(!isExpanded)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            setIsExpanded(!isExpanded)
+          }
+        }}
         className="w-full flex items-center justify-between p-4 hover:bg-red-100/50 transition-colors"
         aria-expanded={isExpanded}
         aria-controls="moq-warning-content"
@@ -209,7 +217,7 @@ function MoqWarningBanner({
             <ChevronDown size={20} className="text-red-400" />
           )}
         </div>
-      </button>
+      </div>
 
       {/* Expandable Content */}
       <div
@@ -254,6 +262,7 @@ function MoqWarningBanner({
                     <img
                       src={item.image}
                       alt={item.productName}
+                      
                       className="w-12 h-12 rounded-lg object-cover border"
                     />
 
@@ -426,6 +435,7 @@ function CartItemRow({
         <img
           src={item.image}
           alt={item.productName}
+          
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {isLocked && item.rfqId && (
@@ -657,25 +667,33 @@ function SupplierGroup({
     <div
       className={`
       border rounded-xl bg-white overflow-hidden shadow-sm transition-all
-      ${moqViolations > 0 ? 'border-amber-200' : 'border-gray-200'}
+      ${moqViolationCount > 0 ? 'border-amber-200' : 'border-gray-200'}
     `}
     >
       {/* Supplier Header */}
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onToggle}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onToggle()
+          }
+        }}
         className={`
           w-full flex items-center justify-between p-4 transition-colors
-          ${moqViolations > 0 ? 'bg-amber-50 hover:bg-amber-100' : 'bg-gray-50 hover:bg-gray-100'}
+          ${moqViolationCount > 0 ? 'bg-amber-50 hover:bg-amber-100' : 'bg-gray-50 hover:bg-gray-100'}
         `}
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
           <div
-            className={`p-2 rounded-lg shadow-sm ${moqViolations > 0 ? 'bg-amber-100' : 'bg-white'}`}
+            className={`p-2 rounded-lg shadow-sm ${moqViolationCount > 0 ? 'bg-amber-100' : 'bg-white'}`}
           >
             <Store
               size={20}
-              className={moqViolations > 0 ? 'text-amber-600' : 'text-gray-600'}
+              className={moqViolationCount > 0 ? 'text-amber-600' : 'text-gray-600'}
             />
           </div>
           <div className="text-left">
@@ -686,9 +704,9 @@ function SupplierGroup({
               {supplier?.verified && (
                 <BadgeCheck size={16} className="text-blue-500" />
               )}
-              {moqViolations > 0 && (
+              {moqViolationCount > 0 && (
                 <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-medium">
-                  {moqViolations} MOQ {moqViolations === 1 ? 'issue' : 'issues'}
+                  {moqViolationCount} MOQ {moqViolationCount === 1 ? 'issue' : 'issues'}
                 </span>
               )}
             </div>
@@ -716,7 +734,7 @@ function SupplierGroup({
             <ChevronDown size={20} className="text-gray-400" />
           )}
         </div>
-      </button>
+      </div>
 
       {/* Items */}
       <div
@@ -1153,6 +1171,7 @@ function CartPage() {
     validateCartItems,
     updateQuantity,
     removeItem,
+    isLoading,
   } = useCart()
   const [expandedSuppliers, setExpandedSuppliers] = useState<Set<number>>(
     new Set(),
@@ -1344,7 +1363,11 @@ function CartPage() {
           </div>
         )}
 
-        {cart.items.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16 text-gray-500">
+            Loading your cart...
+          </div>
+        ) : cart.items.length === 0 ? (
           <EmptyCart />
         ) : (
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">

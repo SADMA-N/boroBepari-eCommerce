@@ -73,6 +73,23 @@ function ReviewPage() {
       setToast({ message: 'You must be logged in', isVisible: true })
       return
     }
+    if (
+      (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') &&
+      (!state.paymentDetails.channel ||
+        !state.paymentDetails.provider.trim() ||
+        !state.paymentDetails.transactionId.trim() ||
+        !state.paymentDetails.referenceNumber.trim() ||
+        !state.paymentDetails.senderAccount.trim() ||
+        !state.paymentDetails.declarationAccepted)
+    ) {
+      setToast({
+        message:
+          'Please complete payment details before placing the order.',
+        isVisible: true,
+      })
+      router.navigate({ to: '/checkout/payment' })
+      return
+    }
     setIsSubmitting(true)
 
     try {
@@ -116,6 +133,27 @@ function ReviewPage() {
 
       setDebugStep('Creating order')
       // 3. Create Order in DB
+      const paymentChannel =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.channel || undefined
+          : undefined
+      const paymentProvider =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.provider.trim() || undefined
+          : undefined
+      const paymentReference =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.referenceNumber.trim() || undefined
+          : undefined
+      const paymentSenderAccount =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.senderAccount.trim() || undefined
+          : undefined
+      const transactionId =
+        state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+          ? state.paymentDetails.transactionId.trim() || undefined
+          : undefined
+
       const newOrder = await createOrder({
         data: {
           userId: user.id,
@@ -123,9 +161,20 @@ function ReviewPage() {
             productId: item.productId,
             quantity: item.quantity,
             price: item.unitPrice,
+            rfqId: item.rfqId,
+            quoteId: item.quoteId,
           })),
           totalAmount: cart.total,
           paymentMethod: state.paymentMethod || 'cod',
+          paymentChannel,
+          paymentProvider,
+          paymentReference,
+          paymentSenderAccount,
+          paymentDeclaration:
+            state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+              ? state.paymentDetails.declarationAccepted || false
+              : false,
+          transactionId,
           depositAmount,
           balanceDue,
           notes: state.notes,
@@ -150,29 +199,22 @@ function ReviewPage() {
 
       setDebugStep('Handling payment redirect')
       // 4. Redirect based on Payment Method
-      if (state.paymentMethod === 'full' || state.paymentMethod === 'deposit') {
-        const amountToPay =
-          state.paymentMethod === 'deposit' ? depositAmount : cart.total
-
-        const mockPaymentUrl = `/mock-payment/bkash?amount=${amountToPay}&orderId=${newOrder.id}&callbackUrl=${encodeURIComponent(window.location.origin + '/checkout/payment-callback')}`
-
-        window.location.href = mockPaymentUrl
-      } else {
-        // COD
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        clearCart()
-        setToast({ message: 'Order placed successfully!', isVisible: true })
-        setTimeout(() => {
-          router.navigate({
-            to: '/order-confirmation/$orderId',
-            params: { orderId: newOrder.id.toString() },
-          })
-        }, 1500)
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      clearCart()
+      setToast({ message: 'Order placed successfully!', isVisible: true })
+      setTimeout(() => {
+        router.navigate({
+          to: '/order-confirmation/$orderId',
+          params: { orderId: newOrder.id.toString() },
+        })
+      }, 1500)
     } catch (error) {
       console.error('Place order failed at step:', debugStep, error)
       setToast({
-        message: `Failed to place order (${debugStep ?? 'unknown step'})`,
+        message:
+          error instanceof Error
+            ? error.message
+            : `Failed to place order (${debugStep ?? 'unknown step'})`,
         isVisible: true,
       })
       setIsSubmitting(false)
@@ -182,7 +224,7 @@ function ReviewPage() {
   const getPaymentMethodLabel = (method: PaymentMethod | null) => {
     switch (method) {
       case 'full':
-        return 'Full Payment (Online)'
+        return 'Full Payment (Manual Transfer)'
       case 'deposit':
         return '30% Deposit (Rest on Delivery)'
       case 'cod':
@@ -254,6 +296,40 @@ function ReviewPage() {
               <p className="text-sm font-medium text-gray-900 dark:text-white">
                 {getPaymentMethodLabel(state.paymentMethod)}
               </p>
+              {(state.paymentMethod === 'full' || state.paymentMethod === 'deposit') && (
+                <div className="mt-2 space-y-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p>
+                    Channel:{' '}
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      {state.paymentDetails.channel?.toUpperCase() || '—'}
+                    </span>
+                  </p>
+                  <p>
+                    Provider:{' '}
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      {state.paymentDetails.provider || '—'}
+                    </span>
+                  </p>
+                  <p>
+                    Transaction ID:{' '}
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      {state.paymentDetails.transactionId || '—'}
+                    </span>
+                  </p>
+                  <p>
+                    Reference:{' '}
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      {state.paymentDetails.referenceNumber || '—'}
+                    </span>
+                  </p>
+                  <p>
+                    Sender Account:{' '}
+                    <span className="font-medium text-gray-700 dark:text-gray-200">
+                      {state.paymentDetails.senderAccount || '—'}
+                    </span>
+                  </p>
+                </div>
+              )}
               {(state.paymentMethod === 'deposit' || cart.items.some(i => (i.depositPercentage ?? 0) > 0)) && (
                 <div className="mt-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-100 dark:border-orange-900/30 max-w-sm">
                   <p className="text-xs text-orange-800 font-bold">Advance Payment Details</p>

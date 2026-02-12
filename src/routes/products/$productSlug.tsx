@@ -25,6 +25,7 @@ import Toast from '../../components/Toast'
 import RFQFormModal from '../../components/RFQFormModal'
 import AuthModal from '../../components/AuthModal'
 import { useNotifications } from '@/contexts/NotificationContext'
+import { isValidBDPhone } from '@/lib/validators'
 
 export const Route = createFileRoute('/products/$productSlug')({
   gcTime: 0,
@@ -95,7 +96,19 @@ function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
-    const result = addItem({ productId: product.id, quantity })
+    const result = addItem({
+      productId: product.id,
+      quantity,
+      customPrice: product.price,
+      productData: {
+        name: product.name,
+        image: product.images?.[0] || '',
+        moq: product.moq,
+        stock: product.stock,
+        supplierId: product.supplierId,
+        unit: product.unit,
+      },
+    })
     if (result.success) {
       setToastMessage(
         `Added ${quantity} ${product.unit}(s) of "${product.name}" to cart`,
@@ -121,6 +134,11 @@ function ProductDetailPage() {
   const handleSubmitStockAlert = async () => {
     if (!alertEmail) {
       setToastMessage('Please provide an email for stock alerts.')
+      setShowToast(true)
+      return
+    }
+    if (alertPhone && !isValidBDPhone(alertPhone)) {
+      setToastMessage('Phone number must be BD format: 01XXXXXXXXX')
       setShowToast(true)
       return
     }
@@ -202,6 +220,7 @@ function ProductDetailPage() {
             <img
               src={selectedImage}
               alt={product.name}
+              
               className="w-full h-96 object-contain cursor-zoom-in"
             />
           </div>
@@ -215,6 +234,7 @@ function ProductDetailPage() {
                 <img
                   src={img}
                   alt={`View ${idx + 1}`}
+                  
                   className="w-full h-20 object-contain"
                 />
               </button>

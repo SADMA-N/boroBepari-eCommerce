@@ -89,6 +89,7 @@ import { Route as ApiCartAddRouteImport } from './routes/api/cart/add'
 import { Route as ApiCartUserIdRouteImport } from './routes/api/cart/$userId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
+import { Route as SellerProductsProductIdEditRouteImport } from './routes/seller/products/$productId/edit'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
@@ -507,6 +508,12 @@ const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
   path: '/demo/start/ssr/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellerProductsProductIdEditRoute =
+  SellerProductsProductIdEditRouteImport.update({
+    id: '/products/$productId/edit',
+    path: '/products/$productId/edit',
+    getParentRoute: () => SellerRouteRoute,
+  } as any)
 const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
   id: '/demo/start/ssr/spa-mode',
   path: '/demo/start/ssr/spa-mode',
@@ -685,6 +692,7 @@ export interface FileRoutesByFullPath {
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/seller/products/$productId/edit': typeof SellerProductsProductIdEditRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
   '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
   '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
@@ -778,6 +786,7 @@ export interface FileRoutesByTo {
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/seller/products/$productId/edit': typeof SellerProductsProductIdEditRoute
   '/demo/start/ssr': typeof DemoStartSsrIndexRoute
   '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
   '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
@@ -877,6 +886,7 @@ export interface FileRoutesById {
   '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
   '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
   '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
+  '/seller/products/$productId/edit': typeof SellerProductsProductIdEditRoute
   '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
   '/api/rfq/quote/$quoteId/accept': typeof ApiRfqQuoteQuoteIdAcceptRoute
   '/api/rfq/quote/$quoteId/counter': typeof ApiRfqQuoteQuoteIdCounterRoute
@@ -977,6 +987,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/seller/products/$productId/edit'
     | '/demo/start/ssr/'
     | '/api/rfq/quote/$quoteId/accept'
     | '/api/rfq/quote/$quoteId/counter'
@@ -1070,6 +1081,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/seller/products/$productId/edit'
     | '/demo/start/ssr'
     | '/api/rfq/quote/$quoteId/accept'
     | '/api/rfq/quote/$quoteId/counter'
@@ -1168,6 +1180,7 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/data-only'
     | '/demo/start/ssr/full-ssr'
     | '/demo/start/ssr/spa-mode'
+    | '/seller/products/$productId/edit'
     | '/demo/start/ssr/'
     | '/api/rfq/quote/$quoteId/accept'
     | '/api/rfq/quote/$quoteId/counter'
@@ -1796,6 +1809,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoStartSsrIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/seller/products/$productId/edit': {
+      id: '/seller/products/$productId/edit'
+      path: '/products/$productId/edit'
+      fullPath: '/seller/products/$productId/edit'
+      preLoaderRoute: typeof SellerProductsProductIdEditRouteImport
+      parentRoute: typeof SellerRouteRoute
+    }
     '/demo/start/ssr/spa-mode': {
       id: '/demo/start/ssr/spa-mode'
       path: '/demo/start/ssr/spa-mode'
@@ -1976,6 +1996,7 @@ interface SellerRouteRouteChildren {
   SellerPayoutsIndexRoute: typeof SellerPayoutsIndexRoute
   SellerProductsIndexRoute: typeof SellerProductsIndexRoute
   SellerRfqsIndexRoute: typeof SellerRfqsIndexRoute
+  SellerProductsProductIdEditRoute: typeof SellerProductsProductIdEditRoute
 }
 
 const SellerRouteRouteChildren: SellerRouteRouteChildren = {
@@ -1995,6 +2016,7 @@ const SellerRouteRouteChildren: SellerRouteRouteChildren = {
   SellerPayoutsIndexRoute: SellerPayoutsIndexRoute,
   SellerProductsIndexRoute: SellerProductsIndexRoute,
   SellerRfqsIndexRoute: SellerRfqsIndexRoute,
+  SellerProductsProductIdEditRoute: SellerProductsProductIdEditRoute,
 }
 
 const SellerRouteRouteWithChildren = SellerRouteRoute._addFileChildren(

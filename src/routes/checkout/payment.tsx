@@ -1,7 +1,6 @@
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import {
-  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Banknote,
@@ -10,7 +9,7 @@ import {
   Percent,
   ShieldCheck,
 } from 'lucide-react'
-import type { PaymentMethod } from '@/contexts/CheckoutContext'
+import type { PaymentDetails, PaymentMethod } from '@/contexts/CheckoutContext'
 import { useCheckout } from '@/contexts/CheckoutContext'
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
@@ -25,12 +24,13 @@ function PaymentPage() {
   const {
     state,
     setPaymentMethod,
+    setPaymentDetails,
     setPoNumber,
     setNotes,
     setIsPaymentVerified,
   } = useCheckout()
   const { cart } = useCart()
-  const { user, isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth()
   const router = useRouter()
 
   // Local state for immediate feedback
@@ -39,6 +39,9 @@ function PaymentPage() {
   )
   const [poInput, setPoInput] = useState(state.poNumber)
   const [notesInput, setNotesInput] = useState(state.notes)
+  const [paymentForm, setPaymentForm] = useState<PaymentDetails>(
+    state.paymentDetails,
+  )
 
   // Verify user logic (Mock: check emailVerified)
   // In real app, check for specific 'verified_buyer' role/flag
@@ -52,6 +55,10 @@ function PaymentPage() {
   }, [isBusinessVerified, setIsPaymentVerified])
 
   useEffect(() => {
+    setPaymentDetails(paymentForm)
+  }, [paymentForm, setPaymentDetails])
+
+  useEffect(() => {
     // If no address selected, redirect back (unless guest flow handled differently)
     // Checking state.shippingAddressId might be null if refreshed and guest.
     // For now, lenient check.
@@ -62,10 +69,19 @@ function PaymentPage() {
     if (method === 'cod' && !isBusinessVerified) return
     setSelectedMethod(method)
     setPaymentMethod(method)
+    if ((method === 'full' || method === 'deposit') && !paymentForm.channel) {
+      updatePaymentForm({ channel: 'mfs' })
+    }
   }
 
   const handleContinue = () => {
     if (selectedMethod) {
+      if (
+        (selectedMethod === 'full' || selectedMethod === 'deposit') &&
+        !isTransferValid
+      ) {
+        return
+      }
       setPoNumber(poInput)
       setNotes(notesInput)
       router.navigate({ to: '/checkout/review' })
@@ -77,6 +93,251 @@ function PaymentPage() {
   const rfqDepositRate = cart.items.find(i => (i.depositPercentage ?? 0) > 0)?.depositPercentage
   const depositAmount = Math.ceil(total * (rfqDepositRate ? rfqDepositRate / 100 : 0.3))
   const balanceDue = total - depositAmount
+
+  const MFS_PROVIDERS = ['bKash', 'Nagad', 'Rocket', 'Upay']
+  const BANK_PROVIDERS = [
+    // State-owned commercial banks (SOCBs)
+    'Agrani Bank',
+    'Bangladesh Development Bank',
+    'BASIC Bank',
+    'Janata Bank',
+    'Rupali Bank',
+    'Sonali Bank',
+    'Sammilito Islami Bank',
+    // Specialized banks (SDBs)
+    'Bangladesh Krishi Bank',
+    'Rajshahi Krishi Unnayan Bank',
+    'Probashi Kallyan Bank',
+    // Private commercial banks (Conventional PCBs)
+    'AB Bank PLC',
+    'Bangladesh Commerce Bank Limited',
+    'Bank Asia PLC',
+    'Bengal Commercial Bank PLC',
+    'BRAC Bank PLC',
+    'Citizens Bank PLC',
+    'City Bank PLC',
+    'Community Bank Bangladesh PLC',
+    'Dhaka Bank PLC',
+    'Dutch-Bangla Bank PLC',
+    'Eastern Bank PLC',
+    'IFIC Bank PLC',
+    'Jamuna Bank PLC',
+    'Meghna Bank PLC',
+    'Mercantile Bank PLC',
+    'Midland Bank PLC',
+    'Modhumoti Bank PLC',
+    'Mutual Trust Bank PLC',
+    'National Bank PLC',
+    'National Credit & Commerce Bank PLC',
+    'NRB Bank PLC',
+    'NRBC Bank PLC',
+    'ONE Bank PLC',
+    'Padma Bank PLC',
+    'Prime Bank PLC',
+    'Pubali Bank PLC',
+    'SBAC Bank PLC',
+    'Shimanto Bank PLC',
+    'Southeast Bank PLC',
+    'The Premier Bank PLC',
+    'Trust Bank PLC',
+    'United Commercial Bank PLC',
+    'Uttara Bank PLC',
+    // Islami Shariah Based PCBs
+    'Al-Arafah Islami Bank PLC',
+    'ICB Islamic Bank PLC',
+    'Islami Bank Bangladesh PLC',
+    'Shahjalal Islami Bank PLC',
+    'Standard Bank PLC',
+  ]
+
+  const DUMMY_ACCOUNT = {
+    mfs: {
+      name: 'BoroBepari Ltd',
+      wallet: '01XXXXXXXXX',
+    },
+    bank: {
+      name: 'BoroBepari Ltd',
+      bankName: 'BRAC Bank',
+      accountNumber: '1234567890',
+      branch: 'Gulshan Branch',
+    },
+  }
+
+  const isTransferValid =
+    paymentForm.channel &&
+    paymentForm.provider.trim() &&
+    paymentForm.transactionId.trim() &&
+    paymentForm.referenceNumber.trim() &&
+    paymentForm.senderAccount.trim() &&
+    paymentForm.declarationAccepted
+
+  const updatePaymentForm = (next: Partial<PaymentDetails>) => {
+    setPaymentForm((prev) => ({ ...prev, ...next }))
+  }
+
+  const renderTransferForm = (amountToPay: number) => (
+    <div className="mt-4 space-y-4">
+      <div className="rounded-lg border border-orange-100 dark:border-orange-900/40 bg-orange-50/60 dark:bg-orange-950/30 p-4 text-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-gray-700 dark:text-gray-300">
+            Amount to Pay Now
+          </span>
+          <span className="font-semibold text-orange-700">
+            {formatCurrency(amountToPay)}
+          </span>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-sm space-y-3">
+        <p className="font-semibold text-gray-800 dark:text-gray-200">
+          Pay To (Recipient)
+        </p>
+        {paymentForm.channel === 'bank' ? (
+          <div className="space-y-1 text-gray-600 dark:text-gray-400">
+            <div>
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {DUMMY_ACCOUNT.bank.name}
+              </span>
+            </div>
+            <div>Bank: {DUMMY_ACCOUNT.bank.bankName}</div>
+            <div>Account: {DUMMY_ACCOUNT.bank.accountNumber}</div>
+            <div>Branch: {DUMMY_ACCOUNT.bank.branch}</div>
+          </div>
+        ) : (
+          <div className="space-y-1 text-gray-600 dark:text-gray-400">
+            <div>
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {DUMMY_ACCOUNT.mfs.name}
+              </span>
+            </div>
+            <div>Wallet: {DUMMY_ACCOUNT.mfs.wallet}</div>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {(['mfs', 'bank'] as const).map((channel) => (
+          <button
+            key={channel}
+            type="button"
+            onClick={() =>
+              updatePaymentForm({
+                channel,
+                provider: '',
+              })
+            }
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+              paymentForm.channel === channel
+                ? 'border-orange-500 bg-orange-50/60 text-orange-700'
+                : 'border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-400 hover:border-orange-300'
+            }`}
+          >
+            {channel === 'mfs' ? 'MFS' : 'Bank'}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            {paymentForm.channel === 'bank' ? 'Bank Name' : 'MFS Provider'}
+          </label>
+          {paymentForm.channel === 'bank' ? (
+            <>
+              <input
+                type="text"
+                list="bank-providers"
+                value={paymentForm.provider}
+                onChange={(e) => updatePaymentForm({ provider: e.target.value })}
+                placeholder="Search bank name..."
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
+              />
+              <datalist id="bank-providers">
+                {BANK_PROVIDERS.map((provider) => (
+                  <option key={provider} value={provider} />
+                ))}
+              </datalist>
+            </>
+          ) : (
+            <select
+              value={paymentForm.provider}
+              onChange={(e) => updatePaymentForm({ provider: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
+            >
+              <option value="">Select provider</option>
+              {MFS_PROVIDERS.map((provider) => (
+                <option key={provider} value={provider}>
+                  {provider}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Transaction ID
+          </label>
+          <input
+            type="text"
+            value={paymentForm.transactionId}
+            onChange={(e) =>
+              updatePaymentForm({ transactionId: e.target.value })
+            }
+            placeholder="e.g. TXN-123456"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Reference Number
+          </label>
+          <input
+            type="text"
+            value={paymentForm.referenceNumber}
+            onChange={(e) =>
+              updatePaymentForm({ referenceNumber: e.target.value })
+            }
+            placeholder="e.g. REF-2024-001"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            {paymentForm.channel === 'bank'
+              ? 'Bank Account Number'
+              : 'Wallet Number'}
+          </label>
+          <input
+            type="text"
+            value={paymentForm.senderAccount}
+            onChange={(e) =>
+              updatePaymentForm({ senderAccount: e.target.value })
+            }
+            placeholder="e.g. 01XXXXXXXXX"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
+          />
+        </div>
+      </div>
+
+      <label className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
+        <input
+          type="checkbox"
+          checked={paymentForm.declarationAccepted}
+          onChange={(e) =>
+            updatePaymentForm({ declarationAccepted: e.target.checked })
+          }
+          className="mt-1 h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+        />
+        <span>
+          I confirm the payment is made from my own account. Third-party
+          payments are not allowed.
+        </span>
+      </label>
+    </div>
+  )
 
   const paymentOptions = [
     {
@@ -91,13 +352,9 @@ function PaymentPage() {
             <span className="text-orange-600">{formatCurrency(total)}</span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Secure payment via bKash or Credit/Debit Card
+            Manual transfer required. Provide transaction details below.
           </p>
-          <div className="flex gap-2 mt-2">
-            {/* Mock Icons */}
-            <div className="h-6 w-10 bg-gray-200 dark:bg-slate-700 rounded"></div>
-            <div className="h-6 w-10 bg-gray-200 dark:bg-slate-700 rounded"></div>
-          </div>
+          {renderTransferForm(total)}
         </div>
       ),
     },
@@ -122,6 +379,7 @@ function PaymentPage() {
             <Info size={12} />
             Balance must be paid upon delivery.
           </p>
+          {renderTransferForm(depositAmount)}
         </div>
       ),
     },
@@ -135,7 +393,7 @@ function PaymentPage() {
         <div className="mt-3 text-sm bg-white dark:bg-slate-800 p-3 rounded border border-gray-100 dark:border-slate-700">
           {!isBusinessVerified ? (
             <p className="text-red-600 text-xs flex items-start gap-1">
-              <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
+              <Info size={12} className="mt-0.5 flex-shrink-0" />
               Available for verified business buyers only.
             </p>
           ) : (
@@ -294,7 +552,11 @@ function PaymentPage() {
 
             <button
               onClick={handleContinue}
-              disabled={!selectedMethod}
+              disabled={
+                !selectedMethod ||
+                ((selectedMethod === 'full' || selectedMethod === 'deposit') &&
+                  !isTransferValid)
+              }
               className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-bold transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform active:scale-[0.98]"
             >
               Continue to Review

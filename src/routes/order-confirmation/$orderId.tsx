@@ -27,12 +27,58 @@ export const Route = createFileRoute('/order-confirmation/$orderId')({
 })
 
 function OrderConfirmationPage() {
-  const order = Route.useLoaderData()
+  const initialOrder = Route.useLoaderData()
+  const { orderId: orderIdParam } = Route.useParams()
+  const [order, setOrder] = useState(initialOrder)
+  const [isLoading, setIsLoading] = useState(!initialOrder)
+  const [loadError, setLoadError] = useState('')
   const [toast, setToast] = useState({ message: '', isVisible: false })
 
-  useEffect(() => undefined, [])
+  useEffect(() => {
+    let isMounted = true
+    if (order) {
+      setIsLoading(false)
+      return
+    }
+    const orderId = Number(orderIdParam)
+    if (!orderId || Number.isNaN(orderId)) {
+      setIsLoading(false)
+      setLoadError('Order not found')
+      return
+    }
+    setIsLoading(true)
+    getOrder({ data: orderId })
+      .then((data) => {
+        if (!isMounted) return
+        if (!data) {
+          setLoadError('Order not found')
+        } else {
+          setOrder(data)
+        }
+      })
+      .catch((err) => {
+        if (!isMounted) return
+        setLoadError(err?.message || 'Failed to load order')
+      })
+      .finally(() => {
+        if (!isMounted) return
+        setIsLoading(false)
+      })
+    return () => {
+      isMounted = false
+    }
+  }, [order, orderIdParam])
 
-  if (!order) return <div className="p-8 text-center">Order not found</div>
+  if (isLoading) {
+    return <div className="p-8 text-center">Loading your order...</div>
+  }
+  if (!order) {
+    return (
+      <div className="p-8 text-center">
+        {loadError || 'Order not found'}
+      </div>
+    )
+  }
 
   const handleCopyOrderNumber = () => {
     navigator.clipboard.writeText(order.id.toString())

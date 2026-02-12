@@ -64,6 +64,13 @@
       "when": 1770555968009,
       "tag": "0008_quick_rawhide_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770650997790,
+      "tag": "0009_great_rattler",
+      "breakpoints": true
     }
   ]
 }

@@ -133,7 +133,10 @@ export function SellerRFQsPage() {
   useEffect(() => {
     const fetchRfqs = async () => {
       try {
-        const data = await getSellerRfqs()
+        const token = localStorage.getItem('seller_token')
+        const data = await getSellerRfqs({
+          headers: { Authorization: `Bearer ${token}` },
+        })
         setRfqs(data)
       } catch (error) {
         console.error('Failed to fetch seller RFQs:', error)
@@ -442,6 +445,7 @@ export function SellerRFQsPage() {
             onClose={() => setQuoteModal(null)}
             onSend={async (quoteData) => {
               try {
+                const token = localStorage.getItem('seller_token')
                 await sendQuote({
                   data: {
                     rfqId: quoteModal.id,
@@ -449,10 +453,13 @@ export function SellerRFQsPage() {
                     validityPeriod: quoteData.validityPeriod,
                     notes: quoteData.notes,
                   },
+                  headers: { Authorization: `Bearer ${token}` },
                 })
                 
                 // Refresh list
-                const updated = await getSellerRfqs()
+                const updated = await getSellerRfqs({
+                  headers: { Authorization: `Bearer ${token}` },
+                })
                 setRfqs(updated)
                 
                 setQuoteModal(null)
