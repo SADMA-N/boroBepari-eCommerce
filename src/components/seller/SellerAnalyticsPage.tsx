@@ -146,10 +146,10 @@ export function SellerAnalyticsPage() {
       <div className="space-y-8">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 transition-colors">
+            <h1 className="text-2xl font-bold text-foreground dark:text-gray-100 transition-colors">
               Analytics & Insights
             </h1>
-            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1 transition-colors">
               Track performance and spot growth opportunities.
             </p>
           </div>
@@ -157,7 +157,7 @@ export function SellerAnalyticsPage() {
             <select
               value={range}
               onChange={(event) => setRange(event.target.value as Range)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 transition-colors"
             >
               <option value="today" className="dark:bg-slate-900">
                 Today
@@ -175,16 +175,16 @@ export function SellerAnalyticsPage() {
                 Custom
               </option>
             </select>
-            <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400 transition-colors cursor-pointer">
+            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors cursor-pointer">
               <input
                 type="checkbox"
                 checked={compare}
                 onChange={(event) => setCompare(event.target.checked)}
-                className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
+                className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
               />
               Compare with previous period
             </label>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="inline-flex items-center gap-2 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               <Download size={16} />
               Export Report
             </button>
@@ -227,13 +227,13 @@ export function SellerAnalyticsPage() {
           />
         </section>
 
-        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4 transition-colors">
+        <section className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 space-y-4 transition-colors">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
                 Revenue Performance
               </h2>
-              <p className="text-sm text-slate-500 dark:text-gray-400 transition-colors">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 Trend across {RANGE_LABELS[range]}
               </p>
             </div>
@@ -256,7 +256,7 @@ export function SellerAnalyticsPage() {
               >
                 Both
               </button>
-              <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+              <button className="inline-flex items-center gap-2 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
                 <Download size={16} />
                 Export Chart
               </button>
@@ -307,8 +307,8 @@ export function SellerAnalyticsPage() {
         </section>
 
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
               Sales by Category
             </h2>
             <div className="mt-4 h-64 min-h-[256px] min-w-0">
@@ -342,20 +342,20 @@ export function SellerAnalyticsPage() {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
               Order Status Funnel
             </h2>
             <div className="mt-4 space-y-3">
               {FUNNEL_DATA.map((step, index) => (
                 <div key={step.stage} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm text-slate-600 dark:text-gray-400 transition-colors">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                     <span>{step.stage}</span>
                     <span className="dark:text-gray-200 font-medium">
                       {step.value}
                     </span>
                   </div>
-                  <div className="h-3 rounded-full bg-slate-100 dark:bg-slate-800 transition-colors">
+                  <div className="h-3 rounded-full bg-muted dark:bg-slate-800 transition-colors">
                     <div
                       className="h-3 rounded-full bg-orange-500"
                       style={{
@@ -364,7 +364,7 @@ export function SellerAnalyticsPage() {
                     />
                   </div>
                   {index < FUNNEL_DATA.length - 1 && (
-                    <p className="text-xs text-slate-400 dark:text-gray-500 transition-colors">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                       Drop-off:{' '}
                       {Math.round(
                         ((step.value - FUNNEL_DATA[index + 1].value) /
@@ -381,9 +381,9 @@ export function SellerAnalyticsPage() {
         </section>
 
         <section className="grid xl:grid-cols-[1.4fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 transition-colors">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
                 Top Products
               </h2>
               <button className="text-sm font-semibold text-orange-600 dark:text-orange-400 hover:text-orange-700 transition-colors">
@@ -392,7 +392,7 @@ export function SellerAnalyticsPage() {
             </div>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="text-left text-slate-400 dark:text-gray-500">
+                <thead className="text-left text-muted-foreground dark:text-muted-foreground">
                   <tr>
                     <th className="pb-2">Product</th>
                     <th>Units sold</th>
@@ -401,7 +401,7 @@ export function SellerAnalyticsPage() {
                     <th>Stock</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-gray-300">
+                <tbody className="divide-y divide-border dark:divide-slate-800 text-muted-foreground dark:text-gray-300">
                   {TOP_PRODUCTS.map((product) => (
                     <tr key={product.id}>
                       <td className="py-3">
@@ -409,9 +409,9 @@ export function SellerAnalyticsPage() {
                           <img
                             src={product.image}
                             alt={product.name}
-                            className="h-10 w-10 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                            className="h-10 w-10 rounded-lg object-cover border border-border dark:border-slate-800"
                           />
-                          <span className="font-semibold text-slate-800 dark:text-gray-100">
+                          <span className="font-semibold text-foreground dark:text-gray-100">
                             {product.name}
                           </span>
                         </div>
@@ -437,15 +437,15 @@ export function SellerAnalyticsPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4 transition-colors">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 space-y-4 transition-colors">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
               Geographic Insights
             </h2>
             <div className="grid gap-3">
               {GEO_DATA.map((city) => (
                 <div
                   key={city.city}
-                  className="flex items-center justify-between text-sm text-slate-600 dark:text-gray-400 transition-colors"
+                  className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground transition-colors"
                 >
                   <span>{city.city}</span>
                   <span className="dark:text-gray-200 font-medium">
@@ -454,7 +454,7 @@ export function SellerAnalyticsPage() {
                 </div>
               ))}
             </div>
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-xs text-slate-500 dark:text-gray-500 transition-colors">
+            <div className="rounded-xl border border-border dark:border-slate-800 bg-muted dark:bg-slate-950 p-4 text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
               Map view coming soon · Identify growth opportunities by region.
             </div>
           </div>
@@ -475,14 +475,14 @@ export function SellerAnalyticsPage() {
 
         <section className="grid lg:grid-cols-2 gap-6">
           <InfoCard title="Inventory Insights" items={INVENTORY_DATA} />
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2">
               <Sparkles size={18} className="text-orange-600" />
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 Insights & Recommendations
               </h2>
             </div>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600 list-disc pl-5">
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5">
               <li>
                 Your response rate improved by 15% compared to last period.
               </li>
@@ -495,30 +495,30 @@ export function SellerAnalyticsPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
+        <section className="rounded-2xl border border-border bg-card p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">
+            <h2 className="text-lg font-semibold text-foreground">
               Reports & Exports
             </h2>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <button className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
               <Download size={16} />
               Export Report
             </button>
           </div>
-          <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
+          <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+            <button className="rounded-lg border border-border px-3 py-2">
               PDF
             </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
+            <button className="rounded-lg border border-border px-3 py-2">
               Excel
             </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
+            <button className="rounded-lg border border-border px-3 py-2">
               CSV
             </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
+            <button className="rounded-lg border border-border px-3 py-2">
               Email report
             </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
+            <button className="rounded-lg border border-border px-3 py-2">
               Schedule recurring
             </button>
           </div>
@@ -545,10 +545,10 @@ function KpiCard({
 }) {
   const trendUp = change !== undefined && change >= 0
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-      <p className="text-xs uppercase text-slate-400">{title}</p>
+    <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
+      <p className="text-xs uppercase text-muted-foreground">{title}</p>
       <div className="flex items-center justify-between">
-        <p className="text-xl font-semibold text-slate-900">{value}</p>
+        <p className="text-xl font-semibold text-foreground">{value}</p>
         {change !== undefined && (
           <span
             className={`text-xs font-semibold ${trendUp ? 'text-green-600' : 'text-red-500'}`}
@@ -558,9 +558,9 @@ function KpiCard({
           </span>
         )}
       </div>
-      {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
       {compare && change !== undefined && (
-        <p className="text-xs text-slate-400">vs previous period</p>
+        <p className="text-xs text-muted-foreground">vs previous period</p>
       )}
       {spark && (
         <div className="h-10 min-h-[40px] min-w-0">
@@ -590,13 +590,13 @@ function InfoCard({
   items: Array<{ label: string; value: string }>
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
-      <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-      <div className="mt-4 space-y-2 text-sm text-slate-600">
+    <div className="rounded-2xl border border-border bg-card p-6">
+      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <div className="mt-4 space-y-2 text-sm text-muted-foreground">
         {items.map((item) => (
           <div key={item.label} className="flex items-center justify-between">
             <span>{item.label}</span>
-            <span className="font-semibold text-slate-800">{item.value}</span>
+            <span className="font-semibold text-foreground">{item.value}</span>
           </div>
         ))}
       </div>

@@ -274,7 +274,7 @@ function ReviewPage() {
                 <p className="mt-1">{shippingAddress.phone}</p>
               </div>
             ) : (
-              <p className="text-sm text-gray-400 ml-6">Loading address...</p>
+              <p className="text-sm text-muted-foreground ml-6">Loading address...</p>
             )}
           </div>
 

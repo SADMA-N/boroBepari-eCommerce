@@ -50,7 +50,7 @@ function EditProductRoute() {
         <p className="text-lg text-red-500 font-medium">{error}</p>
         <button 
             onClick={() => window.history.back()}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 transition-colors"
+            className="px-4 py-2 bg-muted hover:bg-muted rounded-lg text-foreground transition-colors"
         >
             Go Back
         </button>

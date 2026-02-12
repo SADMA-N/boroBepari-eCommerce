@@ -514,7 +514,7 @@ function RFQDetailPage() {
                                 {quote.supplier?.logo ? (
                                   <img
                                     src={quote.supplier.logo}
-                                    className="w-8 h-8 rounded-full bg-gray-200"
+                                    className="w-8 h-8 rounded-full bg-muted"
                                     alt=""
                                   />
                                 ) : (

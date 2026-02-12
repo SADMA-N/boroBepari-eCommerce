@@ -29,10 +29,10 @@ export function AdminProtectedRoute({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+      <div className="min-h-screen bg-muted flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
-          <p className="text-slate-600">Loading...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     )
@@ -55,10 +55,10 @@ export function AdminProtectedRoute({
         <AdminLayout>
           <div className="flex flex-col items-center justify-center py-20">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-slate-900">
+              <h2 className="text-2xl font-bold text-foreground">
                 Access Denied
               </h2>
-              <p className="mt-2 text-slate-600">
+              <p className="mt-2 text-muted-foreground">
                 You don't have permission to access this page.
               </p>
               <button

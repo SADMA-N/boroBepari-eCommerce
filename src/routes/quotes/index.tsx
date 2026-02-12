@@ -71,11 +71,11 @@ function QuotesPage() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">My Quotes</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-6">My Quotes</h1>
 
       <div className="space-y-4">
         {quotes.length === 0 ? (
-          <div className="text-center text-gray-500 py-12 bg-white border rounded-lg">
+          <div className="text-center text-muted-foreground py-12 bg-card border rounded-lg">
             No quotes received yet.
           </div>
         ) : (
@@ -87,12 +87,12 @@ function QuotesPage() {
             return (
               <div
                 key={quote.id}
-                className="bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex flex-col md:flex-row justify-between md:items-start gap-4">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-bold text-lg text-gray-900">
+                      <h3 className="font-bold text-lg text-foreground">
                         {quote.rfq.product.name}
                       </h3>
                       <span
@@ -104,7 +104,7 @@ function QuotesPage() {
                               : quote.status === 'countered'
                                 ? 'bg-orange-100 text-orange-800'
                                 : isExpired
-                                  ? 'bg-gray-100 text-gray-800'
+                                  ? 'bg-gray-100 text-foreground'
                                   : 'bg-blue-100 text-blue-800'
                         }`}
                       >
@@ -113,10 +113,10 @@ function QuotesPage() {
                           : quote.status}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mb-1">
+                    <p className="text-sm text-muted-foreground mb-1">
                       Supplier: {quote.supplier.name}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       RFQ Qty: {quote.rfq.quantity}
                     </p>
                   </div>
@@ -125,9 +125,9 @@ function QuotesPage() {
                     <div className="text-2xl font-bold text-blue-600">
                       {formatBDT(Number(quote.unitPrice))}
                     </div>
-                    <span className="text-xs text-gray-500">per unit</span>
+                    <span className="text-xs text-muted-foreground">per unit</span>
                     {quote.totalPrice && (
-                      <div className="text-sm font-medium text-gray-700 mt-1">
+                      <div className="text-sm font-medium text-foreground mt-1">
                         Total: {formatBDT(Number(quote.totalPrice))}
                       </div>
                     )}
@@ -135,7 +135,7 @@ function QuotesPage() {
                 </div>
 
                 <div className="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="text-sm text-gray-600 space-y-1">
+                  <div className="text-sm text-muted-foreground space-y-1">
                     <div
                       className={`flex items-center ${isExpired ? 'text-red-500 font-medium' : ''}`}
                     >
@@ -159,7 +159,7 @@ function QuotesPage() {
                             setCounterQuote(quote)
                             setCounterPrice(quote.unitPrice)
                           }}
-                          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium flex items-center"
+                          className="px-4 py-2 border border-border rounded-lg text-foreground hover:bg-muted text-sm font-medium flex items-center"
                         >
                           <MessageSquare size={16} className="mr-2" />
                           Counter
@@ -201,7 +201,7 @@ function QuotesPage() {
                     )}
 
                     {isExpired && quote.status === 'pending' && (
-                      <div className="flex items-center text-gray-500 text-sm bg-gray-100 px-3 py-2 rounded">
+                      <div className="flex items-center text-muted-foreground text-sm bg-gray-100 px-3 py-2 rounded">
                         <AlertTriangle size={16} className="mr-2" />
                         Quote Expired
                       </div>
@@ -217,15 +217,15 @@ function QuotesPage() {
       {/* Counter Offer Modal */}
       {counterQuote && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+          <div className="bg-card rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">Counter Offer</h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-muted-foreground mb-4">
               Propose a new price for {counterQuote.rfq.product.name}.
             </p>
 
             <form onSubmit={handleCounterSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Your Price (BDT)
                 </label>
                 <input
@@ -233,11 +233,11 @@ function QuotesPage() {
                   required
                   value={counterPrice}
                   onChange={(e) => setCounterPrice(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="w-full border border-border rounded-lg px-3 py-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Note (Optional)
                 </label>
                 <textarea
@@ -245,7 +245,7 @@ function QuotesPage() {
                   value={counterNote}
                   onChange={(e) => setCounterNote(e.target.value)}
                   placeholder="Reason for counter offer..."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="w-full border border-border rounded-lg px-3 py-2"
                 />
               </div>
 
@@ -253,7 +253,7 @@ function QuotesPage() {
                 <button
                   type="button"
                   onClick={() => setCounterQuote(null)}
-                  className="px-4 py-2 border rounded-lg text-gray-600"
+                  className="px-4 py-2 border rounded-lg text-muted-foreground"
                 >
                   Cancel
                 </button>

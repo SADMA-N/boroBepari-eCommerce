@@ -167,13 +167,13 @@ function BuyerOrderHistoryPage() {
     return (
       <div className="max-w-[1440px] mx-auto px-6 py-16">
         <div className="text-center">
-          <div className="mx-auto w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-            <ShoppingBag className="w-10 h-10 text-gray-400" />
+          <div className="mx-auto w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+            <ShoppingBag className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             Sign in to view your orders
           </h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-muted-foreground mb-6">
             Please log in to access your order history
           </p>
           <Link
@@ -192,7 +192,7 @@ function BuyerOrderHistoryPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 transition-colors">
+          <h1 className="text-2xl font-bold text-foreground dark:text-white flex items-center gap-2 transition-colors">
             Order History
             {orderUnreadCount > 0 && (
               <span className="text-xs font-semibold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full transition-colors">
@@ -200,7 +200,7 @@ function BuyerOrderHistoryPage() {
               </span>
             )}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 transition-colors">
+          <p className="text-muted-foreground dark:text-muted-foreground text-sm mt-1 transition-colors">
             Track and manage your orders
           </p>
         </div>
@@ -214,7 +214,7 @@ function BuyerOrderHistoryPage() {
       </div>
 
       {/* Tabs & Filters */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 mb-6 transition-colors">
+      <div className="bg-card dark:bg-slate-900 rounded-lg shadow-sm border border-border dark:border-slate-800 mb-6 transition-colors">
         {/* Filter Tabs */}
         <div className="border-b dark:border-slate-800 px-4 overflow-x-auto">
           <div className="flex space-x-6 min-w-max">
@@ -232,7 +232,7 @@ function BuyerOrderHistoryPage() {
                 className={`py-4 text-sm font-medium border-b-2 transition-all whitespace-nowrap ${
                   activeTab === tab.key
                     ? 'border-orange-500 text-orange-600 dark:text-orange-500'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-slate-700'
+                    : 'border-transparent text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-gray-200 hover:border-border dark:hover:border-slate-700'
                 }`}
               >
                 {tab.label}
@@ -240,7 +240,7 @@ function BuyerOrderHistoryPage() {
                   className={`ml-2 px-2 py-0.5 rounded-full text-xs transition-colors ${
                     activeTab === tab.key
                       ? 'bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-500'
-                      : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-400'
+                      : 'bg-gray-100 dark:bg-slate-800 text-muted-foreground dark:text-muted-foreground'
                   }`}
                 >
                   {counts[tab.key]}
@@ -253,7 +253,7 @@ function BuyerOrderHistoryPage() {
         {/* Search & Sort */}
         <div className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="relative w-full sm:w-96">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground dark:text-muted-foreground">
               <Search size={18} />
             </div>
             <input
@@ -261,7 +261,7 @@ function BuyerOrderHistoryPage() {
               placeholder="Search by order number or product name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-border dark:border-slate-700 bg-card dark:bg-slate-800 text-foreground dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition-all"
             />
           </div>
 
@@ -273,7 +273,7 @@ function BuyerOrderHistoryPage() {
                   setSortBy(e.target.value as SortOption)
                   setPage(1)
                 }}
-                className="appearance-none pl-3 pr-10 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer transition-all"
+                className="appearance-none pl-3 pr-10 py-2 border border-border dark:border-slate-700 rounded-lg text-sm bg-card dark:bg-slate-800 text-foreground dark:text-white focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer transition-all"
               >
                 {sortOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -283,7 +283,7 @@ function BuyerOrderHistoryPage() {
               </select>
               <ArrowUpDown
                 size={14}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground pointer-events-none"
               />
             </div>
           </div>
@@ -311,7 +311,7 @@ function BuyerOrderHistoryPage() {
           ))}
           <div ref={loadMoreRef} />
           {isLoadingMore && (
-            <div className="flex items-center justify-center py-6 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center justify-center py-6 text-sm text-muted-foreground dark:text-muted-foreground">
               Loading more orders...
             </div>
           )}
@@ -321,7 +321,7 @@ function BuyerOrderHistoryPage() {
       {/* Pagination */}
       {!isLoading && orders.length > 0 && pagination.totalPages > 1 && (
         <div className="mt-8 flex items-center justify-between transition-colors">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             Showing {(pagination.page - 1) * pagination.limit + 1} -{' '}
             {Math.min(
               pagination.page * pagination.limit,
@@ -334,7 +334,7 @@ function BuyerOrderHistoryPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={!pagination.hasPrev}
-              className="p-2 border border-gray-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all"
+              className="p-2 border border-border dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted dark:hover:bg-slate-800 text-muted-foreground dark:text-muted-foreground transition-all"
             >
               <ChevronLeft size={18} />
             </button>
@@ -354,7 +354,7 @@ function BuyerOrderHistoryPage() {
                   return (
                     <span key={p} className="flex items-center">
                       {showEllipsis && (
-                        <span className="px-2 text-gray-400 dark:text-gray-600">
+                        <span className="px-2 text-muted-foreground dark:text-muted-foreground">
                           ...
                         </span>
                       )}
@@ -363,7 +363,7 @@ function BuyerOrderHistoryPage() {
                         className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
                           p === pagination.page
                             ? 'bg-orange-500 text-white shadow-sm shadow-orange-500/20'
-                            : 'hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300'
+                            : 'hover:bg-muted dark:hover:bg-slate-800 text-foreground dark:text-gray-300'
                         }`}
                       >
                         {p}
@@ -378,7 +378,7 @@ function BuyerOrderHistoryPage() {
                 setPage((p) => Math.min(pagination.totalPages, p + 1))
               }
               disabled={!pagination.hasNext}
-              className="p-2 border border-gray-200 dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-all"
+              className="p-2 border border-border dark:border-slate-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted dark:hover:bg-slate-800 text-muted-foreground dark:text-muted-foreground transition-all"
             >
               <ChevronRight size={18} />
             </button>
@@ -474,24 +474,24 @@ function OrderCard({ order }: { order: any }) {
   return (
     <Link
       to={`/buyer/orders/${order.id}`}
-      className="block bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 hover:shadow-md hover:border-gray-200 dark:hover:border-slate-700 transition-all group"
+      className="block bg-card dark:bg-slate-900 rounded-lg shadow-sm border border-border dark:border-slate-800 hover:shadow-md hover:border-border dark:hover:border-slate-700 transition-all group"
     >
       <div className="p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           {/* Left: Order info */}
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-3 mb-2">
-              <span className="text-sm font-mono font-bold text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded transition-colors">
+              <span className="text-sm font-mono font-bold text-muted-foreground dark:text-muted-foreground bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded transition-colors">
                 #{order.id.toString().padStart(6, '0')}
               </span>
-              <span className="text-sm text-gray-400 dark:text-gray-500 flex items-center gap-1 transition-colors">
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground flex items-center gap-1 transition-colors">
                 <Calendar size={14} />
                 {format(createdAt, 'MMM d, yyyy')}
               </span>
               <span
                 className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
                   statusStyles[order.status] ||
-                  'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200'
+                  'bg-gray-100 dark:bg-slate-800 text-foreground dark:text-gray-200'
                 }`}
               >
                 {statusLabels[order.status] || order.status}
@@ -510,13 +510,13 @@ function OrderCard({ order }: { order: any }) {
                   />
                 ))}
                 {itemCount > 3 && (
-                  <div className="w-12 h-12 rounded-lg border-2 border-white dark:border-slate-900 bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 shadow-sm transition-colors">
+                  <div className="w-12 h-12 rounded-lg border-2 border-white dark:border-slate-900 bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-xs font-medium text-muted-foreground dark:text-muted-foreground shadow-sm transition-colors">
                     +{itemCount - 3}
                   </div>
                 )}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 transition-colors">
-                <span className="font-medium text-gray-900 dark:text-gray-200">
+              <div className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
+                <span className="font-medium text-foreground dark:text-gray-200">
                   {itemCount}
                 </span>{' '}
                 {itemCount === 1 ? 'item' : 'items'}
@@ -527,10 +527,10 @@ function OrderCard({ order }: { order: any }) {
           {/* Right: Amount & Action */}
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <div className="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold mb-1 transition-colors">
+              <div className="text-xs text-muted-foreground dark:text-muted-foreground uppercase font-semibold mb-1 transition-colors">
                 Total Amount
               </div>
-              <div className="text-xl font-bold text-gray-900 dark:text-white transition-colors">
+              <div className="text-xl font-bold text-foreground dark:text-white transition-colors">
                 {formatBDT(totalAmount)}
               </div>
             </div>
@@ -545,7 +545,7 @@ function OrderCard({ order }: { order: any }) {
             )}
             <ChevronRight
               size={24}
-              className="text-gray-300 dark:text-gray-700 group-hover:text-orange-500 transition-colors"
+              className="text-gray-300 dark:text-foreground group-hover:text-orange-500 transition-colors"
             />
           </div>
         </div>
@@ -562,35 +562,35 @@ function EmptyState({
   onClearFilters: () => void
 }) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-lg border border-dashed border-gray-300 dark:border-slate-700 p-16 text-center transition-colors">
-      <div className="mx-auto w-20 h-20 bg-gray-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 transition-colors">
+    <div className="bg-card dark:bg-slate-900 rounded-lg border border-dashed border-border dark:border-slate-700 p-16 text-center transition-colors">
+      <div className="mx-auto w-20 h-20 bg-muted dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 transition-colors">
         <Package
           size={40}
-          className="text-gray-300 dark:text-gray-600 transition-colors"
+          className="text-gray-300 dark:text-muted-foreground transition-colors"
         />
       </div>
 
       {hasFilters ? (
         <>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
+          <h3 className="text-xl font-bold text-foreground dark:text-white mb-2 transition-colors">
             No orders found
           </h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6 transition-colors">
+          <p className="text-muted-foreground dark:text-muted-foreground mb-6 transition-colors">
             Try adjusting your search or filter criteria
           </p>
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all"
+            className="inline-flex items-center px-4 py-2 border border-border dark:border-slate-700 text-foreground dark:text-gray-300 font-medium rounded-lg hover:bg-muted dark:hover:bg-slate-800 transition-all"
           >
             Clear Filters
           </button>
         </>
       ) : (
         <>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">
+          <h3 className="text-xl font-bold text-foreground dark:text-white mb-2 transition-colors">
             No orders yet
           </h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-6 transition-colors">
+          <p className="text-muted-foreground dark:text-muted-foreground mb-6 transition-colors">
             Start shopping to see your orders here
           </p>
           <Link

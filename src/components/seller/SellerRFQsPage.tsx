@@ -205,10 +205,10 @@ export function SellerRFQsPage() {
       <div className="space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 transition-colors">
+            <h1 className="text-2xl font-bold text-foreground dark:text-gray-100 transition-colors">
               RFQs
             </h1>
-            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1 transition-colors">
               Respond quickly to win more orders.
             </p>
           </div>
@@ -216,14 +216,14 @@ export function SellerRFQsPage() {
             <select
               value={dateRange}
               onChange={(event) => setDateRange(event.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 transition-colors"
             >
               <option className="dark:bg-slate-900">Today</option>
               <option className="dark:bg-slate-900">Last 7 Days</option>
               <option className="dark:bg-slate-900">Last 30 Days</option>
               <option className="dark:bg-slate-900">Custom Range</option>
             </select>
-            <button className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               Export
             </button>
           </div>
@@ -256,12 +256,12 @@ export function SellerRFQsPage() {
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 tab === status
                   ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
-                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-gray-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                  : 'bg-card dark:bg-slate-900 border border-border dark:border-slate-800 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800'
               }`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
               <span
-                className={`ml-2 rounded-full px-2 py-0.5 text-xs ${tab === status ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}
+                className={`ml-2 rounded-full px-2 py-0.5 text-xs ${tab === status ? 'bg-white/20' : 'bg-muted dark:bg-slate-800'}`}
               >
                 {counts[status]}
               </span>
@@ -269,7 +269,7 @@ export function SellerRFQsPage() {
           ))}
         </section>
 
-        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
+        <section className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -277,14 +277,14 @@ export function SellerRFQsPage() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search by product or RFQ #"
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-gray-100 focus:border-orange-500 transition-all"
+                  className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-gray-100 focus:border-orange-500 transition-all"
                 />
                 <SearchIcon />
               </div>
               <select
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 transition-colors"
               >
                 <option value="" className="dark:bg-slate-900">
                   All categories
@@ -297,14 +297,14 @@ export function SellerRFQsPage() {
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 transition-colors"
               >
                 <option className="dark:bg-slate-900">Date</option>
                 <option className="dark:bg-slate-900">Quantity</option>
                 <option className="dark:bg-slate-900">Target Price</option>
               </select>
             </div>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="inline-flex items-center gap-2 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               <Filter size={16} />
               Filters
             </button>
@@ -324,18 +324,18 @@ export function SellerRFQsPage() {
                 return (
                   <div
                     key={rfq.id}
-                    className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 transition-colors hover:border-orange-200 dark:hover:border-orange-900/50"
+                    className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900/50 p-4 transition-colors hover:border-orange-200 dark:hover:border-orange-900/50"
                   >
                     <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                       <div className="flex items-center gap-3">
                         <img
                           src={rfq.product?.images?.[0]}
                           alt={rfq.product?.name}
-                          className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                          className="h-16 w-16 rounded-lg object-cover border border-border dark:border-slate-800"
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="text-sm text-slate-400 dark:text-gray-500">
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               RFQ #{rfq.id}
                             </p>
                             {rfq.quotes?.some((q: any) => q.status === 'countered') && (
@@ -344,15 +344,15 @@ export function SellerRFQsPage() {
                               </span>
                             )}
                           </div>
-                          <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
+                          <p className="text-base font-semibold text-foreground dark:text-gray-100">
                             {rfq.product?.name}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-gray-400">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                             {rfq.buyer?.name}
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-gray-300">
+                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground dark:text-gray-300">
                         <InfoItem
                           label={acceptedQuote ? "Agreed Qty" : "Quantity"}
                           value={`${displayQuantity} units`}
@@ -391,7 +391,7 @@ export function SellerRFQsPage() {
                         <button
                           type="button"
                           onClick={() => setDetail(rfq)}
-                          className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-xs font-semibold text-foreground dark:text-gray-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
                         >
                           View Details
                         </button>
@@ -405,7 +405,7 @@ export function SellerRFQsPage() {
         </section>
 
         {filtered.length > perPage && (
-          <div className="flex items-center justify-between text-sm text-slate-500 dark:text-gray-400">
+          <div className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground">
             <span>
               Page {page} of {Math.ceil(filtered.length / perPage)}
             </span>
@@ -413,14 +413,14 @@ export function SellerRFQsPage() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage((prev) => prev - 1)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Previous
               </button>
               <button
                 disabled={page >= Math.ceil(filtered.length / perPage)}
                 onClick={() => setPage((prev) => prev + 1)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-1 disabled:opacity-50 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Next
               </button>
@@ -477,11 +477,11 @@ export function SellerRFQsPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-      <p className="text-xs uppercase text-slate-400 dark:text-gray-500">
+    <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+      <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 text-xl font-semibold text-slate-800 dark:text-gray-100">
+      <p className="mt-1 text-xl font-semibold text-foreground dark:text-gray-100">
         {value}
       </p>
     </div>
@@ -491,8 +491,8 @@ function StatCard({ label, value }: { label: string; value: string }) {
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-slate-400 dark:text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
+      <p className="text-xs text-muted-foreground dark:text-muted-foreground">{label}</p>
+      <p className="text-sm font-semibold text-foreground dark:text-gray-200">
         {value}
       </p>
     </div>
@@ -536,7 +536,7 @@ function SearchIcon() {
   return (
     <Search
       size={16}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 pointer-events-none"
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground pointer-events-none"
     />
   )
 }
@@ -551,7 +551,7 @@ function statusBadge(status: RFQStatus) {
   if (status === 'rejected')
     return 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
   if (status === 'expired')
-    return 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-gray-400'
+    return 'bg-muted dark:bg-slate-800 text-muted-foreground dark:text-muted-foreground'
   return 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
 }
 
@@ -582,10 +582,10 @@ function RFQDetailPanel({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 p-6 overflow-y-auto border-l border-slate-200 dark:border-slate-800 transition-colors">
+      <div className="w-full max-w-xl bg-card dark:bg-slate-900 p-6 overflow-y-auto border-l border-border dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
               RFQ #{rfq.id}
             </h2>
             <span
@@ -596,7 +596,7 @@ function RFQDetailPanel({
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
+            className="text-muted-foreground hover:text-muted-foreground dark:hover:text-gray-200 transition-colors"
             aria-label="Close details"
             autoFocus
           >
@@ -608,18 +608,18 @@ function RFQDetailPanel({
             <img
               src={rfq.product?.images?.[0]}
               alt={rfq.product?.name}
-              className="h-16 w-16 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+              className="h-16 w-16 rounded-lg object-cover border border-border dark:border-slate-800"
             />
             <div>
-              <p className="text-sm text-slate-400 dark:text-gray-500">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 Product
               </p>
-              <p className="text-base font-semibold text-slate-800 dark:text-gray-100">
+              <p className="text-base font-semibold text-foreground dark:text-gray-100">
                 {rfq.product?.name}
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-sm text-slate-600 dark:text-gray-300">
+          <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground dark:text-gray-300">
             <InfoItem 
               label={acceptedQuote ? "Agreed Quantity" : "Quantity"} 
               value={`${displayQuantity} ${rfq.product?.unit || 'units'}`} 
@@ -645,19 +645,19 @@ function RFQDetailPanel({
           )}
 
           <div>
-            <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
+            <p className="text-sm font-semibold text-foreground dark:text-gray-200">
               Additional Notes
             </p>
-            <p className="mt-1 text-sm text-slate-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
               {rfq.notes || 'No additional notes provided.'}
             </p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-700 dark:text-gray-200">
+            <p className="text-sm font-semibold text-foreground dark:text-gray-200">
               Attachments
             </p>
             {!rfq.attachments || rfq.attachments.length === 0 ? (
-              <p className="text-sm text-slate-400 dark:text-gray-500 mt-1">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                 No attachments
               </p>
             ) : (
@@ -665,7 +665,7 @@ function RFQDetailPanel({
                 {rfq.attachments.map((file: string) => (
                   <div
                     key={file}
-                    className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-300"
+                    className="flex items-center gap-2 text-sm text-muted-foreground dark:text-gray-300"
                   >
                     <FileText size={16} />
                     <a href={file} target="_blank" rel="noreferrer" className="hover:text-orange-600 underline">
@@ -677,8 +677,8 @@ function RFQDetailPanel({
             )}
           </div>
           {rfq.buyerStats && (
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-4 text-sm text-slate-600 dark:text-gray-300 transition-colors">
-              <p className="font-semibold text-slate-700 dark:text-gray-200">
+            <div className="rounded-xl border border-border dark:border-slate-800 bg-muted dark:bg-slate-900/50 p-4 text-sm text-muted-foreground dark:text-gray-300 transition-colors">
+              <p className="font-semibold text-foreground dark:text-gray-200">
                 Buyer history
               </p>
               <div className="mt-2 grid grid-cols-3 gap-3">
@@ -711,7 +711,7 @@ function RFQDetailPanel({
             >
               Send Quote
             </button>
-            <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm dark:text-gray-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               Contact Buyer
             </button>
           </div>
@@ -752,7 +752,7 @@ function SendQuoteModal({
 
   return (
     <Modal onClose={onClose} title={counterQuote ? `Respond to Counter for ${rfq.id}` : `Send Quote for ${rfq.id}`}>
-      <div className="space-y-4 text-sm text-slate-600 dark:text-gray-300">
+      <div className="space-y-4 text-sm text-muted-foreground dark:text-gray-300">
         {counterQuote && (
           <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-100 dark:border-purple-900/30">
             <p className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 mb-1">Buyer's Counter Offer</p>
@@ -764,36 +764,36 @@ function SendQuoteModal({
         )}
         <div className="grid md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Agreed Quantity</label>
+            <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Agreed Quantity</label>
             <input
               type="number"
               value={agreedQuantity}
               onChange={(event) => setAgreedQuantity(event.target.value)}
               placeholder="Quantity"
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+              className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
             />
           </div>
           <div>
-            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Unit Price (৳)</label>
+            <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Unit Price (৳)</label>
             <input
               value={unitPrice}
               onChange={(event) => setUnitPrice(event.target.value)}
               placeholder="Unit price (৳)"
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+              className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
             />
           </div>
         </div>
-        <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-slate-700 dark:text-gray-200 flex items-center justify-between transition-colors">
+        <div className="rounded-lg border border-border dark:border-slate-800 bg-muted dark:bg-slate-900 px-3 py-2 text-foreground dark:text-gray-200 flex items-center justify-between transition-colors">
           <span>Total amount:</span>
           <span className="font-bold">৳{total.toLocaleString()}</span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Quote Validity</label>
+            <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Quote Validity</label>
             <select
               value={validity}
               onChange={(event) => setValidity(event.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+              className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
             >
               <option className="dark:bg-slate-950">7 days</option>
               <option className="dark:bg-slate-950">14 days</option>
@@ -801,11 +801,11 @@ function SendQuoteModal({
             </select>
           </div>
           <div>
-            <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Payment Terms</label>
+            <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Payment Terms</label>
             <select
               value={paymentTerms}
               onChange={(event) => setPaymentTerms(event.target.value)}
-              className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+              className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
             >
               {PAYMENT_TERMS.map((term) => (
                 <option key={term} className="dark:bg-slate-950">
@@ -816,11 +816,11 @@ function SendQuoteModal({
           </div>
         </div>
         <div>
-          <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">Delivery Time</label>
+          <label className="block text-[10px] uppercase font-bold text-muted-foreground mb-1">Delivery Time</label>
           <select
             value={deliveryTime}
             onChange={(event) => setDeliveryTime(event.target.value)}
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+            className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
           >
             {DELIVERY_TIMES.map((time) => (
               <option key={time} className="dark:bg-slate-950">
@@ -833,11 +833,11 @@ function SendQuoteModal({
           value={notes}
           onChange={(event) => setNotes(event.target.value)}
           placeholder="Additional terms & notes"
-          className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
+          className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 dark:text-gray-100 transition-colors"
           rows={3}
         />
-        <input type="file" className="text-sm dark:text-gray-400" />
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-3 text-xs text-slate-600 dark:text-gray-400 transition-colors">
+        <input type="file" className="text-sm dark:text-muted-foreground" />
+        <div className="rounded-xl border border-border dark:border-slate-800 bg-muted dark:bg-slate-900/50 p-3 text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
           Buyer target: ৳{rfq.targetPrice} · Your quote: ৳{unitPrice || '--'}
           {unitPrice && (
             <span
@@ -875,7 +875,7 @@ function SendQuoteModal({
           <button
             type="button"
             disabled={isSubmitting}
-            className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-semibold dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm font-semibold dark:text-gray-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
           >
             Save as Draft
           </button>
@@ -900,14 +900,14 @@ function Modal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-xl rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl border border-slate-200 dark:border-slate-800 transition-colors">
+      <div className="w-full max-w-xl rounded-2xl bg-card dark:bg-slate-900 p-6 shadow-xl border border-border dark:border-slate-800 transition-colors">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100">
+          <h2 className="text-lg font-semibold text-foreground dark:text-gray-100">
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors"
+            className="text-muted-foreground hover:text-muted-foreground dark:hover:text-gray-200 transition-colors"
             aria-label="Close modal"
             autoFocus
           >
@@ -922,8 +922,8 @@ function Modal({
 
 function EmptyState() {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-8 text-center text-slate-500 dark:text-gray-400 transition-colors">
-      <Timer size={28} className="mx-auto text-slate-400 dark:text-gray-500" />
+    <div className="rounded-2xl border border-dashed border-border dark:border-slate-800 bg-muted dark:bg-slate-900/50 p-8 text-center text-muted-foreground dark:text-muted-foreground transition-colors">
+      <Timer size={28} className="mx-auto text-muted-foreground dark:text-muted-foreground" />
       <p className="mt-3 text-sm">No RFQs match filters</p>
     </div>
   )
@@ -935,7 +935,7 @@ function RfqSkeleton() {
       {[1, 2, 3].map((row) => (
         <div
           key={row}
-          className="h-20 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse"
+          className="h-20 rounded-lg bg-muted dark:bg-slate-800 animate-pulse"
         />
       ))}
     </div>

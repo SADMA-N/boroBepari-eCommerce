@@ -110,7 +110,7 @@ function SupplierRFQInbox() {
         {/* Search */}
         <div className="p-4">
           <div className="relative max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
               <Search size={18} />
             </div>
             <input

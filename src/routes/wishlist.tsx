@@ -69,7 +69,7 @@ function WishlistItem({ product }: { product: MockProduct }) {
             </h3>
             <button
               onClick={() => removeFromWishlist(product.id)}
-              className="text-gray-400 hover:text-red-500 transition-colors"
+              className="text-muted-foreground hover:text-red-500 transition-colors"
               title="Remove from wishlist"
             >
               <Trash2 size={18} />

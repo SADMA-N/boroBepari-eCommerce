@@ -433,15 +433,15 @@ export function AdminKYCPage() {
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+            <h1 className="text-2xl font-bold text-foreground dark:text-white transition-colors">
               KYC Review Queue
             </h1>
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               <span
                 className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   pendingCount > 0
                     ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                    : 'bg-muted dark:bg-slate-800 text-muted-foreground dark:text-muted-foreground'
                 }`}
               >
                 {pendingCount} pending reviews
@@ -450,7 +450,7 @@ export function AdminKYCPage() {
                 <Clock size={14} />
                 Avg review time: {averageReview} hours (target &lt;24h)
               </span>
-              <span className="text-xs text-slate-400 dark:text-slate-500">
+              <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                 {filteredCount} filters applied
               </span>
             </div>
@@ -458,7 +458,7 @@ export function AdminKYCPage() {
           <div className="flex flex-wrap items-center gap-3">
             <button
               disabled={!canReview}
-              className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-card dark:bg-slate-900 border border-border dark:border-slate-800 px-4 py-2 text-sm font-medium text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
               <UserPlus size={16} />
               Assign to Me
@@ -471,22 +471,22 @@ export function AdminKYCPage() {
               <ShieldCheck size={16} />
               Bulk Approve
             </button>
-            <button className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="inline-flex items-center gap-2 rounded-lg bg-card dark:bg-slate-900 border border-border dark:border-slate-800 px-4 py-2 text-sm font-medium text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               <Download size={16} />
               Export
             </button>
           </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
+        <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
           <div className="flex flex-wrap gap-4">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by business or submitter"
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-foreground dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-muted-foreground dark:placeholder:text-muted-foreground"
               />
             </div>
             <select
@@ -494,7 +494,7 @@ export function AdminKYCPage() {
               onChange={(e) =>
                 setPriorityFilter(e.target.value as Priority | 'all')
               }
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             >
               <option value="all" className="dark:bg-slate-900">
                 Priority: All
@@ -506,21 +506,21 @@ export function AdminKYCPage() {
                 Priority: Urgent
               </option>
             </select>
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Submission Date
             </div>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
-            <span className="text-sm text-slate-400">to</span>
+            <span className="text-sm text-muted-foreground">to</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
           </div>
         </div>
@@ -542,12 +542,12 @@ export function AdminKYCPage() {
                 className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
                   activeTab === tab.value
                     ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
-                    : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    : 'border-border dark:border-slate-800 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800'
                 }`}
               >
                 <span>{tab.label}</span>
                 <span
-                  className={`rounded-full px-2 py-0.5 text-xs transition-colors ${tab.color} ${activeTab === tab.value ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800'}`}
+                  className={`rounded-full px-2 py-0.5 text-xs transition-colors ${tab.color} ${activeTab === tab.value ? 'bg-white/20' : 'bg-muted dark:bg-slate-800'}`}
                 >
                   {count}
                 </span>
@@ -557,53 +557,53 @@ export function AdminKYCPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-5">
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
               KYCs reviewed today
             </p>
-            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-xl font-semibold text-foreground dark:text-white transition-colors">
               {todayReviewed}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
               Average review time
             </p>
-            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-xl font-semibold text-foreground dark:text-white transition-colors">
               {averageReview}h
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
               Approval rate
             </p>
-            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-xl font-semibold text-foreground dark:text-white transition-colors">
               {approvalRate}%
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
               Oldest pending
             </p>
-            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-xl font-semibold text-foreground dark:text-white transition-colors">
               {oldestPending}h
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
               My reviews today
             </p>
-            <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-xl font-semibold text-foreground dark:text-white transition-colors">
               {myReviews}
             </p>
           </div>
         </div>
 
         {activeTab === 'pending' && (
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 overflow-hidden transition-colors">
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
-                <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
+                <thead className="bg-muted dark:bg-slate-800/50 text-muted-foreground dark:text-muted-foreground transition-colors">
                   <tr>
                     <th className="px-4 py-3 text-left">
                       <input
@@ -615,7 +615,7 @@ export function AdminKYCPage() {
                           )
                         }
                         onChange={toggleSelectAll}
-                        className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
+                        className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                       />
                     </th>
                     <th className="px-4 py-3 text-left">Submission ID</th>
@@ -628,7 +628,7 @@ export function AdminKYCPage() {
                     <th className="px-4 py-3 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
+                <tbody className="divide-y divide-border dark:divide-slate-800 transition-colors">
                   {pendingQueue.map((item) => {
                     const rowTone =
                       item.waitHours > 48
@@ -639,39 +639,39 @@ export function AdminKYCPage() {
                     return (
                       <tr
                         key={item.id}
-                        className={`${rowTone} hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors`}
+                        className={`${rowTone} hover:bg-muted dark:hover:bg-slate-800/50 transition-colors`}
                       >
                         <td className="px-4 py-3">
                           <input
                             type="checkbox"
                             checked={selectedIds.includes(item.id)}
                             onChange={() => toggleSelectOne(item.id)}
-                            className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
+                            className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                           />
                         </td>
-                        <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 transition-colors">
+                        <td className="px-4 py-3 font-medium text-foreground dark:text-slate-100 transition-colors">
                           {item.id}
                         </td>
-                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300 transition-colors">
+                        <td className="px-4 py-3 text-foreground dark:text-slate-300 transition-colors">
                           {item.businessName}
                         </td>
-                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                        <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                           {item.fullName}
                         </td>
-                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                        <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                           {item.submittedAt
                             ? new Date(item.submittedAt).toLocaleDateString()
                             : '-'}
                         </td>
-                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                        <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                           -
                         </td>
                         <td className="px-4 py-3">
-                          <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs text-slate-600 dark:text-slate-400 transition-colors">
+                          <span className="rounded-full bg-muted dark:bg-slate-800 px-2 py-1 text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                             Normal
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                        <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                           Unassigned
                         </td>
                         <td className="px-4 py-3 text-right">
@@ -690,7 +690,7 @@ export function AdminKYCPage() {
                     <tr>
                       <td
                         colSpan={9}
-                        className="px-4 py-10 text-center text-slate-500 dark:text-slate-400 transition-colors"
+                        className="px-4 py-10 text-center text-muted-foreground dark:text-muted-foreground transition-colors"
                       >
                         No pending KYC submissions.
                       </td>
@@ -711,7 +711,7 @@ export function AdminKYCPage() {
                 <h2 className="text-lg font-semibold transition-colors">
                   Review KYC - {reviewItem.seller.businessName}
                 </h2>
-                <p className="text-xs text-slate-400 transition-colors">
+                <p className="text-xs text-muted-foreground transition-colors">
                   Submission {reviewItem.seller.id}
                 </p>
               </div>
@@ -800,7 +800,7 @@ export function AdminKYCPage() {
                     )}
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between text-slate-400 text-xs transition-colors">
+                <div className="mt-4 flex items-center justify-between text-muted-foreground text-xs transition-colors">
                   <span>Keyboard: ← → to navigate</span>
                   <div className="flex items-center gap-2">
                     <button
@@ -835,13 +835,13 @@ export function AdminKYCPage() {
                   </div>
                 )}
               </div>
-              <div className="w-full lg:w-2/5 bg-white dark:bg-slate-900 p-6 overflow-y-auto transition-colors">
+              <div className="w-full lg:w-2/5 bg-card dark:bg-slate-900 p-6 overflow-y-auto transition-colors">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-white transition-colors">
                       Supplier Information
                     </h3>
-                    <div className="mt-3 grid gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                    <div className="mt-3 grid gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                       <p>
                         <strong>Business:</strong>{' '}
                         {reviewItem.seller.businessName}
@@ -870,10 +870,10 @@ export function AdminKYCPage() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-white transition-colors">
                       Checklist
                     </h3>
-                    <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                    <div className="mt-3 space-y-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                       {DOC_CHECKLIST.map((item) => (
                         <label key={item} className="flex items-center gap-2">
                           <input
@@ -886,7 +886,7 @@ export function AdminKYCPage() {
                                   : prev.filter((entry) => entry !== item),
                               )
                             }}
-                            className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500 transition-colors"
+                            className="rounded border-border dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500 transition-colors"
                           />
                           {item}
                         </label>
@@ -917,41 +917,41 @@ export function AdminKYCPage() {
                     </button>
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+                    <label className="text-sm font-semibold text-foreground dark:text-white transition-colors">
                       Internal Notes
                     </label>
                     <textarea
                       value={internalNotes}
                       onChange={(e) => setInternalNotes(e.target.value)}
                       placeholder="Notes for audit trail"
-                      className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
+                      className="mt-2 w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                       rows={4}
                     />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+                    <h3 className="text-sm font-semibold text-foreground dark:text-white transition-colors">
                       Audit Trail
                     </h3>
-                    <div className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                    <div className="mt-3 space-y-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                       {reviewItem.auditTrail?.map((entry: any) => (
                         <div
                           key={entry.id}
-                          className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
+                          className="rounded-lg border border-border dark:border-slate-800 px-3 py-2 transition-colors"
                         >
-                          <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                          <p className="font-medium text-foreground dark:text-slate-200 transition-colors">
                             {entry.action}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                             {entry.actor} • {entry.time}
                           </p>
                           {entry.notes && (
-                            <p className="text-xs text-slate-500 dark:text-slate-500 transition-colors">
+                            <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                               Notes: {entry.notes}
                             </p>
                           )}
                         </div>
                       )) || (
-                        <p className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                           No audit logs available.
                         </p>
                       )}
@@ -966,22 +966,22 @@ export function AdminKYCPage() {
 
       {approveOpen && reviewItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <div className="w-full max-w-lg rounded-2xl bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="text-green-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-foreground">
                   Approve KYC for {reviewItem.seller.businessName}?
                 </h2>
               </div>
               <button
                 onClick={() => setApproveOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-3 text-sm text-muted-foreground">
               <p>Checklist summary:</p>
               <ul className="list-disc pl-5 space-y-1">
                 {checklist.map((item) => (
@@ -989,10 +989,10 @@ export function AdminKYCPage() {
                 ))}
               </ul>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
               <button
                 onClick={() => setApproveOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-border px-4 py-2 text-sm"
               >
                 Cancel
               </button>
@@ -1009,22 +1009,22 @@ export function AdminKYCPage() {
 
       {rejectOpen && reviewItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <div className="w-full max-w-lg rounded-2xl bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex items-center gap-2">
                 <Ban className="text-red-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-foreground">
                   Reject KYC for {reviewItem.seller.businessName}
                 </h2>
               </div>
               <button
                 onClick={() => setRejectOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-3 text-sm text-muted-foreground">
               {REJECTION_REASONS.map((reason) => (
                 <label key={reason} className="flex items-center gap-2">
                   <input
@@ -1046,21 +1046,21 @@ export function AdminKYCPage() {
                   value={rejectOther}
                   onChange={(e) => setRejectOther(e.target.value)}
                   placeholder="Other reason (required)"
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                 />
               )}
               <textarea
                 value={rejectFeedback}
                 onChange={(e) => setRejectFeedback(e.target.value)}
                 placeholder="Detailed feedback (required)"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
               <button
                 onClick={() => setRejectOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-border px-4 py-2 text-sm"
               >
                 Cancel
               </button>
@@ -1077,34 +1077,34 @@ export function AdminKYCPage() {
 
       {requestInfoOpen && reviewItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <div className="w-full max-w-lg rounded-2xl bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex items-center gap-2">
                 <MessageSquare className="text-blue-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-foreground">
                   Request More Info
                 </h2>
               </div>
               <button
                 onClick={() => setRequestInfoOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600">
+            <div className="px-6 py-5 space-y-3 text-sm text-muted-foreground">
               <textarea
                 value={requestMessage}
                 onChange={(e) => setRequestMessage(e.target.value)}
                 placeholder="What additional information is needed?"
-                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-border px-3 py-2 text-sm"
                 rows={4}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
               <button
                 onClick={() => setRequestInfoOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-border px-4 py-2 text-sm"
               >
                 Cancel
               </button>
@@ -1121,29 +1121,29 @@ export function AdminKYCPage() {
 
       {assignOpen && reviewItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <div className="w-full max-w-md rounded-2xl bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex items-center gap-2">
-                <User className="text-slate-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <User className="text-muted-foreground" size={20} />
+                <h2 className="text-lg font-semibold text-foreground">
                   Assignment
                 </h2>
               </div>
               <button
                 onClick={() => setAssignOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600">
+            <div className="px-6 py-5 text-sm text-muted-foreground">
               This action will assign the review to you and prevent others from
               editing.
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
               <button
                 onClick={() => setAssignOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-border px-4 py-2 text-sm"
               >
                 Cancel
               </button>
@@ -1160,28 +1160,28 @@ export function AdminKYCPage() {
 
       {bulkApproveOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+          <div className="w-full max-w-lg rounded-2xl bg-card shadow-xl">
+            <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex items-center gap-2">
                 <FileCheck className="text-green-600" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900">
+                <h2 className="text-lg font-semibold text-foreground">
                   Bulk Approve Selected KYCs?
                 </h2>
               </div>
               <button
                 onClick={() => setBulkApproveOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg"
+                className="p-2 hover:bg-muted rounded-lg"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600">
+            <div className="px-6 py-5 text-sm text-muted-foreground">
               Only use this for clear, straightforward cases.
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
+            <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
               <button
                 onClick={() => setBulkApproveOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                className="rounded-lg border border-border px-4 py-2 text-sm"
               >
                 Cancel
               </button>

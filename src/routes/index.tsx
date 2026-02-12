@@ -96,7 +96,7 @@ function HomePage() {
 
       {/* Categories Grid - Mobile/Tablet */}
       <section className="lg:hidden max-w-[1440px] mx-auto px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
+        <h2 className="text-xl font-bold text-foreground mb-4">
           Shop by Category
         </h2>
         <CategoryList categories={mainCategories} />

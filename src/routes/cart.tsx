@@ -241,7 +241,7 @@ function MoqWarningBanner({
           {groupedBySupplier.map(({ supplier, items: supplierItems }) => (
             <div
               key={supplier?.id || 'unknown'}
-              className="bg-white rounded-lg border border-red-100 overflow-hidden"
+              className="bg-card rounded-lg border border-red-100 overflow-hidden"
             >
               {/* Supplier Header */}
               <div className="px-3 py-2 bg-red-50 border-b border-red-100 flex items-center gap-2">
@@ -271,7 +271,7 @@ function MoqWarningBanner({
                       <Link
                         to="/products/$productSlug"
                         params={{ productSlug: item.productId.toString() }}
-                        className="text-sm font-medium text-gray-900 hover:text-orange-600 line-clamp-1 flex items-center gap-1"
+                        className="text-sm font-medium text-foreground hover:text-orange-600 line-clamp-1 flex items-center gap-1"
                       >
                         {item.productName}
                         <ExternalLink
@@ -289,7 +289,7 @@ function MoqWarningBanner({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => onRemoveItem(item.id)}
-                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                         title="Remove item"
                         aria-label={`Remove ${item.productName}`}
                       >
@@ -405,12 +405,12 @@ function CartItemRow({
   return (
     <div
       className={`
-        relative flex flex-col sm:flex-row gap-4 p-4 bg-white rounded-lg border-2
+        relative flex flex-col sm:flex-row gap-4 p-4 bg-card rounded-lg border-2
         transition-all duration-300 ease-in-out
         ${isRemoving ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100'}
         ${isBelowMoq ? 'border-amber-300 bg-amber-50/30 shadow-amber-100' : 'border-transparent'}
         ${isLocked && !isBelowMoq ? 'border-orange-200 bg-orange-50/20' : ''}
-        ${!isBelowMoq && !isLocked ? 'border-gray-100 hover:shadow-md hover:border-gray-200' : ''}
+        ${!isBelowMoq && !isLocked ? 'border-border hover:shadow-md hover:border-border' : ''}
         ${isUpdating ? 'ring-2 ring-green-400 ring-opacity-50' : ''}
         ${isHighlighted ? 'ring-2 ring-green-300 bg-green-50/40 border-green-200' : ''}
       `}
@@ -452,13 +452,13 @@ function CartItemRow({
             <Link
               to="/products/$productSlug"
               params={{ productSlug: item.productId.toString() }}
-              className="text-base font-medium text-gray-900 hover:text-orange-600 transition-colors line-clamp-2"
+              className="text-base font-medium text-foreground hover:text-orange-600 transition-colors line-clamp-2"
             >
               {item.productName}
             </Link>
 
             {showSupplier && supplier && (
-              <div className="flex items-center gap-1 mt-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
                 {supplier.verified && (
                   <BadgeCheck
                     size={14}
@@ -472,7 +472,7 @@ function CartItemRow({
 
           <button
             onClick={handleRemove}
-            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+            className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
             title="Remove from cart"
             aria-label={`Remove ${item.productName} from cart`}
           >
@@ -485,7 +485,7 @@ function CartItemRow({
           <span className="text-lg font-bold text-orange-600">
             {formatCurrency(item.lineTotal)}
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground">
             ({formatCurrency(item.unitPrice)} each)
           </span>
         </div>
@@ -502,7 +502,7 @@ function CartItemRow({
           <span
             className={`
             inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium
-            ${isBelowMoq ? 'text-amber-800 bg-amber-200' : 'text-gray-600 bg-gray-100'}
+            ${isBelowMoq ? 'text-amber-800 bg-amber-200' : 'text-muted-foreground bg-gray-100'}
           `}
           >
             <Package size={12} />
@@ -548,7 +548,7 @@ function CartItemRow({
                     text-sm font-medium rounded-lg transition-all
                     ${
                       isLocked
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        ? 'bg-gray-100 text-muted-foreground cursor-not-allowed'
                         : 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow'
                     }
                   `}
@@ -564,7 +564,7 @@ function CartItemRow({
 
               <button
                 onClick={handleRemove}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-white border border-amber-300 text-amber-700 text-sm font-medium rounded-lg hover:bg-amber-50 transition-colors"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-card border border-amber-300 text-amber-700 text-sm font-medium rounded-lg hover:bg-amber-50 transition-colors"
               >
                 <Trash2 size={14} />
                 Remove
@@ -579,13 +579,13 @@ function CartItemRow({
         <div
           className={`
           flex items-center border-2 rounded-lg overflow-hidden transition-colors
-          ${isLocked ? 'bg-gray-100 border-gray-200' : 'bg-white'}
-          ${isBelowMoq ? 'border-amber-400' : 'border-gray-200'}
+          ${isLocked ? 'bg-gray-100 border-border' : 'bg-card'}
+          ${isBelowMoq ? 'border-amber-400' : 'border-border'}
         `}
         >
           <button
             onClick={handleDecrement}
-            className="p-2.5 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="p-2.5 hover:bg-muted text-muted-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             disabled={item.quantity <= 1 || isLocked}
             title={isLocked ? 'Quantity fixed for quote' : 'Decrease quantity'}
             aria-label="Decrease quantity"
@@ -607,13 +607,13 @@ function CartItemRow({
               w-14 text-center font-bold border-x-2
               focus:outline-none focus:bg-orange-50
               disabled:bg-gray-100 disabled:cursor-not-allowed
-              ${isBelowMoq ? 'border-amber-300 text-amber-700 bg-amber-50' : 'border-gray-200 text-gray-900'}
+              ${isBelowMoq ? 'border-amber-300 text-amber-700 bg-amber-50' : 'border-border text-foreground'}
             `}
           />
 
           <button
             onClick={handleIncrement}
-            className="p-2.5 hover:bg-gray-100 text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="p-2.5 hover:bg-muted text-muted-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             disabled={item.quantity >= item.stock || isLocked}
             title={isLocked ? 'Quantity fixed for quote' : 'Increase quantity'}
             aria-label="Increase quantity"
@@ -666,8 +666,8 @@ function SupplierGroup({
   return (
     <div
       className={`
-      border rounded-xl bg-white overflow-hidden shadow-sm transition-all
-      ${moqViolationCount > 0 ? 'border-amber-200' : 'border-gray-200'}
+      border rounded-xl bg-card overflow-hidden shadow-sm transition-all
+      ${moqViolationCount > 0 ? 'border-amber-200' : 'border-border'}
     `}
     >
       {/* Supplier Header */}
@@ -683,22 +683,22 @@ function SupplierGroup({
         }}
         className={`
           w-full flex items-center justify-between p-4 transition-colors
-          ${moqViolationCount > 0 ? 'bg-amber-50 hover:bg-amber-100' : 'bg-gray-50 hover:bg-gray-100'}
+          ${moqViolationCount > 0 ? 'bg-amber-50 hover:bg-amber-100' : 'bg-muted hover:bg-muted'}
         `}
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
           <div
-            className={`p-2 rounded-lg shadow-sm ${moqViolationCount > 0 ? 'bg-amber-100' : 'bg-white'}`}
+            className={`p-2 rounded-lg shadow-sm ${moqViolationCount > 0 ? 'bg-amber-100' : 'bg-card'}`}
           >
             <Store
               size={20}
-              className={moqViolationCount > 0 ? 'text-amber-600' : 'text-gray-600'}
+              className={moqViolationCount > 0 ? 'text-amber-600' : 'text-muted-foreground'}
             />
           </div>
           <div className="text-left">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-foreground">
                 {breakdown.supplierName}
               </span>
               {supplier?.verified && (
@@ -710,7 +710,7 @@ function SupplierGroup({
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               {breakdown.itemCount} item{breakdown.itemCount > 1 ? 's' : ''} ·
               Subtotal: {formatCurrency(breakdown.subtotal)}
             </div>
@@ -719,8 +719,8 @@ function SupplierGroup({
 
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
-            <div className="text-sm text-gray-500">Delivery</div>
-            <div className="font-medium text-gray-900">
+            <div className="text-sm text-muted-foreground">Delivery</div>
+            <div className="font-medium text-foreground">
               {breakdown.deliveryFee === 0 ? (
                 <span className="text-green-600">Free</span>
               ) : (
@@ -729,9 +729,9 @@ function SupplierGroup({
             </div>
           </div>
           {isExpanded ? (
-            <ChevronUp size={20} className="text-gray-400" />
+            <ChevronUp size={20} className="text-muted-foreground" />
           ) : (
-            <ChevronDown size={20} className="text-gray-400" />
+            <ChevronDown size={20} className="text-muted-foreground" />
           )}
         </div>
       </div>
@@ -743,7 +743,7 @@ function SupplierGroup({
         ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}
       `}
       >
-        <div className="p-4 space-y-3 border-t bg-gray-50/50">
+        <div className="p-4 space-y-3 border-t bg-muted/50">
           {breakdown.items.map((item) => (
             <CartItemRow
               key={item.id}
@@ -755,8 +755,8 @@ function SupplierGroup({
         </div>
 
         {/* Supplier Footer */}
-        <div className="px-4 py-3 border-t bg-white flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="px-4 py-3 border-t bg-card flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Truck size={16} />
             <span>
               {breakdown.deliveryFee === 0
@@ -764,7 +764,7 @@ function SupplierGroup({
                 : `Delivery: ${formatCurrency(breakdown.deliveryFee)}`}
             </span>
           </div>
-          <div className="font-semibold text-gray-900">
+          <div className="font-semibold text-foreground">
             {formatCurrency(breakdown.subtotal + breakdown.deliveryFee)}
           </div>
         </div>
@@ -780,13 +780,13 @@ function SupplierGroup({
 function EmptyCart() {
   return (
     <div className="text-center py-16 px-4">
-      <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
-        <ShoppingBag size={48} className="text-gray-300" />
+      <div className="inline-flex items-center justify-center w-24 h-24 bg-muted rounded-full mb-6">
+        <ShoppingBag size={48} className="text-muted-foreground" />
       </div>
-      <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+      <h2 className="text-2xl font-semibold text-foreground mb-2">
         Your cart is empty
       </h2>
-      <p className="text-gray-500 mb-8 max-w-md mx-auto">
+      <p className="text-muted-foreground mb-8 max-w-md mx-auto">
         Looks like you haven\'t added any products yet. Start exploring our
         catalog to find the best deals for your business.
       </p>
@@ -800,7 +800,7 @@ function EmptyCart() {
         </Link>
         <Link
           to="/search"
-          className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-700 px-6 py-3 rounded-lg font-medium border transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-card hover:bg-muted text-foreground px-6 py-3 rounded-lg font-medium border transition-colors"
         >
           Browse Products
         </Link>
@@ -856,7 +856,7 @@ function CouponSection() {
 
   return (
     <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-foreground mb-2">
         Promo Code
       </label>
 
@@ -866,7 +866,7 @@ function CouponSection() {
             <div className="flex-1 relative">
               <Tag
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
               <input
                 type="text"
@@ -879,8 +879,8 @@ function CouponSection() {
                 className={`
                   w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm uppercase
                   focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
-                  disabled:bg-gray-50 disabled:cursor-not-allowed
-                  ${error ? 'border-red-300 bg-red-50' : 'border-gray-200'}
+                  disabled:bg-muted disabled:cursor-not-allowed
+                  ${error ? 'border-red-300 bg-red-50' : 'border-border'}
                 `}
               />
             </div>
@@ -892,7 +892,7 @@ function CouponSection() {
                 flex items-center gap-2 min-w-[90px] justify-center
                 ${
                   isValidating || !couponInput.trim()
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    ? 'bg-gray-200 text-muted-foreground cursor-not-allowed'
                     : 'bg-gray-900 hover:bg-gray-800 text-white'
                 }
               `}
@@ -918,8 +918,8 @@ function CouponSection() {
             </div>
           )}
 
-          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-500 mb-2 font-medium">
+          <div className="mt-3 p-3 bg-muted rounded-lg">
+            <p className="text-xs text-muted-foreground mb-2 font-medium">
               Available coupons:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -927,7 +927,7 @@ function CouponSection() {
                 <button
                   key={code}
                   onClick={() => setCouponInput(code)}
-                  className="text-xs px-2 py-1 bg-white border border-gray-200 rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                  className="text-xs px-2 py-1 bg-card border border-border rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
                 >
                   {code}
                 </button>
@@ -1007,19 +1007,19 @@ function OrderSummary({
   const hasDiscount = cart.discount > 0
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+    <div className="bg-card rounded-xl shadow-sm border overflow-hidden">
       <div className="p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Order Summary</h2>
+        <h2 className="text-lg font-bold text-foreground mb-4">Order Summary</h2>
 
         <CouponSection />
 
         <div className="space-y-3 text-sm">
-          <div className="flex justify-between text-gray-600">
+          <div className="flex justify-between text-muted-foreground">
             <span>Subtotal ({cart.items.length} items)</span>
             <span className="font-medium">{formatCurrency(cart.subtotal)}</span>
           </div>
 
-          <div className="flex justify-between text-gray-600">
+          <div className="flex justify-between text-muted-foreground">
             <span className="flex items-center gap-1">
               <Truck size={14} />
               Delivery
@@ -1053,9 +1053,9 @@ function OrderSummary({
 
         <div className="flex justify-between items-center mt-4 pt-4 border-t">
           <div>
-            <span className="text-base font-bold text-gray-900">Total</span>
+            <span className="text-base font-bold text-foreground">Total</span>
             {hasDiscount && (
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 <span className="line-through">
                   {formatCurrency(originalTotal)}
                 </span>
@@ -1124,14 +1124,14 @@ function OrderSummary({
           )}
         </button>
 
-        <p className="text-center text-xs text-gray-500 mt-3">
+        <p className="text-center text-xs text-muted-foreground mt-3">
           Secure checkout · SSL encrypted
         </p>
       </div>
 
       {cart.supplierBreakdown.length > 1 && (
-        <div className="px-6 py-4 bg-gray-50 border-t">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">
+        <div className="px-6 py-4 bg-muted border-t">
+          <h3 className="text-sm font-medium text-foreground mb-3">
             Delivery by Supplier
           </h3>
           <div className="space-y-2">
@@ -1140,10 +1140,10 @@ function OrderSummary({
                 key={supplier.supplierId}
                 className="flex justify-between text-sm"
               >
-                <span className="text-gray-600 truncate mr-2">
+                <span className="text-muted-foreground truncate mr-2">
                   {supplier.supplierName}
                 </span>
-                <span className="font-medium text-gray-900 flex-shrink-0">
+                <span className="font-medium text-foreground flex-shrink-0">
                   {supplier.deliveryFee === 0 ? (
                     <span className="text-green-600">Free</span>
                   ) : (
@@ -1303,7 +1303,7 @@ function CartPage() {
   const isSingleSupplier = cart.supplierBreakdown.length === 1
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       <Toast
         message={toast.message}
         isVisible={toast.isVisible}
@@ -1318,10 +1318,10 @@ function CartPage() {
               <ShoppingCart size={24} className="text-orange-600" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
                 Shopping Cart
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 {cartCount} {cartCount === 1 ? 'item' : 'items'}
                 {moqViolationCount > 0 && (
                   <span className="text-amber-600 ml-2">
@@ -1336,7 +1336,7 @@ function CartPage() {
           {cart.items.length > 0 && (
             <button
               onClick={clearCart}
-              className="text-sm text-gray-500 hover:text-red-500 transition-colors flex items-center gap-1"
+              className="text-sm text-muted-foreground hover:text-red-500 transition-colors flex items-center gap-1"
             >
               <Trash2 size={16} />
               <span className="hidden sm:inline">Clear Cart</span>
@@ -1364,7 +1364,7 @@ function CartPage() {
         )}
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-16 text-gray-500">
+          <div className="flex items-center justify-center py-16 text-muted-foreground">
             Loading your cart...
           </div>
         ) : cart.items.length === 0 ? (
@@ -1410,7 +1410,7 @@ function CartPage() {
 
               {/* Items grouped by supplier or flat list */}
               {isSingleSupplier ? (
-                <div className="bg-white rounded-xl border p-4 space-y-3">
+                <div className="bg-card rounded-xl border p-4 space-y-3">
                   {cart.items.map((item) => (
                     <CartItemRow
                       key={item.id}
@@ -1456,13 +1456,13 @@ function CartPage() {
       {cart.items.length > 0 && (
         <div
           className={`
-          lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-40
+          lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg p-4 z-40
           ${moqViolationCount > 0 ? 'pb-safe' : ''}
         `}
         >
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm text-gray-500">Total</p>
+              <p className="text-sm text-muted-foreground">Total</p>
               <p className="text-xl font-bold text-orange-600">
                 {formatCurrency(cart.total)}
               </p>
