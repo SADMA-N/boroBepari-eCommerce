@@ -272,7 +272,10 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
         updatedAt: new Date(),
       })
       .where(eq(schema.sellerProducts.id, data.id))
-      .returning({ id: schema.sellerProducts.id, slug: schema.sellerProducts.slug })
+      .returning({
+        id: schema.sellerProducts.id,
+        slug: schema.sellerProducts.slug,
+      })
 
     // Sync with public products table if mode is publish
     if (data.mode === 'publish') {
@@ -281,7 +284,7 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
           where: eq(schema.sellers.id, context.seller.id),
         })
 
-        if (updated.publishedProductId) {
+        if (existing.publishedProductId) {
           // Update existing public product
           await db
             .update(schema.products)
@@ -298,7 +301,7 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
               tieredPricing: tieredPricingData,
               updatedAt: new Date(),
             })
-            .where(eq(schema.products.id, updated.publishedProductId))
+            .where(eq(schema.products.id, existing.publishedProductId))
 
           // Auto-approve
           await db
