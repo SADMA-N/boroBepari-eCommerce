@@ -1,20 +1,20 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
-import { getSupplierRfqs } from '@/lib/supplier-server'
+import { api } from '@/api/client'
 import { formatBDT } from '@/data/mock-products'
 import QuoteResponseModal from '@/components/QuoteResponseModal'
-import { getAuthSession } from '@/lib/auth-server'
 
 export const Route = createFileRoute('/supplier/dashboard')({
   beforeLoad: async () => {
     // Basic auth check, ideally check for supplier role too
-    const session: any = await getAuthSession()
+    const session: any = await api.auth.buyer.session()
     if (!session?.user) {
       throw redirect({ to: '/login' })
     }
   },
   loader: async () => {
-    const rfqs = await getSupplierRfqs()
+    const token = typeof window !== 'undefined' ? localStorage.getItem('seller_token') || '' : ''
+    const rfqs = await api.supplier.rfq.list(token)
     return { rfqs }
   },
   component: SupplierDashboard,

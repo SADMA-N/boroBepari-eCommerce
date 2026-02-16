@@ -1,19 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { proxyAllApiMethods } from '@/api/proxy'
 
 export const Route = createFileRoute('/api/rfq/quote/$quoteId/accept')({
   server: {
-    handlers: {
-      PATCH: ({ params }) => {
-        const { quoteId } = params
-        // TODO: Update quote status to 'accepted'
-        // TODO: Update RFQ status to 'accepted' or 'converted'
-        return new Response(
-          JSON.stringify({ message: `Quote ${quoteId} accepted` }),
-          {
-            headers: { 'Content-Type': 'application/json' },
-          },
-        )
-      },
-    },
+    handlers: proxyAllApiMethods,
   },
 })

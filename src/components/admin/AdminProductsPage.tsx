@@ -29,11 +29,8 @@ import {
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import {
-  getAdminSellerProducts,
-  approveSellerProduct,
-  declineSellerProduct,
-} from '@/lib/admin-product-server'
+import { useTheme } from '@/contexts/ThemeContext'
+import { api } from '@/api/client'
 
 type ProductStatus =
   | 'published'
@@ -44,6 +41,7 @@ type ProductStatus =
   | 'pending'
   | 'declined'
   | 'accepted'
+  | 'deleted'
 type StockFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
 type SortKey = 'name' | 'price' | 'date' | 'orders' | 'flags'
 type DetailTab = 'info' | 'pricing' | 'reports' | 'analytics'
@@ -89,6 +87,8 @@ type Product = {
   sellerBusinessName?: string
   adminNotes?: string
   slug?: string
+  deletedAt?: string
+  deletedBy?: string
 }
 
 const CATEGORIES = [
@@ -302,6 +302,7 @@ const STATUS_TABS: Array<{ label: string; value: ProductStatus | 'all' }> = [
   { label: 'Accepted', value: 'accepted' },
   { label: 'Declined', value: 'declined' },
   { label: 'Draft', value: 'draft' },
+  { label: 'Deleted by Seller', value: 'deleted' },
   { label: 'Flagged', value: 'flagged' },
   { label: 'Out of Stock', value: 'out_of_stock' },
   { label: 'Suspended', value: 'suspended' },
@@ -376,11 +377,23 @@ function statusBadge(status: ProductStatus) {
           Suspended
         </span>
       )
+    case 'deleted':
+      return (
+        <span className="rounded-full bg-slate-200 dark:bg-slate-700 px-2.5 py-1 text-xs text-slate-700 dark:text-slate-300">
+          Deleted by Seller
+        </span>
+      )
   }
 }
 
 export function AdminProductsPage() {
-  const { can } = useAdminAuth()
+  const { theme } = useTheme()
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const { can, getToken } = useAdminAuth()
   const canView = can('products.view')
   const canModerate = can('products.moderate')
   const canDelete = can('products.delete')
@@ -419,10 +432,8 @@ export function AdminProductsPage() {
   const [actionLoading, setActionLoading] = useState(false)
 
   const refreshSellerProducts = () => {
-    const token = localStorage.getItem('admin_token') || ''
-    getAdminSellerProducts({
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const token = getToken() || ''
+    api.admin.products.list(token)
       .then((data) => {
         const mapped: Array<Product> = data.map((sp) => ({
           id: `SP-${sp.id}`,
@@ -434,14 +445,14 @@ export function AdminProductsPage() {
           price: sp.price,
           moq: sp.moq,
           stock: sp.stock,
-          status: sp.status as ProductStatus,
+          status: (sp.moderationStatus ?? sp.status) as ProductStatus, // eslint-disable-line @typescript-eslint/no-unnecessary-condition
           orders: 0,
           flags: 0,
           addedAt: sp.createdAt.split('T')[0],
           images: sp.images,
-          description: sp.description || '',
-          specs: sp.specifications?.map((s) => `${s.key}: ${s.value}`) || [],
-          tieredPricing: sp.tieredPricing?.map((t) => ({ min: t.minQty, price: t.price })) || [],
+          description: sp.description || '',  
+          specs: (sp.specifications as Array<{ key: string; value: string }> | undefined)?.map((s) => `${s.key}: ${s.value}`) ?? [],
+          tieredPricing: (sp.tieredPricing as Array<{ minQty: number; price: number }> | undefined)?.map((t) => ({ min: t.minQty, price: t.price })) ?? [],
           stockHistory: [],
           priceHistory: [],
           reports: [],
@@ -449,6 +460,8 @@ export function AdminProductsPage() {
           sellerProductId: sp.id,
           sellerBusinessName: sp.sellerBusinessName,
           adminNotes: sp.adminNotes ?? undefined,
+          deletedAt: sp.deletedAt ?? undefined,
+          deletedBy: sp.deletedBy ?? undefined,
         }))
         setSellerProducts(mapped)
       })
@@ -537,6 +550,7 @@ export function AdminProductsPage() {
   const pendingCount = allProducts.filter((p) => p.status === 'pending').length
   const flaggedCount = allProducts.filter((p) => p.flags > 0).length
   const suspendedCount = allProducts.filter((p) => p.status === 'suspended').length
+  const deletedCount = allProducts.filter((p) => p.status === 'deleted').length
   const outOfStockCount = allProducts.filter((p) => p.stock === 0).length
 
   const categoryBreakdown = CATEGORIES.map((category) => ({
@@ -609,6 +623,48 @@ export function AdminProductsPage() {
     setExportOpen(false)
   }
 
+  const restoreDeletedProduct = async (product: Product) => {
+    if (!product.sellerProductId) return
+
+    setActionLoading(true)
+    const token = getToken() || ''
+
+    try {
+      await api.admin.products.restore(product.sellerProductId.toString(), token)
+
+      setSellerProducts((prev) =>
+        prev.map((p) =>
+          p.sellerProductId === product.sellerProductId
+            ? {
+                ...p,
+                status: 'draft' as ProductStatus,
+                deletedAt: undefined,
+                deletedBy: undefined,
+              }
+            : p,
+        ),
+      )
+
+      setDetailProduct((prev) =>
+        prev && prev.sellerProductId === product.sellerProductId
+          ? {
+              ...prev,
+              status: 'draft',
+              deletedAt: undefined,
+              deletedBy: undefined,
+            }
+          : prev,
+      )
+
+      refreshSellerProducts()
+      setOpenMenuId(null)
+    } catch (err) {
+      console.error('Restore failed:', err)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   return (
     <AdminProtectedRoute requiredPermissions={['products.view']}>
       <div className="space-y-6">
@@ -628,6 +684,11 @@ export function AdminProductsPage() {
                 <Flag size={12} />
                 {flaggedCount} flagged
               </span>
+              {deletedCount > 0 && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-slate-200 dark:bg-slate-700 px-3 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                  {deletedCount} deleted by seller
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -751,6 +812,13 @@ export function AdminProductsPage() {
                   className={`ml-2 rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400'}`}
                 >
                   {flaggedCount}
+                </span>
+              )}
+              {tab.value === 'deleted' && deletedCount > 0 && (
+                <span
+                  className={`ml-2 rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                >
+                  {deletedCount}
                 </span>
               )}
             </button>
@@ -934,7 +1002,9 @@ export function AdminProductsPage() {
               <tbody className="divide-y divide-border dark:divide-slate-800 transition-colors">
                 {sortedProducts.map((product) => {
                   const rowTone =
-                    product.status === 'suspended'
+                    product.status === 'deleted'
+                      ? 'bg-slate-100 dark:bg-slate-800/40'
+                      : product.status === 'suspended'
                       ? 'bg-red-50 dark:bg-red-900/10'
                       : product.flags > 0
                         ? 'bg-yellow-50 dark:bg-yellow-900/10'
@@ -1063,11 +1133,8 @@ export function AdminProductsPage() {
                                       onClick={() => {
                                         setOpenMenuId(null)
                                         setActionLoading(true)
-                                        const token = localStorage.getItem('admin_token') || ''
-                                        approveSellerProduct({
-                                          data: { sellerProductId: product.sellerProductId! },
-                                          headers: { Authorization: `Bearer ${token}` },
-                                        })
+                                        const token = getToken() || ''
+                                        api.admin.products.approve(product.sellerProductId!.toString(), token)
                                           .then(() => {
                                             setSellerProducts((prev) =>
                                               prev.map((p) =>
@@ -1107,7 +1174,9 @@ export function AdminProductsPage() {
                                     </button>
                                   </>
                                 )}
-                                {product.status !== 'published' && product.status !== 'pending' && (
+                                {product.status !== 'published' &&
+                                  product.status !== 'pending' &&
+                                  product.status !== 'deleted' && (
                                   <button
                                     onClick={() => setOpenMenuId(null)}
                                     disabled={!canModerate}
@@ -1117,6 +1186,19 @@ export function AdminProductsPage() {
                                     Activate Product
                                   </button>
                                 )}
+                                {product.status === 'deleted' &&
+                                  product.sellerProductId && (
+                                    <button
+                                      onClick={() => {
+                                        restoreDeletedProduct(product)
+                                      }}
+                                      disabled={!canModerate || actionLoading}
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors disabled:opacity-50"
+                                    >
+                                      <CheckCircle size={14} />
+                                      Restore Product
+                                    </button>
+                                  )}
                                 <button
                                   onClick={() => {
                                     setSuspendProduct(product)
@@ -1318,6 +1400,19 @@ export function AdminProductsPage() {
                       </p>
                     </div>
                   </div>
+                  {detailProduct.deletedAt && (
+                    <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-4 transition-colors">
+                      <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
+                        Deletion Record
+                      </p>
+                      <p className="mt-1 text-sm text-foreground dark:text-slate-200">
+                        Deleted by seller: {detailProduct.deletedBy ?? 'Unknown'}
+                      </p>
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                        Deleted at: {new Date(detailProduct.deletedAt).toLocaleString()}
+                      </p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
                       Description
@@ -1365,13 +1460,8 @@ export function AdminProductsPage() {
                       <button
                         onClick={() => {
                           setActionLoading(true)
-                          const token = localStorage.getItem('admin_token') || ''
-                          approveSellerProduct({
-                            data: {
-                              sellerProductId: detailProduct.sellerProductId!,
-                            },
-                            headers: { Authorization: `Bearer ${token}` },
-                          })
+                          const token = getToken() || ''
+                          api.admin.products.approve(detailProduct.sellerProductId!.toString(), token)
                             .then(() => {
                               setSellerProducts((prev) =>
                                 prev.map((p) =>
@@ -1407,6 +1497,20 @@ export function AdminProductsPage() {
                       </button>
                     </div>
                   )}
+                  {detailProduct.status === 'deleted' &&
+                    detailProduct.sellerProductId && (
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          onClick={() => {
+                            restoreDeletedProduct(detailProduct)
+                          }}
+                          disabled={!canModerate || actionLoading}
+                          className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/20 disabled:opacity-50"
+                        >
+                          Restore as Draft
+                        </button>
+                      </div>
+                    )}
                 </div>
               )}
 
@@ -1932,14 +2036,8 @@ export function AdminProductsPage() {
                 onClick={() => {
                   if (!declineModalProduct.sellerProductId) return
                   setActionLoading(true)
-                  const token = localStorage.getItem('admin_token') || ''
-                  declineSellerProduct({
-                    data: {
-                      sellerProductId: declineModalProduct.sellerProductId!,
-                      reason: declineReason,
-                    },
-                    headers: { Authorization: `Bearer ${token}` },
-                  })
+                  const token = getToken() || ''
+                  api.admin.products.decline(declineModalProduct.sellerProductId!.toString(), { reason: declineReason }, token)
                     .then(() => {
                       setSellerProducts((prev) =>
                         prev.map((p) =>

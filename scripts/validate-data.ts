@@ -1,11 +1,11 @@
+import { count, eq } from 'drizzle-orm';
 import { db } from '@/db';
-import { products, sellers, suppliers, categories } from '@/db/schema';
-import { eq, count } from 'drizzle-orm';
+import { categories, products, sellers, suppliers } from '@/db/schema';
 
 async function validateData() {
   console.log("Starting data validation...\n");
-  let errors: string[] = [];
-  let warnings: string[] = [];
+  const errors: Array<string> = [];
+  const warnings: Array<string> = [];
 
   try {
     // 1. Fetch Data
@@ -35,7 +35,7 @@ async function validateData() {
     console.log("Checking Products...");
     for (const product of allProducts) {
       // Images
-      const images = product.images as string[];
+      const images = product.images as Array<string>;
       if (!Array.isArray(images) || images.length < 3) {
         errors.push(`Product "${product.name}" (ID: ${product.id}) has fewer than 3 images.`);
       }
@@ -46,7 +46,7 @@ async function validateData() {
       }
 
       // Specifications
-      const specs = product.specifications as any[];
+      const specs = product.specifications as Array<any>;
       if (!Array.isArray(specs) || specs.length === 0) {
         warnings.push(`Product "${product.name}" (ID: ${product.id}) has no specifications.`);
       }
@@ -69,7 +69,7 @@ async function validateData() {
       }
 
       // Tiered Pricing
-      const pricing = product.tieredPricing as any[];
+      const pricing = product.tieredPricing as Array<any>;
       if (!Array.isArray(pricing) || pricing.length === 0) {
         warnings.push(`Product "${product.name}" (ID: ${product.id}) has no tiered pricing.`);
       } else {

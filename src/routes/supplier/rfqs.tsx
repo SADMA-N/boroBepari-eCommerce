@@ -170,7 +170,7 @@ function SupplierRFQCard({
     <div className="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-100 dark:border-slate-800 p-6 hover:shadow-md transition-shadow relative overflow-hidden">
       {/* Urgent Badge */}
       {isUrgent && isActionable && (
-        <div className="absolute top-0 right-0 bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
+        <div className="absolute top-0 right-0 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
           <Timer size={12} />
           Respond in {hoursLeft}h
         </div>

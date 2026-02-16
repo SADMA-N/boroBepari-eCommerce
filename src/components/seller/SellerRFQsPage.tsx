@@ -3,7 +3,7 @@ import { ChevronDown, FileText, Filter, Search, Timer, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
-import { getSellerRfqs, sendQuote } from '@/lib/quote-server'
+import { api } from '@/api/client'
 
 type RFQStatus =
   | 'pending'
@@ -133,10 +133,8 @@ export function SellerRFQsPage() {
   useEffect(() => {
     const fetchRfqs = async () => {
       try {
-        const token = localStorage.getItem('seller_token')
-        const data = await getSellerRfqs({
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const token = localStorage.getItem('seller_token') || ''
+        const data = await api.seller.rfq.list(token)
         setRfqs(data)
       } catch (error) {
         console.error('Failed to fetch seller RFQs:', error)
@@ -445,21 +443,15 @@ export function SellerRFQsPage() {
             onClose={() => setQuoteModal(null)}
             onSend={async (quoteData) => {
               try {
-                const token = localStorage.getItem('seller_token')
-                await sendQuote({
-                  data: {
-                    rfqId: quoteModal.id,
-                    unitPrice: quoteData.unitPrice,
-                    validityPeriod: quoteData.validityPeriod,
-                    notes: quoteData.notes,
-                  },
-                  headers: { Authorization: `Bearer ${token}` },
-                })
-                
+                const token = localStorage.getItem('seller_token') || ''
+                await api.seller.rfq.sendQuote(quoteModal.id.toString(), {
+                  unitPrice: quoteData.unitPrice,
+                  validityPeriod: quoteData.validityPeriod,
+                  notes: quoteData.notes,
+                }, token)
+
                 // Refresh list
-                const updated = await getSellerRfqs({
-                  headers: { Authorization: `Bearer ${token}` },
-                })
+                const updated = await api.seller.rfq.list(token)
                 setRfqs(updated)
                 
                 setQuoteModal(null)

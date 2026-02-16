@@ -282,7 +282,7 @@ export default function FilterSidebar({
               onClick={handleVerifiedToggle}
             >
               <div
-                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                className={`absolute top-1 w-4 h-4 bg-white dark:bg-slate-100 rounded-full shadow transition-transform ${
                   filters.verifiedOnly ? 'translate-x-5' : 'translate-x-1'
                 }`}
               />

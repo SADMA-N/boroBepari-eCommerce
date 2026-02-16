@@ -1,9 +1,7 @@
 import { BadgeCheck, ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import type { SupplierDisplay } from '@/lib/product-server'
-
 interface PopularSuppliersProps {
-  suppliers: Array<SupplierDisplay>
+  suppliers: Array<any>
   title?: string
 }
 
@@ -87,7 +85,7 @@ export default function PopularSuppliers({
   )
 }
 
-function SupplierCard({ supplier }: { supplier: SupplierDisplay }) {
+function SupplierCard({ supplier }: { supplier: any }) {
   return (
     <a
       href={`/suppliers/${supplier.slug}`}

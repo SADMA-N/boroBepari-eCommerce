@@ -59,11 +59,11 @@ function MockBkashPage() {
 
   return (
     <div className="min-h-screen bg-[#E2136E] flex items-center justify-center p-4">
-      <div className="bg-card rounded-lg shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="bg-card dark:bg-slate-900 rounded-lg shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
         {/* Header */}
         <div className="bg-[#E2136E] p-4 flex items-center justify-between text-white">
           <div className="flex items-center gap-2">
-            <div className="bg-white/20 p-1.5 rounded">
+            <div className="bg-white/20 dark:bg-white/10 p-1.5 rounded">
               {/* Mock Logo */}
               <span className="font-bold text-lg">bKash</span>
             </div>
@@ -88,7 +88,7 @@ function MockBkashPage() {
 
           <div className="relative z-10 space-y-6">
             <div className="text-center mb-6">
-              <div className="inline-block p-3 bg-pink-50 rounded-full mb-3">
+              <div className="inline-block p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full mb-3">
                 <img
                   src="/img/bkash-bird.png"
                   alt=""
@@ -117,7 +117,7 @@ function MockBkashPage() {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder="01XXXXXXXXX"
-                    className="w-full outline-none text-lg text-foreground font-medium placeholder-gray-300"
+                    className="w-full outline-none text-lg text-foreground font-medium placeholder-gray-300 dark:placeholder-slate-500"
                     autoFocus
                   />
                 </div>

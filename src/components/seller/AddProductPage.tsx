@@ -13,11 +13,7 @@ import {
 } from 'lucide-react'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
-import {
-  uploadSellerProductImage,
-  submitSellerProduct,
-  updateSellerProduct,
-} from '@/lib/seller-product-server'
+import { api } from '@/api/client'
 
 type PricingTier = { id: string; minQty: string; maxQty: string; price: string }
 type SpecRow = { id: string; key: string; value: string }
@@ -683,24 +679,12 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
 
     const doSubmit = async () => {
       // Upload images first
-      const imageUrls: string[] = []
+      const imageUrls: Array<string> = []
       for (const img of images) {
         if (img.file) {
-          const arrayBuf = await img.file.arrayBuffer()
-          const base64 = btoa(
-            new Uint8Array(arrayBuf).reduce(
-              (data, byte) => data + String.fromCharCode(byte),
-              '',
-            ),
-          )
-          const result = await uploadSellerProductImage({
-            data: {
-              fileBase64: base64,
-              mimeType: img.file.type || 'image/jpeg',
-              fileName: img.file.name,
-            },
-            headers: { Authorization: `Bearer ${token}` },
-          })
+          const formData = new FormData()
+          formData.append('file', img.file)
+          const result = await api.seller.products.uploadImage(formData, token)
           imageUrls.push(result.url)
         } else {
           // Existing image
@@ -757,16 +741,10 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
 
       let resultSlug = ''
       if (initialData?.id) {
-        const res = await updateSellerProduct({
-          data: { ...payload, id: initialData.id },
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await api.seller.products.update(initialData.id.toString(), payload, token)
         resultSlug = res.slug
       } else {
-        const res = await submitSellerProduct({
-          data: payload,
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await api.seller.products.create(payload, token)
         resultSlug = res.slug
       }
       return resultSlug
@@ -1168,7 +1146,7 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
                     className={`h-6 w-11 rounded-full ${tieredPricing ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-700'} relative`}
                   >
                     <div
-                      className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${tieredPricing ? 'translate-x-5' : 'translate-x-1'}`}
+                      className={`h-5 w-5 rounded-full bg-white dark:bg-slate-100 absolute top-0.5 transition ${tieredPricing ? 'translate-x-5' : 'translate-x-1'}`}
                     />
                   </div>
                 </label>
@@ -1459,7 +1437,7 @@ export function AddProductPage({ initialData }: { initialData?: any }) {
                     className={`h-6 w-11 rounded-full ${sampleEnabled ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-700'} relative`}
                   >
                     <div
-                      className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${sampleEnabled ? 'translate-x-5' : 'translate-x-1'}`}
+                      className={`h-5 w-5 rounded-full bg-white dark:bg-slate-100 absolute top-0.5 transition ${sampleEnabled ? 'translate-x-5' : 'translate-x-1'}`}
                     />
                   </div>
                 </label>
@@ -1679,7 +1657,7 @@ function SelectField({
         </select>
         <ChevronDown
           size={16}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
       </div>
       {error && <p className="mt-1 text-xs text-red-500">{error}</p>}

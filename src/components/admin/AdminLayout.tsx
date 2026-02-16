@@ -47,7 +47,12 @@ const NAV_ITEMS: Array<{
     icon: FileCheck,
     permission: 'kyc.review',
   },
-  { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+  {
+    to: '/admin/orders',
+    label: 'Orders',
+    icon: ShoppingCart,
+    permission: 'orders.view',
+  },
   {
     to: '/admin/disputes',
     label: 'Disputes',

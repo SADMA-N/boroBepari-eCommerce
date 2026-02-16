@@ -21,7 +21,8 @@ import {
 } from 'lucide-react'
 import { addresses, user as userTable } from '@/db/schema'
 import { db } from '@/db'
-import { authMiddleware, updateUserPassword } from '@/lib/auth-server'
+import { authMiddleware } from '@/lib/auth-server'
+import { api } from '@/api/client'
 import { useAuth } from '@/contexts/AuthContext'
 import BuyerRFQsSection from '@/components/buyer/BuyerRFQsSection'
 
@@ -301,7 +302,7 @@ function AccountPage() {
               <OrdersSection orders={userData.orders} />
             )}
             {activeTab === 'rfqs' && (
-              <BuyerRFQsSection rfqs={userData.rfqs || []} />
+              <BuyerRFQsSection rfqs={userData.rfqs} />
             )}
             {activeTab === 'security' && <SecuritySection />}
           </div>
@@ -805,11 +806,9 @@ function SecuritySection() {
       setIsLoading(true)
       setMessage(null)
       try {
-        await updateUserPassword({
-          data: {
-            currentPassword: value.currentPassword,
-            newPassword: value.newPassword,
-          },
+        await api.auth.buyer.updatePassword({
+          currentPassword: value.currentPassword,
+          newPassword: value.newPassword,
         })
         setMessage({ type: 'success', text: 'Password updated successfully' })
         form.reset()

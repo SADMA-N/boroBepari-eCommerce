@@ -47,7 +47,7 @@ import type {
 } from '@/types/cart'
 import { formatCurrency } from '@/lib/cart-utils'
 import { useCouponValidation } from '@/hooks/useCouponValidation'
-import { validateCartServer } from '@/lib/cart-actions'
+import { api } from '@/api/client'
 import Toast from '@/components/Toast'
 
 export const Route = createFileRoute('/cart')({
@@ -76,27 +76,27 @@ function ServerValidationBanner({
   if (changes.length === 0) return null
 
   return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/40 rounded-xl p-4 mb-6 flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
       <AlertTriangle
-        className="text-yellow-600 mt-0.5 flex-shrink-0"
+        className="text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0"
         size={20}
       />
       <div className="flex-1">
-        <h3 className="font-bold text-yellow-800 text-sm">Cart Updated</h3>
+        <h3 className="font-bold text-yellow-800 dark:text-yellow-300 text-sm">Cart Updated</h3>
         <ul className="mt-1 space-y-1">
           {changes.map((change, idx) => (
-            <li key={idx} className="text-sm text-yellow-700">
+            <li key={idx} className="text-sm text-yellow-700 dark:text-yellow-300">
               {change.message}
             </li>
           ))}
         </ul>
-        <p className="text-xs text-yellow-600 mt-2">
+        <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
           Please review your cart items before proceeding.
         </p>
       </div>
       <button
         onClick={onDismiss}
-        className="text-yellow-500 hover:text-yellow-700"
+        className="text-yellow-500 dark:text-yellow-400 hover:text-yellow-700 dark:hover:text-yellow-200"
         aria-label="Dismiss warning"
       >
         <X size={18} />
@@ -168,7 +168,7 @@ function MoqWarningBanner({
   if (violatingItems.length === 0) return null
 
   return (
-    <div className="bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-top-2 duration-300 mb-6">
+    <div className="bg-gradient-to-r from-red-50 dark:from-red-950/30 to-orange-50 dark:to-orange-950/20 border-2 border-red-200 dark:border-red-900/40 rounded-xl overflow-hidden shadow-sm animate-in fade-in slide-in-from-top-2 duration-300 mb-6">
       {/* Header */}
       <div
         role="button"
@@ -180,19 +180,19 @@ function MoqWarningBanner({
             setIsExpanded(!isExpanded)
           }
         }}
-        className="w-full flex items-center justify-between p-4 hover:bg-red-100/50 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-red-100/50 dark:hover:bg-red-900/20 transition-colors"
         aria-expanded={isExpanded}
         aria-controls="moq-warning-content"
       >
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-red-100 rounded-lg">
-            <AlertCircle size={24} className="text-red-600" />
+          <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+            <AlertCircle size={24} className="text-red-600 dark:text-red-400" />
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-red-800">
+            <h3 className="font-bold text-red-800 dark:text-red-300">
               Cannot Proceed to Checkout
             </h3>
-            <p className="text-sm text-red-600">
+            <p className="text-sm text-red-600 dark:text-red-400">
               {violatingItems.length}{' '}
               {violatingItems.length === 1 ? "item doesn't" : "items don't"}{' '}
               meet minimum order quantity
@@ -206,15 +206,15 @@ function MoqWarningBanner({
               e.stopPropagation()
               onFixAll()
             }}
-            className="hidden sm:flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="hidden sm:flex items-center gap-2 px-4 py-2 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-400 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Zap size={16} />
             Fix All MOQ Issues
           </button>
           {isExpanded ? (
-            <ChevronUp size={20} className="text-red-400" />
+            <ChevronUp size={20} className="text-red-400 dark:text-red-300" />
           ) : (
-            <ChevronDown size={20} className="text-red-400" />
+            <ChevronDown size={20} className="text-red-400 dark:text-red-300" />
           )}
         </div>
       </div>
@@ -231,7 +231,7 @@ function MoqWarningBanner({
           {/* Mobile Fix All Button */}
           <button
             onClick={onFixAll}
-            className="sm:hidden w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="sm:hidden w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-400 text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Zap size={16} />
             Fix All MOQ Issues
@@ -241,21 +241,21 @@ function MoqWarningBanner({
           {groupedBySupplier.map(({ supplier, items: supplierItems }) => (
             <div
               key={supplier?.id || 'unknown'}
-              className="bg-card rounded-lg border border-red-100 overflow-hidden"
+              className="bg-card dark:bg-slate-900 rounded-lg border border-red-100 dark:border-red-900/40 overflow-hidden"
             >
               {/* Supplier Header */}
-              <div className="px-3 py-2 bg-red-50 border-b border-red-100 flex items-center gap-2">
-                <Store size={14} className="text-red-500" />
-                <span className="text-sm font-medium text-red-800">
+              <div className="px-3 py-2 bg-red-50 dark:bg-red-900/20 border-b border-red-100 dark:border-red-900/40 flex items-center gap-2">
+                <Store size={14} className="text-red-500 dark:text-red-400" />
+                <span className="text-sm font-medium text-red-800 dark:text-red-300">
                   {supplier?.name || 'Unknown Supplier'}
                 </span>
                 {supplier?.verified && (
-                  <BadgeCheck size={14} className="text-blue-500" />
+                  <BadgeCheck size={14} className="text-blue-500 dark:text-blue-400" />
                 )}
               </div>
 
               {/* Items */}
-              <div className="divide-y divide-red-50">
+              <div className="divide-y divide-red-50 dark:divide-red-900/30">
                 {supplierItems.map(({ item }) => (
                   <div key={item.id} className="p-3 flex items-center gap-3">
                     {/* Thumbnail */}
@@ -271,7 +271,7 @@ function MoqWarningBanner({
                       <Link
                         to="/products/$productSlug"
                         params={{ productSlug: item.productId.toString() }}
-                        className="text-sm font-medium text-foreground hover:text-orange-600 line-clamp-1 flex items-center gap-1"
+                        className="text-sm font-medium text-foreground hover:text-orange-600 dark:hover:text-orange-400 line-clamp-1 flex items-center gap-1"
                       >
                         {item.productName}
                         <ExternalLink
@@ -279,7 +279,7 @@ function MoqWarningBanner({
                           className="flex-shrink-0 opacity-50"
                         />
                       </Link>
-                      <p className="text-xs text-red-600 mt-0.5">
+                      <p className="text-xs text-red-600 dark:text-red-400 mt-0.5">
                         Need <strong>{item.moq - item.quantity}</strong> more
                         (have {item.quantity}, need {item.moq})
                       </p>
@@ -289,7 +289,7 @@ function MoqWarningBanner({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => onRemoveItem(item.id)}
-                        className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         title="Remove item"
                         aria-label={`Remove ${item.productName}`}
                       >
@@ -303,7 +303,7 @@ function MoqWarningBanner({
           ))}
 
           {/* Help Text */}
-          <p className="text-xs text-red-600 text-center pt-2">
+          <p className="text-xs text-red-600 dark:text-red-400 text-center pt-2">
             Increase quantities to meet MOQ or remove items to proceed with
             checkout
           </p>
@@ -408,17 +408,17 @@ function CartItemRow({
         relative flex flex-col sm:flex-row gap-4 p-4 bg-card rounded-lg border-2
         transition-all duration-300 ease-in-out
         ${isRemoving ? 'opacity-0 scale-95 -translate-x-4' : 'opacity-100 scale-100'}
-        ${isBelowMoq ? 'border-amber-300 bg-amber-50/30 shadow-amber-100' : 'border-transparent'}
-        ${isLocked && !isBelowMoq ? 'border-orange-200 bg-orange-50/20' : ''}
+        ${isBelowMoq ? 'border-amber-300 dark:border-amber-800 bg-amber-50/30 dark:bg-amber-950/20 shadow-amber-100 dark:shadow-none' : 'border-transparent'}
+        ${isLocked && !isBelowMoq ? 'border-orange-200 dark:border-orange-900/40 bg-orange-50/20 dark:bg-orange-950/20' : ''}
         ${!isBelowMoq && !isLocked ? 'border-border hover:shadow-md hover:border-border' : ''}
         ${isUpdating ? 'ring-2 ring-green-400 ring-opacity-50' : ''}
-        ${isHighlighted ? 'ring-2 ring-green-300 bg-green-50/40 border-green-200' : ''}
+        ${isHighlighted ? 'ring-2 ring-green-300 dark:ring-green-700 bg-green-50/40 dark:bg-green-950/20 border-green-200 dark:border-green-900/40' : ''}
       `}
     >
       {/* MOQ Warning Indicator */}
       {isBelowMoq && (
         <div className="absolute -top-2 -left-2 z-10">
-          <div className="bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse">
+          <div className="bg-amber-500 dark:bg-amber-400 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1 animate-pulse">
             <AlertTriangle size={10} />
             MOQ
           </div>
@@ -429,7 +429,7 @@ function CartItemRow({
       <Link
         to="/products/$productSlug"
         params={{ productSlug: item.productId.toString() }}
-        className="w-full sm:w-28 h-28 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden relative group"
+        className="w-full sm:w-28 h-28 flex-shrink-0 bg-muted rounded-lg overflow-hidden relative group"
         aria-label={`View details for ${item.productName}`}
       >
         <img
@@ -439,7 +439,7 @@ function CartItemRow({
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {isLocked && item.rfqId && (
-          <div className="absolute top-0 left-0 bg-orange-500 text-white text-[10px] px-2 py-0.5 font-bold rounded-br-lg">
+          <div className="absolute top-0 left-0 bg-orange-500 dark:bg-orange-400 text-white text-[10px] px-2 py-0.5 font-bold rounded-br-lg">
             RFQ #{item.rfqId}
           </div>
         )}
@@ -452,7 +452,7 @@ function CartItemRow({
             <Link
               to="/products/$productSlug"
               params={{ productSlug: item.productId.toString() }}
-              className="text-base font-medium text-foreground hover:text-orange-600 transition-colors line-clamp-2"
+              className="text-base font-medium text-foreground hover:text-orange-600 dark:hover:text-orange-400 transition-colors line-clamp-2"
             >
               {item.productName}
             </Link>
@@ -462,7 +462,7 @@ function CartItemRow({
                 {supplier.verified && (
                   <BadgeCheck
                     size={14}
-                    className="text-blue-500 flex-shrink-0"
+                    className="text-blue-500 dark:text-blue-400 flex-shrink-0"
                   />
                 )}
                 <span className="truncate">{supplier.name}</span>
@@ -472,7 +472,7 @@ function CartItemRow({
 
           <button
             onClick={handleRemove}
-            className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+            className="p-1.5 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0"
             title="Remove from cart"
             aria-label={`Remove ${item.productName} from cart`}
           >
@@ -482,7 +482,7 @@ function CartItemRow({
 
         {/* Price */}
         <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-          <span className="text-lg font-bold text-orange-600">
+          <span className="text-lg font-bold text-orange-600 dark:text-orange-400">
             {formatCurrency(item.lineTotal)}
           </span>
           <span className="text-sm text-muted-foreground">
@@ -493,7 +493,7 @@ function CartItemRow({
         {/* Badges */}
         <div className="mt-2 flex flex-wrap gap-2">
           {isLocked && item.quoteId && (
-            <span className="inline-flex items-center gap-1 text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded-full font-medium">
+            <span className="inline-flex items-center gap-1 text-xs text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-900/30 px-2 py-1 rounded-full font-medium">
               <Tag size={12} />
               Quote #{item.quoteId}
             </span>
@@ -502,7 +502,7 @@ function CartItemRow({
           <span
             className={`
             inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium
-            ${isBelowMoq ? 'text-amber-800 bg-amber-200' : 'text-muted-foreground bg-gray-100'}
+            ${isBelowMoq ? 'text-amber-800 dark:text-amber-300 bg-amber-200 dark:bg-amber-900/30' : 'text-muted-foreground bg-muted'}
           `}
           >
             <Package size={12} />
@@ -510,7 +510,7 @@ function CartItemRow({
           </span>
 
           {isLowStock && (
-            <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded-full">
+            <span className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded-full">
               <AlertTriangle size={12} />
               {item.stock} left
             </span>
@@ -519,17 +519,17 @@ function CartItemRow({
 
         {/* MOQ Warning with Quick Actions */}
         {isBelowMoq && (
-          <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg">
+          <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 dark:from-amber-950/30 to-orange-50 dark:to-orange-950/20 border border-amber-200 dark:border-amber-900/40 rounded-lg">
             <div className="flex items-start gap-2 mb-2">
               <AlertTriangle
                 size={18}
-                className="text-amber-600 flex-shrink-0 mt-0.5"
+                className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"
               />
               <div className="flex-1">
-                <p className="text-sm font-medium text-amber-800">
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
                   Below Minimum Order Quantity
                 </p>
-                <p className="text-xs text-amber-700 mt-0.5">
+                <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
                   You need <strong>{moqShortfall}</strong> more{' '}
                   {moqShortfall === 1 ? 'unit' : 'units'} to meet the minimum of{' '}
                   <strong>{item.moq}</strong>
@@ -548,7 +548,7 @@ function CartItemRow({
                     text-sm font-medium rounded-lg transition-all
                     ${
                       isLocked
-                        ? 'bg-gray-100 text-muted-foreground cursor-not-allowed'
+                        ? 'bg-muted text-muted-foreground cursor-not-allowed'
                         : 'bg-amber-600 hover:bg-amber-700 text-white shadow-sm hover:shadow'
                     }
                   `}
@@ -557,14 +557,14 @@ function CartItemRow({
                   Set to {item.moq} units
                 </button>
               ) : (
-                <span className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">
+                <span className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
                   Not enough stock (only {item.stock} available)
                 </span>
               )}
 
               <button
                 onClick={handleRemove}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-card border border-amber-300 text-amber-700 text-sm font-medium rounded-lg hover:bg-amber-50 transition-colors"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-card dark:bg-slate-900 border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-sm font-medium rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors"
               >
                 <Trash2 size={14} />
                 Remove
@@ -579,7 +579,7 @@ function CartItemRow({
         <div
           className={`
           flex items-center border-2 rounded-lg overflow-hidden transition-colors
-          ${isLocked ? 'bg-gray-100 border-border' : 'bg-card'}
+          ${isLocked ? 'bg-muted border-border' : 'bg-card'}
           ${isBelowMoq ? 'border-amber-400' : 'border-border'}
         `}
         >
@@ -606,7 +606,7 @@ function CartItemRow({
             className={`
               w-14 text-center font-bold border-x-2
               focus:outline-none focus:bg-orange-50
-              disabled:bg-gray-100 disabled:cursor-not-allowed
+              disabled:bg-muted disabled:cursor-not-allowed
               ${isBelowMoq ? 'border-amber-300 text-amber-700 bg-amber-50' : 'border-border text-foreground'}
             `}
           />
@@ -626,7 +626,7 @@ function CartItemRow({
         {isBelowMoq && item.moq <= item.stock && !isLocked && (
           <button
             onClick={handleIncreaseToMoq}
-            className="hidden sm:flex items-center gap-1 text-xs text-amber-700 hover:text-amber-800 font-medium"
+            className="hidden sm:flex items-center gap-1 text-xs text-amber-700 dark:text-amber-300 hover:text-amber-800 dark:hover:text-amber-200 font-medium"
           >
             <Zap size={12} />
             Quick fix
@@ -667,7 +667,7 @@ function SupplierGroup({
     <div
       className={`
       border rounded-xl bg-card overflow-hidden shadow-sm transition-all
-      ${moqViolationCount > 0 ? 'border-amber-200' : 'border-border'}
+      ${moqViolationCount > 0 ? 'border-amber-200 dark:border-amber-900/40' : 'border-border'}
     `}
     >
       {/* Supplier Header */}
@@ -683,17 +683,17 @@ function SupplierGroup({
         }}
         className={`
           w-full flex items-center justify-between p-4 transition-colors
-          ${moqViolationCount > 0 ? 'bg-amber-50 hover:bg-amber-100' : 'bg-muted hover:bg-muted'}
+          ${moqViolationCount > 0 ? 'bg-amber-50 dark:bg-amber-950/20 hover:bg-amber-100 dark:hover:bg-amber-900/30' : 'bg-muted hover:bg-muted'}
         `}
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
           <div
-            className={`p-2 rounded-lg shadow-sm ${moqViolationCount > 0 ? 'bg-amber-100' : 'bg-card'}`}
+            className={`p-2 rounded-lg shadow-sm ${moqViolationCount > 0 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-card dark:bg-slate-900'}`}
           >
             <Store
               size={20}
-              className={moqViolationCount > 0 ? 'text-amber-600' : 'text-muted-foreground'}
+              className={moqViolationCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'}
             />
           </div>
           <div className="text-left">
@@ -702,10 +702,10 @@ function SupplierGroup({
                 {breakdown.supplierName}
               </span>
               {supplier?.verified && (
-                <BadgeCheck size={16} className="text-blue-500" />
+                <BadgeCheck size={16} className="text-blue-500 dark:text-blue-400" />
               )}
               {moqViolationCount > 0 && (
-                <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-medium">
+                <span className="text-xs bg-amber-500 dark:bg-amber-400 text-white px-2 py-0.5 rounded-full font-medium">
                   {moqViolationCount} MOQ {moqViolationCount === 1 ? 'issue' : 'issues'}
                 </span>
               )}
@@ -722,7 +722,7 @@ function SupplierGroup({
             <div className="text-sm text-muted-foreground">Delivery</div>
             <div className="font-medium text-foreground">
               {breakdown.deliveryFee === 0 ? (
-                <span className="text-green-600">Free</span>
+                <span className="text-green-600 dark:text-green-400">Free</span>
               ) : (
                 formatCurrency(breakdown.deliveryFee)
               )}
@@ -793,7 +793,7 @@ function EmptyCart() {
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           to="/"
-          className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
+          className="inline-flex items-center justify-center gap-2 bg-orange-500 dark:bg-orange-400 hover:bg-orange-600 dark:hover:bg-orange-500 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
         >
           <ShoppingCart size={20} />
           Start Shopping
@@ -892,8 +892,8 @@ function CouponSection() {
                 flex items-center gap-2 min-w-[90px] justify-center
                 ${
                   isValidating || !couponInput.trim()
-                    ? 'bg-gray-200 text-muted-foreground cursor-not-allowed'
-                    : 'bg-gray-900 hover:bg-gray-800 text-white'
+                    ? 'bg-gray-200 dark:bg-slate-700 text-muted-foreground cursor-not-allowed'
+                    : 'bg-gray-900 dark:bg-slate-100 hover:bg-gray-800 dark:hover:bg-slate-200 text-white dark:text-slate-900'
                 }
               `}
             >
@@ -907,14 +907,14 @@ function CouponSection() {
 
           {error && (
             <div
-              className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2"
+              className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/40 rounded-lg flex items-start gap-2"
               role="alert"
             >
               <AlertTriangle
                 size={16}
-                className="text-red-500 flex-shrink-0 mt-0.5"
+                className="text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5"
               />
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
 
@@ -927,7 +927,7 @@ function CouponSection() {
                 <button
                   key={code}
                   onClick={() => setCouponInput(code)}
-                  className="text-xs px-2 py-1 bg-card border border-border rounded-md hover:border-orange-300 hover:bg-orange-50 transition-colors"
+                  className="text-xs px-2 py-1 bg-card dark:bg-slate-900 border border-border dark:border-slate-700 rounded-md hover:border-orange-300 dark:hover:border-orange-800 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
                 >
                   {code}
                 </button>
@@ -939,42 +939,42 @@ function CouponSection() {
 
       {successMessage && !appliedCoupon && (
         <div
-          className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2"
+          className="mt-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/40 rounded-lg flex items-center gap-2"
           role="status"
         >
-          <Check size={16} className="text-green-600" />
-          <p className="text-sm text-green-700 font-medium">{successMessage}</p>
+          <Check size={16} className="text-green-600 dark:text-green-400" />
+          <p className="text-sm text-green-700 dark:text-green-300 font-medium">{successMessage}</p>
         </div>
       )}
 
       {appliedCoupon && (
-        <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+        <div className="p-4 bg-gradient-to-r from-green-50 dark:from-green-950/30 to-emerald-50 dark:to-emerald-950/20 border border-green-200 dark:border-green-900/40 rounded-xl">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Sparkles size={20} className="text-green-600" />
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Sparkles size={20} className="text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-green-800 text-lg">
+                  <span className="font-bold text-green-800 dark:text-green-300 text-lg">
                     {appliedCoupon.code}
                   </span>
-                  <Check size={18} className="text-green-600" />
+                  <Check size={18} className="text-green-600 dark:text-green-400" />
                 </div>
-                <p className="text-sm text-green-700 mt-0.5">
+                <p className="text-sm text-green-700 dark:text-green-300 mt-0.5">
                   {couponDescription ||
                     (appliedCoupon.discountType === 'percentage'
                       ? `${appliedCoupon.value}% off your order`
                       : `${formatCurrency(appliedCoupon.value)} off your order`)}
                 </p>
-                <span className="inline-block mt-2 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full font-medium">
+                <span className="inline-block mt-2 text-xs text-green-600 dark:text-green-300 bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full font-medium">
                   You save {formatCurrency(calculatedDiscount)}
                 </span>
               </div>
             </div>
             <button
               onClick={removeCoupon}
-              className="p-1.5 text-green-600 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="p-1.5 text-green-600 dark:text-green-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
               title="Remove coupon"
             >
               <X size={18} />
@@ -1031,7 +1031,7 @@ function OrderSummary({
             </span>
             <span className="font-medium">
               {cart.deliveryFee === 0 ? (
-                <span className="text-green-600">Free</span>
+                <span className="text-green-600 dark:text-green-400">Free</span>
               ) : (
                 formatCurrency(cart.deliveryFee)
               )}
@@ -1039,7 +1039,7 @@ function OrderSummary({
           </div>
 
           {hasDiscount && (
-            <div className="flex justify-between text-green-600 bg-green-50 -mx-2 px-2 py-2 rounded-lg">
+            <div className="flex justify-between text-green-600 dark:text-green-300 bg-green-50 dark:bg-green-900/20 -mx-2 px-2 py-2 rounded-lg">
               <span className="flex items-center gap-1 font-medium">
                 <Percent size={14} />
                 Coupon Discount
@@ -1063,11 +1063,11 @@ function OrderSummary({
             )}
           </div>
           <div className="text-right">
-            <span className="text-2xl font-bold text-orange-600">
+            <span className="text-2xl font-bold text-orange-600 dark:text-orange-400">
               {formatCurrency(cart.total)}
             </span>
             {hasDiscount && (
-              <p className="text-xs text-green-600 font-medium">
+              <p className="text-xs text-green-600 dark:text-green-400 font-medium">
                 You save {formatCurrency(cart.discount)}!
               </p>
             )}
@@ -1076,17 +1076,17 @@ function OrderSummary({
 
         {/* MOQ Validation Warning */}
         {hasValidationErrors && moqViolationCount > 0 && (
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/40 rounded-lg">
             <div className="flex items-start gap-2">
               <AlertTriangle
                 size={18}
-                className="text-amber-600 flex-shrink-0 mt-0.5"
+                className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"
               />
               <div>
-                <p className="text-sm font-medium text-amber-800">
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
                   MOQ Requirements Not Met
                 </p>
-                <p className="text-xs text-amber-700 mt-0.5">
+                <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
                   {moqViolationCount}{' '}
                   {moqViolationCount === 1 ? 'item needs' : 'items need'}{' '}
                   quantity adjustment before checkout
@@ -1106,8 +1106,8 @@ function OrderSummary({
             transition-all duration-200
             ${
               hasValidationErrors
-                ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-orange-500 hover:bg-orange-600 shadow-md hover:shadow-lg active:scale-[0.98]'
+                ? 'bg-gray-300 dark:bg-slate-700 cursor-not-allowed'
+                : 'bg-orange-500 dark:bg-orange-400 hover:bg-orange-600 dark:hover:bg-orange-500 shadow-md hover:shadow-lg active:scale-[0.98]'
             }
           `}
         >
@@ -1145,7 +1145,7 @@ function OrderSummary({
                 </span>
                 <span className="font-medium text-foreground flex-shrink-0">
                   {supplier.deliveryFee === 0 ? (
-                    <span className="text-green-600">Free</span>
+                    <span className="text-green-600 dark:text-green-400">Free</span>
                   ) : (
                     formatCurrency(supplier.deliveryFee)
                   )}
@@ -1204,14 +1204,14 @@ function CartPage() {
       if (cart.items.length === 0) return
 
       try {
-        const result = await validateCartServer({
-          data: cart.items.map((i) => ({
+        const result = await api.cart.validate(
+          cart.items.map((i) => ({
             productId: i.productId,
             quantity: i.quantity,
             unitPrice: i.unitPrice,
             id: i.id,
           })),
-        })
+        )
 
         if (isMounted && !result.valid) {
           setServerValidationChanges(result.changes)
@@ -1314,8 +1314,8 @@ function CartPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <ShoppingCart size={24} className="text-orange-600" />
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+              <ShoppingCart size={24} className="text-orange-600 dark:text-orange-400" />
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-foreground">
@@ -1324,7 +1324,7 @@ function CartPage() {
               <p className="text-sm text-muted-foreground">
                 {cartCount} {cartCount === 1 ? 'item' : 'items'}
                 {moqViolationCount > 0 && (
-                  <span className="text-amber-600 ml-2">
+                  <span className="text-amber-600 dark:text-amber-400 ml-2">
                     · {moqViolationCount} MOQ{' '}
                     {moqViolationCount === 1 ? 'issue' : 'issues'}
                   </span>
@@ -1336,7 +1336,7 @@ function CartPage() {
           {cart.items.length > 0 && (
             <button
               onClick={clearCart}
-              className="text-sm text-muted-foreground hover:text-red-500 transition-colors flex items-center gap-1"
+              className="text-sm text-muted-foreground hover:text-red-500 dark:hover:text-red-400 transition-colors flex items-center gap-1"
             >
               <Trash2 size={16} />
               <span className="hidden sm:inline">Clear Cart</span>
@@ -1345,17 +1345,17 @@ function CartPage() {
         </div>
 
         {reorderHighlight && (
-          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 flex items-start gap-3">
-            <div className="p-2 rounded-full bg-green-100 text-green-600">
+          <div className="mb-6 rounded-xl border border-green-200 dark:border-green-900/40 bg-green-50 dark:bg-green-900/20 p-4 flex items-start gap-3">
+            <div className="p-2 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
               <Check size={18} />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-green-900">
+              <p className="text-sm font-semibold text-green-900 dark:text-green-200">
                 {reorderHighlight.addedCount} item
                 {reorderHighlight.addedCount === 1 ? '' : 's'} added from Order
                 #{reorderHighlight.orderLabel}
               </p>
-              <p className="text-xs text-green-700 mt-1">
+              <p className="text-xs text-green-700 dark:text-green-300 mt-1">
                 These items are highlighted below so you can review them
                 quickly.
               </p>
@@ -1390,16 +1390,16 @@ function CartPage() {
 
               {/* Multi-Supplier Notice */}
               {!isSingleSupplier && moqViolationCount === 0 && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-3">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/40 rounded-xl flex items-start gap-3">
                   <Store
                     size={20}
-                    className="text-blue-600 flex-shrink-0 mt-0.5"
+                    className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5"
                   />
                   <div>
-                    <p className="font-medium text-blue-900">
+                    <p className="font-medium text-blue-900 dark:text-blue-200">
                       Multi-Supplier Order
                     </p>
-                    <p className="text-sm text-blue-700 mt-0.5">
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-0.5">
                       Your cart contains items from{' '}
                       {cart.supplierBreakdown.length} different suppliers. Each
                       supplier will ship separately.
@@ -1463,11 +1463,11 @@ function CartPage() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Total</p>
-              <p className="text-xl font-bold text-orange-600">
+              <p className="text-xl font-bold text-orange-600 dark:text-orange-400">
                 {formatCurrency(cart.total)}
               </p>
               {cart.discount > 0 && (
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-green-600 dark:text-green-400">
                   Saving {formatCurrency(cart.discount)}
                 </p>
               )}
@@ -1481,8 +1481,8 @@ function CartPage() {
                 transition-all duration-200
                 ${
                   hasValidationErrors
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-orange-500 hover:bg-orange-600 active:scale-[0.98]'
+                    ? 'bg-gray-300 dark:bg-slate-700 cursor-not-allowed'
+                    : 'bg-orange-500 dark:bg-orange-400 hover:bg-orange-600 dark:hover:bg-orange-500 active:scale-[0.98]'
                 }
               `}
             >
@@ -1501,14 +1501,14 @@ function CartPage() {
           </div>
           {moqViolationCount > 0 && (
             <div className="flex items-center justify-between mt-2 pt-2 border-t">
-              <p className="text-xs text-amber-600 flex items-center gap-1">
+              <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                 <AlertTriangle size={12} />
                 {moqViolationCount} MOQ{' '}
                 {moqViolationCount === 1 ? 'issue' : 'issues'}
               </p>
               <button
                 onClick={handleFixAllMoq}
-                className="text-xs text-amber-700 font-medium flex items-center gap-1 hover:text-amber-800"
+                className="text-xs text-amber-700 dark:text-amber-300 font-medium flex items-center gap-1 hover:text-amber-800 dark:hover:text-amber-200"
               >
                 <Zap size={12} />
                 Fix All

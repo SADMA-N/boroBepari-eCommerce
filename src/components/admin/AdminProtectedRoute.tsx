@@ -29,9 +29,9 @@ export function AdminProtectedRoute({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center">
+      <div className="min-h-screen bg-muted dark:bg-slate-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-orange-600 dark:text-orange-400" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export function AdminProtectedRoute({
               </p>
               <button
                 onClick={() => navigate({ to: '/admin/dashboard' })}
-                className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+                className="mt-4 px-4 py-2 bg-orange-600 dark:bg-orange-500 text-white rounded-lg hover:bg-orange-700 dark:hover:bg-orange-400"
               >
                 Go to Dashboard
               </button>

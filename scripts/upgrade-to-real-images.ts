@@ -1,13 +1,13 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const catalogPath = path.join(process.cwd(), 'products-catalog.json');
 const products = JSON.parse(fs.readFileSync(catalogPath, 'utf-8'));
 
 const slugify = (text: string) => text.toString().toLowerCase()
   .replace(/\s+/g, '-')
-  .replace(/[^\w\-]+/g, '')
-  .replace(/\-\-+/g, '-')
+  .replace(/[^\w-]+/g, '')
+  .replace(/--+/g, '-')
   .replace(/^-+/, '')
   .replace(/-+$/, '');
 
@@ -16,10 +16,10 @@ const generatePollinationsUrl = (prompt: string) => {
   return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random() * 10000)}`;
 };
 
-async function upgradeImages() {
+function upgradeImages() {
   console.log(`Starting upgrade for ${products.length} products to realistic images...`);
   
-  let lines = [];
+  const lines = [];
   lines.push("#!/bin/bash");
   lines.push("");
   lines.push("# Created by Gemini CLI - Real Images");

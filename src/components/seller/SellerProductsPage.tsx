@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { BulkImportModal } from './BulkImportModal'
 import { SellerProtectedRoute } from '@/components/seller'
-import { getSellerProducts } from '@/lib/seller-product-server'
+import { api } from '@/api/client'
 
 type ProductStatus = 'draft' | 'pending' | 'accepted' | 'declined'
 type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock'
@@ -24,7 +24,7 @@ type Product = {
   stock: number
   lowStockThreshold: number
   status: ProductStatus
-  images: string[]
+  images: Array<string>
   adminNotes: string | null
   createdAt: string
 }
@@ -50,15 +50,14 @@ export function SellerProductsPage() {
   const [loadingEdit, setLoadingEdit] = useState<number | null>(null)
   const [products, setProducts] = useState<Array<Product>>([])
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(false)
   const [page, setPage] = useState(1)
   const [showImport, setShowImport] = useState(false)
   const perPage = 20
 
   useEffect(() => {
     const token = localStorage.getItem('seller_token') || ''
-    getSellerProducts({
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    api.seller.products.list(token)
       .then((data) => {
         setProducts(data as Array<Product>)
       })
@@ -142,11 +141,9 @@ export function SellerProductsPage() {
 
   const handleBulkAction = (action: 'publish' | 'unpublish' | 'delete') => {
     if (action === 'delete') {
+      if (selected.length === 0) return
       if (!window.confirm('Delete selected products?')) return
-      setProducts((prev) =>
-        prev.filter((product) => !selected.includes(product.id)),
-      )
-      setSelected([])
+      void handleDeleteProducts(selected)
       return
     }
   }
@@ -165,8 +162,35 @@ export function SellerProductsPage() {
     }
     if (action === 'delete') {
       if (!window.confirm('Delete this product?')) return
-      setProducts((prev) => prev.filter((product) => product.id !== id))
+      void handleDeleteProducts([id])
       return
+    }
+  }
+
+  const handleDeleteProducts = async (ids: Array<number>) => {
+    if (ids.length === 0 || deleting) return
+
+    setDeleting(true)
+    try {
+      const token = localStorage.getItem('seller_token') || ''
+      const result = await api.seller.products.delete(ids.map(String), token)
+
+      const deletedIds = result.deletedSellerProductIds
+      const deletedSet = new Set(deletedIds)
+
+      setProducts((prev) => prev.filter((product) => !deletedSet.has(product.id)))
+      setSelected((prev) => prev.filter((id) => !deletedSet.has(id)))
+
+      alert(
+        deletedIds.length === 1
+          ? 'Product deleted successfully.'
+          : `${deletedIds.length} products deleted successfully.`,
+      )
+    } catch (err) {
+      console.error('Delete product failed:', err)
+      alert('Failed to remove product. Please try again.')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -192,7 +216,7 @@ export function SellerProductsPage() {
             {selected.length > 0 && (
               <div className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-600 dark:text-gray-300 transition-colors">
                 {selected.length} selected
-                <BulkActions onAction={handleBulkAction} />
+                <BulkActions onAction={handleBulkAction} disabled={deleting} />
               </div>
             )}
             <button
@@ -378,7 +402,7 @@ export function SellerProductsPage() {
                           >
                             ৳{product.price} / Min: {product.moq}
                             {loadingEdit === product.id && (
-                              <span className="ml-2 text-xs text-slate-400">
+                              <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">
                                 Saving...
                               </span>
                             )}
@@ -425,6 +449,7 @@ export function SellerProductsPage() {
                             handleAction(product.id, action)
                           }
                           status={product.status}
+                          disabled={deleting}
                         />
                       </td>
                     </tr>
@@ -536,12 +561,15 @@ export function SellerProductsPage() {
 
 function BulkActions({
   onAction,
+  disabled = false,
 }: {
   onAction: (action: 'publish' | 'unpublish' | 'delete') => void
+  disabled?: boolean
 }) {
   return (
     <div className="relative">
       <select
+        disabled={disabled}
         className="appearance-none rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-gray-300 transition-colors"
         onChange={(event) =>
           onAction(event.target.value as 'publish' | 'unpublish' | 'delete')
@@ -600,14 +628,17 @@ function ExportMenu({
 function RowActions({
   onAction,
   status,
+  disabled = false,
 }: {
   onAction: (action: string) => void
   status: ProductStatus
+  disabled?: boolean
 }) {
   return (
     <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-gray-400">
       <div className="relative">
         <select
+          disabled={disabled}
           className="appearance-none rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-600 dark:text-gray-300 transition-colors"
           onChange={(event) => onAction(event.target.value)}
         >

@@ -1,18 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { proxyAllApiMethods } from '@/api/proxy'
 
 export const Route = createFileRoute('/api/rfq/supplier/$supplierId')({
   server: {
-    handlers: {
-      GET: ({ params }) => {
-        const { supplierId } = params
-        // TODO: Fetch RFQs for supplierId from database
-        return new Response(
-          JSON.stringify({ message: `RFQs for supplier ${supplierId}` }),
-          {
-            headers: { 'Content-Type': 'application/json' },
-          },
-        )
-      },
-    },
+    handlers: proxyAllApiMethods,
   },
 })

@@ -22,12 +22,8 @@ import {
   ZoomOut,
 } from 'lucide-react'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
-import {
-  getKycReviewQueue,
-  getSellerKycDetails,
-  reviewSellerKyc,
-} from '@/lib/seller-kyc-server'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import { api } from '@/api/client'
 
 type KycStatus = 'pending' | 'approved' | 'rejected' | 'resubmitted'
 type Priority = 'normal' | 'urgent'
@@ -290,11 +286,7 @@ export function AdminKYCPage() {
   const fetchQueue = async () => {
     setIsLoadingQueue(true)
     try {
-      const data = await getKycReviewQueue({
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
+      const data = await api.admin.kyc.queue(getToken() || '')
       setQueue(data)
     } catch (error) {
       console.error('Failed to fetch KYC queue:', error)
@@ -310,12 +302,7 @@ export function AdminKYCPage() {
   const handleReview = async (item: any) => {
     setIsLoadingDetails(true)
     try {
-      const details = await getSellerKycDetails({
-        data: { sellerId: item.id },
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
+      const details = await api.admin.kyc.details(item.id.toString(), getToken() || '')
       setReviewItem(details)
       setDocIndex(0)
       setZoom(1)
@@ -330,16 +317,11 @@ export function AdminKYCPage() {
   const handleAction = async (status: 'approved' | 'rejected') => {
     if (!reviewItem) return
     try {
-      await reviewSellerKyc({
-        data: {
-          sellerId: reviewItem.seller.id,
-          status,
-          reason: status === 'rejected' ? rejectFeedback : undefined,
-        },
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      })
+      await api.admin.kyc.review(
+        reviewItem.seller.id.toString(),
+        { status, reason: status === 'rejected' ? rejectFeedback : undefined },
+        getToken() || '',
+      )
       setReviewItem(null)
       setApproveOpen(false)
       setRejectOpen(false)

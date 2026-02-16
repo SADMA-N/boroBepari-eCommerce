@@ -559,7 +559,7 @@ function SecurityTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
               className={`h-6 w-11 rounded-full transition-colors ${twoFA ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-700'} relative`}
             >
               <div
-                className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${twoFA ? 'translate-x-5' : 'translate-x-1'}`}
+                className={`h-5 w-5 rounded-full bg-white dark:bg-slate-100 absolute top-0.5 transition ${twoFA ? 'translate-x-5' : 'translate-x-1'}`}
               />
             </div>
           </label>
@@ -612,7 +612,7 @@ function StoreTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
               className={`h-6 w-11 rounded-full transition-colors ${!vacation ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-700'} relative`}
             >
               <div
-                className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${!vacation ? 'translate-x-5' : 'translate-x-1'}`}
+                className={`h-5 w-5 rounded-full bg-white dark:bg-slate-100 absolute top-0.5 transition ${!vacation ? 'translate-x-5' : 'translate-x-1'}`}
               />
             </div>
           </label>

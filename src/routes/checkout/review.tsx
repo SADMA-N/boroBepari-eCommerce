@@ -15,9 +15,7 @@ import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { CheckoutLayout } from '@/components/checkout/CheckoutLayout'
 import { formatCurrency } from '@/lib/cart-utils'
-import { getAddresses } from '@/lib/address-actions'
-import { createOrder } from '@/lib/order-actions'
-import { validateCartServer } from '@/lib/cart-actions'
+import { api } from '@/api/client'
 import Toast from '@/components/Toast'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { useWishlist } from '@/contexts/WishlistContext'
@@ -36,11 +34,13 @@ function ReviewPage() {
 
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isRedirectingToConfirmation, setIsRedirectingToConfirmation] =
+    useState(false)
   const [toast, setToast] = useState({ message: '', isVisible: false })
   const [debugStep, setDebugStep] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!cart.items.length) {
+    if (!cart.items.length && !isRedirectingToConfirmation) {
       router.navigate({ to: '/cart' })
       return
     }
@@ -55,7 +55,7 @@ function ReviewPage() {
 
     // Fetch address details
     if (user?.id && state.shippingAddressId) {
-      getAddresses({ data: user.id }).then((addresses) => {
+      api.addresses.list(user.id.toString()).then((addresses) => {
         const addr = addresses.find((a) => a.id === state.shippingAddressId)
         if (addr) setShippingAddress(addr)
       })
@@ -65,6 +65,7 @@ function ReviewPage() {
     state.shippingAddressId,
     state.paymentMethod,
     user?.id,
+    isRedirectingToConfirmation,
     router,
   ])
 
@@ -95,14 +96,14 @@ function ReviewPage() {
     try {
       setDebugStep('Validating cart')
       // 1. Validate Cart (Stock/Price)
-      const validation = await validateCartServer({
-        data: cart.items.map((i) => ({
+      const validation = await api.cart.validate(
+        cart.items.map((i) => ({
           productId: i.productId,
           quantity: i.quantity,
           unitPrice: i.unitPrice,
           id: i.id,
         })),
-      })
+      )
 
       if (!validation.valid) {
         setToast({
@@ -154,31 +155,29 @@ function ReviewPage() {
           ? state.paymentDetails.transactionId.trim() || undefined
           : undefined
 
-      const newOrder = await createOrder({
-        data: {
-          userId: user.id,
-          items: cart.items.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.unitPrice,
-            rfqId: item.rfqId,
-            quoteId: item.quoteId,
-          })),
-          totalAmount: cart.total,
-          paymentMethod: state.paymentMethod || 'cod',
-          paymentChannel,
-          paymentProvider,
-          paymentReference,
-          paymentSenderAccount,
-          paymentDeclaration:
-            state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
-              ? state.paymentDetails.declarationAccepted || false
-              : false,
-          transactionId,
-          depositAmount,
-          balanceDue,
-          notes: state.notes,
-        },
+      const newOrder = await api.orders.create({
+        userId: user.id,
+        items: cart.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.unitPrice,
+          rfqId: item.rfqId,
+          quoteId: item.quoteId,
+        })),
+        totalAmount: cart.total,
+        paymentMethod: state.paymentMethod || 'cod',
+        paymentChannel,
+        paymentProvider,
+        paymentReference,
+        paymentSenderAccount,
+        paymentDeclaration:
+          state.paymentMethod === 'full' || state.paymentMethod === 'deposit'
+            ? state.paymentDetails.declarationAccepted || false
+            : false,
+        transactionId,
+        depositAmount,
+        balanceDue,
+        notes: state.notes,
       })
 
       cart.items.forEach((item) => removeFromWishlist(item.productId))
@@ -198,16 +197,13 @@ function ReviewPage() {
       }
 
       setDebugStep('Handling payment redirect')
-      // 4. Redirect based on Payment Method
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // 4. Redirect to confirmation and prevent checkout guard from bouncing to /cart
+      setIsRedirectingToConfirmation(true)
       clearCart()
-      setToast({ message: 'Order placed successfully!', isVisible: true })
-      setTimeout(() => {
-        router.navigate({
-          to: '/order-confirmation/$orderId',
-          params: { orderId: newOrder.id.toString() },
-        })
-      }, 1500)
+      await router.navigate({
+        to: '/order-confirmation/$orderId',
+        params: { orderId: newOrder.id.toString() },
+      })
     } catch (error) {
       console.error('Place order failed at step:', debugStep, error)
       setToast({

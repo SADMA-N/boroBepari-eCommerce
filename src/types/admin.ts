@@ -13,6 +13,8 @@ export type AdminPermission =
   | 'users.view'
   | 'users.edit'
   | 'users.delete'
+  | 'orders.view'
+  | 'orders.update'
   | 'suppliers.view'
   | 'suppliers.verify'
   | 'suppliers.suspend'
@@ -34,6 +36,8 @@ const basePermissions: AdminPermissions = {
   'users.view': false,
   'users.edit': false,
   'users.delete': false,
+  'orders.view': false,
+  'orders.update': false,
   'suppliers.view': false,
   'suppliers.verify': false,
   'suppliers.suspend': false,
@@ -58,6 +62,8 @@ export function getAdminPermissions(role: AdminRole): AdminPermissions {
         'users.view': true,
         'users.edit': true,
         'users.delete': true,
+        'orders.view': true,
+        'orders.update': true,
         'suppliers.view': true,
         'suppliers.verify': true,
         'suppliers.suspend': true,
@@ -79,6 +85,8 @@ export function getAdminPermissions(role: AdminRole): AdminPermissions {
         'users.view': true,
         'users.edit': true,
         'users.delete': true,
+        'orders.view': true,
+        'orders.update': true,
         'suppliers.view': true,
         'suppliers.verify': true,
         'suppliers.suspend': true,
@@ -97,6 +105,8 @@ export function getAdminPermissions(role: AdminRole): AdminPermissions {
     case 'moderator':
       return {
         ...basePermissions,
+        'orders.view': true,
+        'orders.update': false,
         'kyc.review': true,
         'kyc.approve': true,
         'kyc.reject': true,

@@ -1,16 +1,15 @@
 import { BadgeCheck, Eye, Heart, MessageSquare, Package } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { formatBDT } from '@/lib/product-server'
 import { useWishlist } from '../contexts/WishlistContext'
 import { useAuth } from '../contexts/AuthContext'
-import type { ProductWithSupplier } from '@/lib/product-server'
 import AuthModal from './AuthModal'
 import RFQFormModal from './RFQFormModal'
+import { formatBDT } from '@/lib/format'
 
 interface ProductCardProps {
-  product: ProductWithSupplier
-  onQuickView?: (product: ProductWithSupplier) => void
+  product: any
+  onQuickView?: (product: any) => void
 }
 
 export default function ProductCard({
@@ -27,7 +26,7 @@ export default function ProductCard({
 
   // Check if image is already loaded (cached) on mount
   useEffect(() => {
-    if (imgRef.current?.complete && imgRef.current?.naturalWidth > 0) {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
       setImageLoaded(true)
     }
   }, [activeIndex])
@@ -131,8 +130,8 @@ export default function ProductCard({
                 }}
                 className={`w-2 h-2 rounded-full transition-all ${
                   idx === activeIndex
-                    ? 'bg-white scale-110 shadow-md'
-                    : 'bg-white/60 hover:bg-white/80'
+                    ? 'bg-white dark:bg-slate-100 scale-110 shadow-md'
+                    : 'bg-white/60 hover:bg-white/80 dark:bg-slate-100/40 dark:hover:bg-slate-100/70'
                 }`}
                 aria-label={`View image ${idx + 1}`}
               />

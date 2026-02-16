@@ -8,19 +8,18 @@ import {
   ShoppingCart,
   X,
 } from 'lucide-react'
-import { getBuyerQuotes, updateQuoteStatus } from '@/lib/quote-server'
+import { api } from '@/api/client'
 import { formatBDT } from '@/data/mock-products'
-import { getAuthSession } from '@/lib/auth-server'
 
 export const Route = createFileRoute('/quotes/')({
   beforeLoad: async () => {
-    const session: any = await getAuthSession()
+    const session: any = await api.auth.buyer.session()
     if (!session?.user) {
       throw redirect({ to: '/login' })
     }
   },
   loader: async () => {
-    const quotes = await getBuyerQuotes()
+    const quotes = await api.rfq.buyerQuotes()
     return { quotes }
   },
   component: QuotesPage,
@@ -40,7 +39,7 @@ function QuotesPage() {
   ) => {
     if (!confirm(`Are you sure you want to ${status} this quote?`)) return
     try {
-      await updateQuoteStatus({ data: { quoteId, status } })
+      await api.rfq.updateQuoteStatus(quoteId.toString(), { status })
       router.invalidate()
     } catch (err) {
       alert('Failed to update status')
@@ -52,13 +51,10 @@ function QuotesPage() {
     if (!counterQuote) return
     setIsCounterSubmitting(true)
     try {
-      await updateQuoteStatus({
-        data: {
-          quoteId: counterQuote.id,
-          status: 'countered',
-          counterPrice,
-          counterNote,
-        },
+      await api.rfq.updateQuoteStatus(counterQuote.id.toString(), {
+        status: 'countered',
+        counterPrice,
+        counterNote,
       })
       setCounterQuote(null)
       router.invalidate()
@@ -87,7 +83,7 @@ function QuotesPage() {
             return (
               <div
                 key={quote.id}
-                className="bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-card dark:bg-slate-900 border border-border dark:border-slate-800 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex flex-col md:flex-row justify-between md:items-start gap-4">
                   <div>
@@ -98,14 +94,14 @@ function QuotesPage() {
                       <span
                         className={`px-2 py-0.5 rounded text-xs font-medium uppercase ${
                           quote.status === 'accepted'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                             : quote.status === 'rejected'
-                              ? 'bg-red-100 text-red-800'
+                              ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
                               : quote.status === 'countered'
-                                ? 'bg-orange-100 text-orange-800'
+                                ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300'
                                 : isExpired
-                                  ? 'bg-gray-100 text-foreground'
-                                  : 'bg-blue-100 text-blue-800'
+                                  ? 'bg-gray-100 dark:bg-slate-800 text-foreground dark:text-slate-200'
+                                  : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
                         }`}
                       >
                         {isExpired && quote.status === 'pending'
@@ -122,7 +118,7 @@ function QuotesPage() {
                   </div>
 
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {formatBDT(Number(quote.unitPrice))}
                     </div>
                     <span className="text-xs text-muted-foreground">per unit</span>
@@ -168,7 +164,7 @@ function QuotesPage() {
                           onClick={() =>
                             handleStatusUpdate(quote.id, 'rejected')
                           }
-                          className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 text-sm font-medium flex items-center"
+                          className="px-4 py-2 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-medium flex items-center"
                         >
                           <X size={16} className="mr-2" />
                           Reject
@@ -177,7 +173,7 @@ function QuotesPage() {
                           onClick={() =>
                             handleStatusUpdate(quote.id, 'accepted')
                           }
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium flex items-center"
+                          className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-400 text-sm font-medium flex items-center"
                         >
                           <Check size={16} className="mr-2" />
                           Accept Quote
@@ -187,7 +183,7 @@ function QuotesPage() {
 
                     {quote.status === 'accepted' && (
                       <button
-                        className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-bold flex items-center shadow-sm"
+                        className="px-6 py-2 bg-green-600 dark:bg-green-500 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-400 text-sm font-bold flex items-center shadow-sm"
                         onClick={() =>
                           alert(
                             'Proceeding to checkout with price: ' +
@@ -201,7 +197,7 @@ function QuotesPage() {
                     )}
 
                     {isExpired && quote.status === 'pending' && (
-                      <div className="flex items-center text-muted-foreground text-sm bg-gray-100 px-3 py-2 rounded">
+                      <div className="flex items-center text-muted-foreground text-sm bg-muted px-3 py-2 rounded">
                         <AlertTriangle size={16} className="mr-2" />
                         Quote Expired
                       </div>
@@ -216,8 +212,8 @@ function QuotesPage() {
 
       {/* Counter Offer Modal */}
       {counterQuote && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-card rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-card dark:bg-slate-900 border border-border dark:border-slate-800 rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">Counter Offer</h2>
             <p className="text-sm text-muted-foreground mb-4">
               Propose a new price for {counterQuote.rfq.product.name}.
@@ -233,7 +229,7 @@ function QuotesPage() {
                   required
                   value={counterPrice}
                   onChange={(e) => setCounterPrice(e.target.value)}
-                  className="w-full border border-border rounded-lg px-3 py-2"
+                  className="w-full border border-border dark:border-slate-700 rounded-lg px-3 py-2 bg-background dark:bg-slate-800 text-foreground dark:text-slate-100"
                 />
               </div>
               <div>
@@ -245,7 +241,7 @@ function QuotesPage() {
                   value={counterNote}
                   onChange={(e) => setCounterNote(e.target.value)}
                   placeholder="Reason for counter offer..."
-                  className="w-full border border-border rounded-lg px-3 py-2"
+                  className="w-full border border-border dark:border-slate-700 rounded-lg px-3 py-2 bg-background dark:bg-slate-800 text-foreground dark:text-slate-100"
                 />
               </div>
 
@@ -253,14 +249,14 @@ function QuotesPage() {
                 <button
                   type="button"
                   onClick={() => setCounterQuote(null)}
-                  className="px-4 py-2 border rounded-lg text-muted-foreground"
+                  className="px-4 py-2 border border-border dark:border-slate-700 rounded-lg text-muted-foreground hover:bg-muted dark:hover:bg-slate-800"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCounterSubmitting}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-400 disabled:opacity-50"
                 >
                   Submit Counter
                 </button>

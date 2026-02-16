@@ -1,20 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { createRfqSchema } from '@/lib/rfq-validation'
+import { proxyAllApiMethods } from '@/api/proxy'
 
 export const Route = createFileRoute('/api/rfq/submit')({
   server: {
-    handlers: {
-      POST: ({ request }) => {
-        // TODO: Parse body using createRfqSchema
-        // TODO: Create RFQ in database
-        // TODO: Return created RFQ
-        return new Response(
-          JSON.stringify({ message: 'Submit RFQ placeholder' }),
-          {
-            headers: { 'Content-Type': 'application/json' },
-          },
-        )
-      },
-    },
+    handlers: proxyAllApiMethods,
   },
 })

@@ -206,6 +206,7 @@ export const products = pgTable('products', {
     .default([]),
   hasSample: boolean('has_sample').default(false),
   samplePrice: decimal('sample_price', { precision: 12, scale: 2 }),
+  deletedAt: timestamp('deleted_at'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 }).enableRLS()
@@ -263,6 +264,8 @@ export const sellerProducts = pgTable('seller_products', {
   reviewedBy: text('reviewed_by'),
   reviewedAt: timestamp('reviewed_at'),
   publishedProductId: integer('published_product_id').references(() => products.id),
+  deletedAt: timestamp('deleted_at'),
+  deletedBy: text('deleted_by'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 }).enableRLS()

@@ -329,7 +329,7 @@ function PaymentPage() {
           onChange={(e) =>
             updatePaymentForm({ declarationAccepted: e.target.checked })
           }
-          className="mt-1 h-4 w-4 rounded border-border text-orange-600 focus:ring-orange-500"
+          className="mt-1 h-4 w-4 rounded border-border text-orange-600 dark:text-orange-400 focus:ring-orange-500"
         />
         <span>
           I confirm the payment is made from my own account. Third-party

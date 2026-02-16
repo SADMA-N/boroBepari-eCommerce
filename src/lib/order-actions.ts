@@ -1,5 +1,16 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  isNull,
+  or,
+  sql,
+} from 'drizzle-orm'
 import { z } from 'zod'
 import { authMiddleware } from './auth-server'
 import { addresses, orderItems, orders, products, rfqs, user } from '@/db/schema'
@@ -104,7 +115,7 @@ export const createOrder = createServerFn({ method: 'POST' })
     const insertValues = {
       userId: session.user.id,
       totalAmount: totalAmount.toString(),
-      status: 'pending',
+      status: 'placed',
       paymentStatus: 'pending',
       paymentMethod: data.paymentMethod,
       paymentChannel: data.paymentChannel,
@@ -115,52 +126,7 @@ export const createOrder = createServerFn({ method: 'POST' })
       transactionId: data.transactionId,
       depositAmount: depositAmount.toString(),
       balanceDue: balanceDue.toString(),
-        notes: data.notes ? sanitizeText(data.notes) : null,
-    }
-
-    let newOrder
-    try {
-      ;[newOrder] = await db.insert(orders).values(insertValues).returning()
-    } catch (err: any) {
-      const msg =
-        err?.cause?.message || err?.message || 'Unknown database error'
-      // Fallback for older DBs missing new payment columns
-      if (
-        msg.includes('payment_channel') ||
-        msg.includes('payment_provider') ||
-        msg.includes('payment_reference') ||
-        msg.includes('payment_sender_account') ||
-        msg.includes('payment_declaration')
-      ) {
-        const fallbackValues = {
-          userId: insertValues.userId,
-          totalAmount: insertValues.totalAmount,
-          status: insertValues.status,
-          paymentStatus: insertValues.paymentStatus,
-          paymentMethod: insertValues.paymentMethod,
-          transactionId: insertValues.transactionId,
-          depositAmount: insertValues.depositAmount,
-          balanceDue: insertValues.balanceDue,
-          notes: insertValues.notes,
-        }
-        ;[newOrder] = await db.insert(orders).values(fallbackValues).returning()
-      } else {
-        throw new Error(`Order insert failed: ${msg}`)
-      }
-    }
-
-    // 2. Create Order Items
-    if (normalizedItems.length > 0) {
-      await db.insert(orderItems).values(
-        normalizedItems.map((item) => ({
-          orderId: newOrder.id,
-          productId: item.productId,
-          rfqId: item.rfqId,
-          quoteId: item.quoteId,
-          quantity: item.quantity,
-          price: item.lineTotal.toString(),
-        })),
-      )
+      notes: data.notes ? sanitizeText(data.notes) : null,
     }
 
     const rfqIds = Array.from(
@@ -171,15 +137,115 @@ export const createOrder = createServerFn({ method: 'POST' })
       ),
     )
 
-    if (rfqIds.length > 0) {
-      await db
-        .update(rfqs)
-        .set({ status: 'converted', updatedAt: new Date() })
-        .where(inArray(rfqs.id, rfqIds))
-    }
+    const quantityByProductId = new Map<number, number>()
+    normalizedItems.forEach((item) => {
+      quantityByProductId.set(
+        item.productId,
+        (quantityByProductId.get(item.productId) ?? 0) + item.quantity,
+      )
+    })
+
+    const newOrder = await db.transaction(async (tx) => {
+      let insertedOrder: typeof orders.$inferSelect
+      try {
+        ;[insertedOrder] = await tx.insert(orders).values(insertValues).returning()
+      } catch (err: any) {
+        const msg =
+          err?.cause?.message || err?.message || 'Unknown database error'
+        // Fallback for older DBs missing new payment columns
+        if (
+          msg.includes('payment_channel') ||
+          msg.includes('payment_provider') ||
+          msg.includes('payment_reference') ||
+          msg.includes('payment_sender_account') ||
+          msg.includes('payment_declaration')
+        ) {
+          const fallbackValues = {
+            userId: insertValues.userId,
+            totalAmount: insertValues.totalAmount,
+            status: insertValues.status,
+            paymentStatus: insertValues.paymentStatus,
+            paymentMethod: insertValues.paymentMethod,
+            transactionId: insertValues.transactionId,
+            depositAmount: insertValues.depositAmount,
+            balanceDue: insertValues.balanceDue,
+            notes: insertValues.notes,
+          }
+          ;[insertedOrder] = await tx
+            .insert(orders)
+            .values(fallbackValues)
+            .returning()
+        } else {
+          throw new Error(`Order insert failed: ${msg}`)
+        }
+      }
+
+      // 2. Reserve stock and create order items
+      if (normalizedItems.length > 0) {
+        const productIds = Array.from(
+          new Set(normalizedItems.map((item) => item.productId)),
+        )
+
+        const supplierRows = await tx
+          .select({
+            id: products.id,
+            supplierId: products.supplierId,
+          })
+          .from(products)
+          .where(and(inArray(products.id, productIds), isNull(products.deletedAt)))
+
+        const supplierByProductId = new Map<number, number | null>()
+        supplierRows.forEach((row) => {
+          supplierByProductId.set(row.id, row.supplierId)
+        })
+
+        for (const [productId, quantity] of quantityByProductId.entries()) {
+          const [reserved] = await tx
+            .update(products)
+            .set({
+              stock: sql`${products.stock} - ${quantity}`,
+              soldCount: sql`coalesce(${products.soldCount}, 0) + ${quantity}`,
+              updatedAt: new Date(),
+            })
+            .where(
+              and(
+                eq(products.id, productId),
+                isNull(products.deletedAt),
+                gte(products.stock, quantity),
+              ),
+            )
+            .returning({ id: products.id })
+
+          if (!reserved) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+            throw new Error(`Insufficient stock for product ${productId}`)
+          }
+        }
+
+        await tx.insert(orderItems).values(
+          normalizedItems.map((item) => ({
+            orderId: insertedOrder.id,
+            productId: item.productId,
+            supplierId: supplierByProductId.get(item.productId) ?? null,
+            rfqId: item.rfqId,
+            quoteId: item.quoteId,
+            quantity: item.quantity,
+            price: item.lineTotal.toString(),
+          })),
+        )
+      }
+
+      if (rfqIds.length > 0) {
+        await tx
+          .update(rfqs)
+          .set({ status: 'converted', updatedAt: new Date() })
+          .where(inArray(rfqs.id, rfqIds))
+      }
+
+      return insertedOrder
+    })
 
     const buyer = await db.query.user.findFirst({
-      where: eq(user.id, data.userId),
+      where: eq(user.id, session.user.id),
     })
 
     if (buyer) {

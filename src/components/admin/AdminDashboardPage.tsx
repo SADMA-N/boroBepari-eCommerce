@@ -44,55 +44,9 @@ import {
   YAxis,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
-
-// Mock data generators
-const generateGMVData = (days: number) => {
-  const data = []
-  const now = new Date()
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now)
-    date.setDate(date.getDate() - i)
-    data.push({
-      date: date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      }),
-      gmv: Math.floor(Math.random() * 500000) + 200000,
-      orders: Math.floor(Math.random() * 200) + 100,
-    })
-  }
-  return data
-}
-
-const generateUserGrowthData = (days: number) => {
-  const data = []
-  const now = new Date()
-  let buyers = 10000
-  let sellers = 800
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now)
-    date.setDate(date.getDate() - i)
-    buyers += Math.floor(Math.random() * 50) + 10
-    sellers += Math.floor(Math.random() * 5) + 1
-    data.push({
-      date: date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      }),
-      buyers,
-      sellers,
-    })
-  }
-  return data
-}
-
-const ORDER_STATUS_DATA = [
-  { name: 'Completed', value: 4500, color: '#22c55e' },
-  { name: 'In Progress', value: 1200, color: '#3b82f6' },
-  { name: 'Cancelled', value: 350, color: '#ef4444' },
-  { name: 'Returned', value: 180, color: '#f59e0b' },
-]
+import { api } from '@/api/client'
 
 const RECENT_ACTIVITIES = [
   {
@@ -167,86 +121,6 @@ const RECENT_ACTIVITIES = [
   },
 ]
 
-const TOP_SELLERS = [
-  {
-    id: 1,
-    name: 'Rahim Textiles Ltd.',
-    gmv: 2450000,
-    orders: 342,
-    commission: 73500,
-    status: 'premium',
-  },
-  {
-    id: 2,
-    name: 'Rajshahi Exports',
-    gmv: 1890000,
-    orders: 278,
-    commission: 56700,
-    status: 'verified',
-  },
-  {
-    id: 3,
-    name: 'Dhaka Wholesale Hub',
-    gmv: 1650000,
-    orders: 245,
-    commission: 49500,
-    status: 'verified',
-  },
-  {
-    id: 4,
-    name: 'Chittagong Trading',
-    gmv: 1420000,
-    orders: 198,
-    commission: 42600,
-    status: 'basic',
-  },
-  {
-    id: 5,
-    name: 'Sylhet Garments',
-    gmv: 1180000,
-    orders: 167,
-    commission: 35400,
-    status: 'verified',
-  },
-]
-
-const TOP_BUYERS = [
-  {
-    id: 1,
-    name: 'Karim Enterprises',
-    orders: 89,
-    spent: 1250000,
-    lastOrder: '2024-04-22',
-  },
-  {
-    id: 2,
-    name: 'Fatima Trading Co.',
-    orders: 76,
-    spent: 980000,
-    lastOrder: '2024-04-21',
-  },
-  {
-    id: 3,
-    name: 'Abdul & Sons',
-    orders: 68,
-    spent: 870000,
-    lastOrder: '2024-04-22',
-  },
-  {
-    id: 4,
-    name: 'Nasreen Wholesale',
-    orders: 54,
-    spent: 720000,
-    lastOrder: '2024-04-20',
-  },
-  {
-    id: 5,
-    name: 'Rafiq Industries',
-    orders: 48,
-    spent: 650000,
-    lastOrder: '2024-04-22',
-  },
-]
 
 const ALERTS = [
   {
@@ -307,13 +181,13 @@ function getStatusBadge(status: string) {
   switch (status) {
     case 'premium':
       return (
-        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
           Premium
         </span>
       )
     case 'verified':
       return (
-        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
           Verified
         </span>
       )
@@ -329,6 +203,7 @@ function getStatusBadge(status: string) {
 }
 
 export function AdminDashboardPage() {
+  const { getToken } = useAdminAuth()
   const { theme } = useTheme()
   const [dateRange, setDateRange] = useState('30d')
   const [chartRange, setChartRange] = useState(30)
@@ -337,10 +212,35 @@ export function AdminDashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false)
   const [dismissedAlerts, setDismissedAlerts] = useState<Array<number>>([])
-  const [gmvData, setGmvData] = useState(() => generateGMVData(30))
-  const [userGrowthData, setUserGrowthData] = useState(() =>
-    generateUserGrowthData(30),
-  )
+  const [dataError, setDataError] = useState<string | null>(null)
+  const [gmvData, setGmvData] = useState<
+    Array<{ date: string; gmv: number; orders: number }>
+  >([])
+  const [userGrowthData, setUserGrowthData] = useState<
+    Array<{ date: string; buyers: number; sellers: number }>
+  >([])
+  const [orderStatusData, setOrderStatusData] = useState<
+    Array<{ name: string; value: number; color: string }>
+  >([])
+  const [topSellers, setTopSellers] = useState<
+    Array<{
+      id: number
+      name: string
+      gmv: number
+      orders: number
+      commission: number
+      status: string
+    }>
+  >([])
+  const [topBuyers, setTopBuyers] = useState<
+    Array<{
+      id: string
+      name: string
+      orders: number
+      spent: number
+      lastOrder: string
+    }>
+  >([])
 
   const isDark =
     theme === 'dark' ||
@@ -348,27 +248,105 @@ export function AdminDashboardPage() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-  const refreshData = useCallback(() => {
-    setIsRefreshing(true)
-    setTimeout(() => {
-      setGmvData(generateGMVData(chartRange))
-      setUserGrowthData(generateUserGrowthData(chartRange))
+  const fetchAnalytics = useCallback(
+    async (days: number) => {
+      const token = getToken() || ''
+      const result = await api.admin.analytics(token, days)
+      setGmvData(
+        Array.isArray(result.chart)
+          ? result.chart
+              .filter((point: unknown) => Boolean(point && typeof point === 'object'))
+              .map((point: any) => ({
+                date: String(point.date || ''),
+                gmv: Number(point.gmv) || 0,
+                orders: Number(point.orders) || 0,
+              }))
+          : [],
+      )
+      setUserGrowthData(
+        Array.isArray(result.userGrowth)
+          ? result.userGrowth
+              .filter((point: unknown) => Boolean(point && typeof point === 'object'))
+              .map((point: any) => ({
+                date: String(point.date || ''),
+                buyers: Number(point.buyers) || 0,
+                sellers: Number(point.sellers) || 0,
+              }))
+          : [],
+      )
+      setOrderStatusData(
+        Array.isArray(result.orderStatus)
+          ? result.orderStatus
+              .filter((point: unknown) => Boolean(point && typeof point === 'object'))
+              .map((point: any) => ({
+                name: String(point.name || ''),
+                value: Number(point.value) || 0,
+                color: String(point.color || '#9ca3af'),
+              }))
+          : [],
+      )
+      setTopSellers(
+        Array.isArray(result.topSellers)
+          ? result.topSellers
+              .filter((seller: unknown) => Boolean(seller && typeof seller === 'object'))
+              .map((seller: any) => ({
+                id: Number(seller.id) || 0,
+                name: String(seller.name || 'Unknown seller'),
+                gmv: Number(seller.gmv) || 0,
+                orders: Number(seller.orders) || 0,
+                commission: Number(seller.commission) || 0,
+                status:
+                  seller.status === 'premium' ||
+                  seller.status === 'verified' ||
+                  seller.status === 'basic'
+                    ? seller.status
+                    : 'basic',
+              }))
+          : [],
+      )
+      setTopBuyers(
+        Array.isArray(result.topBuyers)
+          ? result.topBuyers
+              .filter((buyer: unknown) => Boolean(buyer && typeof buyer === 'object'))
+              .map((buyer: any) => ({
+                id: String(buyer.id || ''),
+                name: String(buyer.name || 'Unknown buyer'),
+                orders: Number(buyer.orders) || 0,
+                spent: Number(buyer.spent) || 0,
+                lastOrder: String(buyer.lastOrder || ''),
+              }))
+          : [],
+      )
       setLastUpdated(new Date())
+    },
+    [getToken],
+  )
+
+  const refreshData = useCallback(async () => {
+    setIsRefreshing(true)
+    setDataError(null)
+    try {
+      await fetchAnalytics(chartRange)
+    } catch (error) {
+      console.error('Failed to refresh admin analytics:', error)
+      setDataError('Could not load analytics data right now.')
+    } finally {
       setIsRefreshing(false)
-    }, 500)
-  }, [chartRange])
+    }
+  }, [chartRange, fetchAnalytics])
 
   useEffect(() => {
     if (autoRefresh) {
-      const interval = setInterval(refreshData, 30000)
+      const interval = setInterval(() => {
+        void refreshData()
+      }, 30000)
       return () => clearInterval(interval)
     }
   }, [autoRefresh, refreshData])
 
   useEffect(() => {
-    setGmvData(generateGMVData(chartRange))
-    setUserGrowthData(generateUserGrowthData(chartRange))
-  }, [chartRange])
+    void refreshData()
+  }, [chartRange, refreshData])
 
   const dismissAlert = (id: number) => {
     setDismissedAlerts((prev) => [...prev, id])
@@ -387,6 +365,27 @@ export function AdminDashboardPage() {
   const todayOrders = gmvData[gmvData.length - 1]?.orders || 0
   const totalOrders = gmvData.reduce((sum, d) => sum + d.orders, 0)
   const avgOrderValue = totalOrders > 0 ? totalGMV / totalOrders : 0
+
+  const latestGrowth = userGrowthData[userGrowthData.length - 1] ?? {
+    date: '',
+    buyers: 0,
+    sellers: 0,
+  }
+  const previousGrowth =
+    userGrowthData[userGrowthData.length - 2] ??
+    latestGrowth ?? {
+      date: '',
+      buyers: 0,
+      sellers: 0,
+    }
+  const buyersCount = Number(latestGrowth?.buyers) || 0
+  const sellersCount = Number(latestGrowth?.sellers) || 0
+  const activeUsers = buyersCount + sellersCount
+  const newUsersToday = Math.max(
+    0,
+    (buyersCount - (Number(previousGrowth?.buyers) || 0)) +
+      (sellersCount - (Number(previousGrowth?.sellers) || 0)),
+  )
 
   const commissionRate = 0.03
   const todayCommission = todayGMV * commissionRate
@@ -429,6 +428,7 @@ export function AdminDashboardPage() {
                         key={range.value}
                         onClick={() => {
                           setDateRange(range.value)
+                          setChartRange(range.days)
                           setDateDropdownOpen(false)
                         }}
                         className={`w-full px-4 py-2 text-left text-sm transition-colors ${
@@ -478,6 +478,12 @@ export function AdminDashboardPage() {
           <Clock size={12} />
           Last updated: {lastUpdated.toLocaleTimeString()}
         </div>
+
+        {dataError && (
+          <div className="rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+            {dataError}
+          </div>
+        )}
 
         {/* Alerts Panel */}
         {activeAlerts.length > 0 && (
@@ -590,11 +596,11 @@ export function AdminDashboardPage() {
               </div>
               <span className="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
                 <TrendingUp size={14} />
-                +124 today
+                +{newUsersToday} today
               </span>
             </div>
             <p className="text-2xl font-bold text-foreground dark:text-white transition-colors">
-              12,847
+              {activeUsers.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               Active Users
@@ -605,7 +611,7 @@ export function AdminDashboardPage() {
                   Buyers
                 </p>
                 <p className="text-sm font-medium text-foreground dark:text-slate-300">
-                  11,563
+                  {buyersCount.toLocaleString()}
                 </p>
               </div>
               <div>
@@ -613,7 +619,7 @@ export function AdminDashboardPage() {
                   Sellers
                 </p>
                 <p className="text-sm font-medium text-foreground dark:text-slate-300">
-                  1,284
+                  {sellersCount.toLocaleString()}
                 </p>
               </div>
             </div>
@@ -901,7 +907,7 @@ export function AdminDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={ORDER_STATUS_DATA}
+                    data={orderStatusData}
                     cx="50%"
                     cy="50%"
                     innerRadius={50}
@@ -909,7 +915,7 @@ export function AdminDashboardPage() {
                     paddingAngle={2}
                     dataKey="value"
                   >
-                    {ORDER_STATUS_DATA.map((entry, index) => (
+                    {orderStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -931,7 +937,7 @@ export function AdminDashboardPage() {
               </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-4">
-              {ORDER_STATUS_DATA.map((item) => (
+              {orderStatusData.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-full"
@@ -1034,7 +1040,7 @@ export function AdminDashboardPage() {
               </Link>
             </div>
             <div className="divide-y divide-border dark:divide-slate-800 transition-colors">
-              {TOP_SELLERS.map((seller, index) => (
+              {topSellers.map((seller, index) => (
                 <div
                   key={seller.id}
                   className="px-6 py-3 flex items-center gap-3"
@@ -1080,7 +1086,7 @@ export function AdminDashboardPage() {
               </Link>
             </div>
             <div className="divide-y divide-border dark:divide-slate-800 transition-colors">
-              {TOP_BUYERS.map((buyer, index) => (
+              {topBuyers.map((buyer, index) => (
                 <div
                   key={buyer.id}
                   className="px-6 py-3 flex items-center gap-3"

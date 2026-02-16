@@ -1,0 +1,712 @@
+scripts/attach-images-by-name.ts:11:async function attachImagesByName() {
+scripts/attach-images-by-name.ts:84:function getMimeType(ext: string) {
+scripts/clear-users.ts:5:async function main() {
+scripts/debug-admins.ts:4:async function checkAdmins() {
+scripts/debug-auth.ts:5:async function main() {
+scripts/debug-product-22.ts:5:async function checkProduct() {
+scripts/debug-products.ts:6:async function debugProducts() {
+scripts/debug-rfq-mapping.ts:5:async function debug() {
+scripts/fix-admin.ts:18:async function fixAdmin() {
+scripts/fix-admin.ts:8:async function hashPassword(password: string): Promise<string> {
+scripts/force-reset.ts:11:async function reset() {
+scripts/generate-assets.ts:16:const generatePrompts = (product) => {
+scripts/generate-assets.ts:8:const slugify = (text) => text.toString().toLowerCase()
+scripts/promote-new-products.ts:12:const slugify = (text: string) =>
+scripts/promote-new-products.ts:22:async function promoteNewProducts() {
+scripts/seed-admin.ts:15:async function seedAdmin() {
+scripts/seed-admin.ts:7:async function hashPassword(password: string): Promise<string> {
+scripts/seed-categories.ts:125:const slugify = (text: string) =>
+scripts/seed-categories.ts:135:async function seedCategories() {
+scripts/seed-products.ts:14:const slugify = (text: string) =>
+scripts/seed-products.ts:24:async function seedProducts() {
+scripts/seed-sellers.ts:13:async function hashPassword(password: string): Promise<string> {
+scripts/seed-sellers.ts:21:const slugify = (text: string) =>
+scripts/seed-sellers.ts:31:async function seedSellers() {
+scripts/upgrade-to-real-images.ts:14:const generatePollinationsUrl = (prompt: string) => {
+scripts/upgrade-to-real-images.ts:19:async function upgradeImages() {
+scripts/upgrade-to-real-images.ts:7:const slugify = (text: string) => text.toString().toLowerCase()
+scripts/upload-images-to-s3.ts:10:async function uploadImages() {
+scripts/upload-product-images.ts:16:async function uploadProductImages() {
+scripts/validate-data.ts:5:async function validateData() {
+src/components/AuthModal.tsx:26:  const handleEmailLogin = async (e: React.FormEvent) => {
+src/components/AuthModal.tsx:58:  const handleGoogleSignIn = async () => {
+src/components/CartSidebar.tsx:24:    const handleClickOutside = (event: MouseEvent) => {
+src/components/CategorySidebar.tsx:106:export function CategoryList({
+src/components/FeaturedProductsGrid.tsx:72:export function FeaturedProductsGridSkeleton({
+src/components/FeaturedProductsGrid.tsx:92:function ProductCardSkeleton() {
+src/components/FilterSidebar.tsx:337:function FilterSection({
+src/components/FilterSidebar.tsx:53:  const toggleSection = (section: string) => {
+src/components/FilterSidebar.tsx:63:  const handlePriceApply = () => {
+src/components/FilterSidebar.tsx:71:  const handleMoqApply = () => {
+src/components/FilterSidebar.tsx:79:  const handleLocationChange = (location: string) => {
+src/components/FilterSidebar.tsx:87:  const handleVerifiedToggle = () => {
+src/components/FilterSidebar.tsx:91:  const handleSortChange = (sortBy: ProductFilters['sortBy']) => {
+src/components/FilterSidebar.tsx:95:  const clearAllFilters = () => {
+src/components/FilterSidebar.tsx:99:  const hasActiveFilters = () => {
+src/components/Header.tsx:47:  const handleAuthRequired = (e: React.MouseEvent, path: string) => {
+src/components/Header.tsx:55:  const handleLogout = () => {
+src/components/HeroBanner.tsx:61:  const onTouchStart = (e: React.TouchEvent) => {
+src/components/HeroBanner.tsx:66:  const onTouchMove = (e: React.TouchEvent) => {
+src/components/HeroBanner.tsx:70:  const onTouchEnd = () => {
+src/components/HeroBanner.tsx:86:    const handleKeyDown = (e: KeyboardEvent) => {
+src/components/NotificationBell.tsx:135:function NotificationItem({
+src/components/NotificationBell.tsx:226:function AlertTriangleIcon({ size }: { size: number }) {
+src/components/NotificationBell.tsx:29:    const handleClickOutside = (event: MouseEvent) => {
+src/components/NotificationBell.tsx:41:  const handleMarkAsRead = (e: React.MouseEvent, id: string) => {
+src/components/NotificationBell.tsx:47:  const handleOpenNotification = (id: string) => {
+src/components/OrderStatusTimeline.tsx:179:  const handleCopyTracking = () => {
+src/components/OrderStatusTimeline.tsx:207:  const isStageCompleted = (stageIndex: number) => {
+src/components/OrderStatusTimeline.tsx:213:  const isStageCurrent = (stageIndex: number) => {
+src/components/OrderStatusTimeline.tsx:219:  const getStageDate = (stageIndex: number) => {
+src/components/OrderStatusTimeline.tsx:575:export function OrderStatusBadge({ status }: { status: string }) {
+src/components/OrderStatusTimeline.tsx:635:export function OrderProgressIndicator({ status }: { status: string }) {
+src/components/PopularSuppliers.tsx:18:  const checkScrollability = () => {
+src/components/PopularSuppliers.tsx:35:  const scroll = (direction: 'left' | 'right') => {
+src/components/PopularSuppliers.tsx:90:function SupplierCard({ supplier }: { supplier: SupplierDisplay }) {
+src/components/ProductCard.tsx:35:  const handleRequestQuote = (e: React.MouseEvent) => {
+src/components/PromoBanner.tsx:44:export function PromoStrip({
+src/components/PromoBanner.tsx:79:export function FrequentlySearched({
+src/components/QuickViewModal.tsx:53:  const handleQuantityChange = (val: number) => {
+src/components/QuickViewModal.tsx:61:  const handleAddToCart = () => {
+src/components/QuickViewModal.tsx:65:  const handleRequestQuote = () => {
+src/components/QuoteActionModals.tsx:182:export function CounterOfferModal({
+src/components/QuoteActionModals.tsx:202:  const handleSubmit = () => {
+src/components/QuoteActionModals.tsx:24:export function AcceptQuoteModal({
+src/components/QuoteActionModals.tsx:90:export function RejectQuoteModal({
+src/components/QuoteResponseModal.tsx:30:  const handleSubmit = async (e: React.FormEvent) => {
+src/components/QuoteResponseModal.tsx:56:  const handleClose = () => {
+src/components/RFQFormModal.tsx:129:  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+src/components/RFQFormModal.tsx:151:  const removeFile = (index: number) => {
+src/components/SearchBar.tsx:105:  const handleSubmit = (e: React.FormEvent) => {
+src/components/SearchBar.tsx:110:  const handleSuggestionClick = (suggestion: string) => {
+src/components/SearchBar.tsx:122:  const handleProductSuggestionClick = (suggestion: ProductSuggestion) => {
+src/components/SearchBar.tsx:127:  const clearSearch = () => {
+src/components/SearchBar.tsx:132:  const clearRecentSearches = () => {
+src/components/SearchBar.tsx:139:    const handleClickOutside = (e: MouseEvent) => {
+src/components/SearchBar.tsx:79:  const saveRecentSearch = (searchQuery: string) => {
+src/components/SearchBar.tsx:91:  const performSearch = () => {
+src/components/ThemeToggle.tsx:4:export function ThemeToggle({ className }: { className?: string }) {
+src/components/admin/AdminAuditLogsPage.tsx:223:function severityBadge(severity: Severity) {
+src/components/admin/AdminAuditLogsPage.tsx:252:function statusBadge(status: Status) {
+src/components/admin/AdminAuditLogsPage.tsx:264:export function AdminAuditLogsPage() {
+src/components/admin/AdminAuditLogsPage.tsx:319:  const exportCsv = () => {
+src/components/admin/AdminDashboardPage.tsx:287:function getActivityIcon(type: string) {
+src/components/admin/AdminDashboardPage.tsx:306:function getStatusBadge(status: string) {
+src/components/admin/AdminDashboardPage.tsx:331:export function AdminDashboardPage() {
+src/components/admin/AdminDashboardPage.tsx:373:  const dismissAlert = (id: number) => {
+src/components/admin/AdminDashboardPage.tsx:50:const generateGMVData = (days: number) => {
+src/components/admin/AdminDashboardPage.tsx:68:const generateUserGrowthData = (days: number) => {
+src/components/admin/AdminDisputesPage.tsx:329:function statusBadge(status: DisputeStatus) {
+src/components/admin/AdminDisputesPage.tsx:370:export function AdminDisputesPage() {
+src/components/admin/AdminKYCPage.tsx:260:export function AdminKYCPage() {
+src/components/admin/AdminKYCPage.tsx:290:  const fetchQueue = async () => {
+src/components/admin/AdminKYCPage.tsx:310:  const handleReview = async (item: any) => {
+src/components/admin/AdminKYCPage.tsx:330:  const handleAction = async (status: 'approved' | 'rejected') => {
+src/components/admin/AdminKYCPage.tsx:354:    const handler = (event: KeyboardEvent) => {
+src/components/admin/AdminKYCPage.tsx:408:  const toggleSelectAll = () => {
+src/components/admin/AdminKYCPage.tsx:419:  const toggleSelectOne = (id: string) => {
+src/components/admin/AdminLayout.tsx:102:  const isActive = (path: string) => location.pathname === path
+src/components/admin/AdminLayout.tsx:78:function getRoleBadgeColor(role: AdminRole): string {
+src/components/admin/AdminLayout.tsx:89:function formatRole(role: AdminRole): string {
+src/components/admin/AdminLayout.tsx:96:export function AdminLayout({ children }: { children: React.ReactNode }) {
+src/components/admin/AdminLoginPage.tsx:16:  const handleSubmit = async (event: React.FormEvent) => {
+src/components/admin/AdminLoginPage.tsx:6:export function AdminLoginPage() {
+src/components/admin/AdminProductsPage.tsx:330:function formatCurrency(amount: number) {
+src/components/admin/AdminProductsPage.tsx:334:function statusBadge(status: ProductStatus) {
+src/components/admin/AdminProductsPage.tsx:393:export function AdminProductsPage() {
+src/components/admin/AdminProductsPage.tsx:432:  const refreshSellerProducts = () => {
+src/components/admin/AdminProductsPage.tsx:500:      const matchesStock = (() => {
+src/components/admin/AdminProductsPage.tsx:568:  const toggleSelectAll = () => {
+src/components/admin/AdminProductsPage.tsx:579:  const toggleSelectOne = (id: string) => {
+src/components/admin/AdminProductsPage.tsx:626:  const restoreDeletedProduct = async (product: Product) => {
+src/components/admin/AdminProtectedRoute.tsx:15:export function AdminProtectedRoute({
+src/components/admin/AdminSettingsPage.tsx:52:export function AdminSettingsPage() {
+src/components/admin/AdminSuppliersPage.tsx:138:function formatCurrency(amount: number) {
+src/components/admin/AdminSuppliersPage.tsx:142:function kycBadge(status: KycStatus) {
+src/components/admin/AdminSuppliersPage.tsx:164:function statusBadge(status: SupplierStatus) {
+src/components/admin/AdminSuppliersPage.tsx:179:export function AdminSuppliersPage() {
+src/components/admin/AdminSuppliersPage.tsx:191:    async function loadSuppliers() {
+src/components/admin/AdminSuppliersPage.tsx:263:      const matchesPerformance = (() => {
+src/components/admin/AdminSuppliersPage.tsx:320:  const toggleSelectAll = () => {
+src/components/admin/AdminSuppliersPage.tsx:331:  const toggleSelectOne = (id: string) => {
+src/components/admin/AdminUsersPage.tsx:273:function formatCurrency(amount: number) {
+src/components/admin/AdminUsersPage.tsx:277:function matchesOrderCount(orders: number, filter: OrderCountFilter) {
+src/components/admin/AdminUsersPage.tsx:285:function statusBadge(status: UserStatus) {
+src/components/admin/AdminUsersPage.tsx:307:export function AdminUsersPage() {
+src/components/admin/AdminUsersPage.tsx:399:  const toggleSelectAll = () => {
+src/components/admin/AdminUsersPage.tsx:410:  const toggleSelectOne = (id: string) => {
+src/components/admin/AdminUsersPage.tsx:416:  const exportUsers = (scope: 'all' | 'filtered', format: 'csv' | 'excel') => {
+src/components/buyer/BuyerRFQsSection.tsx:294:function StatusBadge({ status }: { status?: string }) {
+src/components/buyer/BuyerRFQsSection.tsx:323:function PlusCircleIcon({ size }: { size: number }) {
+src/components/buyer/BuyerRFQsSection.tsx:67:  const toggleSort = (field: SortField) => {
+src/components/checkout/AddressCard.tsx:20:export function AddressCard({
+src/components/checkout/AddressCard.tsx:27:  const getIcon = (label: string) => {
+src/components/checkout/AddressFormModal.tsx:30:export function AddressFormModal({
+src/components/checkout/CheckoutLayout.tsx:15:export function CheckoutLayout({ children, currentStep }: CheckoutLayoutProps) {
+src/components/checkout/GuestAddressForm.tsx:24:export function GuestAddressForm({ onSubmit }: GuestAddressFormProps) {
+src/components/demo.FormComponents.tsx:22:function ErrorMessages({
+src/components/demo.FormComponents.tsx:41:export function TextField({
+src/components/demo.FormComponents.tsx:5:export function SubscribeButton({ label }: { label: string }) {
+src/components/demo.FormComponents.tsx:68:export function TextArea({
+src/components/demo.FormComponents.tsx:95:export function Select({
+src/components/demo.chat-area.tsx:14:  const postMessage = () => {
+src/components/demo.chat-area.tsx:21:  const handleKeyPress = (e: React.KeyboardEvent) => {
+src/components/demo.messages.tsx:3:export const getAvatarColor = (username: string) => {
+src/components/seller/AddProductPage.tsx:1607:function Field({
+src/components/seller/AddProductPage.tsx:1644:function SelectField({
+src/components/seller/AddProductPage.tsx:1690:function ToolbarButton({
+src/components/seller/AddProductPage.tsx:1708:function Modal({
+src/components/seller/AddProductPage.tsx:1743:function sanitizeHtml(input: string) {
+src/components/seller/AddProductPage.tsx:1760:async function compressImage(file: File) {
+src/components/seller/AddProductPage.tsx:1780:async function generateThumbnail(file: File) {
+src/components/seller/AddProductPage.tsx:313:    const computeActive = () => {
+src/components/seller/AddProductPage.tsx:332:    const onScroll = () => {
+src/components/seller/AddProductPage.tsx:484:  const handleTagInput = (value: string) => {
+src/components/seller/AddProductPage.tsx:497:  const removeTag = (tag: string) => {
+src/components/seller/AddProductPage.tsx:501:  const addTier = () => {
+src/components/seller/AddProductPage.tsx:508:  const updateTier = (id: string, field: keyof PricingTier, value: string) => {
+src/components/seller/AddProductPage.tsx:514:  const removeTier = (id: string) => {
+src/components/seller/AddProductPage.tsx:519:  const addSpecRow = () => {
+src/components/seller/AddProductPage.tsx:526:  const updateSpec = (id: string, field: keyof SpecRow, value: string) => {
+src/components/seller/AddProductPage.tsx:532:  const removeSpec = (id: string) => {
+src/components/seller/AddProductPage.tsx:536:  const handleImageFiles = async (files: FileList | null) => {
+src/components/seller/AddProductPage.tsx:562:  const validateImage = (file: File) => {
+src/components/seller/AddProductPage.tsx:569:  const simulateUploadProgress = (id: string) => {
+src/components/seller/AddProductPage.tsx:582:  const removeImage = (id: string) => {
+src/components/seller/AddProductPage.tsx:592:  const setPrimaryImage = (id: string) => {
+src/components/seller/AddProductPage.tsx:598:  const onDragStart = (event: React.DragEvent<HTMLDivElement>, id: string) => {
+src/components/seller/AddProductPage.tsx:620:  const validateAll = () => {
+src/components/seller/AddProductPage.tsx:677:  const handleSubmit = (mode: SubmitMode) => {
+src/components/seller/AddProductPage.tsx:684:    const doSubmit = async () => {
+src/components/seller/AddProductPage.tsx:797:  const handlePreview = () => {
+src/components/seller/AddProductPage.tsx:80:export function AddProductPage({ initialData }: { initialData?: any }) {
+src/components/seller/BulkImportModal.tsx:123:  const downloadCsvTemplate = () => {
+src/components/seller/BulkImportModal.tsx:128:  const downloadExcelTemplate = async () => {
+src/components/seller/BulkImportModal.tsx:140:  const handleFile = async (file: File | null) => {
+src/components/seller/BulkImportModal.tsx:176:  const handleImport = () => {
+src/components/seller/BulkImportModal.tsx:181:  const downloadErrorReport = () => {
+src/components/seller/BulkImportModal.tsx:476:function SummaryCard({
+src/components/seller/BulkImportModal.tsx:499:function downloadFile(content: string, filename: string, type: string) {
+src/components/seller/BulkImportModal.tsx:513:async function parseCsv(file: File) {
+src/components/seller/BulkImportModal.tsx:528:async function parseExcel(file: File) {
+src/components/seller/BulkImportModal.tsx:544:function parseCsvLine(line: string) {
+src/components/seller/BulkImportModal.tsx:570:function normalizeHeader(header: string) {
+src/components/seller/BulkImportModal.tsx:577:function toImportRow(
+src/components/seller/BulkImportModal.tsx:597:function validateRows(rows: Array<ImportRow>, uploadImagesSeparately: boolean) {
+src/components/seller/BulkImportModal.tsx:75:export function BulkImportModal({
+src/components/seller/SellerAnalyticsPage.tsx:128:export function SellerAnalyticsPage() {
+src/components/seller/SellerAnalyticsPage.tsx:531:function KpiCard({
+src/components/seller/SellerAnalyticsPage.tsx:585:function InfoCard({
+src/components/seller/SellerDashboardPage.tsx:53:export function SellerDashboardPage() {
+src/components/seller/SellerDashboardPage.tsx:599:function MetricCard({
+src/components/seller/SellerDashboardPage.tsx:652:function StatusBadge({ status }: { status: string }) {
+src/components/seller/SellerDashboardPage.tsx:671:function ActionButton({
+src/components/seller/SellerDashboardPage.tsx:694:function VerificationStatus({ seller }: { seller: any }) {
+src/components/seller/SellerDashboardPage.tsx:756:function ChartSkeleton() {
+src/components/seller/SellerDashboardPage.tsx:762:function TableSkeleton() {
+src/components/seller/SellerDashboardPage.tsx:775:function PanelSkeleton() {
+src/components/seller/SellerDashboardPage.tsx:788:function EmptyState({ icon, label }: { icon: React.ReactNode; label: string }) {
+src/components/seller/SellerHeader.tsx:12:export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
+src/components/seller/SellerHeader.tsx:19:    function handleClickOutside(event: MouseEvent) {
+src/components/seller/SellerKYCPage.tsx:110:  const updateUpload = async (key: UploadKey, file: File) => {
+src/components/seller/SellerKYCPage.tsx:129:  const simulateProgress = (key: UploadKey) => {
+src/components/seller/SellerKYCPage.tsx:144:  const validateFile = (file: File) => {
+src/components/seller/SellerKYCPage.tsx:163:  const handleBrowse = (key: UploadKey, files: FileList | null) => {
+src/components/seller/SellerKYCPage.tsx:168:  const clearUpload = (key: UploadKey) => {
+src/components/seller/SellerKYCPage.tsx:174:  const toggleCategory = (category: string) => {
+src/components/seller/SellerKYCPage.tsx:182:  const validateSubmission = () => {
+src/components/seller/SellerKYCPage.tsx:193:  const handleSubmit = () => {
+src/components/seller/SellerKYCPage.tsx:199:  const confirmSubmit = async () => {
+src/components/seller/SellerKYCPage.tsx:515:function StatusBadge({ status }: { status: string }) {
+src/components/seller/SellerKYCPage.tsx:53:export function SellerKYCPage() {
+src/components/seller/SellerKYCPage.tsx:540:function DocumentUploader({
+src/components/seller/SellerKYCPage.tsx:650:function ConfirmationModal({
+src/components/seller/SellerKYCPage.tsx:715:async function compressImageIfNeeded(file: File) {
+src/components/seller/SellerKYCPage.tsx:739:async function fileToBase64(file: File) {
+src/components/seller/SellerKYCPage.tsx:756:async function buildSubmissionPayload(
+src/components/seller/SellerLayout.tsx:10:export function SellerLayout({ children }: SellerLayoutProps) {
+src/components/seller/SellerLoginPage.tsx:11:export function SellerLoginPage() {
+src/components/seller/SellerLoginPage.tsx:294:function StatCard({ value, label }: { value: string; label: string }) {
+src/components/seller/SellerLoginPage.tsx:305:function BenefitTile({
+src/components/seller/SellerLoginPage.tsx:31:  const validate = () => {
+src/components/seller/SellerLoginPage.tsx:43:  const mapErrorMessage = (message: string) => {
+src/components/seller/SellerLoginPage.tsx:54:  const handleSubmit = async (event: React.FormEvent) => {
+src/components/seller/SellerLoginPage.tsx:89:  const handleGoogleLogin = async () => {
+src/components/seller/SellerMobileNav.tsx:12:export function SellerMobileNav() {
+src/components/seller/SellerOrdersPage.tsx:408:function OrderDetail({ order }: { order: SellerOrderListItem }) {
+src/components/seller/SellerOrdersPage.tsx:469:function ActionMenu({
+src/components/seller/SellerOrdersPage.tsx:508:function EmptyState({ query }: { query: string }) {
+src/components/seller/SellerOrdersPage.tsx:519:function OrderSkeleton() {
+src/components/seller/SellerOrdersPage.tsx:532:function statusBadge(status: string) {
+src/components/seller/SellerOrdersPage.tsx:551:function actionLabel(status: SellerOrderActionStatus) {
+src/components/seller/SellerOrdersPage.tsx:560:function formatDate(value: string) {
+src/components/seller/SellerOrdersPage.tsx:568:function formatBdt(value: number) {
+src/components/seller/SellerOrdersPage.tsx:59:export function SellerOrdersPage() {
+src/components/seller/SellerPayoutsPage.tsx:121:export function SellerPayoutsPage() {
+src/components/seller/SellerPayoutsPage.tsx:500:function BalanceCard({
+src/components/seller/SellerPayoutsPage.tsx:569:function WithdrawModal({
+src/components/seller/SellerPayoutsPage.tsx:660:function statusBadge(status: PayoutStatus) {
+src/components/seller/SellerProductsPage.tsx:116:  const toggleSelection = (id: number) => {
+src/components/seller/SellerProductsPage.tsx:122:  const toggleSelectAll = () => {
+src/components/seller/SellerProductsPage.tsx:147:  const handleBulkAction = (action: 'publish' | 'unpublish' | 'delete') => {
+src/components/seller/SellerProductsPage.tsx:156:  const handleAction = (id: number, action: string) => {
+src/components/seller/SellerProductsPage.tsx:175:  const handleDeleteProducts = async (ids: Array<number>) => {
+src/components/seller/SellerProductsPage.tsx:205:  const handleExport = (type: 'csv' | 'excel') => {
+src/components/seller/SellerProductsPage.tsx:43:export function SellerProductsPage() {
+src/components/seller/SellerProductsPage.tsx:570:function BulkActions({
+src/components/seller/SellerProductsPage.tsx:607:function ExportMenu({
+src/components/seller/SellerProductsPage.tsx:636:function RowActions({
+src/components/seller/SellerProductsPage.tsx:677:function statusBadge(status: ProductStatus) {
+src/components/seller/SellerProductsPage.tsx:690:function stockBadge(product: Product) {
+src/components/seller/SellerProductsPage.tsx:698:function EmptyState({
+src/components/seller/SellerProductsPage.tsx:744:function ProductSkeleton() {
+src/components/seller/SellerProductsPage.tsx:76:    const matchesQuery = (product: Product) =>
+src/components/seller/SellerProfilePage.tsx:125:function BusinessTab({
+src/components/seller/SellerProfilePage.tsx:152:  const toggleCategory = (value: string) => {
+src/components/seller/SellerProfilePage.tsx:158:  const handleSaveBusiness = () => {
+src/components/seller/SellerProfilePage.tsx:167:  const handleSaveContact = () => {
+src/components/seller/SellerProfilePage.tsx:25:export function SellerProfilePage() {
+src/components/seller/SellerProfilePage.tsx:297:function BankTab({
+src/components/seller/SellerProfilePage.tsx:313:  const handleSaveBank = async () => {
+src/components/seller/SellerProfilePage.tsx:33:  const showMessage = (message: string) => {
+src/components/seller/SellerProfilePage.tsx:381:function KycTab({
+src/components/seller/SellerProfilePage.tsx:40:  const handleUpdate = async (data: Partial<SellerUser>) => {
+src/components/seller/SellerProfilePage.tsx:441:function NotificationsTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
+src/components/seller/SellerProfilePage.tsx:497:function SecurityTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
+src/components/seller/SellerProfilePage.tsx:593:function StoreTab({ onSuccess }: { onSuccess: (msg: string) => void }) {
+src/components/seller/SellerProfilePage.tsx:698:function SectionCard({
+src/components/seller/SellerProfilePage.tsx:715:function Field({
+src/components/seller/SellerProfilePage.tsx:753:function TextArea({
+src/components/seller/SellerProfilePage.tsx:785:function SelectField({
+src/components/seller/SellerProfilePage.tsx:823:function FileField({
+src/components/seller/SellerProfilePage.tsx:855:function DocumentRow({ label, status }: { label: string; status: string }) {
+src/components/seller/SellerProfilePage.tsx:877:function NotificationRow({ label }: { label: string }) {
+src/components/seller/SellerProfilePage.tsx:888:function Toggle({ label }: { label: string }) {
+src/components/seller/SellerProtectedRoute.tsx:11:export function SellerProtectedRoute({
+src/components/seller/SellerRFQsPage.tsx:119:export function SellerRFQsPage() {
+src/components/seller/SellerRFQsPage.tsx:134:    const fetchRfqs = async () => {
+src/components/seller/SellerRFQsPage.tsx:478:function StatCard({ label, value }: { label: string; value: string }) {
+src/components/seller/SellerRFQsPage.tsx:491:function InfoItem({ label, value }: { label: string; value: string }) {
+src/components/seller/SellerRFQsPage.tsx:502:function UrgencyBadge({ hoursLeft }: { hoursLeft: number }) {
+src/components/seller/SellerRFQsPage.tsx:525:function Badge({ label, className }: { label: string; className: string }) {
+src/components/seller/SellerRFQsPage.tsx:535:function SearchIcon() {
+src/components/seller/SellerRFQsPage.tsx:544:function statusBadge(status: RFQStatus) {
+src/components/seller/SellerRFQsPage.tsx:558:function RFQDetailPanel({
+src/components/seller/SellerRFQsPage.tsx:724:function SendQuoteModal({
+src/components/seller/SellerRFQsPage.tsx:747:  const getDepositPercentage = (terms: string) => {
+src/components/seller/SellerRFQsPage.tsx:888:function Modal({
+src/components/seller/SellerRFQsPage.tsx:923:function EmptyState() {
+src/components/seller/SellerRFQsPage.tsx:932:function RfqSkeleton() {
+src/components/seller/SellerRegistrationPage.tsx:111:  const validateStep2 = () => {
+src/components/seller/SellerRegistrationPage.tsx:133:  const validateStep3 = () => {
+src/components/seller/SellerRegistrationPage.tsx:149:  const handleNext = () => {
+src/components/seller/SellerRegistrationPage.tsx:154:  const handleBack = () => {
+src/components/seller/SellerRegistrationPage.tsx:159:  const handleSubmit = async () => {
+src/components/seller/SellerRegistrationPage.tsx:41:export function SellerRegistrationPage() {
+src/components/seller/SellerRegistrationPage.tsx:466:function BenefitCard({
+src/components/seller/SellerRegistrationPage.tsx:485:function StepBadge({ active, label }: { active: boolean; label: string }) {
+src/components/seller/SellerRegistrationPage.tsx:502:function Field({
+src/components/seller/SellerRegistrationPage.tsx:548:function SelectField({
+src/components/seller/SellerRegistrationPage.tsx:90:  const updateField = (name: keyof SellerRegisterData, value: string) => {
+src/components/seller/SellerRegistrationPage.tsx:94:  const validateStep1 = () => {
+src/components/seller/SellerSidebar.tsx:30:export function SellerSidebar({ isOpen, onClose }: SellerSidebarProps) {
+src/components/seller/SellerToastProvider.tsx:25:export function SellerToastProvider({
+src/components/seller/SellerToastProvider.tsx:68:export function useSellerToast() {
+src/contexts/AdminAuthContext.tsx:147:export function useAdminAuth() {
+src/contexts/AdminAuthContext.tsx:38:export function AdminAuthProvider({ children }: { children: ReactNode }) {
+src/contexts/AdminAuthContext.tsx:74:    const updateActivity = () => {
+src/contexts/AdminAuthContext.tsx:91:    const handleBeforeUnload = () => {
+src/contexts/AuthContext.tsx:116:export function useAuth() {
+src/contexts/AuthContext.tsx:26:export function AuthProvider({ children }: { children: React.ReactNode }) {
+src/contexts/AuthContext.tsx:35:  const logout = async () => {
+src/contexts/AuthContext.tsx:48:  const refreshUser = async () => {
+src/contexts/AuthContext.tsx:53:    const verifyPasswordStatus = async () => {
+src/contexts/CartContext.tsx:400:export function useCart() {
+src/contexts/CartContext.tsx:95:export function CartProvider({ children }: { children: React.ReactNode }) {
+src/contexts/CheckoutContext.tsx:113:export function useCheckout() {
+src/contexts/CheckoutContext.tsx:41:export function CheckoutProvider({ children }: { children: React.ReactNode }) {
+src/contexts/CheckoutContext.tsx:83:  const setShippingAddressId = (id: number) =>
+src/contexts/CheckoutContext.tsx:85:  const setPaymentMethod = (method: PaymentMethod) =>
+src/contexts/CheckoutContext.tsx:87:  const setPaymentDetails = (details: PaymentDetails) =>
+src/contexts/CheckoutContext.tsx:89:  const setPoNumber = (po: string) =>
+src/contexts/CheckoutContext.tsx:91:  const setNotes = (notes: string) =>
+src/contexts/CheckoutContext.tsx:93:  const setIsPaymentVerified = (verified: boolean) =>
+src/contexts/NotificationContext.tsx:110:export function NotificationProvider({
+src/contexts/NotificationContext.tsx:208:    const handleStorage = (event: StorageEvent) => {
+src/contexts/NotificationContext.tsx:217:  const flushNotificationQueue = () => {
+src/contexts/NotificationContext.tsx:243:  const markAsRead = (id: string) => {
+src/contexts/NotificationContext.tsx:249:  const toggleRead = (id: string) => {
+src/contexts/NotificationContext.tsx:255:  const markAllAsRead = () => {
+src/contexts/NotificationContext.tsx:259:  const archiveNotification = (id: string) => {
+src/contexts/NotificationContext.tsx:265:  const restoreNotification = (id: string) => {
+src/contexts/NotificationContext.tsx:298:    const fetchStockAlerts = async () => {
+src/contexts/NotificationContext.tsx:338:  const updatePreferences = (prefs: Partial<NotificationPreferences>) => {
+src/contexts/NotificationContext.tsx:375:export function useNotifications() {
+src/contexts/SellerAuthContext.tsx:198:export function useSellerAuth() {
+src/contexts/SellerAuthContext.tsx:39:export function SellerAuthProvider({
+src/contexts/ThemeContext.tsx:23:export function ThemeProvider({
+src/contexts/ThemeContext.tsx:85:export const useTheme = () => {
+src/contexts/WishlistContext.tsx:113:export function useWishlist() {
+src/contexts/WishlistContext.tsx:19:export function WishlistProvider({ children }: { children: React.ReactNode }) {
+src/contexts/WishlistContext.tsx:33:  const addToWishlist = (productId: number) => {
+src/contexts/WishlistContext.tsx:57:  const removeFromWishlist = (productId: number) => {
+src/contexts/WishlistContext.tsx:61:  const toggleWishlist = (productId: number) => {
+src/contexts/WishlistContext.tsx:89:  const isInWishlist = (productId: number) => {
+src/data/demo-table-data.ts:14:const range = (len: number) => {
+src/data/demo-table-data.ts:38:export function makeData(...lens: Array<number>) {
+src/data/demo.punk-songs.ts:3:export const getPunkSongs = createServerFn({
+src/data/mock-rfqs.ts:21:const getProduct = (id: number) =>
+src/db/login-events.ts:5:export async function createLoginEvent(data: NewLoginEvent) {
+src/db/login-events.ts:9:export async function getLoginEventsByUserId(userId: string) {
+src/hooks/demo.useChat.ts:15:    const fetchData = async () => {
+src/hooks/demo.useChat.ts:44:export function useChat() {
+src/hooks/demo.useChat.ts:47:  const sendMessage = (message: string, user: string) => {
+src/hooks/demo.useChat.ts:57:export function useMessages() {
+src/hooks/demo.useChat.ts:8:function useStreamConnection(
+src/hooks/useCouponValidation.ts:39:export function useCouponValidation(): UseCouponValidationReturn {
+src/hooks/useProductFilters.ts:130:export function parseSearchParamsToFilters(
+src/hooks/useProductFilters.ts:147:export function filtersToSearchParams(
+src/hooks/useProductFilters.ts:26:export function useProductFilters({
+src/integrations/tanstack-query/root-provider.tsx:10:export function Provider({
+src/integrations/tanstack-query/root-provider.tsx:3:export function getContext() {
+src/lib/address-actions.ts:13:export const addAddress = createServerFn({ method: 'POST' })
+src/lib/address-actions.ts:27:export const updateAddress = createServerFn({ method: 'POST' })
+src/lib/address-actions.ts:47:export const deleteAddress = createServerFn({ method: 'POST' })
+src/lib/address-actions.ts:7:export const getAddresses = createServerFn({ method: 'GET' })
+src/lib/admin-auth-server.ts:103:export const adminLogin = createServerFn({ method: 'POST' })
+src/lib/admin-auth-server.ts:15:function generateToken(adminId: string): string {
+src/lib/admin-auth-server.ts:179:export const getAdminSession = createServerFn({ method: 'GET' })
+src/lib/admin-auth-server.ts:186:export const validateAdminToken = createServerFn({ method: 'POST' })
+src/lib/admin-auth-server.ts:217:export const createAdmin = createServerFn({ method: 'POST' })
+src/lib/admin-auth-server.ts:27:export function verifyAdminToken(token: string): { adminId: string } | null {
+src/lib/admin-auth-server.ts:50:async function hashPassword(password: string): Promise<string> {
+src/lib/admin-auth-server.ts:58:async function verifyPassword(
+src/lib/admin-product-server.ts:104:export const approveSellerProduct = createServerFn({ method: 'POST' })
+src/lib/admin-product-server.ts:12:async function getOrCreateSupplierForSeller(
+src/lib/admin-product-server.ts:197:export const declineSellerProduct = createServerFn({ method: 'POST' })
+src/lib/admin-product-server.ts:238:export const restoreSellerDeletedProduct = createServerFn({ method: 'POST' })
+src/lib/admin-product-server.ts:49:export const getAdminSellerProducts = createServerFn({ method: 'GET' })
+src/lib/admin-supplier-server.ts:51:export const getAdminSuppliers = createServerFn({ method: 'GET' })
+src/lib/auth-server.ts:105:export const checkUserPasswordStatus = createServerFn({ method: 'GET' })
+src/lib/auth-server.ts:121:export const verifyResetCode = createServerFn({ method: 'POST' })
+src/lib/auth-server.ts:23:export const getAuthSession = createServerFn({ method: 'GET' })
+src/lib/auth-server.ts:29:export const setUserPassword = createServerFn({ method: 'POST' })
+src/lib/auth-server.ts:67:export const updateUserPassword = createServerFn({ method: 'POST' })
+src/lib/cart-actions.ts:7:export const validateCartServer = createServerFn({ method: 'POST' })
+src/lib/cart-utils.ts:132:export function validateCart(cart: Cart): CartValidation {
+src/lib/cart-utils.ts:183:export function calculateSupplierBreakdown(
+src/lib/cart-utils.ts:231:export function validateCoupon(
+src/lib/cart-utils.ts:301:export function calculateDiscount(
+src/lib/cart-utils.ts:366:export function calculateCartTotals(
+src/lib/cart-utils.ts:414:export function saveCartToStorage(cart: Cart, userId?: string | null): void {
+src/lib/cart-utils.ts:441:export function loadCartFromStorage(): StoredCart | null {
+src/lib/cart-utils.ts:468:export function clearCartFromStorage(): void {
+src/lib/cart-utils.ts:485:export function mergeGuestCartWithUserCart(
+src/lib/cart-utils.ts:52:export function validateMoq(item: CartItem): {
+src/lib/cart-utils.ts:531:export function generateCartItemId(productId: number, rfqId?: number): string {
+src/lib/cart-utils.ts:541:export function formatCurrency(amount: number): string {
+src/lib/cart-utils.ts:555:export function calculateSavings(
+src/lib/cart-utils.ts:77:export function validateStock(item: CartItem): {
+src/lib/cart-utils.ts:96:export function validateCartItem(item: CartItem): CartItemValidation {
+src/lib/email.ts:156:export async function sendInvoiceEmail({
+src/lib/email.ts:205:export async function sendCancellationEmail({
+src/lib/email.ts:247:export async function sendOrderStatusEmail({
+src/lib/email.ts:309:export async function sendStockAlertEmail({
+src/lib/email.ts:367:export async function sendRfqEmail({
+src/lib/email.ts:415:export async function sendQuoteEmail({
+src/lib/email.ts:77:export async function sendVerificationEmail({
+src/lib/notifications.ts:16:export async function sendOrderStatusEmail({
+src/lib/notifications.ts:55:export function sendSmsNotification({
+src/lib/notifications.ts:65:export function sendPushNotification({
+src/lib/notifications.ts:77:function buildOrderNumber(orderId: number) {
+src/lib/order-actions.ts:10:export const getOrder = createServerFn({ method: 'GET' })
+src/lib/order-actions.ts:219:export const updateOrderPayment = createServerFn({ method: 'POST' })
+src/lib/order-actions.ts:268:export const getBuyerOrders = createServerFn({ method: 'GET' })
+src/lib/order-actions.ts:74:export const createOrder = createServerFn({ method: 'POST' })
+src/lib/order-utils.ts:16:export function calculateEstimatedDelivery(
+src/lib/order-utils.ts:26:export function canCancelOrder(status: string): boolean {
+src/lib/order-utils.ts:33:export function generateInvoiceUrl(orderId: number): string {
+src/lib/order-utils.ts:7:export function generateOrderNumber(sequence: number): string {
+src/lib/product-images-s3.ts:12:const getS3Client = async () => {
+src/lib/product-images-s3.ts:36:function getExtFromMime(mimeType: string): string {
+src/lib/product-images-s3.ts:45:export async function uploadProductImage(
+src/lib/product-images-s3.ts:75:export async function deleteProductImage(publicUrl: string): Promise<void> {
+src/lib/product-server.ts:115:export const getFeaturedProducts = createServerFn({ method: 'GET' })
+src/lib/product-server.ts:126:export const getNewArrivals = createServerFn({ method: 'GET' })
+src/lib/product-server.ts:137:export const getTopRanking = createServerFn({ method: 'GET' })
+src/lib/product-server.ts:149:export const getVerifiedSuppliersList = createServerFn({ method: 'GET' }).handler(
+src/lib/product-server.ts:171:function mapProductDetail(row: {
+src/lib/product-server.ts:249:export const getProductBySlug = createServerFn({ method: 'POST' })
+src/lib/product-server.ts:296:export const getProductSuggestions = createServerFn({ method: 'GET' })
+src/lib/product-server.ts:323:export const searchProducts = createServerFn({ method: 'POST' })
+src/lib/product-server.ts:76:function mapProduct(row: {
+src/lib/quote-server.ts:118:export const uploadRfqAttachment = createServerFn({ method: 'POST' })
+src/lib/quote-server.ts:155:export const sendQuote = createServerFn({ method: 'POST' })
+src/lib/quote-server.ts:24:export const submitRFQ = createServerFn({ method: 'POST' })
+src/lib/quote-server.ts:271:export const getSellerRfqs = createServerFn({ method: 'GET' })
+src/lib/quote-server.ts:304:export const getBuyerRfqs = createServerFn({ method: 'GET' })
+src/lib/quote-server.ts:329:export const getBuyerQuotes = createServerFn({ method: 'GET' })
+src/lib/quote-server.ts:369:export const getRfqById = createServerFn({ method: 'GET' })
+src/lib/quote-server.ts:437:export const updateQuoteStatus = createServerFn({ method: 'POST' })
+src/lib/rfq-validation.ts:50:export function validateMoq(quantity: number, moq: number): boolean {
+src/lib/rfq-validation.ts:60:export function validatePrice(price: number): boolean {
+src/lib/rfq-validation.ts:69:export function calculateExpiry(days: number = 30): Date {
+src/lib/rfq-validation.ts:80:export function isExpired(expiryDate: Date | string): boolean {
+src/lib/s3.ts:13:const getS3Client = async () => {
+src/lib/s3.ts:36:export async function uploadToS3(
+src/lib/s3.ts:77:export async function getSignedUrl(key: string, expiresIn: number = 3600) {
+src/lib/s3.ts:90:export async function deleteFromS3(key: string) {
+src/lib/sanitize.ts:30:export function sanitizeHtml(input: string): string {
+src/lib/sanitize.ts:38:export function sanitizeText(input: string): string {
+src/lib/seller-auth-server.ts:126:export const sellerRegister = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:16:function generateToken(sellerId: string): string {
+src/lib/seller-auth-server.ts:216:export const setSellerPassword = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:274:export const updateSellerProfile = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:28:export function verifySellerToken(token: string): { sellerId: string } | null {
+src/lib/seller-auth-server.ts:332:export const requestSellerPasswordReset = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:376:export const verifySellerResetCode = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:421:export const sellerGoogleLogin = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:450:export const sellerLogin = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:488:export const getSellerSession = createServerFn({ method: 'GET' })
+src/lib/seller-auth-server.ts:495:export const validateSellerToken = createServerFn({ method: 'POST' })
+src/lib/seller-auth-server.ts:52:async function hashPassword(password: string): Promise<string> {
+src/lib/seller-auth-server.ts:60:function mapSellerToUser(seller: any): SellerUser {
+src/lib/seller-auth-server.ts:88:async function verifyPassword(
+src/lib/seller-kyc-server.ts:135:export const getKycReviewQueue = createServerFn({ method: 'GET' })
+src/lib/seller-kyc-server.ts:166:export const getSellerKycDetails = createServerFn({ method: 'GET' })
+src/lib/seller-kyc-server.ts:235:export const reviewSellerKyc = createServerFn({ method: 'POST' })
+src/lib/seller-kyc-server.ts:33:function bufferFromBase64(data: string) {
+src/lib/seller-kyc-server.ts:39:function getExtension(mimeType: string) {
+src/lib/seller-kyc-server.ts:45:async function processAndUploadDocument(
+src/lib/seller-kyc-server.ts:74:export const submitSellerKyc = createServerFn({ method: 'POST' })
+src/lib/seller-order-server.ts:229:export const updateSellerOrderStatus = createServerFn({ method: 'POST' })
+src/lib/seller-order-server.ts:49:function formatOrderNumber(orderId: number, createdAt: Date | string | null) {
+src/lib/seller-order-server.ts:64:export const getSellerOrders = createServerFn({ method: 'GET' })
+src/lib/seller-product-server.ts:10:export const uploadSellerProductImage = createServerFn({ method: 'POST' })
+src/lib/seller-product-server.ts:157:export const getSellerProducts = createServerFn({ method: 'GET' })
+src/lib/seller-product-server.ts:188:export const getSellerProductById = createServerFn({ method: 'POST' })
+src/lib/seller-product-server.ts:217:export const updateSellerProduct = createServerFn({ method: 'POST' })
+src/lib/seller-product-server.ts:366:export const deleteSellerProducts = createServerFn({ method: 'POST' })
+src/lib/seller-product-server.ts:86:export const submitSellerProduct = createServerFn({ method: 'POST' })
+src/lib/supplier-server.ts:17:export const getSupplierRfqs = createServerFn({ method: 'GET' })
+src/lib/supplier-server.ts:67:export const respondToRfq = createServerFn({ method: 'POST' })
+src/lib/validators.ts:3:export function isValidBDPhone(phone: string): boolean {
+src/router.tsx:9:export const getRouter = () => {
+src/routes/__root.tsx:107:function RootDocument({ children }: { children: React.ReactNode }) {
+src/routes/__root.tsx:122:                function getTheme() {
+src/routes/__root.tsx:87:function NotFoundPage() {
+src/routes/account.tsx:108:const upsertAddress = createServerFn({ method: 'POST' })
+src/routes/account.tsx:177:const deleteAddress = createServerFn({ method: 'POST' })
+src/routes/account.tsx:210:function AccountPage() {
+src/routes/account.tsx:30:const getAccountData = createServerFn({ method: 'GET' })
+src/routes/account.tsx:316:function ProfileSection({ user }: { user: any }) {
+src/routes/account.tsx:496:function AddressSection({
+src/routes/account.tsx:505:  const handleDelete = async (id: number) => {
+src/routes/account.tsx:602:function AddressForm({
+src/routes/account.tsx:72:const updateProfile = createServerFn({ method: 'POST' })
+src/routes/account.tsx:765:function SecuritySection() {
+src/routes/account.tsx:775:  const generateStrongPassword = () => {
+src/routes/account.tsx:996:function OrdersSection({ orders }: { orders: Array<any> }) {
+src/routes/admin/route.tsx:9:function AdminRouteWrapper() {
+src/routes/api.$.ts:4:async function handle({ request }: { request: Request }) {
+src/routes/api/cart/validate-coupon.ts:165:function validateCoupon(
+src/routes/api/orders/$orderId/status.ts:229:function buildRefundSummary(order: typeof orders.$inferSelect) {
+src/routes/api/orders/$orderId/status.ts:249:function buildOrderNumber(order: typeof orders.$inferSelect) {
+src/routes/auth/set-password.tsx:142:  const generatePassword = () => {
+src/routes/auth/set-password.tsx:168:  const handleSkip = () => {
+src/routes/auth/set-password.tsx:50:function ValidationItem({ isValid, text }: { isValid: boolean; text: string }) {
+src/routes/auth/set-password.tsx:67:function SetPasswordPage() {
+src/routes/auth/set-password.tsx:98:  const handleSubmit = async (e?: React.FormEvent) => {
+src/routes/buyer/notifications.tsx:22:function NotificationsPage() {
+src/routes/buyer/notifications.tsx:41:    const fetchAlerts = async () => {
+src/routes/buyer/notifications.tsx:428:function ToggleRow({
+src/routes/buyer/notifications.tsx:56:  const handleUnsubscribeAlert = async (alertId: number) => {
+src/routes/buyer/notifications.tsx:71:    const byOrder = (items: typeof notifications) => {
+src/routes/buyer/orders/$orderId.tsx:137:function OrderDetailPage() {
+src/routes/buyer/orders/$orderId.tsx:1508:function ReorderModalShell({
+src/routes/buyer/orders/$orderId.tsx:1565:function itemSupplierKey(item: ReorderItem) {
+src/routes/buyer/orders/$orderId.tsx:1569:function getCancelReasonLabel(value: string) {
+src/routes/buyer/orders/$orderId.tsx:1586:function shouldNotifyStatus(
+src/routes/buyer/orders/$orderId.tsx:1610:function buildOrderStatusNotification(
+src/routes/buyer/orders/$orderId.tsx:1681:function buildReorderItems(order: any): Array<ReorderItem> {
+src/routes/buyer/orders/$orderId.tsx:1725:function buildSupplierGroups(items: Array<ReorderItem>): Array<SupplierGroup> {
+src/routes/buyer/orders/$orderId.tsx:1744:function buildAlternatives(unavailable: Array<ReorderItem>) {
+src/routes/buyer/orders/$orderId.tsx:1780:function formatOrderLabel(order: any) {
+src/routes/buyer/orders/$orderId.tsx:1787:function persistReorderHighlight(
+src/routes/buyer/orders/$orderId.tsx:1806:function trackReorderAnalytics(orderLabel: string, productIds: Array<number>) {
+src/routes/buyer/orders/$orderId.tsx:1864:function buildInvoiceMeta(order: any, address: any | null): InvoiceMeta {
+src/routes/buyer/orders/$orderId.tsx:1919:async function generateInvoicePdf(meta: InvoiceMeta) {
+src/routes/buyer/orders/$orderId.tsx:2080:function buildInvoiceFileName(order: any) {
+src/routes/buyer/orders/$orderId.tsx:2087:function triggerInvoiceDownload(url: string, filename: string) {
+src/routes/buyer/orders/$orderId.tsx:2096:async function loadImageAsDataUrl(url: string) {
+src/routes/buyer/orders/$orderId.tsx:2123:function buildStageTimestamps(
+src/routes/buyer/orders/$orderId.tsx:2159:function getMockStatusByNow(
+src/routes/buyer/orders/$orderId.tsx:2178:function ensureForwardStatus(current: string, next: string) {
+src/routes/buyer/orders/$orderId.tsx:2188:function buildMockTrackingInfo(createdAt: Date, order: any) {
+src/routes/buyer/orders/$orderId.tsx:272:  const handleCopyOrderId = () => {
+src/routes/buyer/orders/$orderId.tsx:279:  const handleReorder = () => {
+src/routes/buyer/orders/$orderId.tsx:306:  const evaluateReorderSelection = (items: Array<ReorderItem>) => {
+src/routes/buyer/orders/$orderId.tsx:328:  const addItemsToCart = (items: Array<ReorderItem>) => {
+src/routes/buyer/orders/$orderId.tsx:370:  const handleDownloadInvoice = () => {
+src/routes/buyer/orders/$orderId.tsx:376:    const fetchInvoice = async () => {
+src/routes/buyer/orders/$orderId.tsx:390:  const downloadOrGenerateInvoice = async () => {
+src/routes/buyer/orders/$orderId.tsx:419:  const handleEmailInvoice = async () => {
+src/routes/buyer/orders/$orderId.tsx:452:  const handleCancelOrder = async () => {
+src/routes/buyer/orders/$orderId.tsx:612:  const handleSupplierSelectionChange = (key: string) => {
+src/routes/buyer/orders/$orderId.tsx:619:  const handleSupplierContinue = () => {
+src/routes/buyer/orders/$orderId.tsx:637:  const handleSupplierQuickReorder = (key: string) => {
+src/routes/buyer/orders/$orderId.tsx:646:  const handleAddAvailableItemsOnly = () => {
+src/routes/buyer/orders/$orderId.tsx:660:  const handleViewAlternatives = () => {
+src/routes/buyer/orders/$orderId.tsx:666:  const handleNotifyBackInStock = () => {
+src/routes/buyer/orders/index.tsx:151:  const handleTabChange = (tab: FilterTab) => {
+src/routes/buyer/orders/index.tsx:392:function filterOrdersByTab(orders: Array<any>, tab: FilterTab) {
+src/routes/buyer/orders/index.tsx:422:function OrderCard({ order }: { order: any }) {
+src/routes/buyer/orders/index.tsx:43:function BuyerOrderHistoryPage() {
+src/routes/buyer/orders/index.tsx:453:  const handleDownloadInvoice = (event: MouseEvent<HTMLButtonElement>) => {
+src/routes/buyer/orders/index.tsx:557:function EmptyState({
+src/routes/buyer/orders/route.tsx:7:function OrdersLayout() {
+src/routes/buyer/rfqs/$rfqId.tsx:109:  const closeActionModal = () => {
+src/routes/buyer/rfqs/$rfqId.tsx:115:  const handleConfirmAccept = async () => {
+src/routes/buyer/rfqs/$rfqId.tsx:137:  const handleConfirmReject = async (reason: string) => {
+src/routes/buyer/rfqs/$rfqId.tsx:159:  const handleConfirmCounter = async (price: number, notes: string) => {
+src/routes/buyer/rfqs/$rfqId.tsx:183:  const handleCheckout = (quote: any) => {
+src/routes/buyer/rfqs/$rfqId.tsx:55:function RFQDetailPage() {
+src/routes/buyer/rfqs/$rfqId.tsx:589:function QuoteCard({
+src/routes/buyer/rfqs/$rfqId.tsx:759:function StatusBadge({ status }: { status?: string }) {
+src/routes/buyer/rfqs/$rfqId.tsx:80:  const handleRefresh = async () => {
+src/routes/buyer/rfqs/index.tsx:10:function BuyerRFQInbox() {
+src/routes/cart.tsx:1000:function OrderSummary({
+src/routes/cart.tsx:1166:function CartPage() {
+src/routes/cart.tsx:119:function MoqWarningBanner({
+src/routes/cart.tsx:1203:    async function validate() {
+src/routes/cart.tsx:1270:  const toggleSupplier = (supplierId: number) => {
+src/routes/cart.tsx:1283:  const handleFixAllMoq = () => {
+src/routes/cart.tsx:1295:  const handleIncreaseToMoq = (itemId: string, moq: number) => {
+src/routes/cart.tsx:1299:  const handleCheckout = () => {
+src/routes/cart.tsx:327:function CartItemRow({
+src/routes/cart.tsx:349:  const handleDecrement = () => {
+src/routes/cart.tsx:355:  const handleIncrement = () => {
+src/routes/cart.tsx:361:  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+src/routes/cart.tsx:368:  const handleInputBlur = () => {
+src/routes/cart.tsx:383:  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+src/routes/cart.tsx:389:  const handleRemove = () => {
+src/routes/cart.tsx:396:  const handleIncreaseToMoq = () => {
+src/routes/cart.tsx:652:function SupplierGroup({
+src/routes/cart.tsx:72:function ServerValidationBanner({
+src/routes/cart.tsx:780:function EmptyCart() {
+src/routes/cart.tsx:816:function CouponSection() {
+src/routes/cart.tsx:831:  const handleApply = async () => {
+src/routes/cart.tsx:839:  const handleKeyDown = (e: React.KeyboardEvent) => {
+src/routes/cart.tsx:845:  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+src/routes/categories/$categorySlug.tsx:125:  const handlePageChange = (newPage: number) => {
+src/routes/categories/$categorySlug.tsx:40:function CategoryPage() {
+src/routes/categories/$categorySlug.tsx:458:function FilterTag({
+src/routes/checkout/index.tsx:111:  const handleUpdateAddress = async (data: Omit<NewAddress, 'userId'>) => {
+src/routes/checkout/index.tsx:137:  const handleDeleteAddress = async (id: number) => {
+src/routes/checkout/index.tsx:153:  const handleGuestSubmit = (data: any) => {
+src/routes/checkout/index.tsx:161:  const handleContinue = () => {
+src/routes/checkout/index.tsx:24:function CheckoutPage() {
+src/routes/checkout/index.tsx:58:    async function fetchAddresses() {
+src/routes/checkout/index.tsx:88:  const handleAddAddress = async (data: Omit<NewAddress, 'userId'>) => {
+src/routes/checkout/payment-callback.tsx:25:function PaymentCallbackPage() {
+src/routes/checkout/payment.tsx:174:  const updatePaymentForm = (next: Partial<PaymentDetails>) => {
+src/routes/checkout/payment.tsx:178:  const renderTransferForm = (amountToPay: number) => (
+src/routes/checkout/payment.tsx:23:function PaymentPage() {
+src/routes/checkout/payment.tsx:68:  const handleMethodSelect = (method: PaymentMethod) => {
+src/routes/checkout/payment.tsx:77:  const handleContinue = () => {
+src/routes/checkout/review.tsx:224:  const getPaymentMethodLabel = (method: PaymentMethod | null) => {
+src/routes/checkout/review.tsx:29:function ReviewPage() {
+src/routes/checkout/review.tsx:74:  const handlePlaceOrder = async () => {
+src/routes/checkout/route.tsx:8:function CheckoutLayoutWrapper() {
+src/routes/demo/db-chat-api.ts:39:const sendMessage = (message: { user: string; text: string }) => {
+src/routes/demo/db-chat.tsx:9:function App() {
+src/routes/demo/drizzle.tsx:15:const createTodo = createServerFn({
+src/routes/demo/drizzle.tsx:29:function DemoDrizzle() {
+src/routes/demo/drizzle.tsx:33:  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+src/routes/demo/drizzle.tsx:7:const getTodos = createServerFn({
+src/routes/demo/form.address.tsx:9:function AddressForm() {
+src/routes/demo/form.simple.tsx:15:function SimpleForm() {
+src/routes/demo/hono-todo.tsx:36:function HonoTodos() {
+src/routes/demo/start.api-request.tsx:15:function Home() {
+src/routes/demo/start.api-request.tsx:5:function getNames() {
+src/routes/demo/start.server-funcs.tsx:13:const loggedServerFunction = createServerFn({ method: "GET" }).middleware([
+src/routes/demo/start.server-funcs.tsx:20:async function readTodos() {
+src/routes/demo/start.server-funcs.tsx:35:const getTodos = createServerFn({
+src/routes/demo/start.server-funcs.tsx:39:const addTodo = createServerFn({ method: 'POST' })
+src/routes/demo/start.server-funcs.tsx:53:function Home() {
+src/routes/demo/start.ssr.data-only.tsx:10:function RouteComponent() {
+src/routes/demo/start.ssr.full-ssr.tsx:9:function RouteComponent() {
+src/routes/demo/start.ssr.index.tsx:7:function RouteComponent() {
+src/routes/demo/start.ssr.spa-mode.tsx:10:function RouteComponent() {
+src/routes/demo/table.tsx:112:  const refreshData = () => setData((_old) => makeData(50_000)) // stress test
+src/routes/demo/table.tsx:317:function Filter({ column }: { column: Column<any, unknown> }) {
+src/routes/demo/table.tsx:332:function DebouncedInput({
+src/routes/demo/table.tsx:72:function TableDemo() {
+src/routes/demo/tanstack-query.tsx:14:function TanStackQueryDemo() {
+src/routes/forgot-password.tsx:11:function ForgotPasswordPage() {
+src/routes/forgot-password.tsx:19:  const handleEmailSubmit = async (e: React.FormEvent) => {
+src/routes/forgot-password.tsx:44:  const handleOtpSubmit = async (e: React.FormEvent) => {
+src/routes/index.tsx:217:function getCategoryEmoji(slug: string): string {
+src/routes/index.tsx:48:function HomePage() {
+src/routes/index.tsx:61:  const handleQuickView = (product: ProductWithSupplier) => {
+src/routes/index.tsx:65:  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
+src/routes/login.tsx:22:function LoginPage() {
+src/routes/login.tsx:29:  const handleGoogleSignIn = async () => {
+src/routes/login.tsx:36:  const handleEmailSignIn = async (e: React.FormEvent) => {
+src/routes/mock-payment/bkash.tsx:15:function MockBkashPage() {
+src/routes/mock-payment/bkash.tsx:24:  const handleNext = () => {
+src/routes/mock-payment/bkash.tsx:34:  const handleConfirm = () => {
+src/routes/mock-payment/bkash.tsx:51:  const handleCancel = () => {
+src/routes/order-confirmation/$orderId.tsx:29:function OrderConfirmationPage() {
+src/routes/order-confirmation/$orderId.tsx:83:  const handleCopyOrderNumber = () => {
+src/routes/order-confirmation/$orderId.tsx:88:  const handleShare = (platform: 'whatsapp' | 'copy') => {
+src/routes/products/$productSlug.tsx:122:  const handleRequestQuote = () => {
+src/routes/products/$productSlug.tsx:130:  const handleOpenStockAlert = () => {
+src/routes/products/$productSlug.tsx:134:  const handleSubmitStockAlert = async () => {
+src/routes/products/$productSlug.tsx:42:function ProductDetailPage() {
+src/routes/products/$productSlug.tsx:83:  const handleQuantityChange = (val: number) => {
+src/routes/products/$productSlug.tsx:91:  const handleSampleToggle = () => {
+src/routes/products/$productSlug.tsx:98:  const handleAddToCart = () => {
+src/routes/quotes/index.tsx:276:function FileTextIcon({ className }: { className?: string }) {
+src/routes/quotes/index.tsx:29:function QuotesPage() {
+src/routes/quotes/index.tsx:50:  const handleCounterSubmit = async (e: React.FormEvent) => {
+src/routes/register.tsx:40:function RegisterPage() {
+src/routes/register.tsx:64:  const generateStrongPassword = () => {
+src/routes/register.tsx:92:  const handleGoogleSignIn = async () => {
+src/routes/register.tsx:99:  const handleEmailSignUp = async (e: React.FormEvent) => {
+src/routes/reset-password.tsx:25:function ResetPasswordPage() {
+src/routes/reset-password.tsx:279:function RequirementItem({
+src/routes/reset-password.tsx:52:  const generateStrongPassword = () => {
+src/routes/reset-password.tsx:79:  const handleSubmit = async (e: React.FormEvent) => {
+src/routes/search.tsx:188:  const handlePageChange = (newPage: number) => {
+src/routes/search.tsx:58:function SearchPage() {
+src/routes/search.tsx:593:function FilterTag({
+src/routes/search.tsx:80:  const handleQuickView = (product: ProductWithSupplier) => {
+src/routes/search.tsx:84:  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
+src/routes/seller/callback.tsx:11:function SellerCallback() {
+src/routes/seller/callback.tsx:19:    const checkSeller = async () => {
+src/routes/seller/faq.tsx:7:function SellerFaqPage() {
+src/routes/seller/forgot-password.tsx:14:function SellerForgotPasswordPage() {
+src/routes/seller/forgot-password.tsx:22:  const handleSubmitEmail = async (e: React.FormEvent) => {
+src/routes/seller/forgot-password.tsx:38:  const handleVerifyCode = async (e: React.FormEvent) => {
+src/routes/seller/help.tsx:7:function SellerHelpPage() {
+src/routes/seller/products/$productId/edit.tsx:10:function EditProductRoute() {
+src/routes/seller/route.tsx:10:function SellerRouteWrapper() {
+src/routes/supplier/dashboard.tsx:23:function SupplierDashboard() {
+src/routes/supplier/dashboard.tsx:28:  const handleOpenQuote = (rfq: any) => {
+src/routes/supplier/dashboard.tsx:33:  const handleQuoteSuccess = () => {
+src/routes/supplier/rfqs.tsx:157:function SupplierRFQCard({
+src/routes/supplier/rfqs.tsx:238:function QuoteResponseModal({
+src/routes/supplier/rfqs.tsx:257:  const handleSubmit = async (e: React.FormEvent) => {
+src/routes/supplier/rfqs.tsx:29:function SupplierRFQInbox() {
+src/routes/supplier/rfqs.tsx:51:  const handleSendQuote = (rfq: MockRfq) => {
+src/routes/supplier/rfqs.tsx:55:  const handleQuoteSuccess = () => {
+src/routes/wishlist.tsx:149:function WishlistPage() {
+src/routes/wishlist.tsx:153:  const handleShare = () => {
+src/routes/wishlist.tsx:226:function HeartIcon({ size, className }: { size: number; className?: string }) {
+src/routes/wishlist.tsx:22:function WishlistItem({ product }: { product: MockProduct }) {
+src/routes/wishlist.tsx:31:  const handleAddToCart = () => {
+src/routes/wishlist.tsx:43:  const increment = () => setQuantity((q) => q + 1)
+src/routes/wishlist.tsx:44:  const decrement = () =>
+src/types/admin.ts:114:export function hasPermission(
+src/types/admin.ts:53:export function getAdminPermissions(role: AdminRole): AdminPermissions {

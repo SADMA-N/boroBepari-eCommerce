@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CheckCircle, X } from 'lucide-react'
-import { respondToRfq } from '@/lib/supplier-server'
+import { api } from '@/api/client'
 import { formatBDT } from '@/data/mock-products'
 
 interface QuoteResponseModalProps {
@@ -33,15 +33,13 @@ export default function QuoteResponseModal({
     setError('')
 
     try {
-      await respondToRfq({
-        data: {
-          rfqId: rfq.id,
-          unitPrice,
-          totalPrice,
-          validityPeriod: validity,
-          terms,
-        },
-      })
+      const token = typeof window !== 'undefined' ? localStorage.getItem('seller_token') || '' : ''
+      await api.supplier.rfq.respond(rfq.id.toString(), {
+        unitPrice,
+        totalPrice,
+        validityPeriod: validity,
+        terms,
+      }, token)
 
       setIsSuccess(true)
       if (onSuccess) onSuccess()

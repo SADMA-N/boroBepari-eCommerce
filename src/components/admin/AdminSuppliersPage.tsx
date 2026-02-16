@@ -1,4 +1,3 @@
-import { getAdminSuppliers } from '@/lib/admin-supplier-server'
 import { useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle,
@@ -35,6 +34,8 @@ import {
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
+import { api } from '@/api/client'
 
 type KycStatus = 'pending' | 'verified' | 'rejected'
 type SupplierStatus = 'active' | 'suspended'
@@ -142,20 +143,20 @@ function formatCurrency(amount: number) {
 function kycBadge(status: KycStatus) {
   if (status === 'verified') {
     return (
-      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
         Verified
       </span>
     )
   }
   if (status === 'pending') {
     return (
-      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">
+      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300">
         Pending
       </span>
     )
   }
   return (
-    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
       Rejected
     </span>
   )
@@ -164,34 +165,41 @@ function kycBadge(status: KycStatus) {
 function statusBadge(status: SupplierStatus) {
   if (status === 'active') {
     return (
-      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+      <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
         Active
       </span>
     )
   }
   return (
-    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
+    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
       Suspended
     </span>
   )
 }
 
 export function AdminSuppliersPage() {
-  const { can } = useAdminAuth()
+  const { theme } = useTheme()
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const { can, getToken } = useAdminAuth()
   const canView = can('suppliers.view')
   const canVerify = can('suppliers.verify')
   const canSuspend = can('suppliers.suspend')
   const canKycApprove = can('kyc.approve')
   const canKycReject = can('kyc.reject')
   
-  const [suppliers, setSuppliers] = useState<Supplier[]>([])
+  const [suppliers, setSuppliers] = useState<Array<Supplier>>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadSuppliers() {
       try {
-        const data = await getAdminSuppliers()
-        setSuppliers(data as Supplier[])
+        const token = getToken() || ''
+        const data = await api.admin.suppliers.list(token)
+        setSuppliers(data as Array<Supplier>)
       } catch (err) {
         console.error('Failed to load suppliers:', err)
       } finally {
@@ -199,7 +207,7 @@ export function AdminSuppliersPage() {
       }
     }
     loadSuppliers()
-  }, [])
+  }, [getToken])
 
   const [searchQuery, setSearchQuery] = useState('')
   const [kycFilter, setKycFilter] = useState<KycStatus | 'all'>('all')

@@ -166,7 +166,7 @@ export function SellerPayoutsPage() {
             </p>
           </div>
           <button
-            className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400"
             onClick={() => setShowWithdraw(true)}
           >
             <Banknote size={16} />
@@ -256,7 +256,7 @@ export function SellerPayoutsPage() {
                       <td>{payout.transactionId ?? '-'}</td>
                       <td>
                         {payout.status === 'Failed' ? (
-                          <button className="text-xs text-red-500">
+                          <button className="text-xs text-red-500 dark:text-red-400">
                             Retry
                           </button>
                         ) : (
@@ -292,14 +292,14 @@ export function SellerPayoutsPage() {
                       </p>
                     </div>
                     <span
-                      className={`text-xs font-semibold ${account.status === 'Verified' ? 'text-green-600' : 'text-orange-600'}`}
+                      className={`text-xs font-semibold ${account.status === 'Verified' ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}
                     >
                       {account.status}
                     </span>
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
                     {account.isPrimary && (
-                      <span className="rounded-full bg-green-50 px-2 py-0.5 text-green-600">
+                      <span className="rounded-full bg-green-50 dark:bg-green-900/30 px-2 py-0.5 text-green-600 dark:text-green-300">
                         Primary
                       </span>
                     )}
@@ -342,7 +342,7 @@ export function SellerPayoutsPage() {
                     <td>{tx.reference}</td>
                     <td
                       className={
-                        tx.type === 'credit' ? 'text-green-600' : 'text-red-500'
+                        tx.type === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'
                       }
                     >
                       {tx.type === 'credit' ? '+' : '-'}৳
@@ -366,7 +366,7 @@ export function SellerPayoutsPage() {
               <div className="rounded-lg border border-border bg-muted p-3 text-sm text-muted-foreground">
                 Monthly commission: ৳12,800
               </div>
-              <button className="text-sm text-orange-600">
+              <button className="text-sm text-orange-600 dark:text-orange-400">
                 View commission policy
               </button>
             </div>
@@ -406,7 +406,7 @@ export function SellerPayoutsPage() {
                   className="sr-only"
                 />
                 <div
-                  className={`h-6 w-11 rounded-full ${autoWithdraw ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                  className={`h-6 w-11 rounded-full ${autoWithdraw ? 'bg-orange-600 dark:bg-orange-500' : 'bg-slate-200 dark:bg-slate-700'} relative`}
                 >
                   <div
                     className={`h-5 w-5 rounded-full bg-card absolute top-0.5 transition ${autoWithdraw ? 'translate-x-5' : 'translate-x-1'}`}
@@ -469,7 +469,7 @@ export function SellerPayoutsPage() {
               Update bank details
             </div>
           </div>
-          <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
+          <button className="rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400 transition-colors">
             Contact Support
           </button>
         </section>
@@ -533,7 +533,7 @@ function BalanceCard({
       {actionLabel && onAction && (
         <button
           onClick={onAction}
-          className="rounded-lg bg-orange-600 px-4 py-2 text-xs font-semibold text-white"
+          className="rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400 transition-colors"
         >
           {actionLabel}
         </button>
@@ -542,7 +542,7 @@ function BalanceCard({
         <div>
           <button
             onClick={() => setExpanded((prev) => !prev)}
-            className="text-xs text-orange-600"
+            className="text-xs text-orange-600 dark:text-orange-400"
           >
             {expanded ? 'Hide breakdown' : 'View breakdown'}
           </button>
@@ -622,7 +622,7 @@ function WithdrawModal({
             className="w-full rounded-lg border border-border px-3 py-2"
           />
           {minimumError && (
-            <p className="text-xs text-red-500">{minimumError}</p>
+            <p className="text-xs text-red-500 dark:text-red-400">{minimumError}</p>
           )}
           <select
             value={selectedBank}
@@ -643,7 +643,7 @@ function WithdrawModal({
             {netAmount.toFixed(2)}
           </div>
           <button
-            className="w-full rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
+            className="w-full rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400 transition-colors"
             disabled={
               !amount || Number(amount) > available || Boolean(minimumError)
             }
@@ -658,8 +658,11 @@ function WithdrawModal({
 }
 
 function statusBadge(status: PayoutStatus) {
-  if (status === 'Pending') return 'bg-yellow-50 text-yellow-700'
-  if (status === 'Processing') return 'bg-blue-50 text-blue-700'
-  if (status === 'Completed') return 'bg-green-50 text-green-700'
-  return 'bg-red-50 text-red-600'
+  if (status === 'Pending')
+    return 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+  if (status === 'Processing')
+    return 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+  if (status === 'Completed')
+    return 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+  return 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300'
 }

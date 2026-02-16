@@ -14,9 +14,8 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import type { MouseEvent } from 'react'
-import type { BuyerOrdersFilter } from '@/lib/order-actions'
 import { formatBDT } from '@/data/mock-products'
-import { getBuyerOrders } from '@/lib/order-actions'
+import { api } from '@/api/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 
@@ -84,7 +83,7 @@ function BuyerOrderHistoryPage() {
       setIsLoadingMore(true)
     }
     try {
-      const result = await getBuyerOrders({
+      const result = await api.orders.list({
         filter: activeTab,
         search: debouncedSearch,
         sortBy,

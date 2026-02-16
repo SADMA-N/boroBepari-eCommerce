@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
-import { desc, eq, sql } from 'drizzle-orm'
+import { and, desc, eq, notInArray, sql } from 'drizzle-orm'
 import { adminAuthMiddleware } from './admin-auth-server'
 import { db } from '@/db'
-import { sellers, suppliers, products, orderItems } from '@/db/schema'
+import { orderItems, orders, products, sellers, suppliers } from '@/db/schema'
 
 export type AdminSupplier = {
   id: string
@@ -62,7 +62,7 @@ export const getAdminSuppliers = createServerFn({ method: 'GET' })
       .orderBy(desc(sellers.createdAt))
 
     // For each seller, fetch product count and GMV (this could be optimized with aggregations)
-    const result: AdminSupplier[] = await Promise.all(
+    const result: Array<AdminSupplier> = await Promise.all(
       allSellers.map(async ({ seller, supplier }) => {
         let totalProducts = 0
         let gmv = 0
@@ -81,11 +81,17 @@ export const getAdminSuppliers = createServerFn({ method: 'GET' })
             // Note: This is a simplified calculation. In a real app, check order status.
             const stats = await db
                 .select({
-                    gmv: sql<number>`sum(${orderItems.price} * ${orderItems.quantity})`,
+                    gmv: sql<number>`sum(${orderItems.price})`,
                     orders: sql<number>`count(distinct ${orderItems.orderId})`
                 })
                 .from(orderItems)
-                .where(eq(orderItems.supplierId, supplier.id))
+                .innerJoin(orders, eq(orderItems.orderId, orders.id))
+                .where(
+                  and(
+                    eq(orderItems.supplierId, supplier.id),
+                    notInArray(orders.status, ['cancelled', 'returned']),
+                  ),
+                )
             
             gmv = Number(stats[0].gmv) || 0
             totalOrders = Number(stats[0].orders) || 0

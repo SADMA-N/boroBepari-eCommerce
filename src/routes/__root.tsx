@@ -7,12 +7,8 @@ import {
   useRouterState,
 } from '@tanstack/react-router'
 import React from 'react'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Header from '../components/Header'
-
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import { CartProvider } from '../contexts/CartContext'
 import { WishlistProvider } from '../contexts/WishlistContext'
 import { AuthProvider } from '../contexts/AuthContext'
@@ -22,7 +18,7 @@ import { ThemeProvider } from '../contexts/ThemeContext'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { checkUserPasswordStatus, getAuthSession } from '@/lib/auth-server'
+import { api } from '@/api/client'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -42,7 +38,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       return
 
     try {
-      const status = await checkUserPasswordStatus()
+      const status = await api.auth.buyer.passwordStatus()
       if (status.needsPassword) {
         // Note: skipping via cookie is harder to check here on SSR without complex header parsing
         // but for client-side navigation it works perfectly.
@@ -50,6 +46,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       }
     } catch (err) {
       if ((err as any).status === 307 || (err as any).status === 302) throw err
+      const message = err instanceof Error ? err.message : String(err)
+      if (message.toLowerCase().includes('unauthorized')) return
       console.error('Auth session fetch failed:', err)
     }
   },
@@ -163,18 +161,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   <WishlistProvider>
                     <Header />
                     {children}
-                    <TanStackDevtools
-                      config={{
-                        position: 'bottom-right',
-                      }}
-                      plugins={[
-                        {
-                          name: 'Tanstack Router',
-                          render: <TanStackRouterDevtoolsPanel />,
-                        },
-                        TanStackQueryDevtools,
-                      ]}
-                    />
                   </WishlistProvider>
                 </CartProvider>
               </NotificationProvider>
@@ -182,18 +168,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           ) : (
             <>
               {children}
-              <TanStackDevtools
-                config={{
-                  position: 'bottom-right',
-                }}
-                plugins={[
-                  {
-                    name: 'Tanstack Router',
-                    render: <TanStackRouterDevtoolsPanel />,
-                  },
-                  TanStackQueryDevtools,
-                ]}
-              />
             </>
           )}
         </ThemeProvider>

@@ -35,7 +35,7 @@ import {
   getProductsByCategory,
   getSupplierById,
 } from '@/data/mock-products'
-import { getOrder } from '@/lib/order-actions'
+import { api } from '@/api/client'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
 import OrderStatusTimeline from '@/components/OrderStatusTimeline'
@@ -46,7 +46,7 @@ export const Route = createFileRoute('/buyer/orders/$orderId')({
   loader: async ({ params }) => {
     const orderId = parseInt(params.orderId)
     if (isNaN(orderId)) return null
-    return await getOrder({ data: orderId })
+    return await api.orders.get(orderId.toString())
   },
 })
 

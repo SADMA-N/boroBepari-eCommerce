@@ -27,8 +27,15 @@ function WishlistItem({ product }: { product: MockProduct }) {
   const [toastMessage, setToastMessage] = useState('')
 
   const supplier = getSupplierById(product.supplierId)
+  const isOutOfStock = product.stock <= 0
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      setToastMessage('This product is out of stock')
+      setShowToast(true)
+      return
+    }
+
     const result = addItem({ productId: product.id, quantity })
     if (result.success) {
       setToastMessage(
@@ -40,7 +47,8 @@ function WishlistItem({ product }: { product: MockProduct }) {
     setShowToast(true)
   }
 
-  const increment = () => setQuantity((q) => q + 1)
+  const increment = () =>
+    setQuantity((q) => (q < product.stock ? q + 1 : q))
   const decrement = () =>
     setQuantity((q) => (q > product.moq ? q - 1 : product.moq))
 
@@ -119,7 +127,7 @@ function WishlistItem({ product }: { product: MockProduct }) {
           <button
             onClick={decrement}
             className="p-2 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 disabled:opacity-50 transition-colors"
-            disabled={quantity <= product.moq}
+            disabled={quantity <= product.moq || isOutOfStock}
           >
             <Minus size={16} />
           </button>
@@ -129,6 +137,7 @@ function WishlistItem({ product }: { product: MockProduct }) {
           <button
             onClick={increment}
             className="p-2 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-400 transition-colors"
+            disabled={isOutOfStock || quantity >= product.stock}
           >
             <Plus size={16} />
           </button>
@@ -136,10 +145,11 @@ function WishlistItem({ product }: { product: MockProduct }) {
 
         <button
           onClick={handleAddToCart}
-          className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+          disabled={isOutOfStock}
+          className="flex items-center gap-2 bg-orange-500 dark:bg-orange-400 hover:bg-orange-600 dark:hover:bg-orange-500 disabled:bg-gray-400 dark:disabled:bg-slate-700 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
         >
           <ShoppingCart size={18} />
-          Add to Cart
+          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
       </div>
     </div>
@@ -204,7 +214,7 @@ function WishlistPage() {
             </p>
             <a
               href="/"
-              className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              className="inline-block bg-orange-500 dark:bg-orange-400 hover:bg-orange-600 dark:hover:bg-orange-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
               Start Shopping
             </a>

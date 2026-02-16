@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Read the catalog file - assuming it's in the project root
 const products = JSON.parse(fs.readFileSync('products-catalog.json', 'utf-8'));
@@ -7,8 +7,8 @@ const products = JSON.parse(fs.readFileSync('products-catalog.json', 'utf-8'));
 // Slugify function
 const slugify = (text) => text.toString().toLowerCase()
   .replace(/\s+/g, '-')           // Replace spaces with -
-  .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-  .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+  .replace(/[^\w-]+/g, '')       // Remove all non-word chars
+  .replace(/--+/g, '-')         // Replace multiple - with single -
   .replace(/^-+/, '')             // Trim - from start of text
   .replace(/-+$/, '');            // Trim - from end of text
 
@@ -17,7 +17,7 @@ const generatePrompts = (product) => {
   const baseName = product.name;
   const category = product.category;
   
-  let prompts = [];
+  const prompts = [];
   
   // General professional shot
   prompts.push(`Professional studio photography of ${baseName}, white background, 4k, sharp focus`);

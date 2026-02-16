@@ -27,10 +27,10 @@ async function uploadProductImages() {
 
     await Promise.all(
       batch.map(async (product) => {
-        const images = (product.images ?? []) as string[]
+        const images = (product.images ?? [])
         if (images.length === 0) return
 
-        const newUrls: string[] = []
+        const newUrls: Array<string> = []
 
         for (const imageUrl of images) {
           // Skip if already uploaded to S3

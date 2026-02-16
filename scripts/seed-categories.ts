@@ -1,7 +1,7 @@
 
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { categories } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 
 const mainCategories = [
   {
@@ -127,8 +127,8 @@ const slugify = (text: string) =>
     .toString()
     .toLowerCase()
     .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/--+/g, '-') // Replace multiple - with single -
     .replace(/^-+/, '') // Trim - from start of text
     .replace(/-+$/, ''); // Trim - from end of text
 

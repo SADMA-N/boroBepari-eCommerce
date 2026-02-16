@@ -71,7 +71,7 @@ function SellerCallback() {
         <p className="mt-2 text-muted-foreground">
           Please wait while we check your credentials.
         </p>
-        {error && <p className="mt-4 text-red-500 font-medium">{error}</p>}
+        {error && <p className="mt-4 text-red-500 dark:text-red-400 font-medium">{error}</p>}
       </div>
     </div>
   )

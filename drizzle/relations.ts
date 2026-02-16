@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { user, account, addresses, loginEvents, suppliers, orderItems, orders, products, rfqs, session, stockAlerts, sellers, notifications, sellerDocuments, categories, sellerProducts, quotes } from "./schema";
+import { account, addresses, categories, loginEvents, notifications, orderItems, orders, products, quotes, rfqs, sellerDocuments, sellerProducts, sellers, session, stockAlerts, suppliers, user } from "./schema";
 
 export const accountRelations = relations(account, ({one}) => ({
 	user: one(user, {
