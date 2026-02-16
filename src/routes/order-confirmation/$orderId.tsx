@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { addDays } from 'date-fns'
-import { getOrder } from '@/lib/order-actions'
+import { api } from '@/api/client'
 import { formatCurrency } from '@/lib/cart-utils'
 import Toast from '@/components/Toast'
 
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/order-confirmation/$orderId')({
   loader: async ({ params }) => {
     const orderId = parseInt(params.orderId)
     if (isNaN(orderId)) return null
-    return await getOrder({ data: orderId })
+    return await api.orders.get(orderId.toString())
   },
 })
 
@@ -47,7 +47,7 @@ function OrderConfirmationPage() {
       return
     }
     setIsLoading(true)
-    getOrder({ data: orderId })
+    api.orders.get(orderId.toString())
       .then((data) => {
         if (!isMounted) return
         if (!data) {

@@ -1,22 +1,10 @@
-import { useMemo, useState } from 'react'
-import {
-  BarChart3,
-  Download,
-  Filter,
-  LineChart as LineIcon,
-  Mail,
-  Sparkles,
-  TrendingDown,
-  TrendingUp,
-} from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Download, Sparkles, TrendingDown, TrendingUp } from 'lucide-react'
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
   Cell,
-  Legend,
   Line,
   LineChart,
   Pie,
@@ -28,6 +16,9 @@ import {
 } from 'recharts'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useTheme } from '@/contexts/ThemeContext'
+import { api } from '@/api/client'
+
+type SellerSalesAnalytics = any
 
 type Range = 'today' | '7d' | '30d' | '90d' | 'custom'
 
@@ -39,90 +30,13 @@ const RANGE_LABELS: Record<Range, string> = {
   custom: 'Custom',
 }
 
-const KPI_DATA = {
-  revenue: { value: 2450000, change: 12, spark: [10, 14, 12, 15, 18, 16, 20] },
-  orders: { value: 428, change: 8, aov: 5724 },
-  conversion: { value: 3.8, change: -0.4, benchmark: 4.2 },
-  rfq: { value: 72, change: 15, responseTime: '3h 20m' },
-  csat: { value: 4.6, reviews: 128 },
-}
-
-const CHART_DATA = [
-  { label: 'Week 1', revenue: 520000, orders: 98 },
-  { label: 'Week 2', revenue: 610000, orders: 110 },
-  { label: 'Week 3', revenue: 590000, orders: 102 },
-  { label: 'Week 4', revenue: 730000, orders: 118 },
-]
-
-const CATEGORY_DATA = [
-  { name: 'Electronics', value: 45 },
-  { name: 'Industrial', value: 25 },
-  { name: 'Home & Kitchen', value: 18 },
-  { name: 'Apparel', value: 12 },
-]
-
-const FUNNEL_DATA = [
-  { stage: 'Placed', value: 520 },
-  { stage: 'Confirmed', value: 468 },
-  { stage: 'Shipped', value: 410 },
-  { stage: 'Delivered', value: 382 },
-]
-
-const TOP_PRODUCTS = [
-  {
-    id: 'p1',
-    name: 'Industrial Safety Gloves',
-    image:
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=300&auto=format&fit=crop',
-    units: 1200,
-    revenue: 144000,
-    rating: 4.7,
-    stock: 'Low',
-  },
-  {
-    id: 'p2',
-    name: 'HDPE Packaging Bags',
-    image:
-      'https://images.unsplash.com/photo-1531498860502-7c67cf02f657?q=80&w=300&auto=format&fit=crop',
-    units: 3400,
-    revenue: 61200,
-    rating: 4.4,
-    stock: 'In Stock',
-  },
-]
-
-const GEO_DATA = [
-  { city: 'Dhaka', orders: 180, revenue: 920000 },
-  { city: 'Chittagong', orders: 98, revenue: 520000 },
-  { city: 'Khulna', orders: 64, revenue: 310000 },
-]
-
-const CUSTOMER_DATA = [
-  { label: 'New', value: 62 },
-  { label: 'Returning', value: 38 },
-]
-
-const RFQ_ANALYTICS = [
-  { label: 'RFQs received', value: '120' },
-  { label: 'Response rate', value: '72%' },
-  { label: 'Acceptance rate', value: '44%' },
-  { label: 'Avg response time', value: '3h 20m' },
-  { label: 'RFQ → Order', value: '18%' },
-]
-
-const TRAFFIC_DATA = [
-  { label: 'Product page views', value: '18,240' },
-  { label: 'Wishlist adds', value: '1,480' },
-  { label: 'Search appearances', value: '32,900' },
-  { label: 'CTR', value: '3.4%' },
-]
-
-const INVENTORY_DATA = [
-  { label: 'Low stock alerts', value: '5' },
-  { label: 'Out of stock', value: '2' },
-  { label: 'Fast-moving', value: '6' },
-  { label: 'Slow-moving', value: '4' },
-  { label: 'Stock turnover', value: '4.8x' },
+const CATEGORY_COLORS = [
+  '#f97316',
+  '#2563eb',
+  '#22c55e',
+  '#f59e0b',
+  '#0ea5e9',
+  '#8b5cf6',
 ]
 
 export function SellerAnalyticsPage() {
@@ -132,6 +46,9 @@ export function SellerAnalyticsPage() {
   const [metricView, setMetricView] = useState<'revenue' | 'orders' | 'both'>(
     'revenue',
   )
+  const [analytics, setAnalytics] = useState<SellerSalesAnalytics | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const isDark =
     theme === 'dark' ||
@@ -139,25 +56,137 @@ export function SellerAnalyticsPage() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-  const chartData = useMemo(() => CHART_DATA, [])
+  const resolvedRange: Exclude<Range, 'custom'> =
+    range === 'custom' ? '30d' : range
+
+  const loadAnalytics = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const token = localStorage.getItem('seller_token') || ''
+      const next = await api.seller.analytics(token, resolvedRange)
+      setAnalytics(next)
+    } catch (err) {
+      console.error('Failed to load seller analytics:', err)
+      setError('Could not load analytics data right now.')
+    } finally {
+      setLoading(false)
+    }
+  }, [resolvedRange])
+
+  useEffect(() => {
+    void loadAnalytics()
+  }, [loadAnalytics])
+
+  const chartData = analytics?.chart ?? []
+  const categoryData = analytics?.categoryShare ?? []
+  const topProducts = analytics?.topProducts ?? []
+  const inventory =
+    analytics?.inventory ??
+    ({
+      totalProducts: 0,
+      inStock: 0,
+      lowStock: 0,
+      outOfStock: 0,
+    } as const)
+
+  const stageCounts = useMemo(() => {
+    const lookup = new Map<string, number>()
+    analytics?.statusBreakdown.forEach((item) => {
+      lookup.set(item.stage, item.value)
+    })
+    return {
+      placed: lookup.get('Placed') ?? 0,
+      confirmed: lookup.get('Confirmed') ?? 0,
+      shipped: lookup.get('Shipped') ?? 0,
+      delivered: lookup.get('Delivered') ?? 0,
+      cancelled: lookup.get('Cancelled') ?? 0,
+    }
+  }, [analytics])
+
+  const funnelData = [
+    { stage: 'Placed', value: stageCounts.placed },
+    { stage: 'Confirmed', value: stageCounts.confirmed },
+    { stage: 'Shipped', value: stageCounts.shipped },
+    { stage: 'Delivered', value: stageCounts.delivered },
+    { stage: 'Cancelled', value: stageCounts.cancelled },
+  ]
+  const funnelTopValue = Math.max(...funnelData.map((step) => step.value), 1)
+
+  const trackedOrders =
+    stageCounts.placed +
+    stageCounts.confirmed +
+    stageCounts.shipped +
+    stageCounts.delivered +
+    stageCounts.cancelled
+  const deliveryRate =
+    trackedOrders > 0
+      ? Number(((stageCounts.delivered / trackedOrders) * 100).toFixed(1))
+      : 0
+  const cancelRate =
+    trackedOrders > 0
+      ? Number(((stageCounts.cancelled / trackedOrders) * 100).toFixed(1))
+      : 0
+
+  const totalRevenue = analytics?.totalRevenue ?? 0
+  const totalOrders = analytics?.totalOrders ?? 0
+  const averageOrderValue = analytics?.averageOrderValue ?? 0
+  const revenueChange = analytics?.revenueChange ?? 0
+  const orderChange = analytics?.orderChange ?? 0
+
+  const revenueSpark = chartData.slice(-7).map((point) => point.revenue)
+  const topCategory = categoryData[0]?.name
+  const restockCandidate = topProducts.find((product) => product.stock !== 'In Stock')
+
+  const bestRevenuePoint = chartData.reduce<
+    { label: string; revenue: number } | null
+  >((best, point) => {
+    if (!best || point.revenue > best.revenue) {
+      return { label: point.label, revenue: point.revenue }
+    }
+    return best
+  }, null)
+
+  const customerItems = [
+    { label: 'Tracked orders', value: String(trackedOrders) },
+    { label: 'Average order value', value: `৳${averageOrderValue.toLocaleString()}` },
+    {
+      label: 'Delivery completion',
+      value: `${deliveryRate}%`,
+    },
+  ]
+
+  const rfqItems = [
+    { label: 'RFQ analytics', value: 'Coming soon' },
+    { label: 'Response SLA', value: 'Coming soon' },
+    { label: 'RFQ → Order', value: 'Coming soon' },
+  ]
+
+  const inventoryItems = [
+    { label: 'Total products', value: String(inventory.totalProducts) },
+    { label: 'In stock', value: String(inventory.inStock) },
+    { label: 'Low stock', value: String(inventory.lowStock) },
+    { label: 'Out of stock', value: String(inventory.outOfStock) },
+  ]
 
   return (
     <SellerProtectedRoute requireVerified>
       <div className="space-y-8">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-gray-100 transition-colors">
+            <h1 className="text-2xl font-bold text-foreground dark:text-gray-100 transition-colors">
               Analytics & Insights
             </h1>
-            <p className="text-sm text-slate-500 dark:text-gray-400 mt-1 transition-colors">
-              Track performance and spot growth opportunities.
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1 transition-colors">
+              Live sales metrics from your placed orders.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <select
               value={range}
               onChange={(event) => setRange(event.target.value as Range)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 transition-colors"
             >
               <option value="today" className="dark:bg-slate-900">
                 Today
@@ -175,65 +204,67 @@ export function SellerAnalyticsPage() {
                 Custom
               </option>
             </select>
-            <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400 transition-colors cursor-pointer">
+            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors cursor-pointer">
               <input
                 type="checkbox"
                 checked={compare}
                 onChange={(event) => setCompare(event.target.checked)}
-                className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
+                className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
               />
               Compare with previous period
             </label>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="inline-flex items-center gap-2 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-gray-200 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               <Download size={16} />
               Export Report
             </button>
           </div>
         </header>
 
+        {error && (
+          <div className="rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+            {error}
+          </div>
+        )}
+
         <section className="grid md:grid-cols-2 xl:grid-cols-5 gap-4">
           <KpiCard
             title="Total Revenue (GMV)"
-            value={`৳${KPI_DATA.revenue.value.toLocaleString()}`}
-            change={KPI_DATA.revenue.change}
-            spark={KPI_DATA.revenue.spark}
+            value={`৳${totalRevenue.toLocaleString()}`}
+            change={revenueChange}
+            spark={revenueSpark}
             compare={compare}
           />
           <KpiCard
             title="Total Orders"
-            value={`${KPI_DATA.orders.value}`}
-            change={KPI_DATA.orders.change}
-            subtitle={`Avg order: ৳${KPI_DATA.orders.aov.toLocaleString()}`}
+            value={`${totalOrders}`}
+            change={orderChange}
+            subtitle={`Avg order: ৳${averageOrderValue.toLocaleString()}`}
             compare={compare}
           />
           <KpiCard
-            title="Conversion Rate"
-            value={`${KPI_DATA.conversion.value}%`}
-            change={KPI_DATA.conversion.change}
-            subtitle={`Benchmark: ${KPI_DATA.conversion.benchmark}%`}
-            compare={compare}
+            title="Delivery Completion"
+            value={`${deliveryRate}%`}
+            subtitle={`${stageCounts.delivered} delivered`}
           />
           <KpiCard
-            title="RFQ Response Rate"
-            value={`${KPI_DATA.rfq.value}%`}
-            change={KPI_DATA.rfq.change}
-            subtitle={`Avg response: ${KPI_DATA.rfq.responseTime}`}
-            compare={compare}
+            title="Cancellation Rate"
+            value={`${cancelRate}%`}
+            subtitle={`${stageCounts.cancelled} cancelled`}
           />
           <KpiCard
-            title="Customer Satisfaction"
-            value={`⭐ ${KPI_DATA.csat.value}`}
-            subtitle={`${KPI_DATA.csat.reviews} reviews`}
+            title="Inventory Health"
+            value={`${inventory.inStock}/${inventory.totalProducts}`}
+            subtitle={`${inventory.lowStock} low · ${inventory.outOfStock} out`}
           />
         </section>
 
-        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4 transition-colors">
+        <section className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 space-y-4 transition-colors">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
                 Revenue Performance
               </h2>
-              <p className="text-sm text-slate-500 dark:text-gray-400 transition-colors">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 Trend across {RANGE_LABELS[range]}
               </p>
             </div>
@@ -256,80 +287,27 @@ export function SellerAnalyticsPage() {
               >
                 Both
               </button>
-              <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                <Download size={16} />
-                Export Chart
-              </button>
             </div>
           </div>
           <div className="h-72 min-h-[288px] min-w-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke={isDark ? '#334155' : '#e2e8f0'}
-                />
-                <XAxis
-                  dataKey="label"
-                  tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#64748b' }}
-                  stroke={isDark ? '#334155' : '#e2e8f0'}
-                />
-                <YAxis
-                  tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#64748b' }}
-                  stroke={isDark ? '#334155' : '#e2e8f0'}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                    borderColor: isDark ? '#334155' : '#e2e8f0',
-                    color: isDark ? '#f8fafc' : '#0f172a',
-                  }}
-                />
-                {metricView !== 'orders' && (
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#f97316"
-                    strokeWidth={3}
-                  />
-                )}
-                {metricView !== 'revenue' && (
-                  <Line
-                    type="monotone"
-                    dataKey="orders"
-                    stroke="#2563eb"
-                    strokeWidth={3}
-                  />
-                )}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
-
-        <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
-              Sales by Category
-            </h2>
-            <div className="mt-4 h-64 min-h-[256px] min-w-0">
+            {loading ? (
+              <div className="h-full w-full animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
+            ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={CATEGORY_DATA}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={55}
-                    outerRadius={90}
-                  >
-                    {CATEGORY_DATA.map((entry, index) => (
-                      <Cell
-                        key={entry.name}
-                        fill={
-                          ['#f97316', '#2563eb', '#22c55e', '#f59e0b'][index]
-                        }
-                      />
-                    ))}
-                  </Pie>
+                <LineChart data={chartData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#64748b' }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#64748b' }}
+                    stroke={isDark ? '#334155' : '#e2e8f0'}
+                  />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: isDark ? '#0f172a' : '#ffffff',
@@ -337,38 +315,96 @@ export function SellerAnalyticsPage() {
                       color: isDark ? '#f8fafc' : '#0f172a',
                     }}
                   />
-                  <Legend />
-                </PieChart>
+                  {metricView !== 'orders' && (
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#f97316"
+                      strokeWidth={3}
+                    />
+                  )}
+                  {metricView !== 'revenue' && (
+                    <Line
+                      type="monotone"
+                      dataKey="orders"
+                      stroke="#2563eb"
+                      strokeWidth={3}
+                    />
+                  )}
+                </LineChart>
               </ResponsiveContainer>
+            )}
+          </div>
+        </section>
+
+        <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
+              Sales by Category
+            </h2>
+            <div className="mt-4 h-64 min-h-[256px] min-w-0">
+              {loading ? (
+                <div className="h-full w-full animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
+              ) : categoryData.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                  No category sales data for this period.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={55}
+                      outerRadius={90}
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell
+                          key={entry.name}
+                          fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number) => [`${value}%`, 'Share']}
+                      contentStyle={{
+                        backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        color: isDark ? '#f8fafc' : '#0f172a',
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 transition-colors">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
               Order Status Funnel
             </h2>
             <div className="mt-4 space-y-3">
-              {FUNNEL_DATA.map((step, index) => (
+              {funnelData.map((step, index) => (
                 <div key={step.stage} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm text-slate-600 dark:text-gray-400 transition-colors">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                     <span>{step.stage}</span>
                     <span className="dark:text-gray-200 font-medium">
                       {step.value}
                     </span>
                   </div>
-                  <div className="h-3 rounded-full bg-slate-100 dark:bg-slate-800 transition-colors">
+                  <div className="h-3 rounded-full bg-muted dark:bg-slate-800 transition-colors">
                     <div
                       className="h-3 rounded-full bg-orange-500"
                       style={{
-                        width: `${(step.value / FUNNEL_DATA[0].value) * 100}%`,
+                        width: `${(step.value / funnelTopValue) * 100}%`,
                       }}
                     />
                   </div>
-                  {index < FUNNEL_DATA.length - 1 && (
-                    <p className="text-xs text-slate-400 dark:text-gray-500 transition-colors">
+                  {index < funnelData.length - 1 && step.value > 0 && (
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                       Drop-off:{' '}
                       {Math.round(
-                        ((step.value - FUNNEL_DATA[index + 1].value) /
-                          step.value) *
+                        ((step.value - funnelData[index + 1].value) / step.value) *
                           100,
                       )}
                       %
@@ -381,146 +417,166 @@ export function SellerAnalyticsPage() {
         </section>
 
         <section className="grid xl:grid-cols-[1.4fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 transition-colors">
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 transition-colors">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
+              <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
                 Top Products
               </h2>
-              <button className="text-sm font-semibold text-orange-600 dark:text-orange-400 hover:text-orange-700 transition-colors">
-                View All Products
-              </button>
             </div>
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="text-left text-slate-400 dark:text-gray-500">
-                  <tr>
-                    <th className="pb-2">Product</th>
-                    <th>Units sold</th>
-                    <th>Revenue</th>
-                    <th>Avg rating</th>
-                    <th>Stock</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-gray-300">
-                  {TOP_PRODUCTS.map((product) => (
-                    <tr key={product.id}>
-                      <td className="py-3">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-10 w-10 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
-                          />
-                          <span className="font-semibold text-slate-800 dark:text-gray-100">
-                            {product.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td>{product.units}</td>
-                      <td>৳{product.revenue.toLocaleString()}</td>
-                      <td>{product.rating}</td>
-                      <td>
-                        <span
-                          className={`font-medium ${
-                            product.stock === 'Low'
-                              ? 'text-orange-600 dark:text-orange-400'
-                              : 'text-green-600 dark:text-green-400'
-                          }`}
-                        >
-                          {product.stock}
-                        </span>
-                      </td>
+              {loading ? (
+                <div className="h-44 w-full animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
+              ) : topProducts.length === 0 ? (
+                <div className="rounded-xl border border-border dark:border-slate-800 bg-muted dark:bg-slate-950 px-4 py-8 text-center text-sm text-muted-foreground">
+                  No product sales data for this period.
+                </div>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead className="text-left text-muted-foreground dark:text-muted-foreground">
+                    <tr>
+                      <th className="pb-2">Product</th>
+                      <th>Units sold</th>
+                      <th>Revenue</th>
+                      <th>Avg rating</th>
+                      <th>Stock</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border dark:divide-slate-800 text-muted-foreground dark:text-gray-300">
+                    {topProducts.map((product) => (
+                      <tr key={product.id}>
+                        <td className="py-3">
+                          <div className="flex items-center gap-3">
+                            {product.image ? (
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="h-10 w-10 rounded-lg object-cover border border-border dark:border-slate-800"
+                              />
+                            ) : (
+                              <div className="h-10 w-10 rounded-lg border border-border dark:border-slate-800 bg-muted dark:bg-slate-950" />
+                            )}
+                            <span className="font-semibold text-foreground dark:text-gray-100">
+                              {product.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td>{product.units}</td>
+                        <td>৳{product.revenue.toLocaleString()}</td>
+                        <td>
+                          {product.rating !== null ? product.rating.toFixed(1) : 'N/A'}
+                        </td>
+                        <td>
+                          <span
+                            className={`font-medium ${
+                              product.stock === 'In Stock'
+                                ? 'text-green-600 dark:text-green-400'
+                                : product.stock === 'Low'
+                                  ? 'text-orange-600 dark:text-orange-400'
+                                  : 'text-red-600 dark:text-red-400'
+                            }`}
+                          >
+                            {product.stock}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4 transition-colors">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-gray-100 transition-colors">
-              Geographic Insights
+          <div className="rounded-2xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-6 space-y-4 transition-colors">
+            <h2 className="text-lg font-semibold text-foreground dark:text-gray-100 transition-colors">
+              Performance Highlights
             </h2>
             <div className="grid gap-3">
-              {GEO_DATA.map((city) => (
-                <div
-                  key={city.city}
-                  className="flex items-center justify-between text-sm text-slate-600 dark:text-gray-400 transition-colors"
-                >
-                  <span>{city.city}</span>
-                  <span className="dark:text-gray-200 font-medium">
-                    {city.orders} orders · ৳{city.revenue.toLocaleString()}
-                  </span>
-                </div>
-              ))}
+              <div className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
+                <span>Best revenue day</span>
+                <span className="dark:text-gray-200 font-medium">
+                  {bestRevenuePoint
+                    ? `${bestRevenuePoint.label} · ৳${bestRevenuePoint.revenue.toLocaleString()}`
+                    : 'No data'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
+                <span>Top category</span>
+                <span className="dark:text-gray-200 font-medium">
+                  {topCategory || 'No category data'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
+                <span>Restock candidate</span>
+                <span className="dark:text-gray-200 font-medium">
+                  {restockCandidate ? restockCandidate.name : 'None right now'}
+                </span>
+              </div>
             </div>
-            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-4 text-xs text-slate-500 dark:text-gray-500 transition-colors">
-              Map view coming soon · Identify growth opportunities by region.
+            <div className="rounded-xl border border-border dark:border-slate-800 bg-muted dark:bg-slate-950 p-4 text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
+              Real-time map and traffic analytics are planned for a future release.
             </div>
           </div>
         </section>
 
         <section className="grid lg:grid-cols-3 gap-6">
-          <InfoCard
-            title="Customer Analytics"
-            items={[
-              { label: 'New vs Returning', value: '62% / 38%' },
-              { label: 'Customer lifetime value', value: '৳48,200' },
-              { label: 'Top buyers', value: 'Shahjalal Traders, Metro Retail' },
-            ]}
-          />
-          <InfoCard title="RFQ Analytics" items={RFQ_ANALYTICS} />
-          <InfoCard title="Traffic & Engagement" items={TRAFFIC_DATA} />
+          <InfoCard title="Customer Analytics" items={customerItems} />
+          <InfoCard title="RFQ Analytics" items={rfqItems} />
+          <InfoCard title="Inventory Insights" items={inventoryItems} />
         </section>
 
         <section className="grid lg:grid-cols-2 gap-6">
-          <InfoCard title="Inventory Insights" items={INVENTORY_DATA} />
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="rounded-2xl border border-border bg-card p-6">
             <div className="flex items-center gap-2">
               <Sparkles size={18} className="text-orange-600" />
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 Insights & Recommendations
               </h2>
             </div>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600 list-disc pl-5">
+            <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc pl-5">
               <li>
-                Your response rate improved by 15% compared to last period.
+                Revenue is {revenueChange >= 0 ? 'up' : 'down'} {Math.abs(revenueChange)}%
+                vs the previous comparable period.
               </li>
-              <li>Top category: Electronics (45% of sales).</li>
               <li>
-                Consider restocking: Industrial Safety Gloves (selling fast).
+                Delivery completion is {deliveryRate}% for {RANGE_LABELS[range].toLowerCase()}.
               </li>
-              <li>Low stock alert: 5 products below threshold.</li>
+              <li>
+                {inventory.lowStock > 0 || inventory.outOfStock > 0
+                  ? `${inventory.lowStock + inventory.outOfStock} product(s) need inventory attention.`
+                  : 'Inventory levels look healthy across all active products.'}
+              </li>
+              <li>
+                {topCategory
+                  ? `Top revenue category this period: ${topCategory}.`
+                  : 'Not enough category data yet to determine a top category.'}
+              </li>
             </ul>
           </div>
-        </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Reports & Exports
-            </h2>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
-              <Download size={16} />
-              Export Report
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-3 text-sm text-slate-600">
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
-              PDF
-            </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
-              Excel
-            </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
-              CSV
-            </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
-              Email report
-            </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2">
-              Schedule recurring
-            </button>
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-foreground">
+                Reports & Exports
+              </h2>
+              <button className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
+                <Download size={16} />
+                Export Report
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+              <button className="rounded-lg border border-border px-3 py-2">
+                PDF
+              </button>
+              <button className="rounded-lg border border-border px-3 py-2">
+                Excel
+              </button>
+              <button className="rounded-lg border border-border px-3 py-2">
+                CSV
+              </button>
+              <button className="rounded-lg border border-border px-3 py-2">
+                Email report
+              </button>
+            </div>
           </div>
         </section>
       </div>
@@ -545,10 +601,10 @@ function KpiCard({
 }) {
   const trendUp = change !== undefined && change >= 0
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-      <p className="text-xs uppercase text-slate-400">{title}</p>
+    <div className="rounded-2xl border border-border bg-card p-4 space-y-2">
+      <p className="text-xs uppercase text-muted-foreground">{title}</p>
       <div className="flex items-center justify-between">
-        <p className="text-xl font-semibold text-slate-900">{value}</p>
+        <p className="text-xl font-semibold text-foreground">{value}</p>
         {change !== undefined && (
           <span
             className={`text-xs font-semibold ${trendUp ? 'text-green-600' : 'text-red-500'}`}
@@ -558,11 +614,11 @@ function KpiCard({
           </span>
         )}
       </div>
-      {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+      {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
       {compare && change !== undefined && (
-        <p className="text-xs text-slate-400">vs previous period</p>
+        <p className="text-xs text-muted-foreground">vs previous period</p>
       )}
-      {spark && (
+      {spark && spark.length > 1 && (
         <div className="h-10 min-h-[40px] min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -590,13 +646,13 @@ function InfoCard({
   items: Array<{ label: string; value: string }>
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
-      <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-      <div className="mt-4 space-y-2 text-sm text-slate-600">
+    <div className="rounded-2xl border border-border bg-card p-6">
+      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+      <div className="mt-4 space-y-2 text-sm text-muted-foreground">
         {items.map((item) => (
           <div key={item.label} className="flex items-center justify-between">
             <span>{item.label}</span>
-            <span className="font-semibold text-slate-800">{item.value}</span>
+            <span className="font-semibold text-foreground">{item.value}</span>
           </div>
         ))}
       </div>

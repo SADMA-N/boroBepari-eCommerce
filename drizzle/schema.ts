@@ -1,4 +1,4 @@
-import { pgTable, unique, text, boolean, timestamp, foreignKey, serial, integer, numeric, jsonb, uuid, pgEnum } from "drizzle-orm/pg-core"
+import { boolean, foreignKey, integer, jsonb, numeric, pgEnum, pgTable, serial, text, timestamp, unique, uuid } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const adminRole = pgEnum("admin_role", ['super_admin', 'admin', 'moderator'])

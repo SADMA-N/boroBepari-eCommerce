@@ -32,7 +32,7 @@ import {
 } from '@/components/QuoteActionModals'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
-import { getRfqById, updateQuoteStatus } from '@/lib/quote-server'
+import { api } from '@/api/client'
 
 export const Route = createFileRoute('/buyer/rfqs/$rfqId')({
   loader: async ({ params }) => {
@@ -40,7 +40,7 @@ export const Route = createFileRoute('/buyer/rfqs/$rfqId')({
     if (isNaN(rfqId)) throw notFound()
     
     try {
-      const rfq = await getRfqById({ data: rfqId })
+      const rfq = await api.rfq.get(rfqId.toString())
       return { rfq }
     } catch (error) {
       throw notFound()
@@ -80,7 +80,7 @@ function RFQDetailPage() {
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
-      const updated = await getRfqById({ data: rfq.id })
+      const updated = await api.rfq.get(rfq.id.toString())
       setRfq(updated)
     } finally {
       setIsRefreshing(false)
@@ -117,11 +117,8 @@ function RFQDetailPage() {
     setIsLoading(true)
 
     try {
-      await updateQuoteStatus({
-        data: {
-          quoteId: selectedQuote.id,
-          status: 'accepted',
-        },
+      await api.rfq.updateQuoteStatus(selectedQuote.id.toString(), {
+        status: 'accepted',
       })
 
       await handleRefresh()
@@ -139,11 +136,8 @@ function RFQDetailPage() {
     setIsLoading(true)
 
     try {
-      await updateQuoteStatus({
-        data: {
-          quoteId: selectedQuote.id,
-          status: 'rejected',
-        },
+      await api.rfq.updateQuoteStatus(selectedQuote.id.toString(), {
+        status: 'rejected',
       })
 
       await handleRefresh()
@@ -161,13 +155,10 @@ function RFQDetailPage() {
     setIsLoading(true)
 
     try {
-      await updateQuoteStatus({
-        data: {
-          quoteId: selectedQuote.id,
-          status: 'countered',
-          counterPrice: price.toString(),
-          counterNote: notes,
-        },
+      await api.rfq.updateQuoteStatus(selectedQuote.id.toString(), {
+        status: 'countered',
+        counterPrice: price.toString(),
+        counterNote: notes,
       })
 
       await handleRefresh()
@@ -514,7 +505,7 @@ function RFQDetailPage() {
                                 {quote.supplier?.logo ? (
                                   <img
                                     src={quote.supplier.logo}
-                                    className="w-8 h-8 rounded-full bg-gray-200"
+                                    className="w-8 h-8 rounded-full bg-muted"
                                     alt=""
                                   />
                                 ) : (
@@ -730,21 +721,21 @@ function QuoteCard({
           <>
             <button
               disabled={isExpired || quote.status === 'rejected'}
-              onClick={() => onAction(quote.id!, 'accept')}
+              onClick={() => onAction(quote.id, 'accept')}
               className="flex-1 bg-green-600 text-white py-2.5 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
               <ThumbsUp size={18} /> Accept Quote
             </button>
             <button
               disabled={isExpired || quote.status === 'rejected'}
-              onClick={() => onAction(quote.id!, 'counter')}
+              onClick={() => onAction(quote.id, 'counter')}
               className="flex-1 bg-white dark:bg-slate-900 border border-blue-600 text-blue-600 dark:text-blue-400 py-2.5 rounded-lg font-semibold hover:bg-blue-50 dark:hover:bg-blue-900/20 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Counter Offer
             </button>
             <button
               disabled={isExpired || quote.status === 'rejected'}
-              onClick={() => onAction(quote.id!, 'reject')}
+              onClick={() => onAction(quote.id, 'reject')}
               className="flex-1 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-400 py-2.5 rounded-lg font-semibold hover:text-red-600 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-900/20 dark:hover:border-red-900/30 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ThumbsDown size={18} /> Decline Quote

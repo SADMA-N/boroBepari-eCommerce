@@ -1,7 +1,7 @@
 
+import { desc, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { products, sellers, suppliers } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
 
 async function debugProducts() {
   console.log("Debugging Products with Relational Query...\n");
@@ -11,6 +11,7 @@ async function debugProducts() {
     console.log("Fetching Featured Products via db.query...");
     
     // Check if db.query.products exists
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!db.query || !db.query.products) {
         console.error("Error: db.query.products is undefined. Schema might not be loaded correctly.");
         return;

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { AddProductPage } from '@/components/seller/AddProductPage'
-import { getSellerProductById } from '@/lib/seller-product-server'
+import { api } from '@/api/client'
 
 export const Route = createFileRoute('/seller/products/$productId/edit')({
   component: EditProductRoute,
@@ -21,10 +21,7 @@ function EditProductRoute() {
         return
     }
 
-    getSellerProductById({
-        data: { id: Number(productId) },
-        headers: { Authorization: `Bearer ${token}` }
-    })
+    api.seller.products.get(productId, token)
     .then((data) => {
         setProduct(data)
         setLoading(false)
@@ -47,10 +44,10 @@ function EditProductRoute() {
   if (error) {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
-        <p className="text-lg text-red-500 font-medium">{error}</p>
+        <p className="text-lg text-red-500 dark:text-red-400 font-medium">{error}</p>
         <button 
             onClick={() => window.history.back()}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 transition-colors"
+            className="px-4 py-2 bg-muted hover:bg-muted rounded-lg text-foreground transition-colors"
         >
             Go Back
         </button>

@@ -35,7 +35,7 @@ import {
   getProductsByCategory,
   getSupplierById,
 } from '@/data/mock-products'
-import { getOrder } from '@/lib/order-actions'
+import { api } from '@/api/client'
 import Toast from '@/components/Toast'
 import { useCart } from '@/contexts/CartContext'
 import OrderStatusTimeline from '@/components/OrderStatusTimeline'
@@ -46,7 +46,7 @@ export const Route = createFileRoute('/buyer/orders/$orderId')({
   loader: async ({ params }) => {
     const orderId = parseInt(params.orderId)
     if (isNaN(orderId)) return null
-    return await getOrder({ data: orderId })
+    return await api.orders.get(orderId.toString())
   },
 })
 
@@ -195,11 +195,11 @@ function OrderDetailPage() {
   if (!order) {
     return (
       <div className="max-w-[1440px] mx-auto px-6 py-16 text-center">
-        <Package size={64} className="mx-auto text-gray-300 mb-4" />
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <Package size={64} className="mx-auto text-muted-foreground mb-4" />
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           Order Not Found
         </h2>
-        <p className="text-gray-500 mb-6">
+        <p className="text-muted-foreground mb-6">
           The order you're looking for doesn't exist or has been removed.
         </p>
         <Link
@@ -671,7 +671,7 @@ function OrderDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-muted dark:bg-slate-950 transition-colors">
       <Toast
         message={toast.message}
         isVisible={toast.isVisible}
@@ -680,7 +680,7 @@ function OrderDetailPage() {
 
       <div className="max-w-[1440px] mx-auto px-6 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6 transition-colors">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground mb-6 transition-colors">
           <Link
             to="/"
             className="hover:text-orange-600 dark:hover:text-orange-500 flex items-center gap-1 transition-colors"
@@ -690,7 +690,7 @@ function OrderDetailPage() {
           </Link>
           <ChevronRight
             size={14}
-            className="text-gray-400 dark:text-gray-600"
+            className="text-muted-foreground dark:text-muted-foreground"
           />
           <Link
             to="/buyer/orders"
@@ -700,30 +700,30 @@ function OrderDetailPage() {
           </Link>
           <ChevronRight
             size={14}
-            className="text-gray-400 dark:text-gray-600"
+            className="text-muted-foreground dark:text-muted-foreground"
           />
-          <span className="text-gray-900 dark:text-gray-100 font-medium transition-colors">
+          <span className="text-foreground dark:text-gray-100 font-medium transition-colors">
             Order #{order.id.toString().padStart(6, '0')}
           </span>
         </nav>
 
         {/* Hero Section */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 mb-6 transition-colors">
+        <div className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 p-6 mb-6 transition-colors">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white transition-colors">
+                <h1 className="text-2xl lg:text-3xl font-bold text-foreground dark:text-white transition-colors">
                   Order #{order.id.toString().padStart(6, '0')}
                 </h1>
                 <button
                   onClick={handleCopyOrderId}
-                  className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded transition-colors"
+                  className="p-1.5 text-muted-foreground dark:text-muted-foreground hover:text-muted-foreground dark:hover:text-gray-300 hover:bg-muted dark:hover:bg-slate-800 rounded transition-colors"
                   title="Copy order ID"
                 >
                   <Copy size={16} />
                 </button>
               </div>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 <span className="flex items-center gap-1.5">
                   <Calendar size={14} />
                   {format(createdAt, 'MMMM d, yyyy')} at{' '}
@@ -762,7 +762,7 @@ function OrderDetailPage() {
               <button
                 onClick={handleDownloadInvoice}
                 disabled={isGeneratingInvoice}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all font-medium"
+                className="flex items-center gap-2 px-4 py-2 border border-border dark:border-slate-700 text-foreground dark:text-gray-300 rounded-lg hover:bg-muted dark:hover:bg-slate-800 transition-all font-medium"
               >
                 {isGeneratingInvoice ? (
                   <Loader2 size={18} className="animate-spin" />
@@ -791,8 +791,8 @@ function OrderDetailPage() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Order Status Timeline */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 transition-colors">
+            <div className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 p-6 transition-colors">
+              <h2 className="text-lg font-semibold text-foreground dark:text-white mb-6 transition-colors">
                 Order Status
               </h2>
               <OrderStatusTimeline
@@ -837,7 +837,7 @@ function OrderDetailPage() {
 
             {/* Order Items by Supplier */}
             <div className="flex items-center justify-between md:hidden transition-colors">
-              <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-base font-semibold text-foreground dark:text-white">
                 Order Items
               </h3>
               <button
@@ -854,27 +854,27 @@ function OrderDetailPage() {
               {Object.values(itemsBySupplier).map((supplier: any) => (
                 <div
                   key={supplier.id}
-                  className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden transition-colors"
+                  className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 overflow-hidden transition-colors"
                 >
                   {/* Supplier Header */}
-                  <div className="px-6 py-4 bg-gray-50 dark:bg-slate-800/50 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+                  <div className="px-6 py-4 bg-muted dark:bg-slate-800/50 border-b border-border dark:border-slate-800 flex items-center justify-between transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-200 dark:bg-slate-800 rounded-lg flex items-center justify-center transition-colors">
                         <Package
                           size={20}
-                          className="text-gray-500 dark:text-gray-400"
+                          className="text-muted-foreground dark:text-muted-foreground"
                         />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 transition-colors">
+                          <h3 className="font-semibold text-foreground dark:text-gray-100 transition-colors">
                             {supplier.name}
                           </h3>
                           {supplier.verified && (
                             <BadgeCheck size={16} className="text-blue-500" />
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors">
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                           {supplier.items.length} item(s)
                         </p>
                       </div>
@@ -891,7 +891,7 @@ function OrderDetailPage() {
                   </div>
 
                   {/* Items */}
-                  <div className="divide-y divide-gray-100 dark:divide-slate-800">
+                  <div className="divide-y divide-border dark:divide-slate-800">
                     {supplier.items.map((item: any) => (
                       <div
                         key={item.id}
@@ -899,7 +899,7 @@ function OrderDetailPage() {
                       >
                         <Link
                           to={`/products/${item.product?.slug || item.productId}`}
-                          className="w-20 h-20 bg-gray-100 dark:bg-slate-800 rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-slate-700 transition-colors"
+                          className="w-20 h-20 bg-gray-100 dark:bg-slate-800 rounded-lg flex-shrink-0 overflow-hidden border border-border dark:border-slate-700 transition-colors"
                         >
                           <img
                             src={
@@ -913,13 +913,13 @@ function OrderDetailPage() {
                         <div className="flex-1 min-w-0">
                           <Link
                             to={`/products/${item.product?.slug || item.productId}`}
-                            className="font-medium text-gray-900 dark:text-gray-100 hover:text-orange-600 dark:hover:text-orange-500 line-clamp-2 transition-colors"
+                            className="font-medium text-foreground dark:text-gray-100 hover:text-orange-600 dark:hover:text-orange-500 line-clamp-2 transition-colors"
                           >
                             {item.product?.name || 'Product'}
                           </Link>
-                          <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+                          <div className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                             Qty:{' '}
-                            <span className="font-medium text-gray-700 dark:text-gray-300">
+                            <span className="font-medium text-foreground dark:text-gray-300">
                               {item.quantity}
                             </span>
                             {item.product?.unit && (
@@ -928,9 +928,9 @@ function OrderDetailPage() {
                               </span>
                             )}
                           </div>
-                          <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+                          <div className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                             Unit Price:{' '}
-                            <span className="font-medium text-gray-700 dark:text-gray-300">
+                            <span className="font-medium text-foreground dark:text-gray-300">
                               {formatBDT(
                                 parseFloat(item.price) / item.quantity,
                               )}
@@ -944,7 +944,7 @@ function OrderDetailPage() {
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900 dark:text-white transition-colors">
+                          <p className="font-semibold text-foreground dark:text-white transition-colors">
                             {formatBDT(parseFloat(item.price))}
                           </p>
                         </div>
@@ -959,11 +959,11 @@ function OrderDetailPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Delivery Information */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
+            <div className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 p-6 transition-colors">
+              <h3 className="font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
                 <MapPin
                   size={18}
-                  className="text-gray-400 dark:text-gray-500"
+                  className="text-muted-foreground dark:text-muted-foreground"
                 />
                 Delivery Information
               </h3>
@@ -971,33 +971,33 @@ function OrderDetailPage() {
               {defaultAddress ? (
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">
+                    <p className="font-medium text-foreground dark:text-gray-100 transition-colors">
                       {defaultAddress.name}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1 transition-colors">
+                    <p className="text-muted-foreground dark:text-muted-foreground mt-1 transition-colors">
                       {defaultAddress.address}
                     </p>
                     {defaultAddress.city && (
-                      <p className="text-gray-600 dark:text-gray-400 transition-colors">
+                      <p className="text-muted-foreground dark:text-muted-foreground transition-colors">
                         {defaultAddress.city} {defaultAddress.postcode}
                       </p>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 transition-colors">
+                  <div className="flex items-center gap-2 text-muted-foreground dark:text-muted-foreground transition-colors">
                     <Phone size={14} />
                     {defaultAddress.phone}
                   </div>
-                  <hr className="border-gray-100 dark:border-slate-800" />
+                  <hr className="border-border dark:border-slate-800" />
                   <div className="flex items-start gap-2">
                     <Calendar
                       size={14}
-                      className="text-gray-400 dark:text-gray-500 mt-0.5"
+                      className="text-muted-foreground dark:text-muted-foreground mt-0.5"
                     />
                     <div>
-                      <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">
+                      <p className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-semibold transition-colors">
                         Estimated Delivery
                       </p>
-                      <p className="font-medium text-gray-900 dark:text-gray-100 transition-colors">
+                      <p className="font-medium text-foreground dark:text-gray-100 transition-colors">
                         {format(estimatedDelivery, 'MMMM d, yyyy')}
                       </p>
                     </div>
@@ -1009,7 +1009,7 @@ function OrderDetailPage() {
                         className="text-green-500 mt-0.5"
                       />
                       <div>
-                        <p className="text-gray-500 dark:text-gray-500 text-xs uppercase font-semibold transition-colors">
+                        <p className="text-muted-foreground dark:text-muted-foreground text-xs uppercase font-semibold transition-colors">
                           Delivered On
                         </p>
                         <p className="font-medium text-green-600 transition-colors">
@@ -1020,28 +1020,28 @@ function OrderDetailPage() {
                   )}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                   No delivery address available
                 </p>
               )}
             </div>
 
             {/* Payment Information */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
+            <div className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 p-6 transition-colors">
+              <h3 className="font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
                 <CreditCard
                   size={18}
-                  className="text-gray-400 dark:text-gray-500"
+                  className="text-muted-foreground dark:text-muted-foreground"
                 />
                 Payment Information
               </h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 transition-colors">
+                  <span className="text-muted-foreground dark:text-muted-foreground transition-colors">
                     Method
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100 capitalize transition-colors">
+                  <span className="font-medium text-foreground dark:text-gray-100 capitalize transition-colors">
                     {order.paymentMethod === 'cod'
                       ? 'Cash on Delivery'
                       : order.paymentMethod === 'deposit'
@@ -1050,7 +1050,7 @@ function OrderDetailPage() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500 dark:text-gray-400 transition-colors">
+                  <span className="text-muted-foreground dark:text-muted-foreground transition-colors">
                     Status
                   </span>
                   <span
@@ -1061,10 +1061,10 @@ function OrderDetailPage() {
                 </div>
                 {order.transactionId && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500 dark:text-gray-400 transition-colors">
+                    <span className="text-muted-foreground dark:text-muted-foreground transition-colors">
                       Transaction ID
                     </span>
-                    <span className="font-mono text-xs text-gray-700 dark:text-gray-300 transition-colors">
+                    <span className="font-mono text-xs text-foreground dark:text-gray-300 transition-colors">
                       {order.transactionId}
                     </span>
                   </div>
@@ -1094,21 +1094,21 @@ function OrderDetailPage() {
             </div>
 
             {/* Order Summary */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 transition-colors">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
+            <div className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 p-6 transition-colors">
+              <h3 className="font-semibold text-foreground dark:text-gray-100 mb-4 flex items-center gap-2 transition-colors">
                 <FileText
                   size={18}
-                  className="text-gray-400 dark:text-gray-500"
+                  className="text-muted-foreground dark:text-muted-foreground"
                 />
                 Order Summary
               </h3>
 
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
+                <div className="flex justify-between text-muted-foreground dark:text-muted-foreground transition-colors">
                   <span>Subtotal ({order.items.length} items)</span>
                   <span>{formatBDT(totalAmount)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
+                <div className="flex justify-between text-muted-foreground dark:text-muted-foreground transition-colors">
                   <span>Delivery</span>
                   <span className="text-green-600 dark:text-green-400 transition-colors">
                     Free
@@ -1116,8 +1116,8 @@ function OrderDetailPage() {
                 </div>
                 {isDeposit && depositAmount > 0 && (
                   <>
-                    <hr className="border-gray-100 dark:border-slate-800 my-2 transition-colors" />
-                    <div className="flex justify-between text-gray-600 dark:text-gray-400 transition-colors">
+                    <hr className="border-border dark:border-slate-800 my-2 transition-colors" />
+                    <div className="flex justify-between text-muted-foreground dark:text-muted-foreground transition-colors">
                       <span>Deposit Paid (30%)</span>
                       <span className="text-green-600 dark:text-green-400 transition-colors">
                         -{formatBDT(depositAmount)}
@@ -1125,14 +1125,14 @@ function OrderDetailPage() {
                     </div>
                   </>
                 )}
-                <hr className="border-gray-100 dark:border-slate-800 my-2 transition-colors" />
+                <hr className="border-border dark:border-slate-800 my-2 transition-colors" />
                 <div className="flex justify-between font-bold text-lg dark:text-white transition-colors">
                   <span>{balanceDue > 0 ? 'Balance Due' : 'Total Paid'}</span>
                   <span
                     className={
                       balanceDue > 0
                         ? 'text-orange-600 dark:text-orange-500'
-                        : 'text-gray-900 dark:text-white'
+                        : 'text-foreground dark:text-white'
                     }
                   >
                     {formatBDT(balanceDue > 0 ? balanceDue : totalAmount)}
@@ -1151,7 +1151,7 @@ function OrderDetailPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-slate-800 p-6 space-y-3 transition-colors">
+            <div className="bg-card dark:bg-slate-900 rounded-xl shadow-sm border border-border dark:border-slate-800 p-6 space-y-3 transition-colors">
               {canReorder && !isCancelled && (
                 <button
                   onClick={handleReorder}
@@ -1179,7 +1179,7 @@ function OrderDetailPage() {
 
               <Link
                 to="/help"
-                className="w-full flex items-center justify-center gap-2 py-2.5 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-all font-medium"
+                className="w-full flex items-center justify-center gap-2 py-2.5 border border-border dark:border-slate-700 text-foreground dark:text-gray-300 rounded-lg hover:bg-muted dark:hover:bg-slate-800 transition-all font-medium"
               >
                 <HelpCircle size={18} />
                 Get Help
@@ -1200,19 +1200,19 @@ function OrderDetailPage() {
           {supplierGroups.map((group) => (
             <div
               key={group.key}
-              className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
+              className="flex items-center justify-between rounded-lg border border-border px-4 py-3"
             >
-              <label className="flex items-center gap-3 text-sm text-gray-700">
+              <label className="flex items-center gap-3 text-sm text-foreground">
                 <input
                   type="checkbox"
                   checked={Boolean(supplierSelection[group.key])}
                   onChange={() => handleSupplierSelectionChange(group.key)}
-                  className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  className="h-4 w-4 rounded border-border text-green-600 focus:ring-green-500"
                 />
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-foreground">
                   {group.supplierName}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {group.itemCount} item{group.itemCount > 1 ? 's' : ''}
                 </span>
               </label>
@@ -1229,7 +1229,7 @@ function OrderDetailPage() {
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => setReorderModal(null)}
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+            className="flex-1 px-4 py-2 rounded-lg border border-border text-muted-foreground hover:bg-muted font-medium"
           >
             Cancel
           </button>
@@ -1260,8 +1260,8 @@ function OrderDetailPage() {
                 key={item.id}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-gray-800">{item.productName}</span>
-                <span className="text-xs text-gray-500">
+                <span className="text-foreground">{item.productName}</span>
+                <span className="text-xs text-muted-foreground">
                   {!item.supplierActive
                     ? 'Supplier inactive'
                     : item.inStock
@@ -1282,13 +1282,13 @@ function OrderDetailPage() {
           </button>
           <button
             onClick={handleViewAlternatives}
-            className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium"
+            className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted font-medium"
           >
             View alternatives
           </button>
           <button
             onClick={handleNotifyBackInStock}
-            className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium"
+            className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted font-medium"
           >
             Notify when back in stock
           </button>
@@ -1301,9 +1301,9 @@ function OrderDetailPage() {
         subtitle="Review the updated prices before adding to cart."
         onClose={() => setReorderModal(null)}
       >
-        <div className="overflow-hidden rounded-lg border border-gray-200">
+        <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-600">
+            <thead className="bg-muted text-muted-foreground">
               <tr>
                 <th className="px-4 py-2 text-left font-semibold">Product</th>
                 <th className="px-4 py-2 text-right font-semibold">
@@ -1322,13 +1322,13 @@ function OrderDetailPage() {
                 const diff = item.newPrice - item.oldPrice
                 return (
                   <tr key={item.id} className="border-t">
-                    <td className="px-4 py-2 text-gray-800">
+                    <td className="px-4 py-2 text-foreground">
                       {item.productName}
                     </td>
-                    <td className="px-4 py-2 text-right text-gray-500">
+                    <td className="px-4 py-2 text-right text-muted-foreground">
                       {formatBDT(item.oldPrice)}
                     </td>
-                    <td className="px-4 py-2 text-right text-gray-900">
+                    <td className="px-4 py-2 text-right text-foreground">
                       {formatBDT(item.newPrice)}
                     </td>
                     <td
@@ -1347,7 +1347,7 @@ function OrderDetailPage() {
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => setReorderModal(null)}
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+            className="flex-1 px-4 py-2 rounded-lg border border-border text-muted-foreground hover:bg-muted font-medium"
           >
             Cancel
           </button>
@@ -1367,7 +1367,7 @@ function OrderDetailPage() {
         onClose={() => setReorderModal(null)}
       >
         {alternativeProducts.length === 0 ? (
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             We couldn't find close alternatives right now.
           </div>
         ) : (
@@ -1375,10 +1375,10 @@ function OrderDetailPage() {
             {alternativeProducts.map((item) => (
               <div
                 key={item.id}
-                className="rounded-lg border border-gray-200 p-3"
+                className="rounded-lg border border-border p-3"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                  <div className="w-16 h-16 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                     {item.image ? (
                       <img
                         src={item.image}
@@ -1386,16 +1386,16 @@ function OrderDetailPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                         <Package size={20} />
                       </div>
                     )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-semibold text-foreground">
                       {item.productName}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {formatBDT(item.newPrice)}
                     </p>
                     {item.productSlug && (
@@ -1415,7 +1415,7 @@ function OrderDetailPage() {
         <div className="mt-6">
           <button
             onClick={() => setReorderModal(null)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+            className="w-full px-4 py-2 rounded-lg border border-border text-muted-foreground hover:bg-muted font-medium"
           >
             Close
           </button>
@@ -1430,13 +1430,13 @@ function OrderDetailPage() {
         position="bottom"
       >
         <div className="space-y-4">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-foreground">
             Reason for cancellation
           </label>
           <select
             value={cancelReason}
             onChange={(event) => setCancelReason(event.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
           >
             <option value="ordered_by_mistake">Ordered by mistake</option>
             <option value="better_price">Found better price elsewhere</option>
@@ -1450,7 +1450,7 @@ function OrderDetailPage() {
               value={cancelReasonNote}
               onChange={(event) => setCancelReasonNote(event.target.value)}
               placeholder="Tell us more"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 min-h-[90px]"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400 min-h-[90px]"
             />
           )}
 
@@ -1463,7 +1463,7 @@ function OrderDetailPage() {
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => setCancelModalOpen(false)}
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium"
+            className="flex-1 px-4 py-2 rounded-lg border border-border text-muted-foreground hover:bg-muted font-medium"
           >
             Keep Order
           </button>
@@ -1478,7 +1478,7 @@ function OrderDetailPage() {
       </ReorderModalShell>
 
       {isShipped && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t shadow-lg md:hidden">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-card border-t shadow-lg md:hidden">
           <button
             onClick={() => {
               if (trackingInfo.trackingUrl) {
@@ -1532,25 +1532,25 @@ function ReorderModalShell({
       aria-labelledby="reorder-modal-title"
     >
       <div
-        className={`bg-white shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] ${
+        className={`bg-card shadow-xl w-full max-w-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] ${
           position === 'bottom' ? 'rounded-t-2xl sm:rounded-xl' : 'rounded-xl'
         }`}
       >
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-muted">
           <div>
             <h2
               id="reorder-modal-title"
-              className="text-lg font-bold text-gray-900"
+              className="text-lg font-bold text-foreground"
             >
               {title}
             </h2>
             {subtitle && (
-              <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-200"
+            className="text-muted-foreground hover:text-muted-foreground transition-colors p-1 rounded-full hover:bg-muted"
             aria-label="Close modal"
           >
             <XCircle size={18} />

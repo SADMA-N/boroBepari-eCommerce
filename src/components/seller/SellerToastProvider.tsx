@@ -49,12 +49,12 @@ export function SellerToastProvider({
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`rounded-xl px-4 py-3 text-sm text-white shadow-lg ${
+            className={`rounded-xl px-4 py-3 text-sm shadow-lg border ${
               toast.tone === 'success'
-                ? 'bg-green-600'
+                ? 'bg-green-600 text-white border-green-700 dark:bg-green-500 dark:border-green-400'
                 : toast.tone === 'error'
-                  ? 'bg-red-600'
-                  : 'bg-slate-900'
+                  ? 'bg-red-600 text-white border-red-700 dark:bg-red-500 dark:border-red-400'
+                  : 'bg-slate-900 text-white border-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-300'
             }`}
           >
             {toast.message}

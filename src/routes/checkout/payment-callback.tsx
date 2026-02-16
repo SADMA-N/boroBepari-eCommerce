@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { useEffect, useState } from 'react'
 import { useCart } from '@/contexts/CartContext'
 import { useCheckout } from '@/contexts/CheckoutContext'
-import { updateOrderPayment } from '@/lib/order-actions'
+import { api } from '@/api/client'
 
 export const Route = createFileRoute('/checkout/payment-callback')({
   component: PaymentCallbackPage,
@@ -35,12 +35,9 @@ function PaymentCallbackPage() {
       const paymentStatus =
         state.paymentMethod === 'deposit' ? 'deposit_paid' : 'full_paid'
 
-      updateOrderPayment({
-        data: {
-          orderId: parseInt(orderId),
-          status: paymentStatus,
-          transactionId: transactionId,
-        },
+      api.orders.updatePayment(orderId, {
+        status: paymentStatus,
+        transactionId: transactionId,
       })
         .then(() => {
           setIsVerifying(false)
@@ -66,16 +63,16 @@ function PaymentCallbackPage() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-md w-full">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-muted p-4">
+        <div className="bg-card p-8 rounded-xl shadow-lg text-center max-w-md w-full">
           <Loader2 className="animate-spin text-orange-500 w-12 h-12 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl font-bold text-foreground mb-2">
             Verifying Payment...
           </h2>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Please wait while we confirm your transaction.
           </p>
-          <div className="mt-4 text-xs text-gray-400">
+          <div className="mt-4 text-xs text-muted-foreground">
             Transaction ID: {transactionId}
           </div>
         </div>
@@ -84,33 +81,33 @@ function PaymentCallbackPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg text-center max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-muted p-4">
+      <div className="bg-card p-8 rounded-xl shadow-lg text-center max-w-md w-full animate-in fade-in zoom-in-95 duration-300">
         {status === 'success' ? (
           <>
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+            <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               Payment Successful!
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Your payment has been processed. Redirecting to order details...
             </p>
           </>
         ) : (
           <>
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
               {status === 'cancel' ? (
-                <AlertTriangle className="w-10 h-10 text-orange-500" />
+                <AlertTriangle className="w-10 h-10 text-orange-500 dark:text-orange-400" />
               ) : (
-                <XCircle className="w-10 h-10 text-red-600" />
+                <XCircle className="w-10 h-10 text-red-600 dark:text-red-400" />
               )}
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               {status === 'cancel' ? 'Payment Cancelled' : 'Payment Failed'}
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               {status === 'cancel'
                 ? 'You cancelled the payment process. No charges were made.'
                 : 'Something went wrong with the transaction. Please try again.'}
@@ -119,14 +116,14 @@ function PaymentCallbackPage() {
             <div className="space-y-3">
               <Link
                 to="/checkout/review"
-                className="flex items-center justify-center gap-2 w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md"
+                className="flex items-center justify-center gap-2 w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-400 text-white font-bold py-3 rounded-lg transition-colors shadow-md"
               >
                 <RefreshCw size={18} />
                 Retry Payment
               </Link>
               <Link
                 to="/cart"
-                className="block w-full text-gray-500 hover:text-gray-700 text-sm font-medium py-2"
+                className="block w-full text-muted-foreground hover:text-foreground dark:hover:text-slate-200 text-sm font-medium py-2"
               >
                 Return to Cart
               </Link>

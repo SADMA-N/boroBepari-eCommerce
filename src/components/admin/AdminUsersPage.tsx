@@ -285,20 +285,20 @@ function matchesOrderCount(orders: number, filter: OrderCountFilter) {
 function statusBadge(status: UserStatus) {
   if (status === 'active') {
     return (
-      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
         Active
       </span>
     )
   }
   if (status === 'suspended') {
     return (
-      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300">
         Suspended
       </span>
     )
   }
   return (
-    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-200 text-slate-600">
+    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
       Deleted
     </span>
   )
@@ -671,7 +671,7 @@ export function AdminUsersPage() {
               onChange={(e) => setDateFrom(e.target.value)}
               className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
-            <span className="text-sm text-slate-400">to</span>
+            <span className="text-sm text-slate-400 dark:text-slate-500">to</span>
             <input
               type="date"
               value={dateTo}

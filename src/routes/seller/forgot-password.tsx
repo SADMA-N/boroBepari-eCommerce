@@ -1,10 +1,7 @@
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowLeft, KeyRound, Mail, Sparkles } from 'lucide-react'
-import {
-  requestSellerPasswordReset,
-  verifySellerResetCode,
-} from '@/lib/seller-auth-server'
+import { api } from '@/api/client'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
 
 export const Route = createFileRoute('/seller/forgot-password')({
@@ -25,7 +22,7 @@ function SellerForgotPasswordPage() {
 
     setIsSubmitting(true)
     try {
-      const result = await requestSellerPasswordReset({ data: { email } })
+      const result = await api.auth.seller.requestReset({ email })
       setStep('code')
       pushToast(result.message, 'success')
     } catch (err) {
@@ -44,7 +41,7 @@ function SellerForgotPasswordPage() {
 
     setIsSubmitting(true)
     try {
-      const result = await verifySellerResetCode({ data: { email, code } })
+      const result = await api.auth.seller.verifyResetCode({ email, code })
       pushToast('Code verified successfully!', 'success')
 
       // Redirect to set-password page with temporary token
@@ -92,7 +89,7 @@ function SellerForgotPasswordPage() {
                   </label>
                   <div className="relative">
                     <Mail
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                       size={18}
                     />
                     <input

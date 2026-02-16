@@ -138,7 +138,7 @@ export default function HeroBanner({
                   </p>
                   <Link
                     to={slide.ctaLink}
-                    className="inline-block bg-white text-gray-900 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm sm:text-base"
+                    className="inline-block bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 border border-white/60 dark:border-slate-700 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-sm sm:text-base"
                   >
                     {slide.ctaText}
                   </Link>
@@ -173,8 +173,8 @@ export default function HeroBanner({
             onClick={() => goToSlide(index)}
             className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all ${
               index === currentSlide
-                ? 'bg-white w-6 sm:w-8'
-                : 'bg-white/50 hover:bg-white/75'
+                ? 'bg-white dark:bg-slate-100 w-6 sm:w-8'
+                : 'bg-white/50 hover:bg-white/75 dark:bg-slate-100/40 dark:hover:bg-slate-100/70'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

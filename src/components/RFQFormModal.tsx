@@ -13,7 +13,7 @@ import { z } from 'zod'
 
 import Toast from './Toast'
 import { createRfqSchema } from '@/lib/rfq-validation'
-import { submitRFQ, uploadRfqAttachment } from '@/lib/quote-server'
+import { api } from '@/api/client'
 
 // Schema for the form fields only (subset of createRfqSchema or modified for UI)
 // We need to handle file uploads separately or as part of the form state if we convert them.
@@ -69,20 +69,9 @@ export default function RFQFormModal({
         
         if (files.length > 0) {
           const uploadPromises = files.map(async (file) => {
-            const base64 = await new Promise<string>((resolve, reject) => {
-              const reader = new FileReader()
-              reader.readAsDataURL(file)
-              reader.onload = () => resolve(reader.result as string)
-              reader.onerror = (error) => reject(error)
-            })
-
-            const result = await uploadRfqAttachment({
-              data: {
-                filename: file.name,
-                mimeType: file.type,
-                data: base64,
-              }
-            })
+            const formData = new FormData()
+            formData.append('file', file)
+            const result = await api.rfq.uploadAttachment(formData)
             return result.url
           })
 
@@ -90,18 +79,16 @@ export default function RFQFormModal({
           attachmentUrls.push(...uploaded)
         }
 
-        const result = await submitRFQ({
-          data: {
-            productId,
-            quantity: value.quantity,
-            targetPrice: value.targetPrice,
-            deliveryLocation: value.deliveryLocation,
-            notes: value.notes,
-            attachments: attachmentUrls,
-          },
+        const result = await api.rfq.submit({
+          productId,
+          quantity: value.quantity,
+          targetPrice: value.targetPrice,
+          deliveryLocation: value.deliveryLocation,
+          notes: value.notes,
+          attachments: attachmentUrls,
         })
 
-        if (result.success) {
+        if (result.success) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
           // Success handling
           const newRfqNumber = `RFQ-${result.rfqId || Math.floor(Math.random() * 10000)}`
           setRfqNumber(newRfqNumber)

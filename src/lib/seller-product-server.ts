@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 import { sellerAuthMiddleware } from './seller-auth-server'
 import { uploadProductImage } from './product-images-s3'
@@ -162,7 +162,10 @@ export const getSellerProducts = createServerFn({ method: 'GET' })
     }
 
     const rows = await db.query.sellerProducts.findMany({
-      where: eq(schema.sellerProducts.sellerId, context.seller.id),
+      where: and(
+        eq(schema.sellerProducts.sellerId, context.seller.id),
+        isNull(schema.sellerProducts.deletedAt),
+      ),
       orderBy: [desc(schema.sellerProducts.createdAt)],
     })
 
@@ -176,7 +179,7 @@ export const getSellerProducts = createServerFn({ method: 'GET' })
       stock: r.stock ?? 0,
       lowStockThreshold: r.lowStockThreshold ?? 10,
       status: r.status,
-      images: (r.images as string[]) ?? [],
+      images: (r.images) ?? [],
       adminNotes: r.adminNotes,
       createdAt: r.createdAt.toISOString(),
     }))
@@ -189,19 +192,23 @@ export const getSellerProductById = createServerFn({ method: 'POST' })
     if (!context.seller) throw new Error('Unauthorized')
 
     const product = await db.query.sellerProducts.findFirst({
-      where: (p, { and, eq }) =>
-        and(eq(p.id, data.id), eq(p.sellerId, context.seller!.id)),
+      where: (p, { and: a, eq: e }) =>
+        a(
+          e(p.id, data.id),
+          e(p.sellerId, context.seller!.id),
+          isNull(p.deletedAt),
+        ),
     })
 
     if (!product) throw new Error('Product not found')
 
     return {
       ...product,
-      images: (product.images as string[]) || [],
-      tags: (product.tags as string[]) || [],
-      specifications: (product.specifications as any[]) || [],
-      tieredPricing: (product.tieredPricing as any[]) || [],
-      dimensions: (product.dimensions as any) || null,
+      images: (product.images) ?? [],
+      tags: (product.tags) ?? [],
+      specifications: (product.specifications as Array<any> | null) ?? [],
+      tieredPricing: (product.tieredPricing as Array<any> | null) ?? [],
+      dimensions: (product.dimensions as any) || null,  
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt.toISOString(),
     }
@@ -214,8 +221,12 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
     if (!context.seller) throw new Error('Unauthorized')
 
     const existing = await db.query.sellerProducts.findFirst({
-      where: (p, { and, eq }) =>
-        and(eq(p.id, data.id), eq(p.sellerId, context.seller!.id)),
+      where: (p, { and: a, eq: e }) =>
+        a(
+          e(p.id, data.id),
+          e(p.sellerId, context.seller!.id),
+          isNull(p.deletedAt),
+        ),
     })
 
     if (!existing) throw new Error('Product not found')
@@ -238,7 +249,7 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
 
     // If publishing, change status to pending, otherwise draft
     // We will override this to 'accepted' if we successfully sync to products table
-    let status = data.mode === 'publish' ? 'pending' : 'draft'
+    const status = data.mode === 'publish' ? 'pending' : 'draft'
 
     const safeName = sanitizeText(data.name)
     const [updated] = await db
@@ -350,4 +361,81 @@ export const updateSellerProduct = createServerFn({ method: 'POST' })
     }
 
     return { success: true, id: updated.id, slug: updated.slug }
+  })
+
+export const deleteSellerProducts = createServerFn({ method: 'POST' })
+  .middleware([sellerAuthMiddleware])
+  .inputValidator(
+    z.object({
+      ids: z.array(z.number().int().positive()).min(1),
+    }),
+  )
+  .handler(async ({ data, context }) => {
+    if (!context.seller) {
+      throw new Error('Unauthorized')
+    }
+    const sellerId = context.seller.id
+
+    const uniqueIds = Array.from(new Set(data.ids))
+
+    const sellerRows = await db.query.sellerProducts.findMany({
+      columns: {
+        id: true,
+        publishedProductId: true,
+      },
+      where: and(
+        eq(schema.sellerProducts.sellerId, sellerId),
+        inArray(schema.sellerProducts.id, uniqueIds),
+      ),
+    })
+
+    if (sellerRows.length !== uniqueIds.length) {
+      throw new Error('One or more products were not found for this seller')
+    }
+
+    const publicProductIds = Array.from(
+      new Set(
+        sellerRows
+          .map((row) => row.publishedProductId)
+          .filter((id): id is number => typeof id === 'number'),
+      ),
+    )
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(schema.sellerProducts)
+        .set({
+          deletedAt: new Date(),
+          deletedBy: sellerId,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(schema.sellerProducts.sellerId, sellerId),
+            inArray(schema.sellerProducts.id, uniqueIds),
+            isNull(schema.sellerProducts.deletedAt),
+          ),
+        )
+
+      if (publicProductIds.length > 0) {
+        await tx
+          .update(schema.products)
+          .set({
+            deletedAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              inArray(schema.products.id, publicProductIds),
+              isNull(schema.products.deletedAt),
+            ),
+          )
+      }
+    })
+
+    return {
+      success: true,
+      deletedSellerProductIds: uniqueIds,
+      deletedPublicProductIds: publicProductIds,
+    }
   })

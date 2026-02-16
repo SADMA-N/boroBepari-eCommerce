@@ -13,8 +13,8 @@ import {
 import type { KycStatus } from '@/types/seller'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
-import { submitSellerKyc } from '@/lib/seller-kyc-server'
 import { useSellerToast } from '@/components/seller/SellerToastProvider'
+import { api } from '@/api/client'
 
 type UploadKey =
   | 'trade_license'
@@ -210,12 +210,7 @@ export function SellerKYCPage() {
         selectedCategories,
         inventoryRange,
       )
-      const result = await submitSellerKyc({
-        data: payload,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const result = await api.seller.kyc.submit(payload, token)
       setSubmittedAt(new Date(result.submittedAt))
       setLocalStatus('submitted')
       setSuccessMessage(true)

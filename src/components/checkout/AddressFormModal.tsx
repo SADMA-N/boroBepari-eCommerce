@@ -4,6 +4,7 @@ import { Briefcase, Home, Loader2, MapPin, Warehouse, X } from 'lucide-react'
 import { z } from 'zod'
 import { BD_PHONE_REGEX } from '@/lib/validators'
 import type { NewAddress } from '@/db/schema'
+import { BD_PHONE_REGEX } from '@/lib/validators'
 
 // Schema
 const addressSchema = z.object({

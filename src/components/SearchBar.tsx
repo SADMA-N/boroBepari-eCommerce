@@ -2,11 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Clock, Loader2, Search, TrendingUp, X } from 'lucide-react'
 import { frequentlySearched } from '../data/mock-products'
-import {
-  formatBDT,
-  getProductSuggestions,
-  type ProductSuggestion,
-} from '@/lib/product-server'
+import { api } from '@/api/client'
+import { formatBDT } from '@/lib/format'
 
 interface SearchBarProps {
   initialValue?: string
@@ -26,7 +23,7 @@ export default function SearchBar({
   const [query, setQuery] = useState(initialValue)
   const [isFocused, setIsFocused] = useState(false)
   const [recentSearches, setRecentSearches] = useState<Array<string>>([])
-  const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([])
+  const [suggestions, setSuggestions] = useState<Array<any>>([])
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -54,7 +51,7 @@ export default function SearchBar({
 
     const timer = setTimeout(async () => {
       try {
-        const results = await getProductSuggestions({ data: { query: trimmed } })
+        const results = await api.products.suggestions(trimmed)
         if (!cancelled) {
           setSuggestions(results)
         }
@@ -119,7 +116,7 @@ export default function SearchBar({
     }
   }
 
-  const handleProductSuggestionClick = (suggestion: ProductSuggestion) => {
+  const handleProductSuggestionClick = (suggestion: any) => {
     setIsFocused(false)
     navigate({ to: '/products/$productSlug', params: { productSlug: suggestion.slug } })
   }
@@ -158,7 +155,7 @@ export default function SearchBar({
         <div className="relative flex items-center">
           <Search
             size={20}
-            className="absolute left-4 text-gray-400 pointer-events-none"
+            className="absolute left-4 text-muted-foreground pointer-events-none"
           />
           <input
             ref={inputRef}

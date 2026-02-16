@@ -1,11 +1,11 @@
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { uploadToS3 } from '@/lib/s3';
-import fs from 'fs';
-import path from 'path';
 
 const productImagesDir = path.join(process.cwd(), 'product-images');
 const imagesMapPath = path.join(process.cwd(), 'product-images.json');
-const imagesMap: Record<string, string[]> = {};
+const imagesMap: Record<string, Array<string>> = {};
 
 async function uploadImages() {
   if (!fs.existsSync(productImagesDir)) {
@@ -37,7 +37,7 @@ async function uploadImages() {
         return numA - numB;
       });
 
-      const productUrls: string[] = [];
+      const productUrls: Array<string> = [];
 
       for (const img of images) {
         const imgPath = path.join(prodPath, img);

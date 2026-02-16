@@ -10,17 +10,16 @@ import {
   ShoppingCart,
   X,
 } from 'lucide-react'
-import { formatBDT } from '@/lib/product-server'
 import { useAuth } from '../contexts/AuthContext'
 import RFQFormModal from './RFQFormModal'
 import AuthModal from './AuthModal'
-import type { ProductWithSupplier } from '@/lib/product-server'
+import { formatBDT } from '@/lib/format'
 
 interface QuickViewModalProps {
-  product: ProductWithSupplier | null
+  product: any | null
   isOpen: boolean
   onClose: () => void
-  onAddToCart: (product: ProductWithSupplier, quantity: number) => void
+  onAddToCart: (product: any, quantity: number) => void
 }
 
 export default function QuickViewModal({
@@ -59,6 +58,9 @@ export default function QuickViewModal({
   }
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      return
+    }
     onAddToCart(product, quantity)
   }
 

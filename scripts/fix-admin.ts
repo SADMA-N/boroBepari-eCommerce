@@ -1,6 +1,6 @@
 
+import { webcrypto } from 'node:crypto';
 import { Client } from 'pg';
-import { webcrypto } from 'crypto';
 
 const SECRET = process.env.ADMIN_AUTH_SECRET || 'admin-secret-key-change-in-production';
 const DATABASE_URL = 'postgresql://postgres:postgres@localhost:54322/postgres';
@@ -9,7 +9,7 @@ async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(password + SECRET);
   // Use webcrypto from 'crypto' module for Node compatibility if global crypto is not available
-  const subtle = (globalThis.crypto?.subtle || webcrypto.subtle);
+  const subtle = webcrypto.subtle;
   const hashBuffer = await subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');

@@ -29,11 +29,8 @@ import {
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import {
-  getAdminSellerProducts,
-  approveSellerProduct,
-  declineSellerProduct,
-} from '@/lib/admin-product-server'
+import { useTheme } from '@/contexts/ThemeContext'
+import { api } from '@/api/client'
 
 type ProductStatus =
   | 'published'
@@ -44,6 +41,7 @@ type ProductStatus =
   | 'pending'
   | 'declined'
   | 'accepted'
+  | 'deleted'
 type StockFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock'
 type SortKey = 'name' | 'price' | 'date' | 'orders' | 'flags'
 type DetailTab = 'info' | 'pricing' | 'reports' | 'analytics'
@@ -89,6 +87,8 @@ type Product = {
   sellerBusinessName?: string
   adminNotes?: string
   slug?: string
+  deletedAt?: string
+  deletedBy?: string
 }
 
 const CATEGORIES = [
@@ -302,6 +302,7 @@ const STATUS_TABS: Array<{ label: string; value: ProductStatus | 'all' }> = [
   { label: 'Accepted', value: 'accepted' },
   { label: 'Declined', value: 'declined' },
   { label: 'Draft', value: 'draft' },
+  { label: 'Deleted by Seller', value: 'deleted' },
   { label: 'Flagged', value: 'flagged' },
   { label: 'Out of Stock', value: 'out_of_stock' },
   { label: 'Suspended', value: 'suspended' },
@@ -354,7 +355,7 @@ function statusBadge(status: ProductStatus) {
       )
     case 'draft':
       return (
-        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs text-slate-600 dark:text-slate-400">
+        <span className="rounded-full bg-muted dark:bg-slate-800 px-2.5 py-1 text-xs text-muted-foreground dark:text-muted-foreground">
           Draft
         </span>
       )
@@ -376,11 +377,23 @@ function statusBadge(status: ProductStatus) {
           Suspended
         </span>
       )
+    case 'deleted':
+      return (
+        <span className="rounded-full bg-slate-200 dark:bg-slate-700 px-2.5 py-1 text-xs text-slate-700 dark:text-slate-300">
+          Deleted by Seller
+        </span>
+      )
   }
 }
 
 export function AdminProductsPage() {
-  const { can } = useAdminAuth()
+  const { theme } = useTheme()
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const { can, getToken } = useAdminAuth()
   const canView = can('products.view')
   const canModerate = can('products.moderate')
   const canDelete = can('products.delete')
@@ -419,10 +432,8 @@ export function AdminProductsPage() {
   const [actionLoading, setActionLoading] = useState(false)
 
   const refreshSellerProducts = () => {
-    const token = localStorage.getItem('admin_token') || ''
-    getAdminSellerProducts({
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const token = getToken() || ''
+    api.admin.products.list(token)
       .then((data) => {
         const mapped: Array<Product> = data.map((sp) => ({
           id: `SP-${sp.id}`,
@@ -434,14 +445,14 @@ export function AdminProductsPage() {
           price: sp.price,
           moq: sp.moq,
           stock: sp.stock,
-          status: sp.status as ProductStatus,
+          status: (sp.moderationStatus ?? sp.status) as ProductStatus, // eslint-disable-line @typescript-eslint/no-unnecessary-condition
           orders: 0,
           flags: 0,
           addedAt: sp.createdAt.split('T')[0],
           images: sp.images,
-          description: sp.description || '',
-          specs: sp.specifications?.map((s) => `${s.key}: ${s.value}`) || [],
-          tieredPricing: sp.tieredPricing?.map((t) => ({ min: t.minQty, price: t.price })) || [],
+          description: sp.description || '',  
+          specs: (sp.specifications as Array<{ key: string; value: string }> | undefined)?.map((s) => `${s.key}: ${s.value}`) ?? [],
+          tieredPricing: (sp.tieredPricing as Array<{ minQty: number; price: number }> | undefined)?.map((t) => ({ min: t.minQty, price: t.price })) ?? [],
           stockHistory: [],
           priceHistory: [],
           reports: [],
@@ -449,6 +460,8 @@ export function AdminProductsPage() {
           sellerProductId: sp.id,
           sellerBusinessName: sp.sellerBusinessName,
           adminNotes: sp.adminNotes ?? undefined,
+          deletedAt: sp.deletedAt ?? undefined,
+          deletedBy: sp.deletedBy ?? undefined,
         }))
         setSellerProducts(mapped)
       })
@@ -537,6 +550,7 @@ export function AdminProductsPage() {
   const pendingCount = allProducts.filter((p) => p.status === 'pending').length
   const flaggedCount = allProducts.filter((p) => p.flags > 0).length
   const suspendedCount = allProducts.filter((p) => p.status === 'suspended').length
+  const deletedCount = allProducts.filter((p) => p.status === 'deleted').length
   const outOfStockCount = allProducts.filter((p) => p.stock === 0).length
 
   const categoryBreakdown = CATEGORIES.map((category) => ({
@@ -609,15 +623,57 @@ export function AdminProductsPage() {
     setExportOpen(false)
   }
 
+  const restoreDeletedProduct = async (product: Product) => {
+    if (!product.sellerProductId) return
+
+    setActionLoading(true)
+    const token = getToken() || ''
+
+    try {
+      await api.admin.products.restore(product.sellerProductId.toString(), token)
+
+      setSellerProducts((prev) =>
+        prev.map((p) =>
+          p.sellerProductId === product.sellerProductId
+            ? {
+                ...p,
+                status: 'draft' as ProductStatus,
+                deletedAt: undefined,
+                deletedBy: undefined,
+              }
+            : p,
+        ),
+      )
+
+      setDetailProduct((prev) =>
+        prev && prev.sellerProductId === product.sellerProductId
+          ? {
+              ...prev,
+              status: 'draft',
+              deletedAt: undefined,
+              deletedBy: undefined,
+            }
+          : prev,
+      )
+
+      refreshSellerProducts()
+      setOpenMenuId(null)
+    } catch (err) {
+      console.error('Restore failed:', err)
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   return (
     <AdminProtectedRoute requiredPermissions={['products.view']}>
       <div className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+            <h1 className="text-2xl font-bold text-foreground dark:text-white transition-colors">
               Product Moderation
             </h1>
-            <div className="mt-2 flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               <span>Total: {totalProducts} products</span>
               {pendingCount > 0 && (
                 <span className="inline-flex items-center gap-2 rounded-full bg-amber-100 dark:bg-amber-900/20 px-3 py-1 text-xs font-medium text-amber-700 dark:text-amber-400 transition-colors">
@@ -628,6 +684,11 @@ export function AdminProductsPage() {
                 <Flag size={12} />
                 {flaggedCount} flagged
               </span>
+              {deletedCount > 0 && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-slate-200 dark:bg-slate-700 px-3 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 transition-colors">
+                  {deletedCount} deleted by seller
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -646,34 +707,34 @@ export function AdminProductsPage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setExportOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white shadow-lg z-20 overflow-hidden">
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                  <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-card shadow-lg z-20 overflow-hidden">
+                    <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">
                       Export Scope
                     </div>
                     <button
                       onClick={() => exportProducts('all', 'csv')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-muted"
                     >
                       Export All (CSV)
                     </button>
                     <button
                       onClick={() => exportProducts('all', 'excel')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-muted"
                     >
                       Export All (Excel)
                     </button>
-                    <div className="px-4 py-2 text-xs font-semibold text-slate-500 uppercase">
+                    <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">
                       Filtered
                     </div>
                     <button
                       onClick={() => exportProducts('filtered', 'csv')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-muted"
                     >
                       Export Filtered (CSV)
                     </button>
                     <button
                       onClick={() => exportProducts('filtered', 'excel')}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50"
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-muted"
                     >
                       Export Filtered (Excel)
                     </button>
@@ -685,43 +746,43 @@ export function AdminProductsPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Total Products
             </p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-2xl font-semibold text-foreground dark:text-white transition-colors">
               {totalProducts}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Published
             </p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-2xl font-semibold text-foreground dark:text-white transition-colors">
               {publishedCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Flagged
             </p>
             <p className="mt-2 text-2xl font-semibold text-red-600 dark:text-red-400 transition-colors">
               {flaggedCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Suspended
             </p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-2xl font-semibold text-foreground dark:text-white transition-colors">
               {suspendedCount}
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Out of Stock
             </p>
-            <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white transition-colors">
+            <p className="mt-2 text-2xl font-semibold text-foreground dark:text-white transition-colors">
               {outOfStockCount}
             </p>
           </div>
@@ -735,7 +796,7 @@ export function AdminProductsPage() {
               className={`rounded-full border px-4 py-2 text-sm transition-colors ${
                 activeTab === tab.value
                   ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
-                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                  : 'border-border dark:border-slate-800 text-muted-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800'
               }`}
             >
               {tab.label}
@@ -753,30 +814,37 @@ export function AdminProductsPage() {
                   {flaggedCount}
                 </span>
               )}
+              {tab.value === 'deleted' && deletedCount > 0 && (
+                <span
+                  className={`ml-2 rounded-full px-2 py-0.5 text-xs transition-colors ${activeTab === tab.value ? 'bg-white/20' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                >
+                  {deletedCount}
+                </span>
+              )}
             </button>
           ))}
         </div>
 
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-4 transition-colors">
+        <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 space-y-4 transition-colors">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground" />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by product name, SKU, supplier"
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-slate-900 dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 py-2.5 pl-9 pr-3 text-sm text-foreground dark:text-slate-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-900/20 transition-all placeholder:text-muted-foreground dark:placeholder:text-muted-foreground"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              <div className="inline-flex items-center gap-2 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 <Filter size={16} />
                 Filters
               </div>
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 <option value="all" className="dark:bg-slate-900">
                   Category: All
@@ -795,9 +863,9 @@ export function AdminProductsPage() {
                 value={supplierFilter}
                 onChange={(e) => setSupplierFilter(e.target.value)}
                 placeholder="Supplier search"
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors placeholder:text-muted-foreground dark:placeholder:text-muted-foreground"
               />
-              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 Price
               </div>
               <input
@@ -805,19 +873,19 @@ export function AdminProductsPage() {
                 value={priceMin}
                 onChange={(e) => setPriceMin(e.target.value)}
                 placeholder="Min"
-                className="w-20 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+                className="w-20 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
               <input
                 type="number"
                 value={priceMax}
                 onChange={(e) => setPriceMax(e.target.value)}
                 placeholder="Max"
-                className="w-20 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+                className="w-20 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
               <select
                 value={stockFilter}
                 onChange={(e) => setStockFilter(e.target.value as StockFilter)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {STOCK_OPTIONS.map((option) => (
                   <option
@@ -832,7 +900,7 @@ export function AdminProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               >
                 {SORT_OPTIONS.map((option) => (
                   <option
@@ -847,21 +915,21 @@ export function AdminProductsPage() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <span className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Date added
             </span>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
-            <span className="text-sm text-slate-400">to</span>
+            <span className="text-sm text-muted-foreground">to</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
             />
           </div>
         </div>
@@ -873,13 +941,13 @@ export function AdminProductsPage() {
             </span>
             <button
               disabled={!canModerate}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 disabled:opacity-50 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
             >
               Bulk Publish
             </button>
             <button
               disabled={!canModerate}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 disabled:opacity-50 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
             >
               Bulk Suspend
             </button>
@@ -893,20 +961,20 @@ export function AdminProductsPage() {
             <button
               onClick={() => setBulkCategoryOpen(true)}
               disabled={!canModerate}
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 disabled:opacity-50 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
             >
               Bulk Category
             </button>
-            <button className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 px-3 py-2 text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
               Bulk Export
             </button>
           </div>
         )}
 
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
+        <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
+              <thead className="bg-muted dark:bg-slate-800/50 text-muted-foreground dark:text-muted-foreground transition-colors">
                 <tr>
                   <th className="px-4 py-3 text-left">
                     <input
@@ -916,7 +984,7 @@ export function AdminProductsPage() {
                         sortedProducts.every((p) => selectedIds.includes(p.id))
                       }
                       onChange={toggleSelectAll}
-                      className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
+                      className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                     />
                   </th>
                   <th className="px-4 py-3 text-left">Product</th>
@@ -931,10 +999,12 @@ export function AdminProductsPage() {
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
+              <tbody className="divide-y divide-border dark:divide-slate-800 transition-colors">
                 {sortedProducts.map((product) => {
                   const rowTone =
-                    product.status === 'suspended'
+                    product.status === 'deleted'
+                      ? 'bg-slate-100 dark:bg-slate-800/40'
+                      : product.status === 'suspended'
                       ? 'bg-red-50 dark:bg-red-900/10'
                       : product.flags > 0
                         ? 'bg-yellow-50 dark:bg-yellow-900/10'
@@ -942,14 +1012,14 @@ export function AdminProductsPage() {
                   return (
                     <tr
                       key={product.id}
-                      className={`${rowTone} hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors`}
+                      className={`${rowTone} hover:bg-muted dark:hover:bg-slate-800/50 transition-colors`}
                     >
                       <td className="px-4 py-3">
                         <input
                           type="checkbox"
                           checked={selectedIds.includes(product.id)}
                           onChange={() => toggleSelectOne(product.id)}
-                          className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
+                          className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950 transition-colors"
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -965,18 +1035,18 @@ export function AdminProductsPage() {
                             <img
                               src={product.images[0]}
                               alt={product.name}
-                              className="h-10 w-10 rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                              className="h-10 w-10 rounded-lg object-cover border border-border dark:border-slate-800"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 transition-colors">
+                            <div className="h-10 w-10 rounded-lg bg-muted dark:bg-slate-800 flex items-center justify-center text-muted-foreground dark:text-muted-foreground transition-colors">
                               <Image size={16} />
                             </div>
                           )}
                           <div>
-                            <p className="font-medium text-slate-900 dark:text-slate-100 transition-colors">
+                            <p className="font-medium text-foreground dark:text-slate-100 transition-colors">
                               {product.name}
                             </p>
-                            <p className="text-xs text-slate-500 dark:text-slate-500">
+                            <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                               {product.id}
                             </p>
                             {product.sellerBusinessName && (
@@ -987,25 +1057,25 @@ export function AdminProductsPage() {
                           </div>
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                      <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                         {product.sku}
                       </td>
-                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                      <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                         {product.supplier}
                       </td>
-                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                      <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                         {product.category}
                       </td>
-                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400 transition-colors">
+                      <td className="px-4 py-3 text-muted-foreground dark:text-muted-foreground transition-colors">
                         {formatCurrency(product.price)} / MOQ {product.moq}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
+                      <td className="px-4 py-3 text-right text-muted-foreground dark:text-muted-foreground transition-colors">
                         {product.stock}
                       </td>
                       <td className="px-4 py-3">
                         {statusBadge(product.status)}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-600 dark:text-slate-400 transition-colors">
+                      <td className="px-4 py-3 text-right text-muted-foreground dark:text-muted-foreground transition-colors">
                         {product.orders}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -1015,7 +1085,7 @@ export function AdminProductsPage() {
                             {product.flags}
                           </span>
                         ) : (
-                          <span className="text-xs text-slate-400 dark:text-slate-500">
+                          <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                             0
                           </span>
                         )}
@@ -1028,7 +1098,7 @@ export function AdminProductsPage() {
                                 openMenuId === product.id ? null : product.id,
                               )
                             }
-                            className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-400"
+                            className="rounded-lg p-2 hover:bg-muted dark:hover:bg-slate-800 transition-colors text-muted-foreground dark:text-muted-foreground"
                           >
                             <MoreVertical size={16} />
                           </button>
@@ -1038,13 +1108,13 @@ export function AdminProductsPage() {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setOpenMenuId(null)}
                               />
-                              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg transition-colors overflow-hidden">
+                              <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-900 shadow-lg transition-colors overflow-hidden">
                                 <a
                                   href={`/products/${product.slug || product.id}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
                                 >
                                   <Eye size={14} />
                                   View on Marketplace
@@ -1052,7 +1122,7 @@ export function AdminProductsPage() {
                                 <button
                                   onClick={() => setOpenMenuId(null)}
                                   disabled={!canModerate}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Edit3 size={14} />
                                   Edit Product
@@ -1063,11 +1133,8 @@ export function AdminProductsPage() {
                                       onClick={() => {
                                         setOpenMenuId(null)
                                         setActionLoading(true)
-                                        const token = localStorage.getItem('admin_token') || ''
-                                        approveSellerProduct({
-                                          data: { sellerProductId: product.sellerProductId! },
-                                          headers: { Authorization: `Bearer ${token}` },
-                                        })
+                                        const token = getToken() || ''
+                                        api.admin.products.approve(product.sellerProductId!.toString(), token)
                                           .then(() => {
                                             setSellerProducts((prev) =>
                                               prev.map((p) =>
@@ -1107,23 +1174,38 @@ export function AdminProductsPage() {
                                     </button>
                                   </>
                                 )}
-                                {product.status !== 'published' && product.status !== 'pending' && (
+                                {product.status !== 'published' &&
+                                  product.status !== 'pending' &&
+                                  product.status !== 'deleted' && (
                                   <button
                                     onClick={() => setOpenMenuId(null)}
                                     disabled={!canModerate}
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                   >
                                     <CheckCircle size={14} />
                                     Activate Product
                                   </button>
                                 )}
+                                {product.status === 'deleted' &&
+                                  product.sellerProductId && (
+                                    <button
+                                      onClick={() => {
+                                        restoreDeletedProduct(product)
+                                      }}
+                                      disabled={!canModerate || actionLoading}
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/10 transition-colors disabled:opacity-50"
+                                    >
+                                      <CheckCircle size={14} />
+                                      Restore Product
+                                    </button>
+                                  )}
                                 <button
                                   onClick={() => {
                                     setSuspendProduct(product)
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canModerate}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Ban size={14} />
                                   Suspend Product
@@ -1135,14 +1217,14 @@ export function AdminProductsPage() {
                                     setOpenMenuId(null)
                                   }}
                                   disabled={!canModerate}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
                                 >
                                   <Flag size={14} />
                                   View Reports/Flags
                                 </button>
                                 <button
                                   onClick={() => setOpenMenuId(null)}
-                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                  className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
                                 >
                                   <FileText size={14} />
                                   View Orders for Product
@@ -1170,7 +1252,7 @@ export function AdminProductsPage() {
                   <tr>
                     <td
                       colSpan={11}
-                      className="px-4 py-10 text-center text-slate-500 dark:text-slate-400 transition-colors"
+                      className="px-4 py-10 text-center text-muted-foreground dark:text-muted-foreground transition-colors"
                     >
                       No products found.
                     </td>
@@ -1182,8 +1264,8 @@ export function AdminProductsPage() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-foreground dark:text-white transition-colors">
               Category Breakdown
             </h3>
             <div className="mt-3 space-y-2">
@@ -1192,25 +1274,25 @@ export function AdminProductsPage() {
                   key={item.category}
                   className="flex items-center justify-between text-sm transition-colors"
                 >
-                  <span className="text-slate-600 dark:text-slate-400">
+                  <span className="text-muted-foreground dark:text-muted-foreground">
                     {item.category}
                   </span>
-                  <span className="text-slate-900 dark:text-slate-200 font-medium">
+                  <span className="text-foreground dark:text-slate-200 font-medium">
                     {item.count}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-foreground dark:text-white transition-colors">
               Most Popular Categories
             </h3>
             <div className="mt-3 space-y-2">
               {popularCategories.map((item) => (
                 <div
                   key={item.category}
-                  className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors"
                 >
                   <Tag size={14} />
                   {item.category} ({item.count})
@@ -1218,15 +1300,15 @@ export function AdminProductsPage() {
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition-colors">
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+          <div className="rounded-xl border border-border dark:border-slate-800 bg-card dark:bg-slate-900 p-4 transition-colors">
+            <h3 className="text-sm font-semibold text-foreground dark:text-white transition-colors">
               Underrepresented
             </h3>
             <div className="mt-3 space-y-2">
               {underrepresentedCategories.map((item) => (
                 <div
                   key={item.category}
-                  className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors"
                 >
                   <Layers size={14} />
                   {item.category} ({item.count})
@@ -1239,24 +1321,24 @@ export function AdminProductsPage() {
 
       {detailProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-4xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-4xl rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   {detailProduct.name}
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                   {detailProduct.sku}
                 </p>
               </div>
               <button
                 onClick={() => setDetailProduct(null)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="border-b border-slate-200 dark:border-slate-800 px-6 transition-colors">
+            <div className="border-b border-border dark:border-slate-800 px-6 transition-colors">
               <div className="flex flex-wrap gap-6 text-sm">
                 {(
                   [
@@ -1272,7 +1354,7 @@ export function AdminProductsPage() {
                     className={`py-3 border-b-2 transition-colors ${
                       detailTab === tab
                         ? 'border-orange-600 text-orange-600'
-                        : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                        : 'border-transparent text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-slate-200'
                     }`}
                   >
                     {tab === 'info'
@@ -1290,54 +1372,67 @@ export function AdminProductsPage() {
               {detailTab === 'info' && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                    <label className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                       <input
                         type="checkbox"
                         checked={editMode}
                         onChange={(e) => setEditMode(e.target.checked)}
-                        className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500 transition-colors"
+                        className="rounded border-border dark:border-slate-700 dark:bg-slate-950 text-orange-600 focus:ring-orange-500 transition-colors"
                       />
                       Admin edit mode
                     </label>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                    <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
                         Supplier
                       </p>
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                      <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                         {detailProduct.supplier}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                      <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                    <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
                         Category
                       </p>
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                      <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                         {detailProduct.category}
                       </p>
                     </div>
                   </div>
+                  {detailProduct.deletedAt && (
+                    <div className="rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-4 transition-colors">
+                      <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
+                        Deletion Record
+                      </p>
+                      <p className="mt-1 text-sm text-foreground dark:text-slate-200">
+                        Deleted by seller: {detailProduct.deletedBy ?? 'Unknown'}
+                      </p>
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                        Deleted at: {new Date(detailProduct.deletedAt).toLocaleString()}
+                      </p>
+                    </div>
+                  )}
                   <div>
-                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                    <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
                       Description
                     </p>
-                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                    <p className="mt-2 text-sm text-foreground dark:text-slate-300 transition-colors">
                       {detailProduct.description}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                    <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
                       Specifications
                     </p>
-                    <ul className="mt-2 space-y-1 text-sm text-slate-700 dark:text-slate-300 transition-colors">
+                    <ul className="mt-2 space-y-1 text-sm text-foreground dark:text-slate-300 transition-colors">
                       {detailProduct.specs.map((spec) => (
                         <li key={spec}>• {spec}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <p className="text-xs uppercase text-slate-400 dark:text-slate-500">
+                    <p className="text-xs uppercase text-muted-foreground dark:text-muted-foreground">
                       Images
                     </p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-3">
@@ -1347,12 +1442,12 @@ export function AdminProductsPage() {
                             key={image}
                             src={image}
                             alt={detailProduct.name}
-                            className="h-24 w-full rounded-lg object-cover border border-slate-200 dark:border-slate-800"
+                            className="h-24 w-full rounded-lg object-cover border border-border dark:border-slate-800"
                           />
                         ) : (
                           <div
                             key={image}
-                            className="flex h-24 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 transition-colors"
+                            className="flex h-24 items-center justify-center rounded-lg bg-muted dark:bg-slate-800 text-muted-foreground dark:text-muted-foreground transition-colors"
                           >
                             <Image size={20} />
                           </div>
@@ -1365,13 +1460,8 @@ export function AdminProductsPage() {
                       <button
                         onClick={() => {
                           setActionLoading(true)
-                          const token = localStorage.getItem('admin_token') || ''
-                          approveSellerProduct({
-                            data: {
-                              sellerProductId: detailProduct.sellerProductId!,
-                            },
-                            headers: { Authorization: `Bearer ${token}` },
-                          })
+                          const token = getToken() || ''
+                          api.admin.products.approve(detailProduct.sellerProductId!.toString(), token)
                             .then(() => {
                               setSellerProducts((prev) =>
                                 prev.map((p) =>
@@ -1407,26 +1497,40 @@ export function AdminProductsPage() {
                       </button>
                     </div>
                   )}
+                  {detailProduct.status === 'deleted' &&
+                    detailProduct.sellerProductId && (
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          onClick={() => {
+                            restoreDeletedProduct(detailProduct)
+                          }}
+                          disabled={!canModerate || actionLoading}
+                          className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-all shadow-lg shadow-green-600/20 disabled:opacity-50"
+                        >
+                          Restore as Draft
+                        </button>
+                      </div>
+                    )}
                 </div>
               )}
 
               {detailTab === 'pricing' && (
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+                  <div className="rounded-lg border border-border dark:border-slate-800 overflow-hidden transition-colors">
                     <table className="min-w-full text-sm">
-                      <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 transition-colors">
+                      <thead className="bg-muted dark:bg-slate-800/50 text-muted-foreground dark:text-muted-foreground transition-colors">
                         <tr>
                           <th className="px-4 py-2 text-left">Min Qty</th>
                           <th className="px-4 py-2 text-right">Price</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200 dark:divide-slate-800 transition-colors">
+                      <tbody className="divide-y divide-border dark:divide-slate-800 transition-colors">
                         {detailProduct.tieredPricing.map((tier) => (
                           <tr key={tier.min}>
-                            <td className="px-4 py-2 text-slate-700 dark:text-slate-300 transition-colors">
+                            <td className="px-4 py-2 text-foreground dark:text-slate-300 transition-colors">
                               {tier.min}
                             </td>
-                            <td className="px-4 py-2 text-right text-slate-700 dark:text-slate-300 transition-colors">
+                            <td className="px-4 py-2 text-right text-foreground dark:text-slate-300 transition-colors">
                               {formatCurrency(tier.price)}
                             </td>
                           </tr>
@@ -1435,26 +1539,26 @@ export function AdminProductsPage() {
                     </table>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                    <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                         Current Stock
                       </p>
-                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+                      <p className="text-lg font-semibold text-foreground dark:text-slate-100 transition-colors">
                         {detailProduct.stock}
                       </p>
                     </div>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                    <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                         MOQ
                       </p>
-                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+                      <p className="text-lg font-semibold text-foreground dark:text-slate-100 transition-colors">
                         {detailProduct.moq}
                       </p>
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+                    <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-sm font-semibold text-foreground dark:text-white transition-colors">
                         Stock History
                       </p>
                       <div className="mt-2 h-32">
@@ -1496,8 +1600,8 @@ export function AdminProductsPage() {
                         </ResponsiveContainer>
                       </div>
                     </div>
-                    <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors">
+                    <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                      <p className="text-sm font-semibold text-foreground dark:text-white transition-colors">
                         Price History
                       </p>
                       <div className="mt-2 h-32">
@@ -1546,39 +1650,39 @@ export function AdminProductsPage() {
               {detailTab === 'reports' && (
                 <div className="space-y-4">
                   {detailProduct.reports.length === 0 && (
-                    <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                       No reports for this product.
                     </p>
                   )}
                   {detailProduct.reports.map((report) => (
                     <div
                       key={report.id}
-                      className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors"
+                      className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors"
                     >
                       <div className="flex items-center justify-between transition-colors">
-                        <p className="text-sm font-medium text-slate-900 dark:text-slate-200">
+                        <p className="text-sm font-medium text-foreground dark:text-slate-200">
                           {report.reason}
                         </p>
-                        <span className="text-xs text-slate-400 dark:text-slate-500">
+                        <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                           {report.date}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                      <p className="mt-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                         {report.details}
                       </p>
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-500 transition-colors">
+                      <p className="mt-2 text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                         Reporter: {report.reporter}
                       </p>
                       {report.action && (
-                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-500 transition-colors">
+                        <p className="mt-1 text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                           Action: {report.action}
                         </p>
                       )}
                       <div className="mt-3 flex flex-wrap gap-2 transition-colors">
-                        <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <button className="rounded-lg border border-border dark:border-slate-800 px-3 py-1.5 text-xs text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
                           Dismiss
                         </button>
-                        <button className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <button className="rounded-lg border border-border dark:border-slate-800 px-3 py-1.5 text-xs text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors">
                           Warn Supplier
                         </button>
                         <button className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-3 py-1.5 text-xs text-orange-700 dark:text-orange-400 transition-colors hover:bg-orange-100 dark:hover:bg-orange-900/20">
@@ -1617,12 +1721,12 @@ export function AdminProductsPage() {
                   ].map((item) => (
                     <div
                       key={item.label}
-                      className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors"
+                      className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors"
                     >
-                      <p className="text-xs text-slate-400 dark:text-slate-500">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                         {item.label}
                       </p>
-                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100 transition-colors">
+                      <p className="text-lg font-semibold text-foreground dark:text-slate-100 transition-colors">
                         {item.value}
                       </p>
                     </div>
@@ -1636,40 +1740,40 @@ export function AdminProductsPage() {
 
       {flagReviewProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-3xl rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-3xl rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   Flag Review
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                   {flagReviewProduct.name}
                 </p>
               </div>
               <button
                 onClick={() => setFlagReviewProduct(null)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="px-6 py-5 space-y-4">
-              <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
-                <p className="font-medium text-slate-900 dark:text-slate-200 transition-colors">
+              <div className="rounded-lg border border-border dark:border-slate-800 p-4 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
+                <p className="font-medium text-foreground dark:text-slate-200 transition-colors">
                   {flagReviewProduct.name}
                 </p>
                 <p>Supplier: {flagReviewProduct.supplier}</p>
                 <p>Category: {flagReviewProduct.category}</p>
               </div>
-              <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-4 transition-colors">
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+              <div className="rounded-lg border border-border dark:border-slate-800 p-4 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Reports
                 </p>
-                <div className="mt-2 space-y-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+                <div className="mt-2 space-y-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                   {flagReviewProduct.reports.map((report) => (
                     <div
                       key={report.id}
-                      className="rounded-lg border border-slate-200 dark:border-slate-800 px-3 py-2 transition-colors"
+                      className="rounded-lg border border-border dark:border-slate-800 px-3 py-2 transition-colors"
                     >
                       <p className="font-medium dark:text-slate-300">
                         {report.reason}
@@ -1680,14 +1784,14 @@ export function AdminProductsPage() {
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-900 dark:text-white transition-colors">
+                <label className="text-sm font-medium text-foreground dark:text-white transition-colors">
                   Admin Notes
                 </label>
                 <textarea
                   value={flagReviewNotes}
                   onChange={(e) => setFlagReviewNotes(e.target.value)}
                   placeholder="Notes or request edits from supplier"
-                  className="mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
+                  className="mt-2 w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                   rows={3}
                 />
               </div>
@@ -1712,29 +1816,29 @@ export function AdminProductsPage() {
 
       {suspendProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-lg rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
                 <Ban
                   className="text-orange-600 dark:text-orange-500"
                   size={20}
                 />
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   Suspend {suspendProduct.name}?
                 </h2>
               </div>
               <button
                 onClick={() => setSuspendProduct(null)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <div className="px-6 py-5 space-y-4 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               <select
                 value={suspendReason}
                 onChange={(e) => setSuspendReason(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
+                className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
               >
                 <option className="dark:bg-slate-900">Policy violation</option>
                 <option className="dark:bg-slate-900">
@@ -1753,7 +1857,7 @@ export function AdminProductsPage() {
                   value={suspendOtherReason}
                   onChange={(e) => setSuspendOtherReason(e.target.value)}
                   placeholder="Other reason"
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                  className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-muted-foreground dark:placeholder:text-muted-foreground"
                 />
               )}
               <div className="rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 px-4 py-3 text-sm text-orange-700 dark:text-orange-400 transition-colors">
@@ -1761,10 +1865,10 @@ export function AdminProductsPage() {
                 appeal or edit.
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+            <div className="flex items-center justify-end gap-3 border-t border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setSuspendProduct(null)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1781,20 +1885,20 @@ export function AdminProductsPage() {
 
       {deleteProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-lg rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
                 <AlertTriangle
                   className="text-red-600 dark:text-red-500"
                   size={20}
                 />
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   Delete {deleteProduct.name}?
                 </h2>
               </div>
               <button
                 onClick={() => setDeleteProduct(null)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
@@ -1803,12 +1907,12 @@ export function AdminProductsPage() {
               <p className="text-sm text-red-600 dark:text-red-400 font-medium transition-colors">
                 This action cannot be undone.
               </p>
-              <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 <input
                   type="checkbox"
                   checked={deleteConfirm}
                   onChange={(e) => setDeleteConfirm(e.target.checked)}
-                  className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-950 text-red-600 focus:ring-red-500 transition-colors"
+                  className="rounded border-border dark:border-slate-700 dark:bg-slate-950 text-red-600 focus:ring-red-500 transition-colors"
                 />
                 I understand this action is permanent
               </label>
@@ -1816,17 +1920,17 @@ export function AdminProductsPage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder="Type DELETE to confirm"
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none placeholder:text-muted-foreground dark:placeholder:text-muted-foreground"
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+            <div className="flex items-center justify-end gap-3 border-t border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => {
                   setDeleteProduct(null)
                   setDeleteConfirm(false)
                   setDeleteConfirmText('')
                 }}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1848,23 +1952,23 @@ export function AdminProductsPage() {
 
       {bulkCategoryOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-md rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
-                <Tag className="text-slate-600 dark:text-slate-400" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <Tag className="text-muted-foreground dark:text-muted-foreground" size={20} />
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   Bulk Category Change
                 </h2>
               </div>
               <button
                 onClick={() => setBulkCategoryOpen(false)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-3 text-sm text-slate-600 dark:text-slate-400 transition-colors">
-              <select className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none">
+            <div className="px-6 py-5 space-y-3 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
+              <select className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none">
                 {CATEGORIES.map((category) => (
                   <option key={category} className="dark:bg-slate-900">
                     {category}
@@ -1872,10 +1976,10 @@ export function AdminProductsPage() {
                 ))}
               </select>
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+            <div className="flex items-center justify-end gap-3 border-t border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setBulkCategoryOpen(false)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1892,38 +1996,38 @@ export function AdminProductsPage() {
 
       {declineModalProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-lg rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
                 <Ban
                   className="text-red-600 dark:text-red-500"
                   size={20}
                 />
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   Decline {declineModalProduct.name}?
                 </h2>
               </div>
               <button
                 onClick={() => setDeclineModalProduct(null)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 space-y-4 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <div className="px-6 py-5 space-y-4 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               <p>Please provide a reason for declining this product submission.</p>
               <textarea
                 value={declineReason}
                 onChange={(e) => setDeclineReason(e.target.value)}
                 placeholder="Reason for declining..."
-                className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
+                className="w-full rounded-lg border border-border dark:border-slate-800 bg-card dark:bg-slate-950 px-3 py-2 text-sm text-foreground dark:text-slate-100 transition-colors focus:border-orange-500 outline-none"
                 rows={3}
               />
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+            <div className="flex items-center justify-end gap-3 border-t border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setDeclineModalProduct(null)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -1932,14 +2036,8 @@ export function AdminProductsPage() {
                 onClick={() => {
                   if (!declineModalProduct.sellerProductId) return
                   setActionLoading(true)
-                  const token = localStorage.getItem('admin_token') || ''
-                  declineSellerProduct({
-                    data: {
-                      sellerProductId: declineModalProduct.sellerProductId!,
-                      reason: declineReason,
-                    },
-                    headers: { Authorization: `Bearer ${token}` },
-                  })
+                  const token = getToken() || ''
+                  api.admin.products.decline(declineModalProduct.sellerProductId!.toString(), { reason: declineReason }, token)
                     .then(() => {
                       setSellerProducts((prev) =>
                         prev.map((p) =>
@@ -1966,28 +2064,28 @@ export function AdminProductsPage() {
 
       {bulkDeleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm transition-all">
-          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+          <div className="w-full max-w-md rounded-2xl bg-card dark:bg-slate-900 shadow-xl transition-colors overflow-hidden">
+            <div className="flex items-center justify-between border-b border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <div className="flex items-center gap-2">
                 <Trash2 className="text-red-600 dark:text-red-500" size={20} />
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="text-lg font-semibold text-foreground dark:text-white transition-colors">
                   Bulk Delete Products
                 </h2>
               </div>
               <button
                 onClick={() => setBulkDeleteOpen(false)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-500 dark:text-slate-400"
+                className="p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors text-muted-foreground dark:text-muted-foreground"
               >
                 <X size={18} />
               </button>
             </div>
-            <div className="px-6 py-5 text-sm text-slate-600 dark:text-slate-400 transition-colors">
+            <div className="px-6 py-5 text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               This action cannot be undone.
             </div>
-            <div className="flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4 transition-colors">
+            <div className="flex items-center justify-end gap-3 border-t border-border dark:border-slate-800 px-6 py-4 transition-colors">
               <button
                 onClick={() => setBulkDeleteOpen(false)}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="rounded-lg border border-border dark:border-slate-800 px-4 py-2 text-sm text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>

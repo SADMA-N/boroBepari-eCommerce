@@ -63,7 +63,7 @@ export function AddressCard({
           ${isSelected ? 'border-orange-500 bg-orange-500 text-white' : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800'}
         `}
         >
-          {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+          {isSelected && <div className="w-2 h-2 bg-white dark:bg-white rounded-full" />}
         </div>
       </div>
 

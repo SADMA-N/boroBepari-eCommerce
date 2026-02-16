@@ -9,12 +9,7 @@ import { CheckoutLayout } from '@/components/checkout/CheckoutLayout'
 import { AddressCard } from '@/components/checkout/AddressCard'
 import { AddressFormModal } from '@/components/checkout/AddressFormModal'
 import { GuestAddressForm } from '@/components/checkout/GuestAddressForm'
-import {
-  addAddress,
-  deleteAddress,
-  getAddresses,
-  updateAddress,
-} from '@/lib/address-actions'
+import { api } from '@/api/client'
 import Toast from '@/components/Toast'
 
 export const Route = createFileRoute('/checkout/')({
@@ -59,7 +54,7 @@ function CheckoutPage() {
       if (isAuthenticated && user?.id) {
         setIsLoadingAddresses(true)
         try {
-          const data = await getAddresses({ data: user.id })
+          const data = await api.addresses.list(user.id.toString())
           setAddresses(data)
 
           // Auto-select if nothing selected yet
@@ -89,9 +84,7 @@ function CheckoutPage() {
     if (!user?.id) return
 
     try {
-      const [newAddr] = await addAddress({
-        data: { ...data, userId: user.id },
-      })
+      const [newAddr] = await api.addresses.create({ ...data, userId: user.id })
 
       setAddresses((prev) => {
         const updated = data.isDefault
@@ -112,12 +105,10 @@ function CheckoutPage() {
     if (!editingAddress || !user?.id) return
 
     try {
-      const [updatedAddr] = await updateAddress({
-        data: {
-          id: editingAddress.id,
-          address: { ...data, userId: user.id },
-        },
-      })
+      const [updatedAddr] = await api.addresses.update(
+        editingAddress.id.toString(),
+        { ...data, userId: user.id },
+      )
 
       setAddresses((prev) => {
         const list = data.isDefault
@@ -138,7 +129,7 @@ function CheckoutPage() {
     if (!window.confirm('Are you sure you want to delete this address?')) return
 
     try {
-      await deleteAddress({ data: id })
+      await api.addresses.delete(id.toString())
       setAddresses((prev) => prev.filter((a) => a.id !== id))
       if (selectedAddressId === id) {
         setSelectedAddressId(null)

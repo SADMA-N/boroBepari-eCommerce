@@ -159,6 +159,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return { success: false, error: 'Product not found' }
       }
 
+      if ((product.stock ?? 0) <= 0) {
+        return { success: false, error: 'Product is out of stock' }
+      }
+
       const itemId = generateCartItemId(request.productId, request.rfqId)
       const unitPrice = request.customPrice ?? product.price
       const supplierId = product.supplierId

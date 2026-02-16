@@ -61,14 +61,14 @@ export const getAdminSellerProducts = createServerFn({ method: 'GET' })
     return rows.map((r) => ({
       id: r.id,
       name: r.name,
-      slug: r.publishedProduct?.slug ?? r.slug,
+      slug: r.publishedProduct?.slug ?? r.slug,  
       sku: r.sku ?? '',
       brand: r.brand,
       mainCategory: r.mainCategory,
       subCategory: r.subCategory,
       description: r.description,
-      tags: (r.tags as string[]) ?? [],
-      images: (r.images as string[]) ?? [],
+      tags: (r.tags) ?? [],
+      images: (r.images) ?? [],
       price: parseFloat(r.price),
       originalPrice: r.originalPrice ? parseFloat(r.originalPrice) : null,
       tieredPricing:
@@ -76,12 +76,13 @@ export const getAdminSellerProducts = createServerFn({ method: 'GET' })
           minQty: number
           maxQty: number | null
           price: number
-        }>) ?? [],
+        }> | null) ?? [],
       moq: r.moq,
-      stock: r.stock ?? 0,
+      stock: r.stock ?? 0,  
       status: r.status,
+      moderationStatus: r.deletedAt ? 'deleted' : r.status,
       specifications:
-        (r.specifications as Array<{ key: string; value: string }>) ?? [],
+        (r.specifications as Array<{ key: string; value: string }> | null) ?? [],
       weight: r.weight,
       shipFrom: r.shipFrom,
       deliveryTime: r.deliveryTime,
@@ -92,8 +93,10 @@ export const getAdminSellerProducts = createServerFn({ method: 'GET' })
       reviewedBy: r.reviewedBy,
       reviewedAt: r.reviewedAt?.toISOString() ?? null,
       publishedProductId: r.publishedProductId,
+      deletedAt: r.deletedAt?.toISOString() ?? null,
+      deletedBy: r.deletedBy ?? null,
       createdAt: r.createdAt.toISOString(),
-      sellerBusinessName: r.seller?.businessName ?? 'Unknown Seller',
+      sellerBusinessName: r.seller?.businessName ?? 'Unknown Seller', // eslint-disable-line @typescript-eslint/no-unnecessary-condition
       sellerId: r.sellerId,
     }))
   })
@@ -113,6 +116,9 @@ export const approveSellerProduct = createServerFn({ method: 'POST' })
 
     if (!sp) {
       throw new Error('Seller product not found')
+    }
+    if (sp.deletedAt) {
+      throw new Error('Product was deleted by seller')
     }
     if (sp.status !== 'pending') {
       throw new Error('Product is not in pending status')
@@ -134,7 +140,7 @@ export const approveSellerProduct = createServerFn({ method: 'POST' })
     }
 
     // Get or create a supplier record for this seller
-    const supplierId = sp.seller
+    const supplierId = sp.seller // eslint-disable-line @typescript-eslint/no-unnecessary-condition
       ? await getOrCreateSupplierForSeller(sp.seller)
       : null
 
@@ -149,25 +155,25 @@ export const approveSellerProduct = createServerFn({ method: 'POST' })
         name: sp.name,
         slug: productSlug,
         description: sp.description,
-        images: (sp.images as string[]) ?? [],
+        images: (sp.images) ?? [],
         price: sp.price,
         originalPrice: sp.originalPrice,
         moq: sp.moq,
-        stock: sp.stock ?? 0,
-        unit: sp.unit ?? 'piece',
+        stock: sp.stock ?? 0,  
+        unit: sp.unit ?? 'piece',  
         categoryId,
         supplierId,
         featured: false,
         isNew: true,
-        tags: (sp.tags as string[]) ?? [],
+        tags: (sp.tags) ?? [],
         tieredPricing:
           (sp.tieredPricing as Array<{
             minQty: number
             maxQty: number | null
             price: number
-          }>) ?? [],
+          }> | null) ?? [],
         specifications:
-          (sp.specifications as Array<{ key: string; value: string }>) ?? [],
+          (sp.specifications as Array<{ key: string; value: string }> | null) ?? [],
         hasSample: sp.hasSample ?? false,
         samplePrice: sp.samplePrice,
       })
@@ -208,6 +214,9 @@ export const declineSellerProduct = createServerFn({ method: 'POST' })
     if (!sp) {
       throw new Error('Seller product not found')
     }
+    if (sp.deletedAt) {
+      throw new Error('Product was deleted by seller')
+    }
     if (sp.status !== 'pending') {
       throw new Error('Product is not in pending status')
     }
@@ -224,4 +233,56 @@ export const declineSellerProduct = createServerFn({ method: 'POST' })
       .where(eq(schema.sellerProducts.id, data.sellerProductId))
 
     return { success: true }
+  })
+
+export const restoreSellerDeletedProduct = createServerFn({ method: 'POST' })
+  .middleware([adminAuthMiddleware])
+  .inputValidator(z.object({ sellerProductId: z.number() }))
+  .handler(async ({ data, context }) => {
+    if (!context.admin) {
+      throw new Error('Unauthorized')
+    }
+
+    const sp = await db.query.sellerProducts.findFirst({
+      where: eq(schema.sellerProducts.id, data.sellerProductId),
+      columns: {
+        id: true,
+        deletedAt: true,
+        publishedProductId: true,
+      },
+    })
+
+    if (!sp) {
+      throw new Error('Seller product not found')
+    }
+
+    if (!sp.deletedAt) {
+      throw new Error('Product is not deleted')
+    }
+
+    const now = new Date()
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(schema.sellerProducts)
+        .set({
+          deletedAt: null,
+          deletedBy: null,
+          status: 'draft',
+          updatedAt: now,
+        })
+        .where(eq(schema.sellerProducts.id, data.sellerProductId))
+
+      if (sp.publishedProductId) {
+        await tx
+          .update(schema.products)
+          .set({
+            deletedAt: null,
+            updatedAt: now,
+          })
+          .where(eq(schema.products.id, sp.publishedProductId))
+      }
+    })
+
+    return { success: true, restoredStatus: 'draft' as const }
   })

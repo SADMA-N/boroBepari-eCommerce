@@ -2,7 +2,7 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { ArrowLeft, KeyRound, Loader2, Mail, Sparkles } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
-import { verifyResetCode } from '@/lib/auth-server'
+import { api } from '@/api/client'
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordPage,
@@ -47,7 +47,7 @@ function ForgotPasswordPage() {
     setError('')
 
     try {
-      const result = await verifyResetCode({ data: { email, code: otp } })
+      const result = await api.auth.buyer.verifyResetCode({ email, code: otp })
 
       if (result.token) {
         router.navigate({

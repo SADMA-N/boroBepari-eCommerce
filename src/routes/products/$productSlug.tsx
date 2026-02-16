@@ -13,24 +13,21 @@ import {
   Star,
   Truck,
 } from 'lucide-react'
-import {
-  formatBDT,
-  getProductBySlug,
-} from '@/lib/product-server'
-import type { ProductDetailWithSupplier } from '@/lib/product-server'
 import { useWishlist } from '../../contexts/WishlistContext'
 import { useCart } from '../../contexts/CartContext'
 import { useAuth } from '../../contexts/AuthContext'
 import Toast from '../../components/Toast'
 import RFQFormModal from '../../components/RFQFormModal'
 import AuthModal from '../../components/AuthModal'
+import { api } from '@/api/client'
+import { formatBDT } from '@/lib/format'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { isValidBDPhone } from '@/lib/validators'
 
 export const Route = createFileRoute('/products/$productSlug')({
   gcTime: 0,
   loader: async ({ params }) => {
-    const product = await getProductBySlug({ data: params.productSlug })
+    const product = await api.products.bySlug(params.productSlug)
     if (!product) {
       throw notFound()
     }
@@ -96,13 +93,19 @@ function ProductDetailPage() {
   }
 
   const handleAddToCart = () => {
+    if (isOutOfStock) {
+      setToastMessage('This product is out of stock')
+      setShowToast(true)
+      return
+    }
+
     const result = addItem({
       productId: product.id,
       quantity,
       customPrice: product.price,
       productData: {
         name: product.name,
-        image: product.images?.[0] || '',
+        image: product.images[0] || '',
         moq: product.moq,
         stock: product.stock,
         supplierId: product.supplierId,
@@ -363,7 +366,7 @@ function ProductDetailPage() {
                 className={`w-10 h-6 flex items-center bg-gray-300 dark:bg-slate-700 rounded-full p-1 duration-300 ease-in-out ${isSample ? 'bg-blue-600 dark:bg-blue-500' : ''}`}
               >
                 <div
-                  className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${isSample ? 'translate-x-4' : ''}`}
+                  className={`bg-white dark:bg-slate-100 w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${isSample ? 'translate-x-4' : ''}`}
                 ></div>
               </div>
             </div>

@@ -17,6 +17,7 @@ import {
   YAxis,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useTheme } from '@/contexts/ThemeContext'
 
 type Severity = 'critical' | 'high' | 'medium' | 'low'
 type Status = 'success' | 'failed'
@@ -224,25 +225,25 @@ function severityBadge(severity: Severity) {
   switch (severity) {
     case 'critical':
       return (
-        <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
+        <span className="rounded-full bg-red-100 dark:bg-red-900/30 px-2 py-0.5 text-xs text-red-700 dark:text-red-300">
           Critical
         </span>
       )
     case 'high':
       return (
-        <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-700">
+        <span className="rounded-full bg-orange-100 dark:bg-orange-900/30 px-2 py-0.5 text-xs text-orange-700 dark:text-orange-300">
           High
         </span>
       )
     case 'medium':
       return (
-        <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs text-yellow-700">
+        <span className="rounded-full bg-yellow-100 dark:bg-yellow-900/30 px-2 py-0.5 text-xs text-yellow-700 dark:text-yellow-300">
           Medium
         </span>
       )
     case 'low':
       return (
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300">
           Low
         </span>
       )
@@ -251,17 +252,23 @@ function severityBadge(severity: Severity) {
 
 function statusBadge(status: Status) {
   return status === 'success' ? (
-    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
+    <span className="rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 text-xs text-green-700 dark:text-green-300">
       Success
     </span>
   ) : (
-    <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700">
+    <span className="rounded-full bg-red-100 dark:bg-red-900/30 px-2 py-0.5 text-xs text-red-700 dark:text-red-300">
       Failed
     </span>
   )
 }
 
 export function AdminAuditLogsPage() {
+  const { theme } = useTheme()
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
   const [adminFilter, setAdminFilter] = useState('all')
   const [actionFilter, setActionFilter] = useState('All')
   const [severityFilter, setSeverityFilter] = useState<'all' | Severity>('all')
@@ -405,7 +412,7 @@ export function AdminAuditLogsPage() {
                 onChange={(e) => setDateFrom(e.target.value)}
                 className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
-              <span className="text-slate-400">to</span>
+              <span className="text-slate-400 dark:text-slate-500">to</span>
               <input
                 type="date"
                 value={dateTo}
@@ -424,7 +431,7 @@ export function AdminAuditLogsPage() {
         </div>
 
         {newActivity && (
-          <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700 flex items-center justify-between">
+          <div className="rounded-xl border border-blue-200 dark:border-blue-900/40 bg-blue-50 dark:bg-blue-900/20 px-4 py-3 text-sm text-blue-700 dark:text-blue-300 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <RefreshCw size={14} />
               New activity detected. Refresh to update.

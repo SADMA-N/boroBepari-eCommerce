@@ -158,7 +158,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         </span>
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="text-gray-400 hover:text-red-500 p-1 transition-colors"
+                          className="text-muted-foreground hover:text-red-500 dark:hover:text-red-400 p-1 transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>

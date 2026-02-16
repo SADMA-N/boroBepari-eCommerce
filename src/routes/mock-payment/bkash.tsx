@@ -59,11 +59,11 @@ function MockBkashPage() {
 
   return (
     <div className="min-h-screen bg-[#E2136E] flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="bg-card dark:bg-slate-900 rounded-lg shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-300">
         {/* Header */}
         <div className="bg-[#E2136E] p-4 flex items-center justify-between text-white">
           <div className="flex items-center gap-2">
-            <div className="bg-white/20 p-1.5 rounded">
+            <div className="bg-white/20 dark:bg-white/10 p-1.5 rounded">
               {/* Mock Logo */}
               <span className="font-bold text-lg">bKash</span>
             </div>
@@ -88,7 +88,7 @@ function MockBkashPage() {
 
           <div className="relative z-10 space-y-6">
             <div className="text-center mb-6">
-              <div className="inline-block p-3 bg-pink-50 rounded-full mb-3">
+              <div className="inline-block p-3 bg-pink-50 dark:bg-pink-900/20 rounded-full mb-3">
                 <img
                   src="/img/bkash-bird.png"
                   alt=""
@@ -98,7 +98,7 @@ function MockBkashPage() {
                 {/* Fallback Icon if image missing */}
                 <Phone className="w-8 h-8 text-[#E2136E]" />
               </div>
-              <h3 className="text-gray-800 font-medium">
+              <h3 className="text-foreground font-medium">
                 {step === 'mobile' && 'Enter your bKash Account Number'}
                 {step === 'otp' && 'Enter Verification Code'}
                 {step === 'pin' && 'Enter PIN to Confirm'}
@@ -107,21 +107,21 @@ function MockBkashPage() {
 
             {step === 'mobile' && (
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">
+                <label className="block text-xs font-bold text-muted-foreground mb-1">
                   Your bKash Account Number
                 </label>
                 <div className="flex border-b-2 border-[#E2136E] pb-1">
-                  <span className="text-gray-500 mr-2">+88</span>
+                  <span className="text-muted-foreground mr-2">+88</span>
                   <input
                     type="tel"
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder="01XXXXXXXXX"
-                    className="w-full outline-none text-lg text-gray-800 font-medium placeholder-gray-300"
+                    className="w-full outline-none text-lg text-foreground font-medium placeholder-gray-300 dark:placeholder-slate-500"
                     autoFocus
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-2 text-center">
+                <p className="text-xs text-muted-foreground mt-2 text-center">
                   By proceeding you agree to the terms and conditions
                 </p>
               </div>
@@ -129,13 +129,13 @@ function MockBkashPage() {
 
             {step === 'otp' && (
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">
+                <label className="block text-xs font-bold text-muted-foreground mb-1">
                   Verification Code (sent to {mobile})
                 </label>
                 <input
                   type="text"
                   placeholder="1 2 3 4 5 6"
-                  className="w-full text-center text-2xl tracking-[0.5em] border-b-2 border-[#E2136E] pb-2 outline-none font-bold text-gray-800"
+                  className="w-full text-center text-2xl tracking-[0.5em] border-b-2 border-[#E2136E] pb-2 outline-none font-bold text-foreground"
                   maxLength={6}
                   autoFocus
                 />
@@ -147,16 +147,16 @@ function MockBkashPage() {
 
             {step === 'pin' && (
               <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">
+                <label className="block text-xs font-bold text-muted-foreground mb-1">
                   Enter PIN
                 </label>
                 <div className="flex items-center border-b-2 border-[#E2136E] pb-1">
-                  <Lock size={16} className="text-gray-400 mr-2" />
+                  <Lock size={16} className="text-muted-foreground mr-2" />
                   <input
                     type="password"
                     value={pin}
                     onChange={(e) => setPin(e.target.value)}
-                    className="w-full outline-none text-lg text-gray-800 font-bold"
+                    className="w-full outline-none text-lg text-foreground font-bold"
                     maxLength={5}
                     autoFocus
                   />
@@ -167,10 +167,10 @@ function MockBkashPage() {
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-gray-50 p-4 flex gap-3 border-t border-gray-100">
+        <div className="bg-muted p-4 flex gap-3 border-t border-border">
           <button
             onClick={handleCancel}
-            className="flex-1 py-3 text-gray-500 font-bold text-sm hover:bg-gray-200 rounded transition-colors"
+            className="flex-1 py-3 text-muted-foreground font-bold text-sm hover:bg-muted rounded transition-colors"
           >
             CLOSE
           </button>

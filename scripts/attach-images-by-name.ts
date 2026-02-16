@@ -1,16 +1,15 @@
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { eq, ilike } from 'drizzle-orm';
 import { db } from '@/db';
 import { products, sellerProducts } from '@/db/schema';
 import { uploadToS3 } from '@/lib/s3';
-import { eq, ilike } from 'drizzle-orm';
-import fs from 'fs';
-import path from 'path';
 
 const MANUAL_IMAGES_DIR = path.join(process.cwd(), 'manual_images');
 
 async function attachImagesByName() {
-  console.log("Starting manual image attachment...
-");
+  console.log("Starting manual image attachment...\n");
 
   if (!fs.existsSync(MANUAL_IMAGES_DIR)) {
     console.error(`Directory ${MANUAL_IMAGES_DIR} does not exist.`);
@@ -57,7 +56,7 @@ async function attachImagesByName() {
       
       // Update Database
       // We append the new image to the existing list
-      const currentImages = (product.images as string[]) || [];
+      const currentImages = (product.images) ?? [];
       const newImages = [...currentImages, publicUrl];
 
       await db.update(products)
@@ -76,8 +75,7 @@ async function attachImagesByName() {
     }
   }
   
-  console.log("
-Done!");
+  console.log("\nDone!");
   process.exit(0);
 }
 

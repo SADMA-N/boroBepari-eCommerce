@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import BuyerRFQsSection from '@/components/buyer/BuyerRFQsSection'
-import { getBuyerRfqs } from '@/lib/quote-server'
+import { api } from '@/api/client'
 
 export const Route = createFileRoute('/buyer/rfqs/')({
-  loader: () => getBuyerRfqs(),
+  loader: () => api.rfq.buyerList(),
   component: BuyerRFQInbox,
 })
 
@@ -12,7 +12,7 @@ function BuyerRFQInbox() {
   
   return (
     <div className="max-w-[1440px] mx-auto px-6 py-8">
-      <BuyerRFQsSection rfqs={rfqs || []} />
+      <BuyerRFQsSection rfqs={rfqs} />
     </div>
   )
 }

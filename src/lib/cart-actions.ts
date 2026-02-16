@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '@/db'
 import { products } from '@/db/schema'
@@ -22,7 +22,7 @@ export const validateCartServer = createServerFn({ method: 'POST' })
     const dbProducts = await db
       .select()
       .from(products)
-      .where(inArray(products.id, productIds))
+      .where(and(inArray(products.id, productIds), isNull(products.deletedAt)))
 
     const changes: Array<{
       itemId: string

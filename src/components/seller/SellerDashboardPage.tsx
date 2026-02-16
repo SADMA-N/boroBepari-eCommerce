@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
   AlertTriangle,
@@ -30,6 +30,7 @@ import {
 } from 'recharts'
 import { SellerProtectedRoute } from '@/components/seller'
 import { useSellerAuth } from '@/contexts/SellerAuthContext'
+import { api } from '@/api/client'
 
 type DateRange = 'today' | '7d' | '30d' | 'custom'
 
@@ -37,10 +38,11 @@ const METRIC_ICON_CLASSES =
   'h-9 w-9 rounded-lg flex items-center justify-center'
 
 const ORDER_STATUS_COLORS = {
+  Placed: '#64748b',
   Confirmed: '#16a34a',
-  Processing: '#f97316',
   Shipped: '#2563eb',
   Delivered: '#0f766e',
+  Cancelled: '#ef4444',
 } as const
 
 const RANGE_LABELS: Record<DateRange, string> = {
@@ -54,7 +56,27 @@ export function SellerDashboardPage() {
   const navigate = useNavigate()
   const { seller } = useSellerAuth()
   const [range, setRange] = useState<DateRange>('7d')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [analytics, setAnalytics] = useState<{
+    totalRevenue: number
+    totalOrders: number
+    averageOrderValue: number
+    revenueChange: number
+    orderChange: number
+    chart: Array<{ label: string; revenue: number }>
+    statusBreakdown: Array<{ stage: string; value: number }>
+    inventory: { totalProducts: number }
+  } | null>(null)
+  const [recentOrders, setRecentOrders] = useState<
+    Array<{
+      id: string
+      buyer: string
+      items: number
+      amount: number
+      status: string
+      date: string
+    }>
+  >([])
   const [alerts, setAlerts] = useState([
     {
       id: 'stock',
@@ -74,136 +96,138 @@ export function SellerDashboardPage() {
     },
   ])
 
-  useEffect(() => {
+  const loadDashboardData = useCallback(async () => {
     setLoading(true)
-    const timer = window.setTimeout(() => setLoading(false), 600)
-    return () => window.clearTimeout(timer)
+    const token = localStorage.getItem('seller_token') || ''
+    const analyticsRange = range === 'custom' ? '30d' : range
+    try {
+      const [analyticsResult, ordersResult] = await Promise.allSettled([
+        api.seller.analytics(token, analyticsRange),
+        api.seller.orders.list(token),
+      ])
+
+      if (analyticsResult.status === 'fulfilled') {
+        const nextAnalytics = analyticsResult.value
+        setAnalytics({
+          totalRevenue: nextAnalytics.totalRevenue,
+          totalOrders: nextAnalytics.totalOrders,
+          averageOrderValue: nextAnalytics.averageOrderValue,
+          revenueChange: nextAnalytics.revenueChange,
+          orderChange: nextAnalytics.orderChange,
+          chart: nextAnalytics.chart.map((item) => ({
+            label: item.label,
+            revenue: item.revenue,
+          })),
+          statusBreakdown: nextAnalytics.statusBreakdown,
+          inventory: {
+            totalProducts: nextAnalytics.inventory.totalProducts,
+          },
+        })
+      } else {
+        console.error(
+          'Failed to load seller dashboard analytics:',
+          analyticsResult.reason,
+        )
+        setAnalytics(null)
+      }
+
+      if (ordersResult.status === 'fulfilled') {
+        const sellerOrders = ordersResult.value
+        setRecentOrders(
+          sellerOrders.slice(0, 5).map((order) => ({
+            id: order.orderNumber,
+            buyer: order.buyer.name,
+            items: order.sellerItemsCount,
+            amount: Math.round(order.sellerSubtotal),
+            status: formatOrderStatusLabel(order.status),
+            date: new Date(order.createdAt).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            }),
+          })),
+        )
+      } else {
+        console.error(
+          'Failed to load seller dashboard recent orders:',
+          ordersResult.reason,
+        )
+        setRecentOrders([])
+      }
+    } catch (error) {
+      console.error('Failed to load seller dashboard data:', error)
+      setAnalytics({
+        totalRevenue: 0,
+        totalOrders: 0,
+        averageOrderValue: 0,
+        revenueChange: 0,
+        orderChange: 0,
+        chart: [],
+        statusBreakdown: [],
+        inventory: { totalProducts: 0 },
+      })
+      setRecentOrders([])
+    } finally {
+      setLoading(false)
+    }
   }, [range])
 
+  useEffect(() => {
+    void loadDashboardData()
+  }, [loadDashboardData])
+
   const metrics = useMemo(() => {
-    if (range === 'today') {
+    if (!analytics) {
       return {
-        orders: { value: 12, trend: 8 },
-        revenue: { value: 58000, trend: 5 },
-        listings: { value: 128, trend: 0 },
-        rfqs: { value: 4, trend: -12, urgent: 1 },
-      }
-    }
-    if (range === '30d') {
-      return {
-        orders: { value: 420, trend: 18 },
-        revenue: { value: 2450000, trend: 22 },
-        listings: { value: 132, trend: 4 },
-        rfqs: { value: 22, trend: 9, urgent: 2 },
-      }
-    }
-    if (range === 'custom') {
-      return {
-        orders: { value: 280, trend: 12 },
-        revenue: { value: 1600000, trend: 15 },
-        listings: { value: 130, trend: 2 },
-        rfqs: { value: 16, trend: -3, urgent: 1 },
+        orders: { value: 0, trend: 0 },
+        revenue: { value: 0, trend: 0 },
+        listings: { value: 0, trend: 0 },
+        rfqs: { value: 0, trend: 0, urgent: 0 },
       }
     }
     return {
-      orders: { value: 96, trend: 14 },
-      revenue: { value: 640000, trend: 9 },
-      listings: { value: 129, trend: 1 },
-      rfqs: { value: 8, trend: 6, urgent: 1 },
+      orders: {
+        value: analytics.totalOrders,
+        trend: analytics.orderChange,
+      },
+      revenue: {
+        value: analytics.totalRevenue,
+        trend: analytics.revenueChange,
+      },
+      listings: {
+        value: analytics.inventory.totalProducts,
+        trend: 0,
+      },
+      rfqs: {
+        value: 0,
+        trend: 0,
+        urgent: 0,
+      },
     }
-  }, [range])
+  }, [analytics])
 
   const revenueData = useMemo(() => {
-    if (range === 'today') {
-      return [
-        { date: '9 AM', revenue: 4000 },
-        { date: '11 AM', revenue: 7200 },
-        { date: '1 PM', revenue: 9800 },
-        { date: '3 PM', revenue: 12000 },
-        { date: '5 PM', revenue: 18000 },
-        { date: '7 PM', revenue: 58000 },
-      ]
-    }
-    if (range === '30d') {
-      return [
-        { date: 'Week 1', revenue: 520000 },
-        { date: 'Week 2', revenue: 600000 },
-        { date: 'Week 3', revenue: 640000 },
-        { date: 'Week 4', revenue: 690000 },
-      ]
-    }
-    if (range === 'custom') {
-      return [
-        { date: 'Day 1', revenue: 120000 },
-        { date: 'Day 2', revenue: 140000 },
-        { date: 'Day 3', revenue: 95000 },
-        { date: 'Day 4', revenue: 170000 },
-        { date: 'Day 5', revenue: 210000 },
-      ]
-    }
+    return (
+      analytics?.chart.map((point) => ({
+        date: point.label,
+        revenue: point.revenue,
+      })) ?? []
+    )
+  }, [analytics])
+
+  const orderStatusData = useMemo(() => {
+    const stageLookup = new Map<string, number>()
+    analytics?.statusBreakdown.forEach((item) => {
+      stageLookup.set(item.stage, item.value)
+    })
     return [
-      { date: 'Mon', revenue: 82000 },
-      { date: 'Tue', revenue: 90000 },
-      { date: 'Wed', revenue: 76000 },
-      { date: 'Thu', revenue: 102000 },
-      { date: 'Fri', revenue: 110000 },
-      { date: 'Sat', revenue: 95000 },
-      { date: 'Sun', revenue: 85000 },
-    ]
-  }, [range])
-
-  const orderStatusData = useMemo(
-    () => [
-      { name: 'Confirmed', value: 38 },
-      { name: 'Processing', value: 26 },
-      { name: 'Shipped', value: 18 },
-      { name: 'Delivered', value: 14 },
-    ],
-    [],
-  )
-
-  const recentOrders = [
-    {
-      id: '#BB-1041',
-      buyer: 'Shahjalal Traders',
-      items: 12,
-      amount: 125000,
-      status: 'Processing',
-      date: 'Feb 2, 2026',
-    },
-    {
-      id: '#BB-1039',
-      buyer: 'Meghna Distributors',
-      items: 6,
-      amount: 82000,
-      status: 'Confirmed',
-      date: 'Feb 2, 2026',
-    },
-    {
-      id: '#BB-1037',
-      buyer: 'Karim Wholesale',
-      items: 4,
-      amount: 54000,
-      status: 'Shipped',
-      date: 'Feb 1, 2026',
-    },
-    {
-      id: '#BB-1033',
-      buyer: 'Metro Retail',
-      items: 7,
-      amount: 91000,
-      status: 'Delivered',
-      date: 'Jan 31, 2026',
-    },
-    {
-      id: '#BB-1031',
-      buyer: 'CityMart Ltd.',
-      items: 3,
-      amount: 46000,
-      status: 'Processing',
-      date: 'Jan 31, 2026',
-    },
-  ]
+      { name: 'Placed', value: stageLookup.get('Placed') ?? 0 },
+      { name: 'Confirmed', value: stageLookup.get('Confirmed') ?? 0 },
+      { name: 'Shipped', value: stageLookup.get('Shipped') ?? 0 },
+      { name: 'Delivered', value: stageLookup.get('Delivered') ?? 0 },
+      { name: 'Cancelled', value: stageLookup.get('Cancelled') ?? 0 },
+    ].filter((item) => item.value > 0)
+  }, [analytics])
 
   const rfqs = [
     {
@@ -649,19 +673,34 @@ function MetricCard({
   )
 }
 
+function formatOrderStatusLabel(status: string): string {
+  const normalized = status.toLowerCase()
+  if (normalized === 'out_for_delivery') return 'Shipped'
+  if (normalized === 'pending' || normalized === 'placed') return 'Placed'
+  if (normalized === 'confirmed') return 'Confirmed'
+  if (normalized === 'processing') return 'Confirmed'
+  if (normalized === 'shipped') return 'Shipped'
+  if (normalized === 'delivered') return 'Delivered'
+  if (normalized === 'cancelled' || normalized === 'returned') return 'Cancelled'
+  return status
+}
+
 function StatusBadge({ status }: { status: string }) {
   const styles = {
+    Placed: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
     Confirmed:
       'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400',
-    Processing:
-      'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400',
     Shipped: 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400',
     Delivered:
       'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400',
+    Cancelled: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400',
   }
   return (
     <span
-      className={`rounded-full px-2 py-1 text-xs font-semibold transition-colors ${styles[status as keyof typeof styles]}`}
+      className={`rounded-full px-2 py-1 text-xs font-semibold transition-colors ${
+        styles[status as keyof typeof styles] ||
+        'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+      }`}
     >
       {status}
     </span>

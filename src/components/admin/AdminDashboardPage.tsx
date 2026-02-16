@@ -44,55 +44,9 @@ import {
   YAxis,
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
-
-// Mock data generators
-const generateGMVData = (days: number) => {
-  const data = []
-  const now = new Date()
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now)
-    date.setDate(date.getDate() - i)
-    data.push({
-      date: date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      }),
-      gmv: Math.floor(Math.random() * 500000) + 200000,
-      orders: Math.floor(Math.random() * 200) + 100,
-    })
-  }
-  return data
-}
-
-const generateUserGrowthData = (days: number) => {
-  const data = []
-  const now = new Date()
-  let buyers = 10000
-  let sellers = 800
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now)
-    date.setDate(date.getDate() - i)
-    buyers += Math.floor(Math.random() * 50) + 10
-    sellers += Math.floor(Math.random() * 5) + 1
-    data.push({
-      date: date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-      }),
-      buyers,
-      sellers,
-    })
-  }
-  return data
-}
-
-const ORDER_STATUS_DATA = [
-  { name: 'Completed', value: 4500, color: '#22c55e' },
-  { name: 'In Progress', value: 1200, color: '#3b82f6' },
-  { name: 'Cancelled', value: 350, color: '#ef4444' },
-  { name: 'Returned', value: 180, color: '#f59e0b' },
-]
+import { api } from '@/api/client'
 
 const RECENT_ACTIVITIES = [
   {
@@ -167,86 +121,6 @@ const RECENT_ACTIVITIES = [
   },
 ]
 
-const TOP_SELLERS = [
-  {
-    id: 1,
-    name: 'Rahim Textiles Ltd.',
-    gmv: 2450000,
-    orders: 342,
-    commission: 73500,
-    status: 'premium',
-  },
-  {
-    id: 2,
-    name: 'Rajshahi Exports',
-    gmv: 1890000,
-    orders: 278,
-    commission: 56700,
-    status: 'verified',
-  },
-  {
-    id: 3,
-    name: 'Dhaka Wholesale Hub',
-    gmv: 1650000,
-    orders: 245,
-    commission: 49500,
-    status: 'verified',
-  },
-  {
-    id: 4,
-    name: 'Chittagong Trading',
-    gmv: 1420000,
-    orders: 198,
-    commission: 42600,
-    status: 'basic',
-  },
-  {
-    id: 5,
-    name: 'Sylhet Garments',
-    gmv: 1180000,
-    orders: 167,
-    commission: 35400,
-    status: 'verified',
-  },
-]
-
-const TOP_BUYERS = [
-  {
-    id: 1,
-    name: 'Karim Enterprises',
-    orders: 89,
-    spent: 1250000,
-    lastOrder: '2024-04-22',
-  },
-  {
-    id: 2,
-    name: 'Fatima Trading Co.',
-    orders: 76,
-    spent: 980000,
-    lastOrder: '2024-04-21',
-  },
-  {
-    id: 3,
-    name: 'Abdul & Sons',
-    orders: 68,
-    spent: 870000,
-    lastOrder: '2024-04-22',
-  },
-  {
-    id: 4,
-    name: 'Nasreen Wholesale',
-    orders: 54,
-    spent: 720000,
-    lastOrder: '2024-04-20',
-  },
-  {
-    id: 5,
-    name: 'Rafiq Industries',
-    orders: 48,
-    spent: 650000,
-    lastOrder: '2024-04-22',
-  },
-]
 
 const ALERTS = [
   {
@@ -299,7 +173,7 @@ function getActivityIcon(type: string) {
     case 'payout':
       return <CreditCard size={14} className="text-teal-500" />
     default:
-      return <Activity size={14} className="text-slate-500" />
+      return <Activity size={14} className="text-muted-foreground" />
   }
 }
 
@@ -307,19 +181,19 @@ function getStatusBadge(status: string) {
   switch (status) {
     case 'premium':
       return (
-        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 text-purple-700">
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
           Premium
         </span>
       )
     case 'verified':
       return (
-        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
           Verified
         </span>
       )
     case 'basic':
       return (
-        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-700">
+        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-muted text-foreground">
           Basic
         </span>
       )
@@ -329,6 +203,7 @@ function getStatusBadge(status: string) {
 }
 
 export function AdminDashboardPage() {
+  const { getToken } = useAdminAuth()
   const { theme } = useTheme()
   const [dateRange, setDateRange] = useState('30d')
   const [chartRange, setChartRange] = useState(30)
@@ -337,10 +212,35 @@ export function AdminDashboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false)
   const [dismissedAlerts, setDismissedAlerts] = useState<Array<number>>([])
-  const [gmvData, setGmvData] = useState(() => generateGMVData(30))
-  const [userGrowthData, setUserGrowthData] = useState(() =>
-    generateUserGrowthData(30),
-  )
+  const [dataError, setDataError] = useState<string | null>(null)
+  const [gmvData, setGmvData] = useState<
+    Array<{ date: string; gmv: number; orders: number }>
+  >([])
+  const [userGrowthData, setUserGrowthData] = useState<
+    Array<{ date: string; buyers: number; sellers: number }>
+  >([])
+  const [orderStatusData, setOrderStatusData] = useState<
+    Array<{ name: string; value: number; color: string }>
+  >([])
+  const [topSellers, setTopSellers] = useState<
+    Array<{
+      id: number
+      name: string
+      gmv: number
+      orders: number
+      commission: number
+      status: string
+    }>
+  >([])
+  const [topBuyers, setTopBuyers] = useState<
+    Array<{
+      id: string
+      name: string
+      orders: number
+      spent: number
+      lastOrder: string
+    }>
+  >([])
 
   const isDark =
     theme === 'dark' ||
@@ -348,27 +248,105 @@ export function AdminDashboardPage() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-  const refreshData = useCallback(() => {
-    setIsRefreshing(true)
-    setTimeout(() => {
-      setGmvData(generateGMVData(chartRange))
-      setUserGrowthData(generateUserGrowthData(chartRange))
+  const fetchAnalytics = useCallback(
+    async (days: number) => {
+      const token = getToken() || ''
+      const result = await api.admin.analytics(token, days)
+      setGmvData(
+        Array.isArray(result.chart)
+          ? result.chart
+              .filter((point: unknown) => Boolean(point && typeof point === 'object'))
+              .map((point: any) => ({
+                date: String(point.date || ''),
+                gmv: Number(point.gmv) || 0,
+                orders: Number(point.orders) || 0,
+              }))
+          : [],
+      )
+      setUserGrowthData(
+        Array.isArray(result.userGrowth)
+          ? result.userGrowth
+              .filter((point: unknown) => Boolean(point && typeof point === 'object'))
+              .map((point: any) => ({
+                date: String(point.date || ''),
+                buyers: Number(point.buyers) || 0,
+                sellers: Number(point.sellers) || 0,
+              }))
+          : [],
+      )
+      setOrderStatusData(
+        Array.isArray(result.orderStatus)
+          ? result.orderStatus
+              .filter((point: unknown) => Boolean(point && typeof point === 'object'))
+              .map((point: any) => ({
+                name: String(point.name || ''),
+                value: Number(point.value) || 0,
+                color: String(point.color || '#9ca3af'),
+              }))
+          : [],
+      )
+      setTopSellers(
+        Array.isArray(result.topSellers)
+          ? result.topSellers
+              .filter((seller: unknown) => Boolean(seller && typeof seller === 'object'))
+              .map((seller: any) => ({
+                id: Number(seller.id) || 0,
+                name: String(seller.name || 'Unknown seller'),
+                gmv: Number(seller.gmv) || 0,
+                orders: Number(seller.orders) || 0,
+                commission: Number(seller.commission) || 0,
+                status:
+                  seller.status === 'premium' ||
+                  seller.status === 'verified' ||
+                  seller.status === 'basic'
+                    ? seller.status
+                    : 'basic',
+              }))
+          : [],
+      )
+      setTopBuyers(
+        Array.isArray(result.topBuyers)
+          ? result.topBuyers
+              .filter((buyer: unknown) => Boolean(buyer && typeof buyer === 'object'))
+              .map((buyer: any) => ({
+                id: String(buyer.id || ''),
+                name: String(buyer.name || 'Unknown buyer'),
+                orders: Number(buyer.orders) || 0,
+                spent: Number(buyer.spent) || 0,
+                lastOrder: String(buyer.lastOrder || ''),
+              }))
+          : [],
+      )
       setLastUpdated(new Date())
+    },
+    [getToken],
+  )
+
+  const refreshData = useCallback(async () => {
+    setIsRefreshing(true)
+    setDataError(null)
+    try {
+      await fetchAnalytics(chartRange)
+    } catch (error) {
+      console.error('Failed to refresh admin analytics:', error)
+      setDataError('Could not load analytics data right now.')
+    } finally {
       setIsRefreshing(false)
-    }, 500)
-  }, [chartRange])
+    }
+  }, [chartRange, fetchAnalytics])
 
   useEffect(() => {
     if (autoRefresh) {
-      const interval = setInterval(refreshData, 30000)
+      const interval = setInterval(() => {
+        void refreshData()
+      }, 30000)
       return () => clearInterval(interval)
     }
   }, [autoRefresh, refreshData])
 
   useEffect(() => {
-    setGmvData(generateGMVData(chartRange))
-    setUserGrowthData(generateUserGrowthData(chartRange))
-  }, [chartRange])
+    void refreshData()
+  }, [chartRange, refreshData])
 
   const dismissAlert = (id: number) => {
     setDismissedAlerts((prev) => [...prev, id])
@@ -388,6 +366,27 @@ export function AdminDashboardPage() {
   const totalOrders = gmvData.reduce((sum, d) => sum + d.orders, 0)
   const avgOrderValue = totalOrders > 0 ? totalGMV / totalOrders : 0
 
+  const latestGrowth = userGrowthData[userGrowthData.length - 1] ?? {
+    date: '',
+    buyers: 0,
+    sellers: 0,
+  }
+  const previousGrowth =
+    userGrowthData[userGrowthData.length - 2] ??
+    latestGrowth ?? {
+      date: '',
+      buyers: 0,
+      sellers: 0,
+    }
+  const buyersCount = Number(latestGrowth?.buyers) || 0
+  const sellersCount = Number(latestGrowth?.sellers) || 0
+  const activeUsers = buyersCount + sellersCount
+  const newUsersToday = Math.max(
+    0,
+    (buyersCount - (Number(previousGrowth?.buyers) || 0)) +
+      (sellersCount - (Number(previousGrowth?.sellers) || 0)),
+  )
+
   const commissionRate = 0.03
   const todayCommission = todayGMV * commissionRate
   const monthlyCommission = totalGMV * commissionRate
@@ -398,10 +397,10 @@ export function AdminDashboardPage() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+            <h1 className="text-2xl font-bold text-foreground dark:text-white transition-colors">
               Dashboard
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 transition-colors">
+            <p className="text-muted-foreground dark:text-muted-foreground transition-colors">
               Platform overview and key metrics
             </p>
           </div>
@@ -411,7 +410,7 @@ export function AdminDashboardPage() {
             <div className="relative">
               <button
                 onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-card dark:bg-slate-900 border border-border dark:border-slate-800 rounded-lg text-sm font-medium text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800 transition-colors"
               >
                 <Calendar size={16} />
                 {DATE_RANGES.find((r) => r.value === dateRange)?.label}
@@ -423,18 +422,19 @@ export function AdminDashboardPage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setDateDropdownOpen(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-20 transition-colors">
+                  <div className="absolute right-0 mt-2 w-48 bg-card dark:bg-slate-900 rounded-lg shadow-lg border border-border dark:border-slate-800 py-1 z-20 transition-colors">
                     {DATE_RANGES.map((range) => (
                       <button
                         key={range.value}
                         onClick={() => {
                           setDateRange(range.value)
+                          setChartRange(range.days)
                           setDateDropdownOpen(false)
                         }}
                         className={`w-full px-4 py-2 text-left text-sm transition-colors ${
                           dateRange === range.value
                             ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
-                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                            : 'text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-800'
                         }`}
                       >
                         {range.label}
@@ -446,14 +446,14 @@ export function AdminDashboardPage() {
             </div>
 
             {/* Auto-refresh Toggle */}
-            <label className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm cursor-pointer transition-colors">
+            <label className="flex items-center gap-2 px-3 py-2 bg-card dark:bg-slate-900 border border-border dark:border-slate-800 rounded-lg text-sm cursor-pointer transition-colors">
               <input
                 type="checkbox"
                 checked={autoRefresh}
                 onChange={(e) => setAutoRefresh(e.target.checked)}
-                className="rounded border-slate-300 dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
+                className="rounded border-border dark:border-slate-700 text-orange-600 focus:ring-orange-500 dark:bg-slate-950"
               />
-              <span className="text-slate-600 dark:text-slate-400">
+              <span className="text-muted-foreground dark:text-muted-foreground">
                 Auto-refresh
               </span>
             </label>
@@ -474,10 +474,16 @@ export function AdminDashboardPage() {
         </div>
 
         {/* Last Updated */}
-        <div className="flex items-center gap-2 text-xs text-slate-500">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Clock size={12} />
           Last updated: {lastUpdated.toLocaleTimeString()}
         </div>
+
+        {dataError && (
+          <div className="rounded-xl border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-900/20 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+            {dataError}
+          </div>
+        )}
 
         {/* Alerts Panel */}
         {activeAlerts.length > 0 && (
@@ -513,7 +519,7 @@ export function AdminDashboardPage() {
                     >
                       {alert.message}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                       {alert.time}
                     </p>
                   </div>
@@ -522,7 +528,7 @@ export function AdminDashboardPage() {
                   onClick={() => dismissAlert(alert.id)}
                   className="p-1 hover:bg-white/50 dark:hover:bg-slate-800 rounded transition-colors"
                 >
-                  <X size={16} className="text-slate-400 dark:text-slate-500" />
+                  <X size={16} className="text-muted-foreground dark:text-muted-foreground" />
                 </button>
               </div>
             ))}
@@ -532,7 +538,7 @@ export function AdminDashboardPage() {
         {/* Key Metrics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* GMV Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
                 <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -552,16 +558,16 @@ export function AdminDashboardPage() {
                 {Math.abs(gmvChange).toFixed(1)}%
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+            <p className="text-2xl font-bold text-foreground dark:text-white transition-colors">
               ৳{totalGMV.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               Gross Merchandise Value
             </p>
             <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Today:{' '}
-                <span className="font-medium text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-foreground dark:text-slate-300">
                   ৳{todayGMV.toLocaleString()}
                 </span>
               </p>
@@ -583,44 +589,44 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Active Users Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20">
                 <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <span className="flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
                 <TrendingUp size={14} />
-                +124 today
+                +{newUsersToday} today
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
-              12,847
+            <p className="text-2xl font-bold text-foreground dark:text-white transition-colors">
+              {activeUsers.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               Active Users
             </p>
             <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors grid grid-cols-2 gap-2">
               <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Buyers
                 </p>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  11,563
+                <p className="text-sm font-medium text-foreground dark:text-slate-300">
+                  {buyersCount.toLocaleString()}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Sellers
                 </p>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  1,284
+                <p className="text-sm font-medium text-foreground dark:text-slate-300">
+                  {sellersCount.toLocaleString()}
                 </p>
               </div>
             </div>
           </div>
 
           {/* Total Orders Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/20">
                 <ShoppingCart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
@@ -630,26 +636,26 @@ export function AdminDashboardPage() {
                 +18.7%
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+            <p className="text-2xl font-bold text-foreground dark:text-white transition-colors">
               {totalOrders.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               Total Orders
             </p>
             <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors grid grid-cols-2 gap-2">
               <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Today
                 </p>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <p className="text-sm font-medium text-foreground dark:text-slate-300">
                   {todayOrders}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Avg Value
                 </p>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <p className="text-sm font-medium text-foreground dark:text-slate-300">
                   ৳{avgOrderValue.toLocaleString()}
                 </p>
               </div>
@@ -657,25 +663,25 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Commission Card */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 transition-colors">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-5 transition-colors">
             <div className="flex items-center justify-between mb-3">
               <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
                 <DollarSign className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">
                 3% of GMV
               </span>
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">
+            <p className="text-2xl font-bold text-foreground dark:text-white transition-colors">
               ৳{monthlyCommission.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               Platform Commission
             </p>
             <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 transition-colors">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Today:{' '}
-                <span className="font-medium text-slate-700 dark:text-slate-300">
+                <span className="font-medium text-foreground dark:text-slate-300">
                   ৳{todayCommission.toLocaleString()}
                 </span>
               </p>
@@ -687,17 +693,17 @@ export function AdminDashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/admin/kyc"
-            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20">
                 <FileCheck className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   KYC Pending
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                   Awaiting review
                 </p>
               </div>
@@ -709,17 +715,17 @@ export function AdminDashboardPage() {
 
           <Link
             to="/admin/disputes"
-            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
                 <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Open Disputes
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                   Need resolution
                 </p>
               </div>
@@ -731,17 +737,17 @@ export function AdminDashboardPage() {
 
           <Link
             to="/admin/products"
-            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/20">
                 <Flag className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Flagged Products
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                   Needs review
                 </p>
               </div>
@@ -753,17 +759,17 @@ export function AdminDashboardPage() {
 
           <Link
             to="/admin/suppliers"
-            className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
+            className="flex items-center justify-between p-4 bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-800 hover:shadow-sm transition-all"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/20">
                 <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Seller Verification
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                   Badge requests
                 </p>
               </div>
@@ -777,25 +783,25 @@ export function AdminDashboardPage() {
         {/* Charts Section */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* GMV & Orders Chart */}
-          <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
+          <div className="lg:col-span-2 bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-6 transition-colors">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="font-semibold text-slate-900 dark:text-white transition-colors">
+                <h2 className="font-semibold text-foreground dark:text-white transition-colors">
                   GMV & Orders Over Time
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                   Revenue and order trends
                 </p>
               </div>
-              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 transition-colors">
+              <div className="flex items-center gap-1 bg-muted dark:bg-slate-800 rounded-lg p-1 transition-colors">
                 {CHART_RANGES.map((range) => (
                   <button
                     key={range.value}
                     onClick={() => setChartRange(range.value)}
                     className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                       chartRange === range.value
-                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                        ? 'bg-card dark:bg-slate-700 text-foreground dark:text-white shadow-sm'
+                        : 'text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-slate-200'
                     }`}
                   >
                     {range.label}
@@ -874,13 +880,13 @@ export function AdminDashboardPage() {
             <div className="flex items-center justify-center gap-6 mt-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-sm text-slate-600 dark:text-slate-400">
+                <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                   GMV
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-blue-500" />
-                <span className="text-sm text-slate-600 dark:text-slate-400">
+                <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                   Orders
                 </span>
               </div>
@@ -888,12 +894,12 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Order Status Breakdown */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-6 transition-colors">
             <div className="mb-6">
-              <h2 className="font-semibold text-slate-900 dark:text-white transition-colors">
+              <h2 className="font-semibold text-foreground dark:text-white transition-colors">
                 Order Status
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
                 Breakdown by status
               </p>
             </div>
@@ -901,7 +907,7 @@ export function AdminDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={ORDER_STATUS_DATA}
+                    data={orderStatusData}
                     cx="50%"
                     cy="50%"
                     innerRadius={50}
@@ -909,7 +915,7 @@ export function AdminDashboardPage() {
                     paddingAngle={2}
                     dataKey="value"
                   >
-                    {ORDER_STATUS_DATA.map((entry, index) => (
+                    {orderStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -931,16 +937,16 @@ export function AdminDashboardPage() {
               </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-2 gap-2 mt-4">
-              {ORDER_STATUS_DATA.map((item) => (
+              {orderStatusData.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-xs text-slate-600 dark:text-slate-400">
+                  <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                     {item.name}
                   </span>
-                  <span className="text-xs font-medium text-slate-900 dark:text-slate-200 ml-auto">
+                  <span className="text-xs font-medium text-foreground dark:text-slate-200 ml-auto">
                     {item.value.toLocaleString()}
                   </span>
                 </div>
@@ -950,12 +956,12 @@ export function AdminDashboardPage() {
         </div>
 
         {/* User Growth Chart */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
+        <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-6 transition-colors">
           <div className="mb-6">
-            <h2 className="font-semibold text-slate-900 dark:text-white transition-colors">
+            <h2 className="font-semibold text-foreground dark:text-white transition-colors">
               User Growth
             </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground transition-colors">
               Cumulative user registrations
             </p>
           </div>
@@ -1005,13 +1011,13 @@ export function AdminDashboardPage() {
           <div className="flex items-center justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-400" />
-              <span className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                 Buyers
               </span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-400" />
-              <span className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                 Sellers
               </span>
             </div>
@@ -1021,9 +1027,9 @@ export function AdminDashboardPage() {
         {/* Tables and Activity */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Top Sellers */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
-              <h2 className="font-semibold text-slate-900 dark:text-white">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 transition-colors">
+            <div className="px-6 py-4 border-b border-border dark:border-slate-800 flex items-center justify-between transition-colors">
+              <h2 className="font-semibold text-foreground dark:text-white">
                 Top Sellers
               </h2>
               <Link
@@ -1033,31 +1039,31 @@ export function AdminDashboardPage() {
                 View All <ExternalLink size={12} />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800 transition-colors">
-              {TOP_SELLERS.map((seller, index) => (
+            <div className="divide-y divide-border dark:divide-slate-800 transition-colors">
+              {topSellers.map((seller, index) => (
                 <div
                   key={seller.id}
                   className="px-6 py-3 flex items-center gap-3"
                 >
-                  <span className="text-sm font-medium text-slate-400 dark:text-slate-500 w-5">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-muted-foreground w-5">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 truncate transition-colors">
+                    <p className="text-sm font-medium text-foreground dark:text-slate-200 truncate transition-colors">
                       {seller.name}
                     </p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-slate-500 dark:text-slate-400">
+                      <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                         ৳{seller.gmv.toLocaleString()}
                       </span>
                       {getStatusBadge(seller.status)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                    <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                       {seller.orders}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-500">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                       orders
                     </p>
                   </div>
@@ -1067,9 +1073,9 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Top Buyers */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
-              <h2 className="font-semibold text-slate-900 dark:text-white">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 transition-colors">
+            <div className="px-6 py-4 border-b border-border dark:border-slate-800 flex items-center justify-between transition-colors">
+              <h2 className="font-semibold text-foreground dark:text-white">
                 Top Buyers
               </h2>
               <Link
@@ -1079,28 +1085,28 @@ export function AdminDashboardPage() {
                 View All <ExternalLink size={12} />
               </Link>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800 transition-colors">
-              {TOP_BUYERS.map((buyer, index) => (
+            <div className="divide-y divide-border dark:divide-slate-800 transition-colors">
+              {topBuyers.map((buyer, index) => (
                 <div
                   key={buyer.id}
                   className="px-6 py-3 flex items-center gap-3"
                 >
-                  <span className="text-sm font-medium text-slate-400 dark:text-slate-500 w-5">
+                  <span className="text-sm font-medium text-muted-foreground dark:text-muted-foreground w-5">
                     {index + 1}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 truncate transition-colors">
+                    <p className="text-sm font-medium text-foreground dark:text-slate-200 truncate transition-colors">
                       {buyer.name}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground transition-colors">
                       ৳{buyer.spent.toLocaleString()}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                    <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                       {buyer.orders}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-500">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                       orders
                     </p>
                   </div>
@@ -1110,10 +1116,10 @@ export function AdminDashboardPage() {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between transition-colors">
+          <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 transition-colors">
+            <div className="px-6 py-4 border-b border-border dark:border-slate-800 flex items-center justify-between transition-colors">
               <div className="flex items-center gap-2">
-                <h2 className="font-semibold text-slate-900 dark:text-white">
+                <h2 className="font-semibold text-foreground dark:text-white">
                   Recent Activity
                 </h2>
                 <span className="flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
@@ -1122,7 +1128,7 @@ export function AdminDashboardPage() {
                 View All
               </button>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[400px] overflow-y-auto transition-colors">
+            <div className="divide-y divide-border dark:divide-slate-800 max-h-[400px] overflow-y-auto transition-colors">
               {RECENT_ACTIVITIES.map((activity) => (
                 <div
                   key={activity.id}
@@ -1130,14 +1136,14 @@ export function AdminDashboardPage() {
                 >
                   <div className="mt-0.5">{getActivityIcon(activity.type)}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-900 dark:text-slate-200 transition-colors">
+                    <p className="text-sm text-foreground dark:text-slate-200 transition-colors">
                       {activity.message}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-500 truncate transition-colors">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate transition-colors">
                       {activity.detail}
                     </p>
                   </div>
-                  <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap transition-colors">
+                  <span className="text-xs text-muted-foreground dark:text-muted-foreground whitespace-nowrap transition-colors">
                     {activity.time}
                   </span>
                 </div>
@@ -1147,17 +1153,17 @@ export function AdminDashboardPage() {
         </div>
 
         {/* System Health */}
-        <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 transition-colors">
-          <h2 className="font-semibold text-slate-900 dark:text-white mb-4 transition-colors">
+        <div className="bg-card dark:bg-slate-900 rounded-xl border border-border dark:border-slate-800 p-6 transition-colors">
+          <h2 className="font-semibold text-foreground dark:text-white mb-4 transition-colors">
             System Health
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+            <div className="flex items-center gap-3 p-4 bg-muted dark:bg-slate-800/50 rounded-xl transition-colors">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
                 <Server className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   API Response
                 </p>
                 <div className="flex items-center gap-1">
@@ -1169,12 +1175,12 @@ export function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+            <div className="flex items-center gap-3 p-4 bg-muted dark:bg-slate-800/50 rounded-xl transition-colors">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
                 <Database className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Database
                 </p>
                 <div className="flex items-center gap-1">
@@ -1186,31 +1192,31 @@ export function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+            <div className="flex items-center gap-3 p-4 bg-muted dark:bg-slate-800/50 rounded-xl transition-colors">
               <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20">
                 <HardDrive className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Storage
                 </p>
                 <div className="flex items-center gap-1">
                   <span className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
                     68%
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                  <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                     used
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl transition-colors">
+            <div className="flex items-center gap-3 p-4 bg-muted dark:bg-slate-800/50 rounded-xl transition-colors">
               <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/20">
                 <Activity className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-200 transition-colors">
+                <p className="text-sm font-medium text-foreground dark:text-slate-200 transition-colors">
                   Uptime
                 </p>
                 <div className="flex items-center gap-1">

@@ -59,11 +59,13 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminSuppliersRouteImport } from './routes/admin/suppliers'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminOrdersRouteImport } from './routes/admin/orders'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminKycRouteImport } from './routes/admin/kyc'
 import { Route as AdminDisputesRouteImport } from './routes/admin/disputes'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminAuditLogsRouteImport } from './routes/admin/audit-logs'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as BuyerOrdersRouteRouteImport } from './routes/buyer/orders/route'
 import { Route as SellerRfqsIndexRouteImport } from './routes/seller/rfqs/index'
 import { Route as SellerProductsIndexRouteImport } from './routes/seller/products/index'
@@ -358,6 +360,11 @@ const AdminProductsRoute = AdminProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -381,6 +388,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
 const AdminAuditLogsRoute = AdminAuditLogsRouteImport.update({
   id: '/audit-logs',
   path: '/audit-logs',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const BuyerOrdersRouteRoute = BuyerOrdersRouteRouteImport.update({
@@ -614,11 +626,13 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/kyc': typeof AdminKycRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/suppliers': typeof AdminSuppliersRoute
@@ -709,11 +723,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/kyc': typeof AdminKycRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/suppliers': typeof AdminSuppliersRoute
@@ -808,11 +824,13 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/wishlist': typeof WishlistRoute
   '/buyer/orders': typeof BuyerOrdersRouteRouteWithChildren
+  '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/disputes': typeof AdminDisputesRoute
   '/admin/kyc': typeof AdminKycRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/suppliers': typeof AdminSuppliersRoute
@@ -909,11 +927,13 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/buyer/orders'
+    | '/admin/analytics'
     | '/admin/audit-logs'
     | '/admin/dashboard'
     | '/admin/disputes'
     | '/admin/kyc'
     | '/admin/login'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
     | '/admin/suppliers'
@@ -1004,11 +1024,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/search'
     | '/wishlist'
+    | '/admin/analytics'
     | '/admin/audit-logs'
     | '/admin/dashboard'
     | '/admin/disputes'
     | '/admin/kyc'
     | '/admin/login'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
     | '/admin/suppliers'
@@ -1102,11 +1124,13 @@ export interface FileRouteTypes {
     | '/search'
     | '/wishlist'
     | '/buyer/orders'
+    | '/admin/analytics'
     | '/admin/audit-logs'
     | '/admin/dashboard'
     | '/admin/disputes'
     | '/admin/kyc'
     | '/admin/login'
+    | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
     | '/admin/suppliers'
@@ -1599,6 +1623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProductsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -1632,6 +1663,13 @@ declare module '@tanstack/react-router' {
       path: '/audit-logs'
       fullPath: '/admin/audit-logs'
       preLoaderRoute: typeof AdminAuditLogsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/buyer/orders': {
@@ -1932,11 +1970,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminAuditLogsRoute: typeof AdminAuditLogsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminDisputesRoute: typeof AdminDisputesRoute
   AdminKycRoute: typeof AdminKycRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
   AdminProductsRoute: typeof AdminProductsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSuppliersRoute: typeof AdminSuppliersRoute
@@ -1945,11 +1985,13 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminAuditLogsRoute: AdminAuditLogsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminDisputesRoute: AdminDisputesRoute,
   AdminKycRoute: AdminKycRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
   AdminProductsRoute: AdminProductsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSuppliersRoute: AdminSuppliersRoute,

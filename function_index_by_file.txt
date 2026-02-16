@@ -1,0 +1,1047 @@
+scripts/attach-images-by-name.ts
+  - line 11: attachImagesByName
+  - line 84: getMimeType
+
+scripts/clear-users.ts
+  - line 5: main
+
+scripts/debug-admins.ts
+  - line 4: checkAdmins
+
+scripts/debug-auth.ts
+  - line 5: main
+
+scripts/debug-product-22.ts
+  - line 5: checkProduct
+
+scripts/debug-products.ts
+  - line 6: debugProducts
+
+scripts/debug-rfq-mapping.ts
+  - line 5: debug
+
+scripts/fix-admin.ts
+  - line 8: hashPassword
+  - line 18: fixAdmin
+
+scripts/force-reset.ts
+  - line 11: reset
+
+scripts/generate-assets.ts
+  - line 8: slugify
+  - line 16: generatePrompts
+
+scripts/promote-new-products.ts
+  - line 12: slugify
+  - line 22: promoteNewProducts
+
+scripts/seed-admin.ts
+  - line 7: hashPassword
+  - line 15: seedAdmin
+
+scripts/seed-categories.ts
+  - line 125: slugify
+  - line 135: seedCategories
+
+scripts/seed-products.ts
+  - line 14: slugify
+  - line 24: seedProducts
+
+scripts/seed-sellers.ts
+  - line 13: hashPassword
+  - line 21: slugify
+  - line 31: seedSellers
+
+scripts/upgrade-to-real-images.ts
+  - line 7: slugify
+  - line 14: generatePollinationsUrl
+  - line 19: upgradeImages
+
+scripts/upload-images-to-s3.ts
+  - line 10: uploadImages
+
+scripts/upload-product-images.ts
+  - line 16: uploadProductImages
+
+scripts/validate-data.ts
+  - line 5: validateData
+
+src/components/AuthModal.tsx
+  - line 26: handleEmailLogin
+  - line 58: handleGoogleSignIn
+
+src/components/CartSidebar.tsx
+  - line 24: handleClickOutside
+
+src/components/CategorySidebar.tsx
+  - line 106: CategoryList
+
+src/components/FeaturedProductsGrid.tsx
+  - line 72: FeaturedProductsGridSkeleton
+  - line 92: ProductCardSkeleton
+
+src/components/FilterSidebar.tsx
+  - line 53: toggleSection
+  - line 63: handlePriceApply
+  - line 71: handleMoqApply
+  - line 79: handleLocationChange
+  - line 87: handleVerifiedToggle
+  - line 91: handleSortChange
+  - line 95: clearAllFilters
+  - line 99: hasActiveFilters
+  - line 337: FilterSection
+
+src/components/Header.tsx
+  - line 47: handleAuthRequired
+  - line 55: handleLogout
+
+src/components/HeroBanner.tsx
+  - line 61: onTouchStart
+  - line 66: onTouchMove
+  - line 70: onTouchEnd
+  - line 86: handleKeyDown
+
+src/components/NotificationBell.tsx
+  - line 29: handleClickOutside
+  - line 41: handleMarkAsRead
+  - line 47: handleOpenNotification
+  - line 135: NotificationItem
+  - line 226: AlertTriangleIcon
+
+src/components/OrderStatusTimeline.tsx
+  - line 179: handleCopyTracking
+  - line 207: isStageCompleted
+  - line 213: isStageCurrent
+  - line 219: getStageDate
+  - line 575: OrderStatusBadge
+  - line 635: OrderProgressIndicator
+
+src/components/PopularSuppliers.tsx
+  - line 18: checkScrollability
+  - line 35: scroll
+  - line 90: SupplierCard
+
+src/components/ProductCard.tsx
+  - line 35: handleRequestQuote
+
+src/components/PromoBanner.tsx
+  - line 44: PromoStrip
+  - line 79: FrequentlySearched
+
+src/components/QuickViewModal.tsx
+  - line 53: handleQuantityChange
+  - line 61: handleAddToCart
+  - line 65: handleRequestQuote
+
+src/components/QuoteActionModals.tsx
+  - line 24: AcceptQuoteModal
+  - line 90: RejectQuoteModal
+  - line 182: CounterOfferModal
+  - line 202: handleSubmit
+
+src/components/QuoteResponseModal.tsx
+  - line 30: handleSubmit
+  - line 56: handleClose
+
+src/components/RFQFormModal.tsx
+  - line 129: handleFileChange
+  - line 151: removeFile
+
+src/components/SearchBar.tsx
+  - line 79: saveRecentSearch
+  - line 91: performSearch
+  - line 105: handleSubmit
+  - line 110: handleSuggestionClick
+  - line 122: handleProductSuggestionClick
+  - line 127: clearSearch
+  - line 132: clearRecentSearches
+  - line 139: handleClickOutside
+
+src/components/ThemeToggle.tsx
+  - line 4: ThemeToggle
+
+src/components/admin/AdminAuditLogsPage.tsx
+  - line 223: severityBadge
+  - line 252: statusBadge
+  - line 264: AdminAuditLogsPage
+  - line 319: exportCsv
+
+src/components/admin/AdminDashboardPage.tsx
+  - line 50: generateGMVData
+  - line 68: generateUserGrowthData
+  - line 287: getActivityIcon
+  - line 306: getStatusBadge
+  - line 331: AdminDashboardPage
+  - line 373: dismissAlert
+
+src/components/admin/AdminDisputesPage.tsx
+  - line 329: statusBadge
+  - line 370: AdminDisputesPage
+
+src/components/admin/AdminKYCPage.tsx
+  - line 260: AdminKYCPage
+  - line 290: fetchQueue
+  - line 310: handleReview
+  - line 330: handleAction
+  - line 354: handler
+  - line 408: toggleSelectAll
+  - line 419: toggleSelectOne
+
+src/components/admin/AdminLayout.tsx
+  - line 78: getRoleBadgeColor
+  - line 89: formatRole
+  - line 96: AdminLayout
+  - line 102: isActive
+
+src/components/admin/AdminLoginPage.tsx
+  - line 6: AdminLoginPage
+  - line 16: handleSubmit
+
+src/components/admin/AdminProductsPage.tsx
+  - line 330: formatCurrency
+  - line 334: statusBadge
+  - line 393: AdminProductsPage
+  - line 432: refreshSellerProducts
+  - line 500: matchesStock
+  - line 568: toggleSelectAll
+  - line 579: toggleSelectOne
+  - line 626: restoreDeletedProduct
+
+src/components/admin/AdminProtectedRoute.tsx
+  - line 15: AdminProtectedRoute
+
+src/components/admin/AdminSettingsPage.tsx
+  - line 52: AdminSettingsPage
+
+src/components/admin/AdminSuppliersPage.tsx
+  - line 138: formatCurrency
+  - line 142: kycBadge
+  - line 164: statusBadge
+  - line 179: AdminSuppliersPage
+  - line 191: loadSuppliers
+  - line 263: matchesPerformance
+  - line 320: toggleSelectAll
+  - line 331: toggleSelectOne
+
+src/components/admin/AdminUsersPage.tsx
+  - line 273: formatCurrency
+  - line 277: matchesOrderCount
+  - line 285: statusBadge
+  - line 307: AdminUsersPage
+  - line 399: toggleSelectAll
+  - line 410: toggleSelectOne
+  - line 416: exportUsers
+
+src/components/buyer/BuyerRFQsSection.tsx
+  - line 67: toggleSort
+  - line 294: StatusBadge
+  - line 323: PlusCircleIcon
+
+src/components/checkout/AddressCard.tsx
+  - line 20: AddressCard
+  - line 27: getIcon
+
+src/components/checkout/AddressFormModal.tsx
+  - line 30: AddressFormModal
+
+src/components/checkout/CheckoutLayout.tsx
+  - line 15: CheckoutLayout
+
+src/components/checkout/GuestAddressForm.tsx
+  - line 24: GuestAddressForm
+
+src/components/demo.FormComponents.tsx
+  - line 5: SubscribeButton
+  - line 22: ErrorMessages
+  - line 41: TextField
+  - line 68: TextArea
+  - line 95: Select
+
+src/components/demo.chat-area.tsx
+  - line 14: postMessage
+  - line 21: handleKeyPress
+
+src/components/demo.messages.tsx
+  - line 3: getAvatarColor
+
+src/components/seller/AddProductPage.tsx
+  - line 80: AddProductPage
+  - line 313: computeActive
+  - line 332: onScroll
+  - line 484: handleTagInput
+  - line 497: removeTag
+  - line 501: addTier
+  - line 508: updateTier
+  - line 514: removeTier
+  - line 519: addSpecRow
+  - line 526: updateSpec
+  - line 532: removeSpec
+  - line 536: handleImageFiles
+  - line 562: validateImage
+  - line 569: simulateUploadProgress
+  - line 582: removeImage
+  - line 592: setPrimaryImage
+  - line 598: onDragStart
+  - line 620: validateAll
+  - line 677: handleSubmit
+  - line 684: doSubmit
+  - line 797: handlePreview
+  - line 1607: Field
+  - line 1644: SelectField
+  - line 1690: ToolbarButton
+  - line 1708: Modal
+  - line 1743: sanitizeHtml
+  - line 1760: compressImage
+  - line 1780: generateThumbnail
+
+src/components/seller/BulkImportModal.tsx
+  - line 75: BulkImportModal
+  - line 123: downloadCsvTemplate
+  - line 128: downloadExcelTemplate
+  - line 140: handleFile
+  - line 176: handleImport
+  - line 181: downloadErrorReport
+  - line 476: SummaryCard
+  - line 499: downloadFile
+  - line 513: parseCsv
+  - line 528: parseExcel
+  - line 544: parseCsvLine
+  - line 570: normalizeHeader
+  - line 577: toImportRow
+  - line 597: validateRows
+
+src/components/seller/SellerAnalyticsPage.tsx
+  - line 128: SellerAnalyticsPage
+  - line 531: KpiCard
+  - line 585: InfoCard
+
+src/components/seller/SellerDashboardPage.tsx
+  - line 53: SellerDashboardPage
+  - line 599: MetricCard
+  - line 652: StatusBadge
+  - line 671: ActionButton
+  - line 694: VerificationStatus
+  - line 756: ChartSkeleton
+  - line 762: TableSkeleton
+  - line 775: PanelSkeleton
+  - line 788: EmptyState
+
+src/components/seller/SellerHeader.tsx
+  - line 12: SellerHeader
+  - line 19: handleClickOutside
+
+src/components/seller/SellerKYCPage.tsx
+  - line 53: SellerKYCPage
+  - line 110: updateUpload
+  - line 129: simulateProgress
+  - line 144: validateFile
+  - line 163: handleBrowse
+  - line 168: clearUpload
+  - line 174: toggleCategory
+  - line 182: validateSubmission
+  - line 193: handleSubmit
+  - line 199: confirmSubmit
+  - line 515: StatusBadge
+  - line 540: DocumentUploader
+  - line 650: ConfirmationModal
+  - line 715: compressImageIfNeeded
+  - line 739: fileToBase64
+  - line 756: buildSubmissionPayload
+
+src/components/seller/SellerLayout.tsx
+  - line 10: SellerLayout
+
+src/components/seller/SellerLoginPage.tsx
+  - line 11: SellerLoginPage
+  - line 31: validate
+  - line 43: mapErrorMessage
+  - line 54: handleSubmit
+  - line 89: handleGoogleLogin
+  - line 294: StatCard
+  - line 305: BenefitTile
+
+src/components/seller/SellerMobileNav.tsx
+  - line 12: SellerMobileNav
+
+src/components/seller/SellerOrdersPage.tsx
+  - line 59: SellerOrdersPage
+  - line 408: OrderDetail
+  - line 469: ActionMenu
+  - line 508: EmptyState
+  - line 519: OrderSkeleton
+  - line 532: statusBadge
+  - line 551: actionLabel
+  - line 560: formatDate
+  - line 568: formatBdt
+
+src/components/seller/SellerPayoutsPage.tsx
+  - line 121: SellerPayoutsPage
+  - line 500: BalanceCard
+  - line 569: WithdrawModal
+  - line 660: statusBadge
+
+src/components/seller/SellerProductsPage.tsx
+  - line 43: SellerProductsPage
+  - line 76: matchesQuery
+  - line 116: toggleSelection
+  - line 122: toggleSelectAll
+  - line 147: handleBulkAction
+  - line 156: handleAction
+  - line 175: handleDeleteProducts
+  - line 205: handleExport
+  - line 570: BulkActions
+  - line 607: ExportMenu
+  - line 636: RowActions
+  - line 677: statusBadge
+  - line 690: stockBadge
+  - line 698: EmptyState
+  - line 744: ProductSkeleton
+
+src/components/seller/SellerProfilePage.tsx
+  - line 25: SellerProfilePage
+  - line 33: showMessage
+  - line 40: handleUpdate
+  - line 125: BusinessTab
+  - line 152: toggleCategory
+  - line 158: handleSaveBusiness
+  - line 167: handleSaveContact
+  - line 297: BankTab
+  - line 313: handleSaveBank
+  - line 381: KycTab
+  - line 441: NotificationsTab
+  - line 497: SecurityTab
+  - line 593: StoreTab
+  - line 698: SectionCard
+  - line 715: Field
+  - line 753: TextArea
+  - line 785: SelectField
+  - line 823: FileField
+  - line 855: DocumentRow
+  - line 877: NotificationRow
+  - line 888: Toggle
+
+src/components/seller/SellerProtectedRoute.tsx
+  - line 11: SellerProtectedRoute
+
+src/components/seller/SellerRFQsPage.tsx
+  - line 119: SellerRFQsPage
+  - line 134: fetchRfqs
+  - line 478: StatCard
+  - line 491: InfoItem
+  - line 502: UrgencyBadge
+  - line 525: Badge
+  - line 535: SearchIcon
+  - line 544: statusBadge
+  - line 558: RFQDetailPanel
+  - line 724: SendQuoteModal
+  - line 747: getDepositPercentage
+  - line 888: Modal
+  - line 923: EmptyState
+  - line 932: RfqSkeleton
+
+src/components/seller/SellerRegistrationPage.tsx
+  - line 41: SellerRegistrationPage
+  - line 90: updateField
+  - line 94: validateStep1
+  - line 111: validateStep2
+  - line 133: validateStep3
+  - line 149: handleNext
+  - line 154: handleBack
+  - line 159: handleSubmit
+  - line 466: BenefitCard
+  - line 485: StepBadge
+  - line 502: Field
+  - line 548: SelectField
+
+src/components/seller/SellerSidebar.tsx
+  - line 30: SellerSidebar
+
+src/components/seller/SellerToastProvider.tsx
+  - line 25: SellerToastProvider
+  - line 68: useSellerToast
+
+src/contexts/AdminAuthContext.tsx
+  - line 38: AdminAuthProvider
+  - line 74: updateActivity
+  - line 91: handleBeforeUnload
+  - line 147: useAdminAuth
+
+src/contexts/AuthContext.tsx
+  - line 26: AuthProvider
+  - line 35: logout
+  - line 48: refreshUser
+  - line 53: verifyPasswordStatus
+  - line 116: useAuth
+
+src/contexts/CartContext.tsx
+  - line 95: CartProvider
+  - line 400: useCart
+
+src/contexts/CheckoutContext.tsx
+  - line 41: CheckoutProvider
+  - line 83: setShippingAddressId
+  - line 85: setPaymentMethod
+  - line 87: setPaymentDetails
+  - line 89: setPoNumber
+  - line 91: setNotes
+  - line 93: setIsPaymentVerified
+  - line 113: useCheckout
+
+src/contexts/NotificationContext.tsx
+  - line 110: NotificationProvider
+  - line 208: handleStorage
+  - line 217: flushNotificationQueue
+  - line 243: markAsRead
+  - line 249: toggleRead
+  - line 255: markAllAsRead
+  - line 259: archiveNotification
+  - line 265: restoreNotification
+  - line 298: fetchStockAlerts
+  - line 338: updatePreferences
+  - line 375: useNotifications
+
+src/contexts/SellerAuthContext.tsx
+  - line 39: SellerAuthProvider
+  - line 198: useSellerAuth
+
+src/contexts/ThemeContext.tsx
+  - line 23: ThemeProvider
+  - line 85: useTheme
+
+src/contexts/WishlistContext.tsx
+  - line 19: WishlistProvider
+  - line 33: addToWishlist
+  - line 57: removeFromWishlist
+  - line 61: toggleWishlist
+  - line 89: isInWishlist
+  - line 113: useWishlist
+
+src/data/demo-table-data.ts
+  - line 14: range
+  - line 38: makeData
+
+src/data/demo.punk-songs.ts
+  - line 3: getPunkSongs
+
+src/data/mock-rfqs.ts
+  - line 21: getProduct
+
+src/db/login-events.ts
+  - line 5: createLoginEvent
+  - line 9: getLoginEventsByUserId
+
+src/hooks/demo.useChat.ts
+  - line 8: useStreamConnection
+  - line 15: fetchData
+  - line 44: useChat
+  - line 47: sendMessage
+  - line 57: useMessages
+
+src/hooks/useCouponValidation.ts
+  - line 39: useCouponValidation
+
+src/hooks/useProductFilters.ts
+  - line 26: useProductFilters
+  - line 130: parseSearchParamsToFilters
+  - line 147: filtersToSearchParams
+
+src/integrations/tanstack-query/root-provider.tsx
+  - line 3: getContext
+  - line 10: Provider
+
+src/lib/address-actions.ts
+  - line 7: getAddresses
+  - line 13: addAddress
+  - line 27: updateAddress
+  - line 47: deleteAddress
+
+src/lib/admin-auth-server.ts
+  - line 15: generateToken
+  - line 27: verifyAdminToken
+  - line 50: hashPassword
+  - line 58: verifyPassword
+  - line 103: adminLogin
+  - line 179: getAdminSession
+  - line 186: validateAdminToken
+  - line 217: createAdmin
+
+src/lib/admin-product-server.ts
+  - line 12: getOrCreateSupplierForSeller
+  - line 49: getAdminSellerProducts
+  - line 104: approveSellerProduct
+  - line 197: declineSellerProduct
+  - line 238: restoreSellerDeletedProduct
+
+src/lib/admin-supplier-server.ts
+  - line 51: getAdminSuppliers
+
+src/lib/auth-server.ts
+  - line 23: getAuthSession
+  - line 29: setUserPassword
+  - line 67: updateUserPassword
+  - line 105: checkUserPasswordStatus
+  - line 121: verifyResetCode
+
+src/lib/cart-actions.ts
+  - line 7: validateCartServer
+
+src/lib/cart-utils.ts
+  - line 52: validateMoq
+  - line 77: validateStock
+  - line 96: validateCartItem
+  - line 132: validateCart
+  - line 183: calculateSupplierBreakdown
+  - line 231: validateCoupon
+  - line 301: calculateDiscount
+  - line 366: calculateCartTotals
+  - line 414: saveCartToStorage
+  - line 441: loadCartFromStorage
+  - line 468: clearCartFromStorage
+  - line 485: mergeGuestCartWithUserCart
+  - line 531: generateCartItemId
+  - line 541: formatCurrency
+  - line 555: calculateSavings
+
+src/lib/email.ts
+  - line 77: sendVerificationEmail
+  - line 156: sendInvoiceEmail
+  - line 205: sendCancellationEmail
+  - line 247: sendOrderStatusEmail
+  - line 309: sendStockAlertEmail
+  - line 367: sendRfqEmail
+  - line 415: sendQuoteEmail
+
+src/lib/notifications.ts
+  - line 16: sendOrderStatusEmail
+  - line 55: sendSmsNotification
+  - line 65: sendPushNotification
+  - line 77: buildOrderNumber
+
+src/lib/order-actions.ts
+  - line 10: getOrder
+  - line 74: createOrder
+  - line 219: updateOrderPayment
+  - line 268: getBuyerOrders
+
+src/lib/order-utils.ts
+  - line 7: generateOrderNumber
+  - line 16: calculateEstimatedDelivery
+  - line 26: canCancelOrder
+  - line 33: generateInvoiceUrl
+
+src/lib/product-images-s3.ts
+  - line 12: getS3Client
+  - line 36: getExtFromMime
+  - line 45: uploadProductImage
+  - line 75: deleteProductImage
+
+src/lib/product-server.ts
+  - line 76: mapProduct
+  - line 115: getFeaturedProducts
+  - line 126: getNewArrivals
+  - line 137: getTopRanking
+  - line 149: getVerifiedSuppliersList
+  - line 171: mapProductDetail
+  - line 249: getProductBySlug
+  - line 296: getProductSuggestions
+  - line 323: searchProducts
+
+src/lib/quote-server.ts
+  - line 24: submitRFQ
+  - line 118: uploadRfqAttachment
+  - line 155: sendQuote
+  - line 271: getSellerRfqs
+  - line 304: getBuyerRfqs
+  - line 329: getBuyerQuotes
+  - line 369: getRfqById
+  - line 437: updateQuoteStatus
+
+src/lib/rfq-validation.ts
+  - line 50: validateMoq
+  - line 60: validatePrice
+  - line 69: calculateExpiry
+  - line 80: isExpired
+
+src/lib/s3.ts
+  - line 13: getS3Client
+  - line 36: uploadToS3
+  - line 77: getSignedUrl
+  - line 90: deleteFromS3
+
+src/lib/sanitize.ts
+  - line 30: sanitizeHtml
+  - line 38: sanitizeText
+
+src/lib/seller-auth-server.ts
+  - line 16: generateToken
+  - line 28: verifySellerToken
+  - line 52: hashPassword
+  - line 60: mapSellerToUser
+  - line 88: verifyPassword
+  - line 126: sellerRegister
+  - line 216: setSellerPassword
+  - line 274: updateSellerProfile
+  - line 332: requestSellerPasswordReset
+  - line 376: verifySellerResetCode
+  - line 421: sellerGoogleLogin
+  - line 450: sellerLogin
+  - line 488: getSellerSession
+  - line 495: validateSellerToken
+
+src/lib/seller-kyc-server.ts
+  - line 33: bufferFromBase64
+  - line 39: getExtension
+  - line 45: processAndUploadDocument
+  - line 74: submitSellerKyc
+  - line 135: getKycReviewQueue
+  - line 166: getSellerKycDetails
+  - line 235: reviewSellerKyc
+
+src/lib/seller-order-server.ts
+  - line 49: formatOrderNumber
+  - line 64: getSellerOrders
+  - line 229: updateSellerOrderStatus
+
+src/lib/seller-product-server.ts
+  - line 10: uploadSellerProductImage
+  - line 86: submitSellerProduct
+  - line 157: getSellerProducts
+  - line 188: getSellerProductById
+  - line 217: updateSellerProduct
+  - line 366: deleteSellerProducts
+
+src/lib/supplier-server.ts
+  - line 17: getSupplierRfqs
+  - line 67: respondToRfq
+
+src/lib/validators.ts
+  - line 3: isValidBDPhone
+
+src/router.tsx
+  - line 9: getRouter
+
+src/routes/__root.tsx
+  - line 87: NotFoundPage
+  - line 107: RootDocument
+  - line 122: getTheme
+
+src/routes/account.tsx
+  - line 30: getAccountData
+  - line 72: updateProfile
+  - line 108: upsertAddress
+  - line 177: deleteAddress
+  - line 210: AccountPage
+  - line 316: ProfileSection
+  - line 496: AddressSection
+  - line 505: handleDelete
+  - line 602: AddressForm
+  - line 765: SecuritySection
+  - line 775: generateStrongPassword
+  - line 996: OrdersSection
+
+src/routes/admin/route.tsx
+  - line 9: AdminRouteWrapper
+
+src/routes/api.$.ts
+  - line 4: handle
+
+src/routes/api/cart/validate-coupon.ts
+  - line 165: validateCoupon
+
+src/routes/api/orders/$orderId/status.ts
+  - line 229: buildRefundSummary
+  - line 249: buildOrderNumber
+
+src/routes/auth/set-password.tsx
+  - line 50: ValidationItem
+  - line 67: SetPasswordPage
+  - line 98: handleSubmit
+  - line 142: generatePassword
+  - line 168: handleSkip
+
+src/routes/buyer/notifications.tsx
+  - line 22: NotificationsPage
+  - line 41: fetchAlerts
+  - line 56: handleUnsubscribeAlert
+  - line 71: byOrder
+  - line 428: ToggleRow
+
+src/routes/buyer/orders/$orderId.tsx
+  - line 137: OrderDetailPage
+  - line 272: handleCopyOrderId
+  - line 279: handleReorder
+  - line 306: evaluateReorderSelection
+  - line 328: addItemsToCart
+  - line 370: handleDownloadInvoice
+  - line 376: fetchInvoice
+  - line 390: downloadOrGenerateInvoice
+  - line 419: handleEmailInvoice
+  - line 452: handleCancelOrder
+  - line 612: handleSupplierSelectionChange
+  - line 619: handleSupplierContinue
+  - line 637: handleSupplierQuickReorder
+  - line 646: handleAddAvailableItemsOnly
+  - line 660: handleViewAlternatives
+  - line 666: handleNotifyBackInStock
+  - line 1508: ReorderModalShell
+  - line 1565: itemSupplierKey
+  - line 1569: getCancelReasonLabel
+  - line 1586: shouldNotifyStatus
+  - line 1610: buildOrderStatusNotification
+  - line 1681: buildReorderItems
+  - line 1725: buildSupplierGroups
+  - line 1744: buildAlternatives
+  - line 1780: formatOrderLabel
+  - line 1787: persistReorderHighlight
+  - line 1806: trackReorderAnalytics
+  - line 1864: buildInvoiceMeta
+  - line 1919: generateInvoicePdf
+  - line 2080: buildInvoiceFileName
+  - line 2087: triggerInvoiceDownload
+  - line 2096: loadImageAsDataUrl
+  - line 2123: buildStageTimestamps
+  - line 2159: getMockStatusByNow
+  - line 2178: ensureForwardStatus
+  - line 2188: buildMockTrackingInfo
+
+src/routes/buyer/orders/index.tsx
+  - line 43: BuyerOrderHistoryPage
+  - line 151: handleTabChange
+  - line 392: filterOrdersByTab
+  - line 422: OrderCard
+  - line 453: handleDownloadInvoice
+  - line 557: EmptyState
+
+src/routes/buyer/orders/route.tsx
+  - line 7: OrdersLayout
+
+src/routes/buyer/rfqs/$rfqId.tsx
+  - line 55: RFQDetailPage
+  - line 80: handleRefresh
+  - line 109: closeActionModal
+  - line 115: handleConfirmAccept
+  - line 137: handleConfirmReject
+  - line 159: handleConfirmCounter
+  - line 183: handleCheckout
+  - line 589: QuoteCard
+  - line 759: StatusBadge
+
+src/routes/buyer/rfqs/index.tsx
+  - line 10: BuyerRFQInbox
+
+src/routes/cart.tsx
+  - line 72: ServerValidationBanner
+  - line 119: MoqWarningBanner
+  - line 327: CartItemRow
+  - line 349: handleDecrement
+  - line 355: handleIncrement
+  - line 361: handleInputChange
+  - line 368: handleInputBlur
+  - line 383: handleInputKeyDown
+  - line 389: handleRemove
+  - line 396: handleIncreaseToMoq
+  - line 652: SupplierGroup
+  - line 780: EmptyCart
+  - line 816: CouponSection
+  - line 831: handleApply
+  - line 839: handleKeyDown
+  - line 845: handleInputChange
+  - line 1000: OrderSummary
+  - line 1166: CartPage
+  - line 1203: validate
+  - line 1270: toggleSupplier
+  - line 1283: handleFixAllMoq
+  - line 1295: handleIncreaseToMoq
+  - line 1299: handleCheckout
+
+src/routes/categories/$categorySlug.tsx
+  - line 40: CategoryPage
+  - line 125: handlePageChange
+  - line 458: FilterTag
+
+src/routes/checkout/index.tsx
+  - line 24: CheckoutPage
+  - line 58: fetchAddresses
+  - line 88: handleAddAddress
+  - line 111: handleUpdateAddress
+  - line 137: handleDeleteAddress
+  - line 153: handleGuestSubmit
+  - line 161: handleContinue
+
+src/routes/checkout/payment-callback.tsx
+  - line 25: PaymentCallbackPage
+
+src/routes/checkout/payment.tsx
+  - line 23: PaymentPage
+  - line 68: handleMethodSelect
+  - line 77: handleContinue
+  - line 174: updatePaymentForm
+  - line 178: renderTransferForm
+
+src/routes/checkout/review.tsx
+  - line 29: ReviewPage
+  - line 74: handlePlaceOrder
+  - line 224: getPaymentMethodLabel
+
+src/routes/checkout/route.tsx
+  - line 8: CheckoutLayoutWrapper
+
+src/routes/demo/db-chat-api.ts
+  - line 39: sendMessage
+
+src/routes/demo/db-chat.tsx
+  - line 9: App
+
+src/routes/demo/drizzle.tsx
+  - line 7: getTodos
+  - line 15: createTodo
+  - line 29: DemoDrizzle
+  - line 33: handleSubmit
+
+src/routes/demo/form.address.tsx
+  - line 9: AddressForm
+
+src/routes/demo/form.simple.tsx
+  - line 15: SimpleForm
+
+src/routes/demo/hono-todo.tsx
+  - line 36: HonoTodos
+
+src/routes/demo/start.api-request.tsx
+  - line 5: getNames
+  - line 15: Home
+
+src/routes/demo/start.server-funcs.tsx
+  - line 13: loggedServerFunction
+  - line 20: readTodos
+  - line 35: getTodos
+  - line 39: addTodo
+  - line 53: Home
+
+src/routes/demo/start.ssr.data-only.tsx
+  - line 10: RouteComponent
+
+src/routes/demo/start.ssr.full-ssr.tsx
+  - line 9: RouteComponent
+
+src/routes/demo/start.ssr.index.tsx
+  - line 7: RouteComponent
+
+src/routes/demo/start.ssr.spa-mode.tsx
+  - line 10: RouteComponent
+
+src/routes/demo/table.tsx
+  - line 72: TableDemo
+  - line 112: refreshData
+  - line 317: Filter
+  - line 332: DebouncedInput
+
+src/routes/demo/tanstack-query.tsx
+  - line 14: TanStackQueryDemo
+
+src/routes/forgot-password.tsx
+  - line 11: ForgotPasswordPage
+  - line 19: handleEmailSubmit
+  - line 44: handleOtpSubmit
+
+src/routes/index.tsx
+  - line 48: HomePage
+  - line 61: handleQuickView
+  - line 65: handleAddToCart
+  - line 217: getCategoryEmoji
+
+src/routes/login.tsx
+  - line 22: LoginPage
+  - line 29: handleGoogleSignIn
+  - line 36: handleEmailSignIn
+
+src/routes/mock-payment/bkash.tsx
+  - line 15: MockBkashPage
+  - line 24: handleNext
+  - line 34: handleConfirm
+  - line 51: handleCancel
+
+src/routes/order-confirmation/$orderId.tsx
+  - line 29: OrderConfirmationPage
+  - line 83: handleCopyOrderNumber
+  - line 88: handleShare
+
+src/routes/products/$productSlug.tsx
+  - line 42: ProductDetailPage
+  - line 83: handleQuantityChange
+  - line 91: handleSampleToggle
+  - line 98: handleAddToCart
+  - line 122: handleRequestQuote
+  - line 130: handleOpenStockAlert
+  - line 134: handleSubmitStockAlert
+
+src/routes/quotes/index.tsx
+  - line 29: QuotesPage
+  - line 50: handleCounterSubmit
+  - line 276: FileTextIcon
+
+src/routes/register.tsx
+  - line 40: RegisterPage
+  - line 64: generateStrongPassword
+  - line 92: handleGoogleSignIn
+  - line 99: handleEmailSignUp
+
+src/routes/reset-password.tsx
+  - line 25: ResetPasswordPage
+  - line 52: generateStrongPassword
+  - line 79: handleSubmit
+  - line 279: RequirementItem
+
+src/routes/search.tsx
+  - line 58: SearchPage
+  - line 80: handleQuickView
+  - line 84: handleAddToCart
+  - line 188: handlePageChange
+  - line 593: FilterTag
+
+src/routes/seller/callback.tsx
+  - line 11: SellerCallback
+  - line 19: checkSeller
+
+src/routes/seller/faq.tsx
+  - line 7: SellerFaqPage
+
+src/routes/seller/forgot-password.tsx
+  - line 14: SellerForgotPasswordPage
+  - line 22: handleSubmitEmail
+  - line 38: handleVerifyCode
+
+src/routes/seller/help.tsx
+  - line 7: SellerHelpPage
+
+src/routes/seller/products/$productId/edit.tsx
+  - line 10: EditProductRoute
+
+src/routes/seller/route.tsx
+  - line 10: SellerRouteWrapper
+
+src/routes/supplier/dashboard.tsx
+  - line 23: SupplierDashboard
+  - line 28: handleOpenQuote
+  - line 33: handleQuoteSuccess
+
+src/routes/supplier/rfqs.tsx
+  - line 29: SupplierRFQInbox
+  - line 51: handleSendQuote
+  - line 55: handleQuoteSuccess
+  - line 157: SupplierRFQCard
+  - line 238: QuoteResponseModal
+  - line 257: handleSubmit
+
+src/routes/wishlist.tsx
+  - line 22: WishlistItem
+  - line 31: handleAddToCart
+  - line 43: increment
+  - line 44: decrement
+  - line 149: WishlistPage
+  - line 153: handleShare
+  - line 226: HeartIcon
+
+src/types/admin.ts
+  - line 53: getAdminPermissions
+  - line 114: hasPermission

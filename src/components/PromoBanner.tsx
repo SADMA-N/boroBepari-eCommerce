@@ -61,7 +61,7 @@ export function PromoStrip({
         </div>
         <Link
           to={ctaLink}
-          className="bg-white text-orange-600 font-semibold px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap"
+          className="bg-white dark:bg-slate-900 text-orange-600 dark:text-orange-300 border border-white/60 dark:border-slate-700 font-semibold px-6 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors whitespace-nowrap"
         >
           {ctaText}
         </Link>

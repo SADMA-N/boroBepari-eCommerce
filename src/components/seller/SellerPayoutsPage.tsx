@@ -158,15 +158,15 @@ export function SellerPayoutsPage() {
       <div className="space-y-8">
         <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-foreground">
               Payouts & Finance
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Manage your earnings, withdrawals, and financial settings.
             </p>
           </div>
           <button
-            className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400"
             onClick={() => setShowWithdraw(true)}
           >
             <Banknote size={16} />
@@ -197,16 +197,16 @@ export function SellerPayoutsPage() {
         </section>
 
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 Payout History
               </h2>
               <div className="flex items-center gap-2">
                 <select
                   value={statusFilter}
                   onChange={(event) => setStatusFilter(event.target.value)}
-                  className="rounded-lg border border-slate-200 px-2 py-1 text-sm"
+                  className="rounded-lg border border-border px-2 py-1 text-sm"
                 >
                   <option value="">All statuses</option>
                   <option value="Pending">Pending</option>
@@ -218,13 +218,13 @@ export function SellerPayoutsPage() {
                   value={searchTxn}
                   onChange={(event) => setSearchTxn(event.target.value)}
                   placeholder="Search transaction ID"
-                  className="rounded-lg border border-slate-200 px-2 py-1 text-sm"
+                  className="rounded-lg border border-border px-2 py-1 text-sm"
                 />
               </div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="text-left text-slate-400">
+                <thead className="text-left text-muted-foreground">
                   <tr>
                     <th className="pb-2">Payout ID</th>
                     <th>Date Requested</th>
@@ -236,10 +236,10 @@ export function SellerPayoutsPage() {
                     <th />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-600">
+                <tbody className="divide-y divide-border text-muted-foreground">
                   {filteredPayouts.map((payout) => (
                     <tr key={payout.id}>
-                      <td className="py-2 font-semibold text-slate-800">
+                      <td className="py-2 font-semibold text-foreground">
                         {payout.id}
                       </td>
                       <td>{payout.requestedAt}</td>
@@ -256,11 +256,11 @@ export function SellerPayoutsPage() {
                       <td>{payout.transactionId ?? '-'}</td>
                       <td>
                         {payout.status === 'Failed' ? (
-                          <button className="text-xs text-red-500">
+                          <button className="text-xs text-red-500 dark:text-red-400">
                             Retry
                           </button>
                         ) : (
-                          <button className="text-xs text-slate-500">
+                          <button className="text-xs text-muted-foreground">
                             Download
                           </button>
                         )}
@@ -272,34 +272,34 @@ export function SellerPayoutsPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground">
               Bank Accounts
             </h2>
             <div className="space-y-3">
               {bankAccounts.map((account) => (
                 <div
                   key={account.id}
-                  className="rounded-xl border border-slate-200 p-4"
+                  className="rounded-xl border border-border p-4"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-semibold text-foreground">
                         {account.bankName}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-muted-foreground">
                         {account.accountNumber}
                       </p>
                     </div>
                     <span
-                      className={`text-xs font-semibold ${account.status === 'Verified' ? 'text-green-600' : 'text-orange-600'}`}
+                      className={`text-xs font-semibold ${account.status === 'Verified' ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}
                     >
                       {account.status}
                     </span>
                   </div>
-                  <div className="mt-3 flex items-center gap-3 text-xs text-slate-500">
+                  <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
                     {account.isPrimary && (
-                      <span className="rounded-full bg-green-50 px-2 py-0.5 text-green-600">
+                      <span className="rounded-full bg-green-50 dark:bg-green-900/30 px-2 py-0.5 text-green-600 dark:text-green-300">
                         Primary
                       </span>
                     )}
@@ -309,7 +309,7 @@ export function SellerPayoutsPage() {
                 </div>
               ))}
             </div>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <button className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
               <Plus size={16} />
               Add New Account
             </button>
@@ -317,15 +317,15 @@ export function SellerPayoutsPage() {
         </section>
 
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="text-lg font-semibold text-foreground">
                 Transaction History
               </h2>
-              <button className="text-sm text-slate-500">Export CSV/PDF</button>
+              <button className="text-sm text-muted-foreground">Export CSV/PDF</button>
             </div>
             <table className="w-full text-sm">
-              <thead className="text-left text-slate-400">
+              <thead className="text-left text-muted-foreground">
                 <tr>
                   <th className="pb-2">Date</th>
                   <th>Description</th>
@@ -334,7 +334,7 @@ export function SellerPayoutsPage() {
                   <th>Balance After</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-600">
+              <tbody className="divide-y divide-border text-muted-foreground">
                 {transactions.map((tx) => (
                   <tr key={`${tx.date}-${tx.reference}`}>
                     <td className="py-2">{tx.date}</td>
@@ -342,7 +342,7 @@ export function SellerPayoutsPage() {
                     <td>{tx.reference}</td>
                     <td
                       className={
-                        tx.type === 'credit' ? 'text-green-600' : 'text-red-500'
+                        tx.type === 'credit' ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'
                       }
                     >
                       {tx.type === 'credit' ? '+' : '-'}৳
@@ -356,35 +356,35 @@ export function SellerPayoutsPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-              <h2 className="text-lg font-semibold text-slate-900">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+              <h2 className="text-lg font-semibold text-foreground">
                 Commission Breakdown
               </h2>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 Commission rate: 3% per order
               </p>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+              <div className="rounded-lg border border-border bg-muted p-3 text-sm text-muted-foreground">
                 Monthly commission: ৳12,800
               </div>
-              <button className="text-sm text-orange-600">
+              <button className="text-sm text-orange-600 dark:text-orange-400">
                 View commission policy
               </button>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-              <h2 className="text-lg font-semibold text-slate-900">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+              <h2 className="text-lg font-semibold text-foreground">
                 Escrow Details
               </h2>
               {escrowOrders.map((order) => (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between text-sm text-slate-600"
+                  className="flex items-center justify-between text-sm text-muted-foreground"
                 >
                   <span>{order.id}</span>
                   <span>৳{order.amount.toLocaleString()}</span>
                   <span>{order.daysRemaining} days</span>
                 </div>
               ))}
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Total escrow: ৳{pendingBalance.toLocaleString()}
               </p>
             </div>
@@ -392,12 +392,12 @@ export function SellerPayoutsPage() {
         </section>
 
         <section className="grid lg:grid-cols-[1.2fr_1fr] gap-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-foreground">
               Payment Settings
             </h2>
             <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-600">Auto-withdrawal</p>
+              <p className="text-sm text-muted-foreground">Auto-withdrawal</p>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -406,10 +406,10 @@ export function SellerPayoutsPage() {
                   className="sr-only"
                 />
                 <div
-                  className={`h-6 w-11 rounded-full ${autoWithdraw ? 'bg-orange-600' : 'bg-slate-200'} relative`}
+                  className={`h-6 w-11 rounded-full ${autoWithdraw ? 'bg-orange-600 dark:bg-orange-500' : 'bg-slate-200 dark:bg-slate-700'} relative`}
                 >
                   <div
-                    className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition ${autoWithdraw ? 'translate-x-5' : 'translate-x-1'}`}
+                    className={`h-5 w-5 rounded-full bg-card absolute top-0.5 transition ${autoWithdraw ? 'translate-x-5' : 'translate-x-1'}`}
                   />
                 </div>
               </label>
@@ -419,18 +419,18 @@ export function SellerPayoutsPage() {
                 value={minAutoBalance}
                 onChange={(event) => setMinAutoBalance(event.target.value)}
                 placeholder="Minimum balance"
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-lg border border-border px-3 py-2 text-sm"
               />
               <select
                 value={schedule}
                 onChange={(event) => setSchedule(event.target.value)}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-lg border border-border px-3 py-2 text-sm"
               >
                 <option>Weekly</option>
                 <option>Monthly</option>
               </select>
             </div>
-            <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+            <label className="inline-flex items-center gap-2 text-sm text-muted-foreground">
               <input
                 type="checkbox"
                 checked={notifyEmail}
@@ -440,36 +440,36 @@ export function SellerPayoutsPage() {
             </label>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-            <h2 className="text-lg font-semibold text-slate-900">
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+            <h2 className="text-lg font-semibold text-foreground">
               Tax Information
             </h2>
-            <p className="text-sm text-slate-500">TDS and GST summaries</p>
-            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <p className="text-sm text-muted-foreground">TDS and GST summaries</p>
+            <button className="rounded-lg border border-border px-3 py-2 text-sm">
               Download TDS Certificate
             </button>
-            <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <button className="rounded-lg border border-border px-3 py-2 text-sm">
               Tax Reports
             </button>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-slate-900">
+        <section className="rounded-2xl border border-border bg-card p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-foreground">
             Help & Support
           </h2>
-          <div className="grid md:grid-cols-3 gap-3 text-sm text-slate-600">
-            <div className="rounded-lg border border-slate-200 p-3">
+          <div className="grid md:grid-cols-3 gap-3 text-sm text-muted-foreground">
+            <div className="rounded-lg border border-border p-3">
               Withdrawal not received
             </div>
-            <div className="rounded-lg border border-slate-200 p-3">
+            <div className="rounded-lg border border-border p-3">
               Incorrect amount
             </div>
-            <div className="rounded-lg border border-slate-200 p-3">
+            <div className="rounded-lg border border-border p-3">
               Update bank details
             </div>
           </div>
-          <button className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white">
+          <button className="rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400 transition-colors">
             Contact Support
           </button>
         </section>
@@ -523,17 +523,17 @@ function BalanceCard({
 }) {
   const [expanded, setExpanded] = useState(false)
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 space-y-3">
-      <p className="text-sm text-slate-500">{title}</p>
-      <p className="text-2xl font-bold text-slate-900">
+    <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+      <p className="text-sm text-muted-foreground">{title}</p>
+      <p className="text-2xl font-bold text-foreground">
         ৳{amount.toLocaleString()}
       </p>
-      {subtext && <p className="text-xs text-slate-400">{subtext}</p>}
-      {updated && <p className="text-xs text-slate-400">{updated}</p>}
+      {subtext && <p className="text-xs text-muted-foreground">{subtext}</p>}
+      {updated && <p className="text-xs text-muted-foreground">{updated}</p>}
       {actionLabel && onAction && (
         <button
           onClick={onAction}
-          className="rounded-lg bg-orange-600 px-4 py-2 text-xs font-semibold text-white"
+          className="rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400 transition-colors"
         >
           {actionLabel}
         </button>
@@ -542,12 +542,12 @@ function BalanceCard({
         <div>
           <button
             onClick={() => setExpanded((prev) => !prev)}
-            className="text-xs text-orange-600"
+            className="text-xs text-orange-600 dark:text-orange-400"
           >
             {expanded ? 'Hide breakdown' : 'View breakdown'}
           </button>
           {expanded && (
-            <div className="mt-2 space-y-2 text-xs text-slate-600">
+            <div className="mt-2 space-y-2 text-xs text-muted-foreground">
               {details.map((item) => (
                 <div
                   key={item.id}
@@ -597,37 +597,37 @@ function WithdrawModal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-semibold text-foreground">
             Request Withdrawal
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
+            className="text-muted-foreground hover:text-muted-foreground"
             aria-label="Close modal"
             autoFocus
           >
             <X size={16} />
           </button>
         </div>
-        <div className="mt-4 space-y-3 text-sm text-slate-600">
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+          <div className="rounded-lg border border-border bg-muted p-3">
             Available balance: ৳{available.toLocaleString()}
           </div>
           <input
             value={amount}
             onChange={(event) => onAmountChange(event.target.value)}
             placeholder="Enter withdrawal amount"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2"
+            className="w-full rounded-lg border border-border px-3 py-2"
           />
           {minimumError && (
-            <p className="text-xs text-red-500">{minimumError}</p>
+            <p className="text-xs text-red-500 dark:text-red-400">{minimumError}</p>
           )}
           <select
             value={selectedBank}
             onChange={(event) => onBankChange(event.target.value)}
-            className="w-full rounded-lg border border-slate-200 px-3 py-2"
+            className="w-full rounded-lg border border-border px-3 py-2"
           >
             {bankAccountList.map((account) => (
               <option key={account.id} value={account.id}>
@@ -635,15 +635,15 @@ function WithdrawModal({
               </option>
             ))}
           </select>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-muted-foreground">
             Expected transfer date: 3-5 business days
           </p>
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+          <div className="rounded-lg border border-border bg-muted p-3 text-sm text-muted-foreground">
             Withdrawal fee: ৳{fee.toFixed(2)} · Net amount: ৳
             {netAmount.toFixed(2)}
           </div>
           <button
-            className="w-full rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white"
+            className="w-full rounded-lg bg-orange-600 dark:bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700 dark:hover:bg-orange-400 transition-colors"
             disabled={
               !amount || Number(amount) > available || Boolean(minimumError)
             }
@@ -658,8 +658,11 @@ function WithdrawModal({
 }
 
 function statusBadge(status: PayoutStatus) {
-  if (status === 'Pending') return 'bg-yellow-50 text-yellow-700'
-  if (status === 'Processing') return 'bg-blue-50 text-blue-700'
-  if (status === 'Completed') return 'bg-green-50 text-green-700'
-  return 'bg-red-50 text-red-600'
+  if (status === 'Pending')
+    return 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300'
+  if (status === 'Processing')
+    return 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+  if (status === 'Completed')
+    return 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+  return 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-300'
 }

@@ -15,8 +15,7 @@ import {
   X,
 } from 'lucide-react'
 import { z } from 'zod'
-import { checkUserPasswordStatus, setUserPassword } from '@/lib/auth-server'
-import { setSellerPassword } from '@/lib/seller-auth-server'
+import { api } from '@/api/client'
 
 const setPasswordSearchSchema = z.object({
   token: z.string().optional(),
@@ -33,7 +32,7 @@ export const Route = createFileRoute('/auth/set-password')({
     if (search.type === 'seller' && search.token) return
 
     try {
-      const status = await checkUserPasswordStatus()
+      const status = await api.auth.buyer.passwordStatus()
       // If user doesn't need a password (already has one or not logged in), redirect to home
       if (!status.needsPassword) {
         throw redirect({ to: '/' })
@@ -108,12 +107,10 @@ function SetPasswordPage() {
 
     try {
       if (search.type === 'seller' && search.token && search.email) {
-        const result = await setSellerPassword({
-          data: {
-            email: search.email,
-            token: search.token,
-            password,
-          },
+        const result = await api.auth.seller.setPassword({
+          email: search.email,
+          token: search.token,
+          password,
         })
 
         // On success, set the seller token and redirect to dashboard
@@ -129,7 +126,7 @@ function SetPasswordPage() {
           }
         }
       } else {
-        await setUserPassword({ data: { password } })
+        await api.auth.buyer.setPassword({ password })
         router.navigate({ to: '/' })
       }
     } catch (err: any) {
@@ -182,7 +179,7 @@ function SetPasswordPage() {
         <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden transition-colors">
           {/* Header Card */}
           <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-white text-center">
-            <div className="inline-flex p-3 bg-white/20 rounded-full mb-4">
+            <div className="inline-flex p-3 bg-white/20 dark:bg-white/20 rounded-full mb-4">
               <ShieldCheck size={40} />
             </div>
             <h2 className="text-2xl font-bold">

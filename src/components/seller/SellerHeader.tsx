@@ -75,7 +75,7 @@ export function SellerHeader({ onMenuClick }: SellerHeaderProps) {
               </div>
               <ChevronDown
                 size={16}
-                className={`text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                className={`text-gray-400 dark:text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
               />
             </button>
 

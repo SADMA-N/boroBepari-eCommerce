@@ -47,7 +47,12 @@ const NAV_ITEMS: Array<{
     icon: FileCheck,
     permission: 'kyc.review',
   },
-  { to: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+  {
+    to: '/admin/orders',
+    label: 'Orders',
+    icon: ShoppingCart,
+    permission: 'orders.view',
+  },
   {
     to: '/admin/disputes',
     label: 'Disputes',
@@ -102,7 +107,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-muted dark:bg-slate-950 transition-colors">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -126,14 +131,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <span className="text-lg font-bold text-white">BoroBepari</span>
-                <span className="block text-xs text-slate-400">
+                <span className="block text-xs text-muted-foreground">
                   Admin Console
                 </span>
               </div>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-slate-400 hover:text-white transition-colors"
+              className="lg:hidden text-muted-foreground hover:text-white transition-colors"
             >
               <X size={20} />
             </button>
@@ -155,7 +160,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                         active
                           ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20'
-                          : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                          : 'text-muted-foreground hover:bg-slate-800 hover:text-white'
                       }`}
                     >
                       <Icon size={18} />
@@ -193,11 +198,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <div className="lg:ml-64">
         {/* Header */}
-        <header className="sticky top-0 z-30 h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <header className="sticky top-0 z-30 h-16 bg-card dark:bg-slate-900 border-b border-border dark:border-slate-800 transition-colors">
           <div className="flex items-center justify-between h-full px-4 lg:px-6">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+              className="lg:hidden text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-slate-100 p-2 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors"
             >
               <Menu size={24} />
             </button>
@@ -208,7 +213,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               <ThemeToggle />
 
               {/* Notifications */}
-              <button className="relative p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+              <button className="relative p-2 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-slate-100 hover:bg-muted dark:hover:bg-slate-800 rounded-lg transition-colors">
                 <Bell size={20} />
                 <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 border-2 border-white dark:border-slate-900" />
               </button>
@@ -218,17 +223,17 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                 <div className="relative">
                   <button
                     onClick={() => setProfileOpen(!profileOpen)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-muted dark:hover:bg-slate-800 transition-colors group"
                   >
-                    <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-semibold transition-colors group-hover:bg-slate-300 dark:group-hover:bg-slate-600">
+                    <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-muted-foreground dark:text-slate-300 font-semibold transition-colors group-hover:bg-slate-300 dark:group-hover:bg-slate-600">
                       {admin.name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="hidden sm:block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <span className="hidden sm:block text-sm font-medium text-foreground dark:text-slate-300">
                       {admin.name}
                     </span>
                     <ChevronDown
                       size={16}
-                      className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`}
+                      className={`text-muted-foreground transition-transform ${profileOpen ? 'rotate-180' : ''}`}
                     />
                   </button>
 
@@ -238,12 +243,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                         className="fixed inset-0 z-10"
                         onClick={() => setProfileOpen(false)}
                       />
-                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 py-1 z-20 transition-colors animate-in fade-in slide-in-from-top-2">
+                      <div className="absolute right-0 mt-2 w-48 bg-card dark:bg-slate-900 rounded-lg shadow-lg border border-border dark:border-slate-800 py-1 z-20 transition-colors animate-in fade-in slide-in-from-top-2">
                         <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
-                          <p className="text-sm font-medium text-slate-900 dark:text-white">
+                          <p className="text-sm font-medium text-foreground dark:text-white">
                             {admin.name}
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                             {admin.email}
                           </p>
                         </div>
@@ -267,7 +272,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-6 text-slate-900 dark:text-slate-100">
+        <main className="p-4 lg:p-6 text-foreground dark:text-slate-100">
           {children}
         </main>
       </div>

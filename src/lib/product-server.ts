@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, desc, eq, ilike, sql } from 'drizzle-orm'
+import { and, desc, eq, ilike, isNull, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { db } from '@/db'
 import { products, sellerProducts, suppliers } from '@/db/schema'
@@ -8,7 +8,7 @@ export interface ProductWithSupplier {
   id: number
   name: string
   slug: string
-  images: string[]
+  images: Array<string>
   price: number
   originalPrice: number | null
   moq: number
@@ -53,7 +53,7 @@ export interface ProductDetailWithSupplier {
   name: string
   slug: string
   description: string
-  images: string[]
+  images: Array<string>
   price: number
   originalPrice: number | null
   moq: number
@@ -65,9 +65,9 @@ export interface ProductDetailWithSupplier {
   rating: number
   reviewCount: number
   soldCount: number
-  tags: string[]
-  tieredPricing: TieredPrice[]
-  specifications: Specification[]
+  tags: Array<string>
+  tieredPricing: Array<TieredPrice>
+  specifications: Array<Specification>
   hasSample: boolean
   samplePrice: number | null
   supplier: SupplierDisplay | null
@@ -95,7 +95,7 @@ function mapProduct(row: {
     id: row.id,
     name: row.name,
     slug: row.slug,
-    images: (row.images as string[]) ?? [],
+    images: (row.images as Array<string> | null) ?? [],
     price: parseFloat(row.price),
     originalPrice: row.originalPrice ? parseFloat(row.originalPrice) : null,
     moq: row.moq,
@@ -116,7 +116,7 @@ export const getFeaturedProducts = createServerFn({ method: 'GET' })
   .inputValidator((limit: number) => limit)
   .handler(async ({ data: limit }) => {
     const rows = await db.query.products.findMany({
-      where: eq(products.featured, true),
+      where: and(eq(products.featured, true), isNull(products.deletedAt)),
       with: { supplier: true },
       limit,
     })
@@ -127,7 +127,7 @@ export const getNewArrivals = createServerFn({ method: 'GET' })
   .inputValidator((limit: number) => limit)
   .handler(async ({ data: limit }) => {
     const rows = await db.query.products.findMany({
-      where: eq(products.isNew, true),
+      where: and(eq(products.isNew, true), isNull(products.deletedAt)),
       with: { supplier: true },
       limit,
     })
@@ -138,6 +138,7 @@ export const getTopRanking = createServerFn({ method: 'GET' })
   .inputValidator((limit: number) => limit)
   .handler(async ({ data: limit }) => {
     const rows = await db.query.products.findMany({
+      where: isNull(products.deletedAt),
       orderBy: [desc(products.soldCount)],
       with: { supplier: true },
       limit,
@@ -206,8 +207,8 @@ function mapProductDetail(row: {
     id: row.id,
     name: row.name,
     slug: row.slug,
-    description: row.description ?? '',
-    images: (row.images as string[]) ?? [],
+    description: row.description ?? '',  
+    images: (row.images as Array<string> | null) ?? [],
     price: parseFloat(row.price),
     originalPrice: row.originalPrice ? parseFloat(row.originalPrice) : null,
     moq: row.moq,
@@ -219,9 +220,9 @@ function mapProductDetail(row: {
     rating: row.rating ? parseFloat(row.rating) : 0,
     reviewCount: row.reviewCount ?? 0,
     soldCount: row.soldCount ?? 0,
-    tags: (row.tags as string[]) ?? [],
-    tieredPricing: (row.tieredPricing as TieredPrice[]) ?? [],
-    specifications: (row.specifications as Specification[]) ?? [],
+    tags: (row.tags as Array<string> | null) ?? [],
+    tieredPricing: (row.tieredPricing as Array<TieredPrice> | null) ?? [],
+    specifications: (row.specifications as Array<Specification> | null) ?? [],
     hasSample: row.hasSample ?? false,
     samplePrice: row.samplePrice ? parseFloat(row.samplePrice) : null,
     supplier: row.supplier
@@ -249,7 +250,7 @@ export const getProductBySlug = createServerFn({ method: 'POST' })
   .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     const row = await db.query.products.findFirst({
-      where: eq(products.slug, slug),
+      where: and(eq(products.slug, slug), isNull(products.deletedAt)),
       with: { supplier: true },
     })
     if (!row) return null
@@ -305,7 +306,7 @@ export const getProductSuggestions = createServerFn({ method: 'GET' })
         price: products.price,
       })
       .from(products)
-      .where(ilike(products.name, `${escaped}%`))
+      .where(and(ilike(products.name, `${escaped}%`), isNull(products.deletedAt)))
       .limit(6)
 
     return rows.map(
@@ -313,7 +314,7 @@ export const getProductSuggestions = createServerFn({ method: 'GET' })
         id: r.id,
         name: r.name,
         slug: r.slug,
-        image: (r.images as string[] | null)?.[0] ?? null,
+        image: (r.images)?.[0] ?? null,
         price: parseFloat(r.price),
       }),
     )
@@ -333,7 +334,7 @@ export const searchProducts = createServerFn({ method: 'POST' })
     }),
   )
   .handler(async ({ data }) => {
-    const conditions = []
+    const conditions = [isNull(products.deletedAt)]
 
     if (data.query) {
       conditions.push(ilike(products.name, `%${data.query}%`))

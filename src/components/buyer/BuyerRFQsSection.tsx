@@ -28,7 +28,7 @@ export default function BuyerRFQsSection({ rfqs }: BuyerRFQsSectionProps) {
 
   // Filter and Sort Logic
   const filteredRfqs = useMemo(() => {
-    let result = rfqs || []
+    let result = rfqs
 
     // Filter by Tab
     if (activeTab !== 'all') {
@@ -135,7 +135,7 @@ export default function BuyerRFQsSection({ rfqs }: BuyerRFQsSectionProps) {
 
         <div className="p-4 flex flex-col sm:flex-row gap-4 justify-between items-center">
           <div className="relative w-full sm:w-96">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
               <Search size={18} />
             </div>
             <input
@@ -204,7 +204,7 @@ export default function BuyerRFQsSection({ rfqs }: BuyerRFQsSectionProps) {
                       <span className="text-xs font-mono font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded transition-colors">
                         RFQ #{rfq.id}
                       </span>
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-muted-foreground">
                         {format(new Date(rfq.createdAt), 'MMM d, yyyy')}
                       </span>
                       <StatusBadge status={rfq.status} />

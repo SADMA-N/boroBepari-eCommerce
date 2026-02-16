@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { authMiddleware } from './auth-server'
 import { sellerAuthMiddleware } from './seller-auth-server'
 import { uploadToS3 } from './s3'
+import { formatBDT } from './product-server'
 import { db } from '@/db'
 import {
   notifications,
@@ -17,7 +18,6 @@ import {
   user as userTable,
 } from '@/db/schema'
 import { sendQuoteEmail, sendRfqEmail } from '@/lib/email'
-import { formatBDT } from './product-server'
 import { env } from '@/env'
 import { sanitizeText } from '@/lib/sanitize'
 
@@ -393,11 +393,11 @@ export const getRfqById = createServerFn({ method: 'GET' })
       with: {
         order: true,
       },
-      orderBy: (items, { desc }) => [desc(items.id)],
+      orderBy: (items, { desc: d }) => [d(items.id)],
     })
 
     if (!orderMatch) {
-      const acceptedQuote = rfq.quotes?.find((quote) => quote.status === 'accepted')
+      const acceptedQuote = rfq.quotes.find((quote) => quote.status === 'accepted')
       if (acceptedQuote) {
         const expectedQuantity = acceptedQuote.agreedQuantity ?? rfq.quantity
         const expectedTotal = (
@@ -413,7 +413,7 @@ export const getRfqById = createServerFn({ method: 'GET' })
           with: {
             order: true,
           },
-          orderBy: (items, { desc }) => [desc(items.id)],
+          orderBy: (items, { desc: d }) => [d(items.id)],
         })
       }
     }

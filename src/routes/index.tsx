@@ -12,19 +12,12 @@ import Footer from '../components/Footer'
 import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import { frequentlySearched, mockCategories } from '../data/mock-products'
-import {
-  getFeaturedProducts,
-  getNewArrivals,
-  getTopRanking,
-  getVerifiedSuppliersList,
-} from '@/lib/product-server'
-import type { ProductWithSupplier } from '@/lib/product-server'
-import { checkUserPasswordStatus } from '@/lib/auth-server'
+import { api } from '@/api/client'
 
 export const Route = createFileRoute('/')({
   beforeLoad: async () => {
     try {
-      const status = await checkUserPasswordStatus()
+      const status = await api.auth.buyer.passwordStatus()
       if (status.needsPassword) {
         throw redirect({ to: '/auth/set-password' })
       }
@@ -33,13 +26,41 @@ export const Route = createFileRoute('/')({
     }
   },
   loader: async () => {
-    const [featured, newArrivals, topRanking, verifiedSuppliers] =
-      await Promise.all([
-        getFeaturedProducts({ data: 12 }),
-        getNewArrivals({ data: 12 }),
-        getTopRanking({ data: 12 }),
-        getVerifiedSuppliersList(),
+    const [featuredResult, newArrivalsResult, topRankingResult, verifiedSuppliersResult] =
+      await Promise.allSettled([
+        api.products.featured(12),
+        api.products.newArrivals(12),
+        api.products.topRanking(12),
+        api.suppliers.verified(),
       ])
+
+    const featured =
+      featuredResult.status === 'fulfilled' ? featuredResult.value : []
+    const newArrivals =
+      newArrivalsResult.status === 'fulfilled' ? newArrivalsResult.value : []
+    const topRanking =
+      topRankingResult.status === 'fulfilled' ? topRankingResult.value : []
+    const verifiedSuppliers =
+      verifiedSuppliersResult.status === 'fulfilled'
+        ? verifiedSuppliersResult.value
+        : []
+
+    if (featuredResult.status === 'rejected') {
+      console.error('Failed to load featured products:', featuredResult.reason)
+    }
+    if (newArrivalsResult.status === 'rejected') {
+      console.error('Failed to load new arrivals:', newArrivalsResult.reason)
+    }
+    if (topRankingResult.status === 'rejected') {
+      console.error('Failed to load top ranking products:', topRankingResult.reason)
+    }
+    if (verifiedSuppliersResult.status === 'rejected') {
+      console.error(
+        'Failed to load verified suppliers:',
+        verifiedSuppliersResult.reason,
+      )
+    }
+
     return { featured, newArrivals, topRanking, verifiedSuppliers }
   },
   component: HomePage,
@@ -52,17 +73,17 @@ function HomePage() {
 
   // Quick View & Toast State
   const [quickViewProduct, setQuickViewProduct] =
-    useState<ProductWithSupplier | null>(null)
+    useState<any | null>(null)
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
   })
 
-  const handleQuickView = (product: ProductWithSupplier) => {
+  const handleQuickView = (product: any) => {
     setQuickViewProduct(product)
   }
 
-  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
+  const handleAddToCart = (product: any, quantity: number) => {
     console.log(`Added ${quantity} of ${product.name} to cart`)
 
     setQuickViewProduct(null)
@@ -96,7 +117,7 @@ function HomePage() {
 
       {/* Categories Grid - Mobile/Tablet */}
       <section className="lg:hidden max-w-[1440px] mx-auto px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">
+        <h2 className="text-xl font-bold text-foreground mb-4">
           Shop by Category
         </h2>
         <CategoryList categories={mainCategories} />

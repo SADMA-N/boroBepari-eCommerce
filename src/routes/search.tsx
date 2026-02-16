@@ -14,11 +14,7 @@ import Footer from '../components/Footer'
 import QuickViewModal from '../components/QuickViewModal'
 import Toast from '../components/Toast'
 import { FeaturedProductsGridSkeleton } from '../components/FeaturedProductsGrid'
-import {
-  searchProducts,
-  getFeaturedProducts as getDbFeaturedProducts,
-} from '../lib/product-server'
-import type { ProductWithSupplier } from '../lib/product-server'
+import { api } from '@/api/client'
 import { mockCategories } from '../data/mock-products'
 import type { ProductFilters } from '../data/mock-products'
 
@@ -62,26 +58,24 @@ function SearchPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [isLoading, setIsLoading] = useState(false)
-  const [products, setProducts] = useState<Array<ProductWithSupplier>>([])
+  const [products, setProducts] = useState<Array<any>>([])
 
   // Recommendations state
-  const [recommendations, setRecommendations] = useState<
-    Array<ProductWithSupplier>
-  >([])
+  const [recommendations, setRecommendations] = useState<Array<any>>([])
 
   // Quick View & Toast State
   const [quickViewProduct, setQuickViewProduct] =
-    useState<ProductWithSupplier | null>(null)
+    useState<any | null>(null)
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({
     message: '',
     isVisible: false,
   })
 
-  const handleQuickView = (product: ProductWithSupplier) => {
+  const handleQuickView = (product: any) => {
     setQuickViewProduct(product)
   }
 
-  const handleAddToCart = (product: ProductWithSupplier, quantity: number) => {
+  const handleAddToCart = (product: any, quantity: number) => {
     // In a real app, this would dispatch to a cart store
     console.log(`Added ${quantity} of ${product.name} to cart`)
 
@@ -114,8 +108,7 @@ function SearchPage() {
   useEffect(() => {
     setIsLoading(true)
     const timer = setTimeout(() => {
-      searchProducts({
-        data: {
+      api.products.search({
           query: filters.search || undefined,
           categoryId: filters.categoryId,
           minPrice: filters.minPrice,
@@ -124,12 +117,11 @@ function SearchPage() {
           isNew: filters.isNew,
           sortBy: filters.sortBy,
           limit: 50,
-        },
-      })
+        })
         .then((results) => {
           setProducts(results)
           if (results.length === 0) {
-            getDbFeaturedProducts({ data: 8 }).then((featured) => {
+            api.products.featured(8).then((featured) => {
               setRecommendations(featured)
             })
           }

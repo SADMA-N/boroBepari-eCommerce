@@ -1,9 +1,9 @@
 
-import { db } from '@/db';
-import { products, sellerProducts, categories, suppliers, sellers } from '@/db/schema';
+import fs from 'node:fs';
+import path from 'node:path';
 import { eq } from 'drizzle-orm';
-import fs from 'fs';
-import path from 'path';
+import { db } from '@/db';
+import { categories, products, sellerProducts, sellers, suppliers } from '@/db/schema';
 
 const catalogPath = path.join(process.cwd(), 'products-catalog.json');
 const imagesPath = path.join(process.cwd(), 'product-images.json');
@@ -16,8 +16,8 @@ const slugify = (text: string) =>
     .toString()
     .toLowerCase()
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
 

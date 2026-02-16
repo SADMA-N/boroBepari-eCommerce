@@ -32,6 +32,7 @@ import {
 } from 'recharts'
 import { AdminProtectedRoute } from './AdminProtectedRoute'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 
 type DisputeStatus =
   | 'open'
@@ -330,37 +331,37 @@ function statusBadge(status: DisputeStatus) {
   switch (status) {
     case 'open':
       return (
-        <span className="rounded-full bg-red-100 px-2.5 py-1 text-xs text-red-700">
+        <span className="rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-xs text-red-700 dark:text-red-300">
           Open
         </span>
       )
     case 'under_review':
       return (
-        <span className="rounded-full bg-yellow-100 px-2.5 py-1 text-xs text-yellow-700">
+        <span className="rounded-full bg-yellow-100 dark:bg-yellow-900/30 px-2.5 py-1 text-xs text-yellow-700 dark:text-yellow-300">
           Under Review
         </span>
       )
     case 'resolved':
       return (
-        <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs text-green-700">
+        <span className="rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-1 text-xs text-green-700 dark:text-green-300">
           Resolved
         </span>
       )
     case 'closed':
       return (
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+        <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-xs text-slate-600 dark:text-slate-300">
           Closed
         </span>
       )
     case 'awaiting_response':
       return (
-        <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs text-blue-700">
+        <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-2.5 py-1 text-xs text-blue-700 dark:text-blue-300">
           Awaiting Response
         </span>
       )
     case 'escalated':
       return (
-        <span className="rounded-full bg-orange-100 px-2.5 py-1 text-xs text-orange-700">
+        <span className="rounded-full bg-orange-100 dark:bg-orange-900/30 px-2.5 py-1 text-xs text-orange-700 dark:text-orange-300">
           Escalated
         </span>
       )
@@ -368,6 +369,12 @@ function statusBadge(status: DisputeStatus) {
 }
 
 export function AdminDisputesPage() {
+  const { theme } = useTheme()
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
   const { can } = useAdminAuth()
   const canView = can('disputes.view')
   const canResolve = can('disputes.resolve')
@@ -566,7 +573,7 @@ export function AdminDisputesPage() {
                 onChange={(e) => setDateFrom(e.target.value)}
                 className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-orange-500 outline-none transition-colors"
               />
-              <span className="text-sm text-slate-400">to</span>
+              <span className="text-sm text-slate-400 dark:text-slate-500">to</span>
               <input
                 type="date"
                 value={dateTo}
@@ -832,7 +839,7 @@ export function AdminDisputesPage() {
                 <h2 className="text-lg font-semibold transition-colors">
                   Dispute Review - {selectedDispute.id}
                 </h2>
-                <p className="text-xs text-slate-400 transition-colors">
+                <p className="text-xs text-slate-400 dark:text-slate-500 transition-colors">
                   Order {selectedDispute.orderNumber}
                 </p>
               </div>

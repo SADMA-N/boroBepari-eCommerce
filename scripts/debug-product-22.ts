@@ -1,6 +1,6 @@
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { products, sellerProducts } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 
 async function checkProduct() {
   console.log('Checking Product ID 22...');
@@ -23,23 +23,20 @@ async function checkProduct() {
   
   const sellerProductById = await db.select().from(sellerProducts).where(eq(sellerProducts.id, 22)).limit(1);
   if (sellerProductById.length > 0) {
-    console.log('
---- Seller Product (draft/edit) by ID 22 ---');
+    console.log('\n--- Seller Product (draft/edit) by ID 22 ---');
     console.log('ID:', sellerProductById[0].id);
     console.log('Name:', sellerProductById[0].name);
     console.log('Images:', JSON.stringify(sellerProductById[0].images, null, 2));
     console.log('Status:', sellerProductById[0].status);
     console.log('Published Product ID:', sellerProductById[0].publishedProductId);
   } else {
-    console.log('
-Seller Product with ID 22 not found.');
+    console.log('\nSeller Product with ID 22 not found.');
   }
 
   // If the user meant the *published* product 22 is being edited, find the seller_product linked to it.
   const sellerProductByPublishedId = await db.select().from(sellerProducts).where(eq(sellerProducts.publishedProductId, 22)).limit(1);
   if (sellerProductByPublishedId.length > 0) {
-    console.log('
---- Seller Product (draft/edit) linked to Public Product 22 ---');
+    console.log('\n--- Seller Product (draft/edit) linked to Public Product 22 ---');
     console.log('ID:', sellerProductByPublishedId[0].id);
     console.log('Name:', sellerProductByPublishedId[0].name);
     console.log('Images:', JSON.stringify(sellerProductByPublishedId[0].images, null, 2));
